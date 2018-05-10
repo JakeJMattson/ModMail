@@ -6,7 +6,7 @@
 
     <groupId>me.aberrantfox</groupId>
     <artifactId>WarmBot</artifactId>
-    <version>0.1.0</version>
+    <version>1.0.0</version>
 
     <properties>
         <kotlin.version>1.2.41</kotlin.version>
@@ -39,35 +39,60 @@
     </repositories>
 
     <build>
-        <sourceDirectory>src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
+                <configuration>
+                    <experimentalCoroutines>enable</experimentalCoroutines>
+                </configuration>
+                <groupId>org.jetbrains.kotlin</groupId>
                 <version>${kotlin.version}</version>
                 <executions>
                     <execution>
                         <id>compile</id>
-                        <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
                     </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
                     <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>test-compile</goal>
+                            <goal>single</goal>
                         </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>me.aberrantfox.warmbot.MainAppKt</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <jvmTarget>1.8</jvmTarget>
+                    <source>1.9</source>
+                    <target>1.9</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 
 
 </project>
