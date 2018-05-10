@@ -3,7 +3,10 @@ package me.aberrantfox.warmbot.services
 import com.google.gson.GsonBuilder
 import java.io.File
 
-data class Configuration(val token: String = "token", val reportCategory: String = "insert-id")
+data class Configuration(val token: String = "token",
+                         val reportCategory: String = "insert-id",
+                         val prefix: String = "!",
+                         val staffRoleName: String = "Staff")
 
 private val gson = GsonBuilder().setPrettyPrinting().create()
 private val configDir = File("config/")

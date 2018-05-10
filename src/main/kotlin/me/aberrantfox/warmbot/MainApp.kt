@@ -22,11 +22,11 @@ fun main(args: Array<String>) {
         return
     }
 
-    startBot(config.token, "!", "me.aberrantfox.warmbot") {
+    startBot(config.token, config.prefix, "me.aberrantfox.warmbot") {
         val reportService = ReportService(jda, config)
         jda.addEventListener(
                 ReportListener(reportService),
-                ResponseListener(reportService, "!"),
+                ResponseListener(reportService, config.prefix),
                 ChannelDeletionListener(reportService))
 
         ObjectRegister["reportService"] = reportService
