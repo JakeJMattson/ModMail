@@ -7,6 +7,12 @@ import me.aberrantfox.warmbot.listeners.ResponseListener
 import me.aberrantfox.warmbot.services.ReportService
 import me.aberrantfox.warmbot.services.loadConfiguration
 
+object ObjectRegister {
+    private val register = HashMap<String, Any>()
+
+    operator fun get(key: String) = register[key]
+    operator fun set(key: String, value: Any) = register.put(key, value)
+}
 
 fun main(args: Array<String>) {
     val config = loadConfiguration()
@@ -20,7 +26,10 @@ fun main(args: Array<String>) {
         val reportService = ReportService(jda, config)
         jda.addEventListener(
                 ReportListener(reportService),
-                ResponseListener(reportService),
+                ResponseListener(reportService, "!"),
                 ChannelDeletionListener(reportService))
+
+        ObjectRegister["reportService"] = reportService
+        ObjectRegister["config"] = config
     }
 }
