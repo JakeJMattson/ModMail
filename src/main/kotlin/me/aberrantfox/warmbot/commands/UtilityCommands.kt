@@ -10,4 +10,16 @@ fun utilityCommands() = commands {
             it.respond("pong! (${it.jda.ping}ms)")
         }
     }
+
+    command("source") {
+        execute {
+            it.respond("http://github.com/AberrantFox/WarmBot")
+        }
+    }
+
+    command("Author") {
+        execute {
+            it.respond("AberrantFox")
+        }
+    }
 }
