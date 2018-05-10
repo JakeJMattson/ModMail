@@ -10,7 +10,15 @@ class ReportListener(val reportService: ReportService)  : ListenerAdapter() {
             return
         }
         val user = event.author
-        val message = event.message.contentRaw
+        var message = event.message.contentRaw
+
+        var attachString = "\n"
+
+        if(event.message.attachments.isNotEmpty()) {
+            attachString += event.message.attachments.map { it.url }.reduce { a, b -> "$a\n $b" }
+        }
+
+        message += attachString
 
         if(reportService.hasReportChannel(user.id)) {
             reportService.receiveFromUser(user, message)
