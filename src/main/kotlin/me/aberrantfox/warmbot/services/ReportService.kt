@@ -1,6 +1,8 @@
 package me.aberrantfox.warmbot.services
 
+import me.aberrantfox.kjdautils.extensions.jda.descriptor
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
+import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.entities.User
@@ -35,10 +37,12 @@ class ReportService(val jda: JDA, config: Configuration) {
         reports.removeAll { it.channelId == channel }
     }
 
-    fun receiveFromUser(user: String, message: String) {
+    fun receiveFromUser(userObject: User, message: String) {
+        val user = userObject.id
+        val safeMessage = message.sanitiseMentions()
         if(reports.any { it.user == user }) {
             val report = reports.first { it.user == user }
-            jda.getTextChannelById(report.channelId).sendMessage(message).queue()
+            jda.getTextChannelById(report.channelId).sendMessage(safeMessage).queue()
 
             return
         }
@@ -47,10 +51,11 @@ class ReportService(val jda: JDA, config: Configuration) {
 
         if(queued == null) {
             val vector = Vector<String>()
-            vector.add(message)
+            vector.add("${userObject.descriptor()} :: ${userObject.asMention}")
+            vector.add(safeMessage.sanitiseMentions())
             queuedReports.add(QueuedReport(vector, user))
         } else {
-            queued.messages.addElement(message)
+            queued.messages.addElement(safeMessage.sanitiseMentions())
         }
     }
 

@@ -9,14 +9,13 @@ class ReportListener(val reportService: ReportService)  : ListenerAdapter() {
         if(event.author.isBot) {
             return
         }
-
-        val user = event.author.id
+        val user = event.author
         val message = event.message.contentRaw
 
-        if(reportService.hasReportChannel(user)) {
+        if(reportService.hasReportChannel(user.id)) {
             reportService.receiveFromUser(user, message)
         } else {
-            reportService.addReport(event.author)
+            reportService.addReport(user)
             reportService.receiveFromUser(user, message)
         }
     }
