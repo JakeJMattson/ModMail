@@ -6,6 +6,8 @@ import me.aberrantfox.warmbot.listeners.ReportListener
 import me.aberrantfox.warmbot.listeners.ResponseListener
 import me.aberrantfox.warmbot.services.ReportService
 import me.aberrantfox.warmbot.services.loadConfiguration
+import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.entities.PermissionOverride
 
 object ObjectRegister {
     private val register = HashMap<String, Any>()
@@ -31,5 +33,23 @@ fun main(args: Array<String>) {
 
         ObjectRegister["reportService"] = reportService
         ObjectRegister["config"] = config
+
+        val staffRole = jda.getRolesByName(config.staffRoleName, true).first()
+        val reportCategory = jda.getCategoryById(config.reportCategory)
+
+        val isAvailableToStaff = reportCategory.permissionOverrides.any {
+            it.isRoleOverride && it.role.name == staffRole.name && it.allowed.contains(Permission.MESSAGE_READ)
+        }
+
+        val isHiddenFromPublic = reportCategory.permissionOverrides
+                .any { it.isRoleOverride && it.role.name == "@everyone" && it.denied.contains(Permission.MESSAGE_READ) }
+
+        if(!isAvailableToStaff) {
+            reportCategory.createPermissionOverride(staffRole).setAllow(Permission.MESSAGE_READ).queue()
+        }
+
+        if(!isHiddenFromPublic) {
+            reportCategory.createPermissionOverride(staffRole.guild.publicRole).setDeny(Permission.MESSAGE_READ).queue()
+        }
     }
 }
