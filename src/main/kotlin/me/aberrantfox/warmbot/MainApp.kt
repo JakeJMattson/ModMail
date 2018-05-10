@@ -7,6 +7,7 @@ import me.aberrantfox.warmbot.listeners.ResponseListener
 import me.aberrantfox.warmbot.services.ReportService
 import me.aberrantfox.warmbot.services.loadConfiguration
 import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.entities.Game
 import net.dv8tion.jda.core.entities.PermissionOverride
 
 object ObjectRegister {
@@ -51,5 +52,7 @@ fun main(args: Array<String>) {
         if(!isHiddenFromPublic) {
             reportCategory.createPermissionOverride(staffRole.guild.publicRole).setDeny(Permission.MESSAGE_READ).queue()
         }
+
+        jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
     }
 }
