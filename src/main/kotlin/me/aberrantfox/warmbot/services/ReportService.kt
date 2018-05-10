@@ -23,7 +23,7 @@ class ReportService(val jda: JDA, config: Configuration) {
 
     fun addReport(user: User) {
         if (reports.none { it.user == user.id }) {
-            reportCategory.createTextChannel(user.id).queue { channel ->
+            reportCategory.createTextChannel(user.name).queue { channel ->
                 queuedReports.first { it.user == user.id }.messages.forEach {
                     (channel as TextChannel).sendMessage(it).queue()
                 }
