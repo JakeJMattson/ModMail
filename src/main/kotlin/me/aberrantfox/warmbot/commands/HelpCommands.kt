@@ -37,6 +37,11 @@ fun helpCommands() = commands {
                 }
 
                 field {
+                    name = "Archive"
+                    value = "Archive the contents of the report as a text document in the archive channel."
+                }
+
+                field {
                     name = "Source"
                     value = "Display the source code via a github link"
                 }
