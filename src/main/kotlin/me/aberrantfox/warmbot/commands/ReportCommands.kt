@@ -27,8 +27,18 @@ fun reportCommands() = commands {
     command("archive") {
         execute {
             val config = ObjectRegister["config"] as Configuration
+            val reportService = ObjectRegister["reportService"] as ReportService
             val archiveChannel = it.jda.getTextChannelById(config.archiveChannel)
-            archiveChannel.sendFile(it.channel.archiveString().toByteArray(), "$${it.channel.name}.txt").queue()
+            val targetChannel = it.channel
+
+            if( !(reportService.isReportChannel(it.channel.id)) ) {
+                it.respond("You can't archive something that isn't a report...")
+                return@execute
+            }
+
+            archiveChannel.sendFile(it.channel.archiveString().toByteArray(), "$${it.channel.name}.txt").queue {
+                (targetChannel as TextChannel).delete().queue()
+            }
         }
     }
 }
