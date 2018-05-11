@@ -26,20 +26,22 @@ fun main(args: Array<String>) {
         return
     }
 
-    startBot(config.token, config.prefix, "me.aberrantfox.warmbot") {
-        val reportService = ReportService(jda, config)
-        jda.addEventListener(
-                ReportListener(reportService),
-                ResponseListener(reportService, config.prefix),
-                ChannelDeletionListener(reportService))
+    start(config)
+}
 
-        ObjectRegister["reportService"] = reportService
-        ObjectRegister["config"] = config
+private fun start(config: Configuration) = startBot(config.token, config.prefix, "me.aberrantfox.warmbot") {
+    val reportService = ReportService(jda, config)
+    jda.addEventListener(
+            ReportListener(reportService),
+            ResponseListener(reportService, config.prefix),
+            ChannelDeletionListener(reportService))
 
-        addOverrides(jda, config)
+    ObjectRegister["reportService"] = reportService
+    ObjectRegister["config"] = config
 
-        jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
-    }
+    addOverrides(jda, config)
+
+    jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
 }
 
 private fun addOverrides(jda: JDA, config: Configuration) {
