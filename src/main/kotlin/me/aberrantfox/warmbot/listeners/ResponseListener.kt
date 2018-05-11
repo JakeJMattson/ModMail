@@ -1,5 +1,6 @@
 package me.aberrantfox.warmbot.listeners
 
+import me.aberrantfox.warmbot.extensions.fullContent
 import me.aberrantfox.warmbot.services.ReportService
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
@@ -20,6 +21,6 @@ class ResponseListener(val reportService: ReportService, val prefix: String) : L
             return
         }
 
-        reportService.sendToUser(channel.id, event.message.contentRaw)
+        reportService.sendToUser(channel.id, event.message.fullContent())
     }
 }
