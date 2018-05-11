@@ -4,6 +4,7 @@ import me.aberrantfox.kjdautils.api.startBot
 import me.aberrantfox.warmbot.listeners.ChannelDeletionListener
 import me.aberrantfox.warmbot.listeners.ReportListener
 import me.aberrantfox.warmbot.listeners.ResponseListener
+import me.aberrantfox.warmbot.listeners.isStaffMember
 import me.aberrantfox.warmbot.services.Configuration
 import me.aberrantfox.warmbot.services.ReportService
 import me.aberrantfox.warmbot.services.loadConfiguration
@@ -42,6 +43,7 @@ private fun start(config: Configuration) = startBot(config.token, config.prefix,
     addOverrides(jda, config)
 
     jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
+    registerCommandPrecondition(isStaffMember)
 }
 
 private fun addOverrides(jda: JDA, config: Configuration) {
