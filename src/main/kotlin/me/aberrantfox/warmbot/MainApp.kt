@@ -49,19 +49,11 @@ private fun start(config: Configuration) = startBot(config.token, config.prefix,
 private fun addOverrides(jda: JDA, config: Configuration) {
     val staffRole = jda.getRolesByName(config.staffRoleName, true).first()
     val reportCategory = jda.getCategoryById(config.reportCategory)
+    val archiveChannel = jda.getTextChannelById(config.archiveChannel)
 
-    val isAvailableToStaff = reportCategory.permissionOverrides.any {
-        it.isRoleOverride && it.role.name == staffRole.name && it.allowed.contains(Permission.MESSAGE_READ)
-    }
+    reportCategory.putPermissionOverride(staffRole).setAllow(Permission.MESSAGE_READ).queue()
+    reportCategory.putPermissionOverride(reportCategory.guild.publicRole).setDeny(Permission.MESSAGE_READ).queue()
 
-    val isHiddenFromPublic = reportCategory.permissionOverrides
-            .any { it.isRoleOverride && it.role.name == "@everyone" && it.denied.contains(Permission.MESSAGE_READ) }
-
-    if(!isAvailableToStaff) {
-        reportCategory.createPermissionOverride(staffRole).setAllow(Permission.MESSAGE_READ).queue()
-    }
-
-    if(!isHiddenFromPublic) {
-        reportCategory.createPermissionOverride(staffRole.guild.publicRole).setDeny(Permission.MESSAGE_READ).queue()
-    }
+    archiveChannel.putPermissionOverride(staffRole).setAllow(Permission.MESSAGE_READ).queue()
+    archiveChannel.putPermissionOverride(reportCategory.guild.publicRole).setDeny(Permission.MESSAGE_READ).queue()
 }
