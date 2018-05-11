@@ -4,6 +4,7 @@ import me.aberrantfox.kjdautils.api.dsl.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.commands
 import me.aberrantfox.warmbot.ObjectRegister
 import me.aberrantfox.warmbot.extensions.archiveString
+import me.aberrantfox.warmbot.services.Configuration
 import me.aberrantfox.warmbot.services.ReportService
 import net.dv8tion.jda.core.entities.TextChannel
 
@@ -25,7 +26,9 @@ fun reportCommands() = commands {
 
     command("archive") {
         execute {
-            it.channel.sendFile(it.channel.archiveString().toByteArray(), "$${it.channel.name}.txt").queue()
+            val config = ObjectRegister["config"] as Configuration
+            val archiveChannel = it.jda.getTextChannelById(config.archiveChannel)
+            archiveChannel.sendFile(it.channel.archiveString().toByteArray(), "$${it.channel.name}.txt").queue()
         }
     }
 }
