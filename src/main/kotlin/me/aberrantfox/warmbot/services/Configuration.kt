@@ -6,7 +6,8 @@ import java.io.File
 data class Configuration(val token: String = "token",
                          val reportCategory: String = "insert-id",
                          val prefix: String = "!",
-                         val staffRoleName: String = "Staff")
+                         val staffRoleName: String = "Staff",
+                         val maxOpenReports: Int = 50)
 
 private val gson = GsonBuilder().setPrettyPrinting().create()
 private val configDir = File("config/")

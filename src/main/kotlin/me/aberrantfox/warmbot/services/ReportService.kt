@@ -12,7 +12,7 @@ data class Report(val user: String, val channelId: String)
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
-class ReportService(val jda: JDA, config: Configuration) {
+class ReportService(val jda: JDA, val config: Configuration) {
     private val reportCategory = jda.getCategoryById(config.reportCategory)
     private val reports = Vector<Report>()
     private val queuedReports = Vector<QueuedReport>()
@@ -23,6 +23,15 @@ class ReportService(val jda: JDA, config: Configuration) {
 
     fun addReport(user: User) {
         if (reports.none { it.user == user.id }) {
+
+            if(reports.size == config.maxOpenReports) {
+                return
+            }
+
+            if(jda.guilds.first().textChannels.size >= 250) {
+                return
+            }
+
             reportCategory.createTextChannel(user.name).queue { channel ->
                 queuedReports.first { it.user == user.id }.messages.forEach {
                     (channel as TextChannel).sendMessage(it).queue()
