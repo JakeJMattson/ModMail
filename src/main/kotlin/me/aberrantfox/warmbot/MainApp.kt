@@ -28,6 +28,7 @@ private fun start(config: Configuration) = startBot(config.token) {
             ChannelDeletionListener(reportService))
 
     registerInjectionObject(reportService, config)
+    registerCommands("me.aberrantfox.warmbot", "!")
     registerCommandPreconditions(produceIsStaffMemberPrecondition(config.staffRoleName))
     addOverrides(jda, config)
 
