@@ -1,23 +1,13 @@
 package me.aberrantfox.warmbot
 
 import me.aberrantfox.kjdautils.api.startBot
-import me.aberrantfox.warmbot.listeners.ChannelDeletionListener
-import me.aberrantfox.warmbot.listeners.ReportListener
-import me.aberrantfox.warmbot.listeners.ResponseListener
-import me.aberrantfox.warmbot.listeners.isStaffMember
+import me.aberrantfox.warmbot.listeners.*
 import me.aberrantfox.warmbot.services.Configuration
 import me.aberrantfox.warmbot.services.ReportService
 import me.aberrantfox.warmbot.services.loadConfiguration
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Game
-
-object ObjectRegister {
-    private val register = HashMap<String, Any>()
-
-    operator fun get(key: String) = register[key]
-    operator fun set(key: String, value: Any) = register.put(key, value)
-}
 
 fun main(args: Array<String>) {
     val config = loadConfiguration()
@@ -30,20 +20,18 @@ fun main(args: Array<String>) {
     start(config)
 }
 
-private fun start(config: Configuration) = startBot(config.token, config.prefix, "me.aberrantfox.warmbot") {
+private fun start(config: Configuration) = startBot(config.token) {
     val reportService = ReportService(jda, config)
-    jda.addEventListener(
+    registerListeners(
             ReportListener(reportService),
             ResponseListener(reportService, config.prefix),
             ChannelDeletionListener(reportService))
 
-    ObjectRegister["reportService"] = reportService
-    ObjectRegister["config"] = config
-
+    registerInjectionObject(reportService, config)
+    registerCommandPreconditions(produceIsStaffMemberPrecondition(config.staffRoleName))
     addOverrides(jda, config)
 
     jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
-    registerCommandPrecondition(isStaffMember)
 }
 
 private fun addOverrides(jda: JDA, config: Configuration) {

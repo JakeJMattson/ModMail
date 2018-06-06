@@ -2,7 +2,6 @@ package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.commands
-import me.aberrantfox.warmbot.ObjectRegister
 import me.aberrantfox.warmbot.extensions.archiveString
 import me.aberrantfox.warmbot.services.Configuration
 import me.aberrantfox.warmbot.services.ReportService
@@ -10,10 +9,9 @@ import net.dv8tion.jda.core.entities.TextChannel
 
 
 @CommandSet
-fun reportCommands() = commands {
+fun reportCommands(reportService: ReportService, config: Configuration) = commands {
     command("close") {
         execute {
-            val reportService = ObjectRegister["reportService"] as ReportService
 
             if( !(reportService.isReportChannel(it.channel.id)) ) {
                 it.respond("Nice try, but you can't close a channel that isn't a report. That would be silly. Don't do silly things.")
@@ -26,8 +24,6 @@ fun reportCommands() = commands {
 
     command("archive") {
         execute {
-            val config = ObjectRegister["config"] as Configuration
-            val reportService = ObjectRegister["reportService"] as ReportService
             val archiveChannel = it.jda.getTextChannelById(config.archiveChannel)
             val targetChannel = it.channel
 
@@ -36,7 +32,7 @@ fun reportCommands() = commands {
                 return@execute
             }
 
-            archiveChannel.sendFile(it.channel.archiveString().toByteArray(), "$${it.channel.name}.txt").queue {
+            archiveChannel.sendFile(it.channel.archiveString(config.prefix).toByteArray(), "$${it.channel.name}.txt").queue {
                 (targetChannel as TextChannel).delete().queue()
             }
         }

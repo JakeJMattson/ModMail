@@ -1,14 +1,17 @@
 package me.aberrantfox.warmbot.listeners
 
 import me.aberrantfox.kjdautils.api.dsl.CommandEvent
-import me.aberrantfox.warmbot.ObjectRegister
-import me.aberrantfox.warmbot.services.Configuration
+import me.aberrantfox.kjdautils.internal.command.Fail
+import me.aberrantfox.kjdautils.internal.command.Pass
 
-val isStaffMember = { event: CommandEvent ->
-    val config = ObjectRegister["config"] as Configuration
-    val staffRole = event.jda.getRolesByName(config.staffRoleName, true).first()
+fun produceIsStaffMemberPrecondition(staffRoleName: String) = { event: CommandEvent ->
+    val staffRole = event.jda.getRolesByName(staffRoleName, true).first()
     val relevantGuild = event.jda.guilds.first()
     val memberAuthor = relevantGuild.getMember(event.author)
 
-    memberAuthor.roles.contains(staffRole)
+    if(memberAuthor.roles.contains(staffRole)) {
+        Pass
+    } else {
+        Fail("You do not have the staff role.")
+    }
 }
