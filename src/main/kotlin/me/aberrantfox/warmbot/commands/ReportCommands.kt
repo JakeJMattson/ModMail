@@ -9,30 +9,34 @@ import net.dv8tion.jda.core.entities.TextChannel
 
 
 @CommandSet
-fun reportCommands(reportService: ReportService, config: Configuration) = commands {
+fun reportCommands(reportService: ReportService, configuration: Configuration) = commands {
     command("close") {
         execute {
-
-            if( !(reportService.isReportChannel(it.channel.id)) ) {
-                it.respond("Nice try, but you can't close a channel that isn't a report. That would be silly. Don't do silly things.")
+            if (!(reportService.isReportChannel(it.channel.id))) {
+                it.respond(
+                        "Nice try, but you can't close a channel that isn't a report. That would be silly. Don't do silly things.")
                 return@execute
             }
-
             (it.channel as TextChannel).delete().queue()
         }
     }
 
     command("archive") {
         execute {
-            val archiveChannel = it.jda.getTextChannelById(config.archiveChannel)
-            val targetChannel = it.channel
 
-            if( !(reportService.isReportChannel(it.channel.id)) ) {
+            if (!(reportService.isReportChannel(it.channel.id))) {
                 it.respond("You can't archive something that isn't a report...")
                 return@execute
             }
 
-            archiveChannel.sendFile(it.channel.archiveString(config.prefix).toByteArray(), "$${it.channel.name}.txt").queue {
+            val relevantGuild = configuration.guildConfigurations.first { g ->
+                g.guildId == reportService.getReportChannelGuild(it.channel.id).guildId
+            }
+
+            val archiveChannel = it.jda.getTextChannelById(relevantGuild.archiveChannel)
+            val targetChannel = it.jda.getTextChannelById(it.channel.id)
+
+            archiveChannel.sendFile(it.channel.archiveString(relevantGuild.prefix).toByteArray(), "$${it.channel.name}.txt").queue {
                 (targetChannel as TextChannel).delete().queue()
             }
         }
