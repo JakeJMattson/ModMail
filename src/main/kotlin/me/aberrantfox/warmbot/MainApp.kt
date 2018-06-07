@@ -32,13 +32,13 @@ private fun start(config: Configuration) = startBot(
 
     registerInjectionObject(reportService, config)
 
+    //TODO: Discuss the implementation strategy around guild-specific prefixes.
+    registerCommands("me.aberrantfox.warmbot", "!")
+    registerCommandPreconditions(produceIsStaffMemberPrecondition(config.guildConfigurations))
+
     config.guildConfigurations.forEach {
-        registerCommandPreconditions(produceIsStaffMemberPrecondition(it.staffRoleName, it.guildId))
         addOverrides(jda, it)
     }
-
-    //TODO: Discuss the implementation strategy around guild-specific prefixes.
-    registerCommands("me.aberrantfox.warmbot.commands", "!")
 
     jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
 }

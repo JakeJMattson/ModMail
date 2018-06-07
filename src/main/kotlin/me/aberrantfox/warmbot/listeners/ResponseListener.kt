@@ -7,14 +7,14 @@ import me.aberrantfox.warmbot.services.ReportService
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
 
-class ResponseListener(val reportService: ReportService, val guildConigurations: List<GuildConfiguration>) {
+class ResponseListener(private val reportService: ReportService, private val guildConfigurations: List<GuildConfiguration>) {
     @Subscribe
     fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
         if (event.author.isBot) {
             return
         }
 
-        if (event.message.contentRaw.startsWith(guildConigurations.first { g -> g.guildId == event.guild.id}.prefix)) {
+        if (event.message.contentRaw.startsWith(guildConfigurations.first { g -> g.guildId == event.guild.id}.prefix)) {
             return
         }
 

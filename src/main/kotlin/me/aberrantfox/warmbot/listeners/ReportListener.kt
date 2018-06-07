@@ -3,13 +3,11 @@ package me.aberrantfox.warmbot.listeners
 import com.google.common.eventbus.Subscribe
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
-import me.aberrantfox.kjdautils.extensions.stdlib.isInteger
 import me.aberrantfox.warmbot.extensions.fullContent
 import me.aberrantfox.warmbot.services.ReportService
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent
-import net.dv8tion.jda.core.hooks.ListenerAdapter
 import java.awt.Color
 
 class ReportListener(val reportService: ReportService) {
@@ -26,13 +24,13 @@ class ReportListener(val reportService: ReportService) {
 
         if (reportService.hasReportChannel(user.id)) {
             reportService.receiveFromUser(user, message)
-        } else if (user.mutualGuilds.size > 0 && hasNumericArgument(message)) {
+        } else if (user.mutualGuilds.size > 1 && hasNumericArgument(message)) {
             if (user.mutualGuilds[getNumericArgument(message)].isAvailable) {
                 reportService.addReport(user, user.mutualGuilds[getNumericArgument(message)], true)
                 reportService.receiveFromUser(user, message)
                 sendReportOpenedEmbed(user, user.mutualGuilds[getNumericArgument(message)])
             }
-        } else if (user.mutualGuilds.size > 0) {
+        } else if (user.mutualGuilds.size > 1) {
             sendGuildChoiceEmbed(user)
         } else {
             reportService.addReport(user, user.mutualGuilds.first(), false)
