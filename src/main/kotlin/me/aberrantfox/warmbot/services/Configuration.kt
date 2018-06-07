@@ -7,10 +7,9 @@ data class GuildConfiguration(val guildId: String = "insert-id",
                               val reportCategory: String = "insert-id",
                               val archiveChannel: String = "insert-id",
                               val prefix: String = "!",
-                              val staffRoleName: String = "Staff",
-                              val maxOpenReports: Int = 50)
+                              val staffRoleName: String = "Staff")
 
-data class Configuration(val token: String,
+data class Configuration(val token: String, val maxOpenReports: Int,
                          val guildConfigurations: List<GuildConfiguration>)
 
 private val gson = GsonBuilder().setPrettyPrinting().create()
@@ -20,7 +19,7 @@ private val configFile = File("config/config.json")
 fun loadConfiguration(): Configuration? {
     if (!(configFile.exists())) {
         configDir.mkdirs()
-        configFile.writeText(gson.toJson(Configuration("insert-token-here", mutableListOf(GuildConfiguration()))))
+        configFile.writeText(gson.toJson(Configuration("insert-token-here", 50, mutableListOf(GuildConfiguration()))))
         return null
     }
 

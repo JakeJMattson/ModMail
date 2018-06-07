@@ -57,7 +57,7 @@ class ReportListener(val reportService: ReportService) {
 
    private fun sendReportOpenedEmbed(userObject: User, guildObject: Guild) {
         userObject.sendPrivateMessage(embed {
-            setColor(Color.CYAN)
+            setColor(Color.PINK)
             setAuthor("You've successfully opened a report with the staff of ${guildObject.name}")
             description("Someone will respond shortly, please be patient.")
             setThumbnail(guildObject.iconUrl)

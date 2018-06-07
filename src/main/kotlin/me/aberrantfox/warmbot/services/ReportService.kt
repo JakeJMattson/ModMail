@@ -15,7 +15,7 @@ data class Report(val user: String, val channelId: String, val guildId: String)
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
-class ReportService(val jda: JDA, private val guildConfigurations: List<GuildConfiguration>) {
+class ReportService(val jda: JDA, private val config: Configuration) {
 
     private val reports = Vector<Report>()
     private val queuedReports = Vector<QueuedReport>()
@@ -26,11 +26,11 @@ class ReportService(val jda: JDA, private val guildConfigurations: List<GuildCon
 
     fun addReport(user: User, guild: Guild, userSelectedGuild: Boolean) {
 
-        val guildConfiguration = guildConfigurations.first { g -> g.guildId == guild.id }
+        val guildConfiguration = config.guildConfigurations.first { g -> g.guildId == guild.id }
         val reportCategory = jda.getCategoryById(guildConfiguration.reportCategory)
 
         if (reports.none { it.user == user.id }) {
-            if (reports.size == guildConfiguration.maxOpenReports)
+            if (reports.filter { it.guildId == guild.id }.size == config.maxOpenReports)
                 return
         }
 

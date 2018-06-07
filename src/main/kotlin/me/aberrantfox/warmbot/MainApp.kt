@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
 private fun start(config: Configuration) = startBot(
         config.token) {
 
-    val reportService = ReportService(jda, config.guildConfigurations)
+    val reportService = ReportService(jda, config)
 
     registerListeners(
             ReportListener(reportService),
