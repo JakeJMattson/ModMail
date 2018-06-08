@@ -25,10 +25,14 @@ class ReportListener(val reportService: ReportService) {
         if (reportService.hasReportChannel(user.id)) {
             reportService.receiveFromUser(user, message)
         } else if (user.mutualGuilds.size > 1 && hasNumericArgument(message)) {
-            if (user.mutualGuilds[getNumericArgument(message)].isAvailable) {
+            if (guildIndexValid(user, getNumericArgument(message))) {
                 reportService.addReport(user, user.mutualGuilds[getNumericArgument(message)], true)
                 reportService.receiveFromUser(user, message)
                 sendReportOpenedEmbed(user, user.mutualGuilds[getNumericArgument(message)])
+            } else {
+                user.sendPrivateMessage(
+                        "**I'm sorry, that guild selection is not valid. Please choose another.**")
+                sendGuildChoiceEmbed(user)
             }
         } else if (user.mutualGuilds.size > 1) {
             sendGuildChoiceEmbed(user)
@@ -55,7 +59,7 @@ class ReportListener(val reportService: ReportService) {
         })
     }
 
-   private fun sendReportOpenedEmbed(userObject: User, guildObject: Guild) {
+    private fun sendReportOpenedEmbed(userObject: User, guildObject: Guild) {
         userObject.sendPrivateMessage(embed {
             setColor(Color.PINK)
             setAuthor("You've successfully opened a report with the staff of ${guildObject.name}")
@@ -63,14 +67,16 @@ class ReportListener(val reportService: ReportService) {
             setThumbnail(guildObject.iconUrl)
         })
     }
+}
 
-    //TODO: There has to be a smoother way to do this. (Only supports 0-9 as valid guild choices.
+private fun guildIndexValid(userObject: User, index: Int) = index in (0..userObject.mutualGuilds.size)
 
-    private fun getNumericArgument(message: String): Int {
-        return message.toCharArray()[0].toString().toInt()
-    }
+//TODO: Rewrite/replace this with syntactic sugar of some kind ::  (Only supports 0-9 as valid guild choices.)
 
-    private fun hasNumericArgument(message: String): Boolean {
-        return message.toCharArray()[0].isDigit()
-    }
+private fun getNumericArgument(message: String): Int {
+    return message.toCharArray()[0].toString().toInt()
+}
+
+private fun hasNumericArgument(message: String): Boolean {
+    return message.toCharArray()[0].isDigit()
 }
