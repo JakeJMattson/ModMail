@@ -28,7 +28,7 @@ class ReportListener(private val reportService: ReportService) {
             reportService.receiveFromUser(user, message)
         } else if (user.mutualGuilds.size > 1 && hasNumericArgument(message)) {
             if (guildIndexValid(user, getNumericArgument(message))) {
-                reportService.addReport(user, user.mutualGuilds[getNumericArgument(message)], true)
+                reportService.addReport(user, user.mutualGuilds[getNumericArgument(message)])
                 reportService.receiveFromUser(user,
                         heldMessages.getOrDefault(user.id,
                                 "**Error :: Could not retrieve initial message from user.**"))
@@ -43,7 +43,7 @@ class ReportListener(private val reportService: ReportService) {
             heldMessages.put(user.id, message)
             sendGuildChoiceEmbed(user)
         } else {
-            reportService.addReport(user, user.mutualGuilds.first(), false)
+            reportService.addReport(user, user.mutualGuilds.first())
             reportService.receiveFromUser(user, message)
             sendReportOpenedEmbed(user, user.mutualGuilds.first())
         }
@@ -58,9 +58,11 @@ class ReportListener(private val reportService: ReportService) {
             addBlankField(true)
 
             userObject.mutualGuilds.forEachIndexed { index, guild ->
-                field {
-                    name = "$index) ${guild.name}"
-                    inline = false
+                if (reportService.getConfig().guildConfigurations.filter { g -> g.guildId == guild.id }.any()) {
+                    field {
+                        name = "$index) ${guild.name}"
+                        inline = false
+                    }
                 }
             }
         })
