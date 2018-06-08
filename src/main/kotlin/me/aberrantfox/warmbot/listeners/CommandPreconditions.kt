@@ -21,6 +21,6 @@ fun produceIsStaffMemberPrecondition(guildConfigurations: List<GuildConfiguratio
             Fail("You do not have the staff role.")
         }
     } else {
-        Fail("You can't close your own report, silly.")
+        Fail("Did you really think I'd let you do that? \uD83E\uDD14")
     }
 }

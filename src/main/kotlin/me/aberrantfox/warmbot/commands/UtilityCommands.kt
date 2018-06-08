@@ -13,7 +13,7 @@ fun utilityCommands() = commands {
 
     command("source") {
         execute {
-            it.respond("http://github.com/AberrantFox/WarmBot")
+            it.respond("https://gitlab.com/AberrantFox/WarmBot")
         }
     }
 
