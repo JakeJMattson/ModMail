@@ -22,7 +22,7 @@ class ReportService(val jda: JDA, private val config: Configuration) {
 
     fun isReportChannel(channelId: String) = reports.any { it.channelId == channelId }
     fun hasReportChannel(userId: String) = reports.any { it.user == userId } || queuedReports.any { it.user == userId }
-    fun getReportChannelGuild(channelId: String) = reports.first { it.channelId == channelId }
+    fun getReportByChannel(channelId: String): Report = reports.first { it.channelId == channelId }
 
     fun addReport(user: User, guild: Guild, userSelectedGuild: Boolean) {
 
@@ -79,5 +79,13 @@ class ReportService(val jda: JDA, private val config: Configuration) {
         if (report != null) {
             jda.getUserById(report.user).sendPrivateMessage(message)
         }
+    }
+
+    fun sendReportClosedEmbed(userObject: User, guildObject: Guild) {
+        userObject.sendPrivateMessage(embed {
+            setColor(Color.LIGHT_GRAY)
+            setAuthor("The staff of ${guildObject.name} have closed this report.")
+            setDescription("If you continue to reply, a new report will be created.")
+        })
     }
 }

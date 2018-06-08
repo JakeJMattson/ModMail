@@ -30,7 +30,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
             }
 
             val relevantGuild = configuration.guildConfigurations.first { g ->
-                g.guildId == reportService.getReportChannelGuild(it.channel.id).guildId
+                g.guildId == reportService.getReportByChannel(it.channel.id).guildId
             }
 
             val archiveChannel = it.jda.getTextChannelById(relevantGuild.archiveChannel)

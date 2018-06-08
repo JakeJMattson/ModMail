@@ -10,7 +10,9 @@ import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent
 import java.awt.Color
 
-class ReportListener(val reportService: ReportService) {
+class ReportListener(private val reportService: ReportService) {
+
+    private val heldMessages = mutableMapOf<String, String>()
 
     @Subscribe
     fun onPrivateMessageReceived(event: PrivateMessageReceivedEvent) {
@@ -27,18 +29,23 @@ class ReportListener(val reportService: ReportService) {
         } else if (user.mutualGuilds.size > 1 && hasNumericArgument(message)) {
             if (guildIndexValid(user, getNumericArgument(message))) {
                 reportService.addReport(user, user.mutualGuilds[getNumericArgument(message)], true)
-                reportService.receiveFromUser(user, message)
+                reportService.receiveFromUser(user,
+                        heldMessages.getOrDefault(user.id,
+                                "**Error :: Could not retrieve initial message from user.**"))
                 sendReportOpenedEmbed(user, user.mutualGuilds[getNumericArgument(message)])
+                heldMessages.remove(user.id)
             } else {
                 user.sendPrivateMessage(
                         "**I'm sorry, that guild selection is not valid. Please choose another.**")
                 sendGuildChoiceEmbed(user)
             }
         } else if (user.mutualGuilds.size > 1) {
+            heldMessages.put(user.id, message)
             sendGuildChoiceEmbed(user)
         } else {
             reportService.addReport(user, user.mutualGuilds.first(), false)
             reportService.receiveFromUser(user, message)
+            sendReportOpenedEmbed(user, user.mutualGuilds.first())
         }
     }
 
@@ -71,7 +78,7 @@ class ReportListener(val reportService: ReportService) {
 
 private fun guildIndexValid(userObject: User, index: Int) = index in (0..userObject.mutualGuilds.size)
 
-//TODO: Rewrite/replace this with syntactic sugar of some kind ::  (Only supports 0-9 as valid guild choices.)
+//TODO: Rewrite/replace this with syntactic sugar of some kind (Only supports 0-9 as valid guild choices.)
 
 private fun getNumericArgument(message: String): Int {
     return message.toCharArray()[0].toString().toInt()
