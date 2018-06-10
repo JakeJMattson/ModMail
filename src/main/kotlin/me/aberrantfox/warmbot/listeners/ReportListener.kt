@@ -42,11 +42,11 @@ class ReportListener(private val reportService: ReportService) {
             } else {
                 user.sendPrivateMessage(
                         "**I'm sorry, that guild selection is not valid. Please choose another.**")
-                user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(user))
+                user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds))
             }
         } else if (commonGuilds.size > 1) {
             heldMessages.put(user.id, message)
-            user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(user))
+            user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds))
         } else {
             reportService.addReport(user, commonGuilds.first())
             reportService.receiveFromUser(user, message)

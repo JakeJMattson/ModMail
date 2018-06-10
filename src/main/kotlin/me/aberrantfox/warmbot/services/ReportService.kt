@@ -82,20 +82,18 @@ class ReportService(val jda: JDA, private val config: Configuration) {
         }
     }
 
-    fun buildGuildChoiceEmbed(userObject: User): MessageEmbed {
+    fun buildGuildChoiceEmbed(commonGuilds: List<Guild>): MessageEmbed {
         return embed {
             setColor(Color.CYAN)
             setAuthor("Please choose which server's staff you'd like to contact.")
-            setThumbnail(userObject.jda.selfUser.avatarUrl)
+            setThumbnail(jda.selfUser.avatarUrl)
             description("Respond with the number that correlates with the desired server to get started.")
             addBlankField(true)
 
-            userObject.mutualGuilds.forEachIndexed { index, guild ->
-                if (config.guildConfigurations.filter { g -> g.guildId == guild.id }.any()) {
-                    field {
-                        name = "$index) ${guild.name}"
-                        inline = false
-                    }
+            commonGuilds.forEachIndexed { index, guild ->
+                field {
+                    name = "$index) ${guild.name}"
+                    inline = false
                 }
             }
         }
