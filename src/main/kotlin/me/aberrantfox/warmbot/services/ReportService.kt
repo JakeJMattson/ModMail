@@ -6,6 +6,7 @@ import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
 import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.core.entities.MessageEmbed
 import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.entities.User
 import java.awt.Color
@@ -23,7 +24,6 @@ class ReportService(val jda: JDA, private val config: Configuration) {
     fun isReportChannel(channelId: String) = reports.any { it.channelId == channelId }
     fun hasReportChannel(userId: String) = reports.any { it.user == userId } || queuedReports.any { it.user == userId }
     fun getReportByChannel(channelId: String): Report = reports.first { it.channelId == channelId }
-    fun getConfig(): Configuration = config
 
     fun addReport(user: User, guild: Guild) {
 
@@ -82,10 +82,38 @@ class ReportService(val jda: JDA, private val config: Configuration) {
         }
     }
 
-    fun sendReportClosedEmbed(userObject: User, guildObject: Guild) {
-        userObject.sendPrivateMessage(embed {
+    fun buildGuildChoiceEmbed(userObject: User): MessageEmbed {
+        return embed {
+            setColor(Color.CYAN)
+            setAuthor("Please choose which server's staff you'd like to contact.")
+            setThumbnail(userObject.jda.selfUser.avatarUrl)
+            description("Respond with the number that correlates with the desired server to get started.")
+            addBlankField(true)
+
+            userObject.mutualGuilds.forEachIndexed { index, guild ->
+                if (config.guildConfigurations.filter { g -> g.guildId == guild.id }.any()) {
+                    field {
+                        name = "$index) ${guild.name}"
+                        inline = false
+                    }
+                }
+            }
+        }
+    }
+
+    fun buildReportOpenedEmbed(guildObject: Guild): MessageEmbed {
+        return embed {
+            setColor(Color.PINK)
+            setAuthor("You've successfully opened a report with the staff of ${guildObject.name}")
+            description("Someone will respond shortly, please be patient.")
+            setThumbnail(guildObject.iconUrl)
+        }
+    }
+
+    fun sendReportClosedEmbed(report: Report) {
+        jda.getUserById(report.user).sendPrivateMessage(embed {
             setColor(Color.LIGHT_GRAY)
-            setAuthor("The staff of ${guildObject.name} have closed this report.")
+            setAuthor("The staff of ${jda.getGuildById(report.guildId).name} have closed this report.")
             setDescription("If you continue to reply, a new report will be created.")
         })
     }
