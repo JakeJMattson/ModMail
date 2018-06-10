@@ -4,6 +4,7 @@ import com.google.common.eventbus.Subscribe
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
 import me.aberrantfox.warmbot.extensions.fullContent
+import me.aberrantfox.warmbot.services.Configuration
 import me.aberrantfox.warmbot.services.ReportService
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Message
@@ -19,6 +20,8 @@ class ReportListener(private val reportService: ReportService) {
     @Subscribe
     fun onPrivateMessageReceived(event: PrivateMessageReceivedEvent) {
 
+        val commonGuilds = reportService.getCommonGuilds(event.author)
+
         if (event.author.isBot) {
             return
         }
@@ -28,30 +31,30 @@ class ReportListener(private val reportService: ReportService) {
 
         if (reportService.hasReportChannel(user.id)) {
             reportService.receiveFromUser(user, message)
-        } else if (user.mutualGuilds.size > 1 && isNumericArgument(message)) {
-            if (guildIndexValid(user, message.toInt())) {
-                reportService.addReport(user, user.mutualGuilds[message.toInt()])
+        } else if (commonGuilds.size > 1 && isNumericArgument(message)) {
+            if (guildIndexValid(commonGuilds, message.toInt())) {
+                reportService.addReport(user, commonGuilds[message.toInt()])
                 reportService.receiveFromUser(user,
                         heldMessages.getOrDefault(user.id,
                                 "**Error :: Could not retrieve initial message from user.**"))
-                user.sendPrivateMessage(reportService.buildReportOpenedEmbed(user.mutualGuilds[message.toInt()]))
+                user.sendPrivateMessage(reportService.buildReportOpenedEmbed(commonGuilds[message.toInt()]))
                 heldMessages.remove(user.id)
             } else {
                 user.sendPrivateMessage(
                         "**I'm sorry, that guild selection is not valid. Please choose another.**")
                 user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(user))
             }
-        } else if (user.mutualGuilds.size > 1) {
+        } else if (commonGuilds.size > 1) {
             heldMessages.put(user.id, message)
             user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(user))
         } else {
-            reportService.addReport(user, user.mutualGuilds.first())
+            reportService.addReport(user, commonGuilds.first())
             reportService.receiveFromUser(user, message)
-            user.sendPrivateMessage(reportService.buildReportOpenedEmbed(user.mutualGuilds.first()))
+            user.sendPrivateMessage(reportService.buildReportOpenedEmbed(commonGuilds.first()))
         }
     }
 
-    private fun guildIndexValid(userObject: User, index: Int) = index in (0..userObject.mutualGuilds.size) 
+    private fun guildIndexValid(commonGuilds: List<Guild>, index: Int) = index in (0..(commonGuilds.size - 1))
 
     private fun isNumericArgument(message: String): Boolean {
         return try {

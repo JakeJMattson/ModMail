@@ -117,4 +117,8 @@ class ReportService(val jda: JDA, private val config: Configuration) {
             setDescription("If you continue to reply, a new report will be created.")
         })
     }
+
+    fun getCommonGuilds(userObject: User): List<Guild> {
+        return userObject.mutualGuilds.filter { g -> g.id in config.guildConfigurations.associateBy { it.guildId } }
+    }
 }
