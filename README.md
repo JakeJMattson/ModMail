@@ -49,7 +49,7 @@ You have three options here:
 
 Below, you can find the configuration fields explained, if you want to set up a bot instance this is useful: 
 
-######Single guild configuration: 
+###### Single guild configuration: 
 
 ```json
 {
@@ -69,7 +69,7 @@ Below, you can find the configuration fields explained, if you want to set up a 
 Warmbot can also be configured for use with multiple guilds below is an example of what that configuration would look like. 
 You will have to add an additional guild configuration for each guild you intend to support. 
 
-######Multi-guild configuration: 
+###### Multi-guild configuration: 
 
 ```json
 {
