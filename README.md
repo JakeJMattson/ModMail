@@ -49,14 +49,47 @@ You have three options here:
 
 Below, you can find the configuration fields explained, if you want to set up a bot instance this is useful: 
 
+###### Single guild configuration: 
+
 ```json
 {
-  "token": "This should be the bot token",
-  "reportCategory": "This is the category in which report channels will be made - it should be the report category ID",
-  "archiveChannel": "This is where the archived reports will go - it should be the channel ID",
-  "prefix": "The command prefix, e.g. !",
-  "staffRoleName": "Anyone with this role will have access to the bot, anyone without won't.",
-  "maxOpenReports": 50 -- this is to prevent spam.
+	"token": "This should be the bot token",
+	"maxOpenReports": 50, -- this is the max number of reports that can be opened in any configured guild. 
+	"guildConfigurations": [{
+			"guildId": "This is the guild your instance of the bot will run on - it should be the guild ID",
+			"reportCategory": "This is the category in which report channels will be made - it should be the report category ID",
+			"archiveChannel": "This is where the archived reports will go - it should be the channel ID",
+			"prefix": "The command prefix for this guild, e.g. !",
+			"staffRoleName": "Anyone with this role will have access to the bot, anyone without won't."
+		}
+	]
+}
+```
+
+Warmbot can also be configured for use with multiple guilds below is an example of what that configuration would look like. 
+You will have to add an additional guild configuration for each guild you intend to support. 
+
+###### Multi-guild configuration: 
+
+```json
+{
+	"token": "This should be the bot token",
+	"maxOpenReports": 50, -- this is the max number of reports that can be opened in any configured guild. 
+	"guildConfigurations": [{
+			"guildId": "This is the guild your instance of the bot will run on - it should be the guild ID",
+			"reportCategory": "This is the category in which report channels will be made - it should be the report category ID",
+			"archiveChannel": "This is where the archived reports will go - it should be the channel ID",
+			"prefix": "The command prefix for this guild, e.g. !",
+			"staffRoleName": "Anyone with this role will have access to the bot, anyone without won't."
+		},
+		{
+			"guildId": "This is the second guild your instance of the bot will run on - it should be the guild ID",
+			"reportCategory": "This is the category in which report channels will be made - it should be the report category ID",
+			"archiveChannel": "This is where the archived reports will go - it should be the channel ID",
+			"prefix": "The command prefix for this guild, e.g. !",
+			"staffRoleName": "Anyone with this role will have access to the bot, anyone without won't."
+		}
+	]
 }
 ```
 

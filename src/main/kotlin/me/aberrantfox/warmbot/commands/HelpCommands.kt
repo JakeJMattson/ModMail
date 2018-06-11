@@ -11,7 +11,7 @@ fun helpCommands() = commands {
         execute {
             it.respond(embed {
                 setColor(Color.GREEN)
-                setAuthor("WarmBot Help Menu", "http://github.com/AberrantFox/WarmBot")
+                setAuthor("WarmBot Help Menu", "https://gitlab.com/AberrantFox/WarmBot")
                 setThumbnail(it.jda.selfUser.effectiveAvatarUrl)
                 description("Below you can see information about how to use this bot.")
 
@@ -43,7 +43,7 @@ fun helpCommands() = commands {
 
                 field {
                     name = "Source"
-                    value = "Display the source code via a github link"
+                    value = "Display the source code via a GitLab link"
                 }
             })
         }
