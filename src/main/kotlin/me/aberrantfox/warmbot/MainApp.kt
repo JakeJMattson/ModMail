@@ -33,7 +33,7 @@ private fun start(config: Configuration) = startBot(
     registerInjectionObject(reportService, config)
 
     //TODO: Discuss the implementation strategy around guild-specific prefixes.
-    registerCommands("me.aberrantfox.warmbot", "!")
+    registerCommands("me.aberrantfox.warmbot", "!!")
     registerCommandPreconditions(produceIsStaffMemberPrecondition(config.guildConfigurations))
 
     config.guildConfigurations.forEach {

@@ -20,19 +20,18 @@ class ReportListener(private val reportService: ReportService) {
     @Subscribe
     fun onPrivateMessageReceived(event: PrivateMessageReceivedEvent) {
 
-        val commonGuilds = reportService.getCommonGuilds(event.author)
-
         if (event.author.isBot) {
             return
         }
 
         val user = event.author
         val message = event.message.fullContent().trim()
+        val commonGuilds = reportService.getCommonGuilds(event.author)
 
         if (reportService.hasReportChannel(user.id)) {
             reportService.receiveFromUser(user, message)
         } else if (commonGuilds.size > 1 && isNumericArgument(message)) {
-            if (guildIndexValid(commonGuilds, message.toInt())) {
+            if (isGuildSelectionValid(commonGuilds, message.toInt())) {
                 reportService.addReport(user, commonGuilds[message.toInt()])
                 reportService.receiveFromUser(user,
                         heldMessages.getOrDefault(user.id,
@@ -45,7 +44,7 @@ class ReportListener(private val reportService: ReportService) {
                 user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds))
             }
         } else if (commonGuilds.size > 1) {
-            heldMessages.put(user.id, message)
+            heldMessages[user.id] = message
             user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds))
         } else {
             reportService.addReport(user, commonGuilds.first())
@@ -54,7 +53,7 @@ class ReportListener(private val reportService: ReportService) {
         }
     }
 
-    private fun guildIndexValid(commonGuilds: List<Guild>, index: Int) = index in (0..(commonGuilds.size - 1))
+    private fun isGuildSelectionValid(commonGuilds: List<Guild>, index: Int) = index in (0..(commonGuilds.size - 1))
 
     private fun isNumericArgument(message: String): Boolean {
         return try {
