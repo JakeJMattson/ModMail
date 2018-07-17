@@ -10,9 +10,15 @@ import me.aberrantfox.warmbot.extensions.fullContent
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent
 
-data class ConversationStateContainer(val userId: String, val guildId: String, var responseMap: MutableMap<Int, Any>,
+data class ConversationStateContainer(val userId: String, val guildId: String, var responses: MutableList<Any>,
                                       val conversation: Conversation, var currentStep: Int,
-                                      var complete: Boolean)
+                                      val jda: JDA) {
+
+    fun respond(message: String) {
+        print("Hello there!")
+        jda.getUserById(userId).sendPrivateMessage(message)
+    }
+}
 
 sealed class ResponseResult {
     data class Argument(val value: Any) : ResponseResult()
@@ -22,51 +28,52 @@ sealed class ResponseResult {
 class ConversationService(val jda: JDA, val configuration: Configuration) {
 
     private var availableConversations = mutableListOf<Conversation>()
-    private val activeConversations = mutableMapOf<String, ConversationStateContainer>()
+    private val activeConversations = mutableListOf<ConversationStateContainer>()
 
+    fun hasConversation(userId: String) = activeConversations.any { it.userId == userId }
 
+    private fun getConversationState(
+            userId: String): ConversationStateContainer = activeConversations.first { cs -> cs.userId == userId }
 
-    fun hasConversation(userId: String) = activeConversations.entries.any { it.key == userId }
+    private fun getCurrentStep(
+            conversationState: ConversationStateContainer): Step = conversationState.conversation.steps[conversationState.currentStep]
 
     fun createConversation(userId: String, guildId: String, conversationName: String) {
+
+        if (hasConversation(userId) || jda.getUserById(userId).isBot)
+            return
+
         availableConversations.add(setupConversation)
         val conversation = availableConversations.first { c -> c.name == conversationName }
-        activeConversations[userId] = ConversationStateContainer(userId, guildId, mutableMapOf<Int, Any>(),
-                conversation, 0, false)
+        activeConversations.add(ConversationStateContainer(userId, guildId, mutableListOf(),
+                conversation, 0, jda))
 
-        sendAppropriatePrompt(jda, activeConversations[userId], false)
+        jda.getUserById(userId).sendPrivateMessage(getCurrentStep(getConversationState(userId)).message)
+
     }
 
     fun handleResponse(userId: String, event: PrivateMessageReceivedEvent) {
-        val result = getResult(event.message.fullContent().trim(), getCurrentStep(activeConversations[userId]))
+        val conversationState = getConversationState(userId)
+        val currentStep = getCurrentStep(conversationState)
+        val totalSteps = conversationState.conversation.steps.size
+        val result = parseResponse(event.message.fullContent().trim(), getCurrentStep(conversationState))
 
         if (result is ResponseResult.Error) {
-            sendAppropriatePrompt(jda, activeConversations[userId], false)
-        } else {
-            sendAppropriatePrompt(jda, activeConversations[userId], true)
-            activeConversations[userId]!!.responseMap[activeConversations[userId]!!.currentStep] = result
+            jda.getUserById(userId)
+                    .sendPrivateMessage(currentStep.message)
+        } else if (result is ResponseResult.Argument) {
+            conversationState.responses.add(result)
+            if (conversationState.currentStep < (totalSteps - 1)) {
+                conversationState.currentStep++
+                jda.getUserById(conversationState.userId).sendPrivateMessage(getCurrentStep(conversationState).message)
+            } else {
+                conversationState.conversation.onComplete.invoke(conversationState)
+                activeConversations.remove(conversationState)
+            }
         }
     }
 
-    private fun sendAppropriatePrompt(jda: JDA, conversationState: ConversationStateContainer?,
-                                      lastArgumentValid: Boolean) {
-        if (lastArgumentValid) {
-            conversationState!!.currentStep++
-            jda.getUserById(conversationState!!.userId)
-                    .sendPrivateMessage(getCurrentStep(conversationState).message)
-        } else {
-            jda.getUserById(conversationState!!.userId).sendPrivateMessage(getCurrentStep(conversationState).message)
-        }
-    }
-
-    private fun getCurrentStep(
-            conversationState: ConversationStateContainer?): Step = conversationState!!.conversation.steps[conversationState.currentStep]
-
-    private fun incrementStep(userId: String) {
-
-    }
-
-    private fun getResult(message: String, step: Step): ResponseResult {
+    private fun parseResponse(message: String, step: Step): ResponseResult {
         if (step.responseType == Step.ResponseType.Channel) {
             val retrieved = tryRetrieveSnowflake(jda) { it.getTextChannelById(message.trimToID()) }
             return if (retrieved != null) {
@@ -101,12 +108,17 @@ private var setupConversation = conversation {
     steps {
         step {
             message = "I'm Warmbot, let's get setup! Please give me a channel id."
-            responseType = Step.ResponseType.Channel
+            expectedResponseType = Step.ResponseType.Channel
         }
         step {
             message = "This is a second message that's expecting a guild id."
-            responseType = Step.ResponseType.Guild
+            expectedResponseType = Step.ResponseType.Guild
         }
+    }
+
+    onComplete {
+       System.out.println("Hello");
+        return@onComplete
     }
 }
 
