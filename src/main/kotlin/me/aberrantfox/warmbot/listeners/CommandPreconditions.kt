@@ -24,3 +24,25 @@ fun produceIsStaffMemberPrecondition(guildConfigurations: List<GuildConfiguratio
         Fail("Did you really think I'd let you do that? \uD83E\uDD14")
     }
 }
+
+fun produceIsGuildOwnerPrecondition(guildConfigurations: List<GuildConfiguration>) = { event: CommandEvent ->
+
+    val command = event.container.commands[event.commandStruct.commandName]
+    if (command!!.category == "Configuration") {
+        if (event.channel is TextChannel) {
+            val textChannel = event.channel as TextChannel
+            val relevantGuildConfiguration = guildConfigurations.first { g -> g.guildId == textChannel.guild.id }
+            val relevantGuild = event.jda.getGuildById(relevantGuildConfiguration.guildId)
+
+            if (relevantGuild.owner.user.id == event.author.id) {
+                Pass
+            } else {
+                Fail("You must be the owner of the guild in order to use this command.")
+            }
+        } else {
+            Fail("This command cannot be used in a private message, it must be invoked from a channel.")
+        }
+    } else {
+        Pass
+    }
+}

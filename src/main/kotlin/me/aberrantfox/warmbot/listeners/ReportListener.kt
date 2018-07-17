@@ -1,28 +1,28 @@
 package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
-import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
 import me.aberrantfox.warmbot.extensions.fullContent
-import me.aberrantfox.warmbot.services.Configuration
+import me.aberrantfox.warmbot.services.ConversationService
 import me.aberrantfox.warmbot.services.ReportService
 import net.dv8tion.jda.core.entities.Guild
-import net.dv8tion.jda.core.entities.Message
-import net.dv8tion.jda.core.entities.MessageEmbed
-import net.dv8tion.jda.core.entities.User
+
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent
 import java.awt.Color
 
-class ReportListener(private val reportService: ReportService) {
+class ReportListener(private val reportService: ReportService, private val conversationService: ConversationService) {
 
     private val heldMessages = mutableMapOf<String, String>()
 
     @Subscribe
     fun onPrivateMessageReceived(event: PrivateMessageReceivedEvent) {
 
-        if (event.author.isBot) {
+        if (event.author.isBot)
             return
-        }
+
+
+        if (conversationService.hasConversation(event.author.id))
+            return
 
         val user = event.author
         val message = event.message.fullContent().trim()
