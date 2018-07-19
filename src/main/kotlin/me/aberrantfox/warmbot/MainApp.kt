@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Game
 
 fun main(args: Array<String>) {
+
     val config = loadConfiguration()
 
     if (config == null) {
@@ -25,7 +26,6 @@ private fun start(config: Configuration) = startBot(
 
     conversationService.registerConversations("me.aberrantfox.warmbot")
 
-
     registerListeners(
             ReportListener(reportService, conversationService),
             ConversationListener(conversationService, reportService),
@@ -35,7 +35,6 @@ private fun start(config: Configuration) = startBot(
     registerInjectionObject(reportService, config)
     registerInjectionObject(conversationService, config)
 
-    //TODO: Discuss the implementation strategy around guild-specific prefixes.
     registerCommands("me.aberrantfox.warmbot", "!!")
     registerCommandPreconditions(produceIsStaffMemberPrecondition(config.guildConfigurations),
             produceIsGuildOwnerPrecondition())
@@ -45,7 +44,6 @@ private fun start(config: Configuration) = startBot(
     }
     jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
 }
-
 
 private fun addOverrides(jda: JDA, config: GuildConfiguration) {
 

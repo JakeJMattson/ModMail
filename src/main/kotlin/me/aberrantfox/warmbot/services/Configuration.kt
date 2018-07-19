@@ -26,3 +26,6 @@ fun loadConfiguration(): Configuration? {
 }
 
 fun saveConfiguration(config: Configuration) = configFile.writeText(gson.toJson(config))
+
+fun hasGuildConfiguration(guildConfigurations: List<GuildConfiguration>,
+                          guildId: String) = guildConfigurations.any { g -> g.guildId == guildId }

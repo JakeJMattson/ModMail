@@ -4,25 +4,26 @@ import me.aberrantfox.kjdautils.api.dsl.CommandEvent
 import me.aberrantfox.kjdautils.internal.command.Fail
 import me.aberrantfox.kjdautils.internal.command.Pass
 import me.aberrantfox.warmbot.services.GuildConfiguration
+import me.aberrantfox.warmbot.services.hasGuildConfiguration
 import net.dv8tion.jda.core.entities.TextChannel
+
 
 fun produceIsStaffMemberPrecondition(guildConfigurations: List<GuildConfiguration>) = { event: CommandEvent ->
 
     if (event.channel is TextChannel) {
         val textChannel = event.channel as TextChannel
-        if (guildConfigurations.any { g -> g.guildId == textChannel.guild.id }) {
+        if (!hasGuildConfiguration(guildConfigurations, textChannel.guild.id)) {
+            Pass
+        } else {
             val relevantGuildConfiguration = guildConfigurations.first { g -> g.guildId == textChannel.guild.id }
-            val relevantGuild = event.jda.getGuildById(relevantGuildConfiguration.guildId)
+            val relevantGuild = event.jda.getGuildById(textChannel.guild.id)
             val staffRole = relevantGuild.getRolesByName(relevantGuildConfiguration.staffRoleName, true).first()
             val memberAuthor = relevantGuild.getMember(event.author)
-
             if (memberAuthor.roles.contains(staffRole)) {
                 Pass
             } else {
                 Fail("You do not have the staff role.")
             }
-        } else {
-            Pass
         }
     } else {
         Fail("Did you really think I'd let you do that? \uD83E\uDD14")
