@@ -14,6 +14,9 @@ class ResponseListener(private val reportService: ReportService, private val gui
             return
         }
 
+        if(!guildConfigurations.any { g -> g.guildId == event.guild.id})
+            return
+
         if (event.message.contentRaw.startsWith(guildConfigurations.first { g -> g.guildId == event.guild.id}.prefix)) {
             return
         }

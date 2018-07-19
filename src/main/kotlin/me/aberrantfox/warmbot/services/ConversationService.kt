@@ -1,26 +1,17 @@
 package me.aberrantfox.warmbot.services
 
-import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
 import me.aberrantfox.kjdautils.extensions.stdlib.trimToID
 import me.aberrantfox.kjdautils.internal.command.tryRetrieveSnowflake
 import me.aberrantfox.warmbot.dsl.Conversation
+import me.aberrantfox.warmbot.dsl.ConversationStateContainer
 import me.aberrantfox.warmbot.dsl.Convo
 import me.aberrantfox.warmbot.dsl.Step
-import me.aberrantfox.warmbot.dsl.conversation
 import me.aberrantfox.warmbot.extensions.fullContent
 import net.dv8tion.jda.core.JDA
+import net.dv8tion.jda.core.entities.MessageEmbed
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent
 import org.reflections.Reflections
 import org.reflections.scanners.FieldAnnotationsScanner
-
-data class ConversationStateContainer(val userId: String, val guildId: String, var responses: MutableList<Any>,
-                                      val conversation: Conversation, var currentStep: Int,
-                                      val jda: JDA) {
-
-    fun respond(message: String) {
-        jda.getUserById(userId).sendPrivateMessage(message)
-    }
-}
 
 sealed class ResponseResult {
     data class Argument(val value: Any) : ResponseResult()
@@ -28,6 +19,7 @@ sealed class ResponseResult {
 }
 
 class ConversationService(val jda: JDA, val configuration: Configuration) {
+
     private var availableConversations = mutableListOf<Conversation>()
     private val activeConversations = mutableListOf<ConversationStateContainer>()
 
@@ -45,10 +37,9 @@ class ConversationService(val jda: JDA, val configuration: Configuration) {
             return
         val conversation = availableConversations.first { c -> c.name == conversationName }
         activeConversations.add(ConversationStateContainer(userId, guildId, mutableListOf(),
-                conversation, 0, jda))
+                conversation, 0, jda, configuration))
 
-        jda.getUserById(userId).sendPrivateMessage(getCurrentStep(getConversationState(userId)).prompt)
-
+        sendToUser(userId, getCurrentStep(getConversationState(userId)).prompt)
     }
 
     fun handleResponse(userId: String, event: PrivateMessageReceivedEvent) {
@@ -58,13 +49,12 @@ class ConversationService(val jda: JDA, val configuration: Configuration) {
         val response = parseResponse(event.message.fullContent().trim(), getCurrentStep(conversationState))
 
         if (response is ResponseResult.Error) {
-            jda.getUserById(userId)
-                    .sendPrivateMessage(currentStep.prompt)
-        } else if (response is ResponseResult.Argument) {
+            sendToUser(userId, currentStep.prompt)
+        } else {
             conversationState.responses.add(response)
             if (conversationState.currentStep < (totalSteps - 1)) {
                 conversationState.currentStep++
-                jda.getUserById(conversationState.userId).sendPrivateMessage(getCurrentStep(conversationState).prompt)
+                sendToUser(conversationState.userId, getCurrentStep(conversationState).prompt)
             } else {
                 conversationState.conversation.onComplete.invoke(conversationState)
                 activeConversations.remove(conversationState)
@@ -72,34 +62,38 @@ class ConversationService(val jda: JDA, val configuration: Configuration) {
         }
     }
 
-    private fun parseResponse(message: String, step: Step): ResponseResult {
+    private fun parseResponse(message: String, step: Step): Any {
+
         when (message.isNotEmpty()) {
             step.expectedResponseType == Step.ResponseType.Channel -> {
-                val retrieved = tryRetrieveSnowflake(jda) { it.getTextChannelById(message.trimToID()) }
-                return if (retrieved != null) {
-                    ResponseResult.Argument(retrieved)
-                } else {
-                    ResponseResult.Error("Couldn't retrieve text channel with parameter :: $message")
-                }
+                return tryRetrieveSnowflake(jda) { it.getTextChannelById(message.trimToID()) }
+                        ?: return ResponseResult.Error("Couldn't retrieve text channel with parameter :: $message")
             }
             step.expectedResponseType == Step.ResponseType.Guild -> {
-                val retrieved = tryRetrieveSnowflake(jda) { it.getGuildById(message.trimToID()) }
-                return if (retrieved != null) {
-                    ResponseResult.Argument(retrieved)
-                } else {
-                    ResponseResult.Error("Couldn't retrieve a guild with parameter :: $message")
-                }
+                return tryRetrieveSnowflake(jda) { it.getGuildById(message.trimToID()) }
+                        ?: return ResponseResult.Error("Couldn't retrieve guild with parameter :: $message")
             }
             step.expectedResponseType == Step.ResponseType.User -> {
-                val retrieved = tryRetrieveSnowflake(jda) { it.getUserById(message.trimToID()) }
-                return if (retrieved != null) {
-                    ResponseResult.Argument(retrieved)
-                } else {
-                    ResponseResult.Error("Couldn't retrieve a user with parameter :: $message")
-                }
+                return tryRetrieveSnowflake(jda) { it.getUserById(message.trimToID()) }
+                        ?: return ResponseResult.Error("Couldn't retrieve user with parameter :: $message")
             }
-            else -> return ResponseResult.Argument(message)
+            step.expectedResponseType == Step.ResponseType.Category -> {
+                return tryRetrieveSnowflake(jda) { it.getCategoryById(message.trimToID()) }
+                        ?: return ResponseResult.Error("Couldn't retrieve category with parameter :: $message")
+            }
+            else -> return message
         }
+    }
+
+    private fun sendToUser(userId: String, message: Any) {
+        if (message is MessageEmbed)
+            jda.getUserById(userId).openPrivateChannel().queue() {
+                it.sendMessage(message).queue()
+            }
+        else
+            jda.getUserById(userId).openPrivateChannel().queue() {
+                it.sendMessage(message as String).queue()
+            }
     }
 
     fun registerConversations(path: String) =

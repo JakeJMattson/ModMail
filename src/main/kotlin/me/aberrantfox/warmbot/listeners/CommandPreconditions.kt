@@ -10,30 +10,32 @@ fun produceIsStaffMemberPrecondition(guildConfigurations: List<GuildConfiguratio
 
     if (event.channel is TextChannel) {
         val textChannel = event.channel as TextChannel
-        val relevantGuildConfiguration = guildConfigurations.first { g -> g.guildId == textChannel.guild.id }
-        val relevantGuild = event.jda.getGuildById(relevantGuildConfiguration.guildId)
-        val staffRole = relevantGuild.getRolesByName(relevantGuildConfiguration.staffRoleName, true).first()
-        val memberAuthor = relevantGuild.getMember(event.author)
+        if (guildConfigurations.any { g -> g.guildId == textChannel.guild.id }) {
+            val relevantGuildConfiguration = guildConfigurations.first { g -> g.guildId == textChannel.guild.id }
+            val relevantGuild = event.jda.getGuildById(relevantGuildConfiguration.guildId)
+            val staffRole = relevantGuild.getRolesByName(relevantGuildConfiguration.staffRoleName, true).first()
+            val memberAuthor = relevantGuild.getMember(event.author)
 
-        if (memberAuthor.roles.contains(staffRole)) {
-            Pass
+            if (memberAuthor.roles.contains(staffRole)) {
+                Pass
+            } else {
+                Fail("You do not have the staff role.")
+            }
         } else {
-            Fail("You do not have the staff role.")
+            Pass
         }
     } else {
         Fail("Did you really think I'd let you do that? \uD83E\uDD14")
     }
 }
 
-fun produceIsGuildOwnerPrecondition(guildConfigurations: List<GuildConfiguration>) = { event: CommandEvent ->
+fun produceIsGuildOwnerPrecondition() = { event: CommandEvent ->
 
     val command = event.container.commands[event.commandStruct.commandName]
     if (command!!.category == "Configuration") {
         if (event.channel is TextChannel) {
             val textChannel = event.channel as TextChannel
-            val relevantGuildConfiguration = guildConfigurations.first { g -> g.guildId == textChannel.guild.id }
-            val relevantGuild = event.jda.getGuildById(relevantGuildConfiguration.guildId)
-
+            val relevantGuild = event.jda.getGuildById(textChannel.guild.id)
             if (relevantGuild.owner.user.id == event.author.id) {
                 Pass
             } else {
