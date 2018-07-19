@@ -9,6 +9,7 @@ import me.aberrantfox.warmbot.dsl.Step
 import me.aberrantfox.warmbot.extensions.fullContent
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.MessageEmbed
+import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent
 import org.reflections.Reflections
 import org.reflections.scanners.FieldAnnotationsScanner
@@ -17,7 +18,7 @@ sealed class ResponseResult {
     data class Error(val errorMessage: String) : ResponseResult()
 }
 
-class ConversationService(val jda: JDA, val configuration: Configuration) {
+class ConversationService(val jda: JDA, val configuration: Configuration, val reportService: ReportService) {
 
     private var availableConversations = mutableListOf<Conversation>()
     private val activeConversations = mutableListOf<ConversationStateContainer>()
@@ -34,9 +35,15 @@ class ConversationService(val jda: JDA, val configuration: Configuration) {
 
         if (hasConversation(userId) || jda.getUserById(userId).isBot)
             return
+
         val conversation = availableConversations.first { c -> c.name == conversationName }
         activeConversations.add(ConversationStateContainer(userId, guildId, mutableListOf(),
                 conversation, 0, jda, configuration))
+
+        if (reportService.hasReportChannel(userId)) {
+            reportService.sendReportClosedEmbed(reportService.getReportByUserId(userId))
+            (jda.getTextChannelById(reportService.getReportByUserId(userId).channelId)).delete().queue()
+        }
 
         sendToUser(userId, getCurrentStep(getConversationState(userId)).prompt)
     }

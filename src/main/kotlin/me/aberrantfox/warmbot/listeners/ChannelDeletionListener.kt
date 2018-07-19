@@ -9,7 +9,6 @@ class ChannelDeletionListener(val reportService: ReportService) {
     @Subscribe
     fun onTextChannelDelete(event: TextChannelDeleteEvent) {
         if (reportService.isReportChannel(event.channel.id)) {
-            reportService.sendReportClosedEmbed(reportService.getReportByChannel(event.channel.id))
             reportService.removeReport(event.channel.id)
         }
     }

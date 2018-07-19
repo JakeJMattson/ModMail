@@ -33,6 +33,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
             return@execute
         }
     }
+
     command("setarchivechannel") {
         expect(TextChannelArg)
         execute {
