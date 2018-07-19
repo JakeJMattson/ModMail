@@ -2,7 +2,7 @@ package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.commands
-import me.aberrantfox.kjdautils.internal.command.arguments.RoleArg
+import me.aberrantfox.kjdautils.internal.command.arguments.WordArg
 import me.aberrantfox.kjdautils.internal.command.arguments.TextChannelArg
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.Category
@@ -54,19 +54,24 @@ fun configurationCommands(conversationService: ConversationService, configuratio
     }
 
     command("setstaffrole") {
-        expect(RoleArg)
+        expect(WordArg)
         execute {
-            val staffRole = it.args.component1() as Role
+            val staffRoleName = it.args.component1() as String
+            val staffRole = it.jda.getRolesByName(staffRoleName, true).first()
 
-            if (hasGuildConfiguration(configuration.guildConfigurations, staffRole.guild.id)) {
-                configuration.guildConfigurations.first { g -> g.guildId == staffRole.guild.id }.staffRoleName =
-                        staffRole.name
+            if (staffRole != null) {
+                if (hasGuildConfiguration(configuration.guildConfigurations, staffRole.guild.id)) {
+                    configuration.guildConfigurations.first { g -> g.guildId == staffRole.guild.id }.staffRoleName =
+                            staffRole.name
 
-                saveConfiguration(configuration)
-                it.respond("Successfully the staff role to :: ${staffRole.name}")
+                    saveConfiguration(configuration)
+                    it.respond("Successfully the staff role to :: ${staffRole.name}")
+                } else {
+                    it.respond(
+                            "No guild configuration found, please go through the setup process before using this command.")
+                }
             } else {
-                it.respond(
-                        "No guild configuration found, please go through the setup process before using this command.")
+                it.respond("Could not find a role named :: $staffRoleName")
             }
             return@execute
         }
