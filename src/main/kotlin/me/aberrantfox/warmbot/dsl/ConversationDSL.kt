@@ -9,7 +9,7 @@ class Conversation(val name: String, val description: String,
                    val steps: List<Step>, var onComplete: (ConversationStateContainer) -> Unit = {})
 
 data class Step(val prompt: Any, val expectedResponseType: ResponseType?) {
-    enum class ResponseType { Guild, String, Integer, Channel, User, Category }
+    enum class ResponseType { Guild, String, Integer, Channel, User, Category, Role }
 }
 
 data class ConversationStateContainer(val userId: String, val guildId: String, var responses: MutableList<Any>,

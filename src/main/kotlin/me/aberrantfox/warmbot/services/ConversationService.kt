@@ -14,7 +14,6 @@ import org.reflections.Reflections
 import org.reflections.scanners.FieldAnnotationsScanner
 
 sealed class ResponseResult {
-    data class Argument(val value: Any) : ResponseResult()
     data class Error(val errorMessage: String) : ResponseResult()
 }
 
@@ -46,7 +45,7 @@ class ConversationService(val jda: JDA, val configuration: Configuration) {
         val conversationState = getConversationState(userId)
         val currentStep = getCurrentStep(conversationState)
         val totalSteps = conversationState.conversation.steps.size
-        val response = parseResponse(event.message.fullContent().trim(), getCurrentStep(conversationState))
+        val response = parseResponse(event.message.contentStripped.trim(), getCurrentStep(conversationState))
 
         if (response is ResponseResult.Error) {
             sendToUser(userId, currentStep.prompt)
@@ -80,6 +79,10 @@ class ConversationService(val jda: JDA, val configuration: Configuration) {
             step.expectedResponseType == Step.ResponseType.Category -> {
                 return tryRetrieveSnowflake(jda) { it.getCategoryById(message.trimToID()) }
                         ?: return ResponseResult.Error("Couldn't retrieve category with parameter :: $message")
+            }
+            step.expectedResponseType == Step.ResponseType.Role -> {
+                return tryRetrieveSnowflake(jda) { it.getRoleById(it.getRolesByName(message, true).first().id) }
+                        ?: return ResponseResult.Error("Couldn't retrieve role with name :: $message")
             }
             else -> return message
         }

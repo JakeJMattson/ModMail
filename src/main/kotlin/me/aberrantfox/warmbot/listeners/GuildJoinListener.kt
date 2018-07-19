@@ -11,6 +11,7 @@ class GuildJoinListener(private val conversationService: ConversationService,
     fun onGuildJoin(event: GuildJoinEvent) {
         if (configuration.guildConfigurations.any { g -> g.guildId == event.guild.id })
             return
-
+        else
+            conversationService.createConversation(event.guild.owner.user.id, event.guild.id, "guild-setup")
     }
 }

@@ -8,6 +8,7 @@ import me.aberrantfox.warmbot.dsl.conversation
 import me.aberrantfox.warmbot.services.GuildConfiguration
 import me.aberrantfox.warmbot.services.saveConfiguration
 import net.dv8tion.jda.core.entities.Category
+import net.dv8tion.jda.core.entities.Role
 import net.dv8tion.jda.core.entities.TextChannel
 import java.awt.Color
 
@@ -44,7 +45,6 @@ var guildSetupConversation = conversation {
                 expectedResponseType = Step.ResponseType.Channel
             }
         }
-
         step {
             prompt = embed {
                 setTitle("Step 3")
@@ -53,7 +53,7 @@ var guildSetupConversation = conversation {
                             "my moderator functions."
                 }
                 setColor(Color.magenta)
-                expectedResponseType = Step.ResponseType.String
+                expectedResponseType = Step.ResponseType.Role
             }
         }
     }
@@ -61,10 +61,10 @@ var guildSetupConversation = conversation {
     onComplete {
         val reportCategory = it.responses.component1() as Category
         val archiveChannel = it.responses.component2() as TextChannel
-        val staffRoleName = it.responses.component3() as String
+        val staffRole = it.responses.component3() as Role
 
         it.config.guildConfigurations.add(
-                GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, "!!", staffRoleName))
+                GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, "!!", staffRole.name))
         saveConfiguration(it.config)
 
         it.respond(
