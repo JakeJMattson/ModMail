@@ -6,7 +6,7 @@ class Conversation(val name: String, val description: String,
                         val steps: List<Step>, var onComplete: (ConversationStateContainer) -> Unit = {}) {
 }
 
-data class Step(val message: String, val responseType: ResponseType?) {
+data class Step(val prompt: String, val expectedResponseType: ResponseType?) {
     enum class ResponseType { Guild, String, Integer, Channel, User }
 }
 
@@ -26,7 +26,7 @@ class ConversationBuilder {
         this.onComplete = onComplete
     }
 
-    fun build(): Conversation = Conversation(name, description, steps)
+    fun build(): Conversation = Conversation(name, description, steps, onComplete)
 }
 
 class STEPS : ArrayList<Step>() {
@@ -36,7 +36,10 @@ class STEPS : ArrayList<Step>() {
 }
 
 class StepBuilder {
-    var message: String = ""
+    var prompt: String = ""
     var expectedResponseType: Step.ResponseType = Step.ResponseType.String
-    fun build(): Step = Step(message, expectedResponseType)
+    fun build(): Step = Step(prompt, expectedResponseType)
 }
+
+@Target(AnnotationTarget.FIELD)
+annotation class Convo

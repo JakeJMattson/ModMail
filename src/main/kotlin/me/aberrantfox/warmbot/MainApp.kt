@@ -6,6 +6,13 @@ import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Game
+import org.reflections.Reflections
+import me.aberrantfox.warmbot.dsl.Convo
+import org.reflections.scanners.FieldAnnotationsScanner
+import kotlin.reflect.KProperty
+
+
+
 
 fun main(args: Array<String>) {
     val config = loadConfiguration()
@@ -22,6 +29,9 @@ private fun start(config: Configuration) = startBot(
 
     val reportService = ReportService(jda, config)
     val conversationService = ConversationService(jda, config)
+
+    conversationService.registerConversations("me.aberrantfox.warmbot")
+
 
     registerListeners(
             ReportListener(reportService, conversationService),
@@ -42,6 +52,7 @@ private fun start(config: Configuration) = startBot(
     }
     jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
 }
+
 
 private fun addOverrides(jda: JDA, config: GuildConfiguration) {
 

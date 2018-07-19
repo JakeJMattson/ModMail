@@ -29,9 +29,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
     command("setup") {
         execute {
             val eventChannel = it.channel as TextChannel
-
-            conversationService.createConversation(it.author.id, eventChannel.guild.id, "setup")
-
+            conversationService.createConversation(it.author.id, eventChannel.guild.id, "guild-setup")
             return@execute
         }
     }
