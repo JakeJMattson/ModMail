@@ -8,7 +8,6 @@ import me.aberrantfox.warmbot.services.ReportService
 import net.dv8tion.jda.core.entities.Guild
 
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent
-import java.awt.Color
 
 class ReportListener(private val reportService: ReportService, private val conversationService: ConversationService) {
 

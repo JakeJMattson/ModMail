@@ -6,10 +6,8 @@ import me.aberrantfox.warmbot.dsl.Conversation
 import me.aberrantfox.warmbot.dsl.ConversationStateContainer
 import me.aberrantfox.warmbot.dsl.Convo
 import me.aberrantfox.warmbot.dsl.Step
-import me.aberrantfox.warmbot.extensions.fullContent
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.MessageEmbed
-import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent
 import org.reflections.Reflections
 import org.reflections.scanners.FieldAnnotationsScanner
@@ -97,11 +95,11 @@ class ConversationService(val jda: JDA, val configuration: Configuration, val re
 
     private fun sendToUser(userId: String, message: Any) {
         if (message is MessageEmbed)
-            jda.getUserById(userId).openPrivateChannel().queue() {
+            jda.getUserById(userId).openPrivateChannel().queue {
                 it.sendMessage(message).queue()
             }
         else
-            jda.getUserById(userId).openPrivateChannel().queue() {
+            jda.getUserById(userId).openPrivateChannel().queue {
                 it.sendMessage(message as String).queue()
             }
     }
