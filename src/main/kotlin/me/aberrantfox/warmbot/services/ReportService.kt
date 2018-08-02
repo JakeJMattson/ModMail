@@ -24,6 +24,7 @@ class ReportService(val jda: JDA, private val config: Configuration) {
     fun isReportChannel(channelId: String) = reports.any { it.channelId == channelId }
     fun hasReportChannel(userId: String) = reports.any { it.user == userId } || queuedReports.any { it.user == userId }
     fun getReportByChannel(channelId: String): Report = reports.first { it.channelId == channelId }
+    fun getReportByUserId(userId: String): Report = reports.first { it.user == userId }
 
     fun addReport(user: User, guild: Guild) {
 

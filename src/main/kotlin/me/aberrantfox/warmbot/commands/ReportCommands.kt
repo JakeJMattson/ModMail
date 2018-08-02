@@ -17,6 +17,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
                         "Nice try, but you can't close a channel that isn't a report. That would be silly. Don't do silly things.")
                 return@execute
             }
+            reportService.sendReportClosedEmbed(reportService.getReportByChannel(it.channel.id))
             (it.channel as TextChannel).delete().queue()
         }
     }
@@ -36,7 +37,9 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
             val archiveChannel = it.jda.getTextChannelById(relevantGuild.archiveChannel)
             val targetChannel = it.jda.getTextChannelById(it.channel.id)
 
-            archiveChannel.sendFile(it.channel.archiveString(relevantGuild.prefix).toByteArray(), "$${it.channel.name}.txt").queue {
+            archiveChannel.sendFile(it.channel.archiveString(relevantGuild.prefix).toByteArray(),
+                    "$${it.channel.name}.txt").queue {
+                reportService.sendReportClosedEmbed(reportService.getReportByChannel(it.channel.id))
                 (targetChannel as TextChannel).delete().queue()
             }
         }

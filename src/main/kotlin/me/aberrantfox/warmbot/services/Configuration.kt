@@ -3,14 +3,14 @@ package me.aberrantfox.warmbot.services
 import com.google.gson.GsonBuilder
 import java.io.File
 
-data class GuildConfiguration(val guildId: String = "insert-id",
-                              val reportCategory: String = "insert-id",
-                              val archiveChannel: String = "insert-id",
-                              val prefix: String = "!",
-                              val staffRoleName: String = "Staff")
+data class GuildConfiguration(var guildId: String = "insert-id",
+                              var reportCategory: String = "insert-id",
+                              var archiveChannel: String = "insert-id",
+                              var prefix: String = "!",
+                              var staffRoleName: String = "Staff")
 
 data class Configuration(val token: String, val maxOpenReports: Int,
-                         val guildConfigurations: List<GuildConfiguration>)
+                         var guildConfigurations: MutableList<GuildConfiguration>)
 
 private val gson = GsonBuilder().setPrettyPrinting().create()
 private val configDir = File("config/")
@@ -22,8 +22,10 @@ fun loadConfiguration(): Configuration? {
         configFile.writeText(gson.toJson(Configuration("insert-token-here", 50, mutableListOf(GuildConfiguration()))))
         return null
     }
-
     return gson.fromJson(configFile.readText(), Configuration::class.java)
 }
 
 fun saveConfiguration(config: Configuration) = configFile.writeText(gson.toJson(config))
+
+fun hasGuildConfiguration(guildConfigurations: List<GuildConfiguration>,
+                          guildId: String) = guildConfigurations.any { g -> g.guildId == guildId }

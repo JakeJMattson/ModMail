@@ -2,15 +2,13 @@ package me.aberrantfox.warmbot
 
 import me.aberrantfox.kjdautils.api.startBot
 import me.aberrantfox.warmbot.listeners.*
-import me.aberrantfox.warmbot.services.Configuration
-import me.aberrantfox.warmbot.services.GuildConfiguration
-import me.aberrantfox.warmbot.services.ReportService
-import me.aberrantfox.warmbot.services.loadConfiguration
+import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Game
 
 fun main(args: Array<String>) {
+
     val config = loadConfiguration()
 
     if (config == null) {
@@ -24,22 +22,27 @@ private fun start(config: Configuration) = startBot(
         config.token) {
 
     val reportService = ReportService(jda, config)
+    val conversationService = ConversationService(jda, config, reportService)
+
+    conversationService.registerConversations("me.aberrantfox.warmbot")
 
     registerListeners(
-            ReportListener(reportService),
+            ReportListener(reportService, conversationService),
+            ConversationListener(conversationService, reportService),
             ResponseListener(reportService, config.guildConfigurations),
-            ChannelDeletionListener(reportService))
+            ChannelDeletionListener(reportService),
+            GuildJoinListener(conversationService, config))
 
     registerInjectionObject(reportService, config)
+    registerInjectionObject(conversationService, config)
 
-    //TODO: Discuss the implementation strategy around guild-specific prefixes.
     registerCommands("me.aberrantfox.warmbot", "!!")
-    registerCommandPreconditions(produceIsStaffMemberPrecondition(config.guildConfigurations))
+    registerCommandPreconditions(produceIsStaffMemberPrecondition(config.guildConfigurations),
+            produceIsGuildOwnerPrecondition())
 
     config.guildConfigurations.forEach {
         addOverrides(jda, it)
     }
-
     jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
 }
 
