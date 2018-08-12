@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Game
 
+
 fun main(args: Array<String>) {
 
     val config = loadConfiguration()
@@ -15,6 +16,7 @@ fun main(args: Array<String>) {
         println("Please fill in the configuration file (config/config.json)")
         return
     }
+
     start(config)
 }
 
@@ -22,7 +24,7 @@ private fun start(config: Configuration) = startBot(
         config.token) {
 
     val reportService = ReportService(jda, config)
-    val conversationService = ConversationService(jda, config, reportService)
+    val conversationService = ConversationService(jda, config, reportService, this.config)
 
     conversationService.registerConversations("me.aberrantfox.warmbot")
 

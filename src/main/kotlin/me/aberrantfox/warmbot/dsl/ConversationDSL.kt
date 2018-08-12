@@ -1,6 +1,11 @@
 package me.aberrantfox.warmbot.dsl
 
+import me.aberrantfox.kjdautils.api.dsl.KJDAConfiguration
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
+import me.aberrantfox.kjdautils.internal.command.ArgumentType
+import me.aberrantfox.kjdautils.internal.command.arguments.WordArg
+import me.aberrantfox.kjdautils.internal.logging.BotLogger
+import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.MessageEmbed
@@ -8,16 +13,14 @@ import net.dv8tion.jda.core.entities.MessageEmbed
 class Conversation(val name: String, val description: String,
                    val steps: List<Step>, var onComplete: (ConversationStateContainer) -> Unit = {})
 
-data class Step(val prompt: Any, val expectedResponseType: ResponseType?) {
-    enum class ResponseType { Guild, String, Integer, Channel, User, Category, Role }
-}
+data class Step(val prompt: Any, val expect: ArgumentType)
 
 data class ConversationStateContainer(val userId: String, val guildId: String, var responses: MutableList<Any>,
                                       val conversation: Conversation, var currentStep: Int,
                                       val jda: JDA, var config: Configuration) {
 
-    fun respond(message: String) = jda.getUserById(userId).sendPrivateMessage(message)
-    fun respond(embed: MessageEmbed) = jda.getUserById(userId).sendPrivateMessage(embed)
+    fun respond(message: String) = jda.getUserById(userId).sendPrivateMessage(message, DefaultLogger())
+    fun respond(embed: MessageEmbed) = jda.getUserById(userId).sendPrivateMessage(embed, DefaultLogger())
 }
 
 fun conversation(block: ConversationBuilder.() -> Unit): Conversation = ConversationBuilder().apply(block).build()
@@ -47,8 +50,8 @@ class STEPS : ArrayList<Step>() {
 
 class StepBuilder {
     var prompt: Any = ""
-    var expectedResponseType: Step.ResponseType = Step.ResponseType.String
-    fun build(): Step = Step(prompt, expectedResponseType)
+    var expect: ArgumentType = WordArg
+    fun build(): Step = Step(prompt, expect)
 }
 
 @Target(AnnotationTarget.FIELD)

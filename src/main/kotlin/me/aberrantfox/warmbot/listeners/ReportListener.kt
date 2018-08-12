@@ -2,6 +2,7 @@ package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
+import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.extensions.fullContent
 import me.aberrantfox.warmbot.services.ConversationService
 import me.aberrantfox.warmbot.services.ReportService
@@ -35,20 +36,20 @@ class ReportListener(private val reportService: ReportService, private val conve
                 reportService.receiveFromUser(user,
                         heldMessages.getOrDefault(user.id,
                                 "**Error :: Could not retrieve initial message from user.**"))
-                user.sendPrivateMessage(reportService.buildReportOpenedEmbed(commonGuilds[message.toInt()]))
+                user.sendPrivateMessage(reportService.buildReportOpenedEmbed(commonGuilds[message.toInt()]), DefaultLogger())
                 heldMessages.remove(user.id)
             } else {
                 user.sendPrivateMessage(
-                        "**I'm sorry, that guild selection is not valid. Please choose another.**")
-                user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds))
+                        "**I'm sorry, that guild selection is not valid. Please choose another.**", DefaultLogger())
+                user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds), DefaultLogger())
             }
         } else if (commonGuilds.size > 1) {
             heldMessages[user.id] = message
-            user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds))
+            user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds), DefaultLogger())
         } else {
             reportService.addReport(user, commonGuilds.first())
             reportService.receiveFromUser(user, message)
-            user.sendPrivateMessage(reportService.buildReportOpenedEmbed(commonGuilds.first()))
+            user.sendPrivateMessage(reportService.buildReportOpenedEmbed(commonGuilds.first()), DefaultLogger())
         }
     }
 

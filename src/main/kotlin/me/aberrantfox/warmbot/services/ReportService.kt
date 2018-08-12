@@ -4,6 +4,7 @@ import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.descriptor
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
 import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
+import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.MessageEmbed
@@ -79,7 +80,7 @@ class ReportService(val jda: JDA, private val config: Configuration) {
         val report = reports.firstOrNull { it.channelId == channelId }
 
         if (report != null) {
-            jda.getUserById(report.user).sendPrivateMessage(message)
+            jda.getUserById(report.user).sendPrivateMessage(message, DefaultLogger())
         }
     }
 
@@ -114,7 +115,7 @@ class ReportService(val jda: JDA, private val config: Configuration) {
             setColor(Color.LIGHT_GRAY)
             setAuthor("The staff of ${jda.getGuildById(report.guildId).name} have closed this report.")
             setDescription("If you continue to reply, a new report will be created.")
-        })
+        }, DefaultLogger())
     }
 
     fun getCommonGuilds(userObject: User): List<Guild> {
