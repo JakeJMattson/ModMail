@@ -82,7 +82,7 @@ class ConversationService(val jda: JDA, val configuration: Configuration, privat
                 result.result
             }
             is ArgumentResult.Error -> {
-                result.error
+                result
             }
         }
     }

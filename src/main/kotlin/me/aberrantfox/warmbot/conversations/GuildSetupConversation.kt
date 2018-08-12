@@ -34,8 +34,8 @@ var guildSetupConversation = conversation {
                     name = "Step 1"
                     value = "Please provide the **ID** for the category you'd like me to create report channels in."
                 }
-                expect = ChannelCategoryArg
             }
+            expect = ChannelCategoryArg
         }
         step {
             prompt = embed {
@@ -44,8 +44,8 @@ var guildSetupConversation = conversation {
                     value = "Now, I need the **ID** of the **channel** you'd like me to send archived reports to."
                 }
                 setColor(Color.magenta)
-                expect = TextChannelArg
             }
+            expect = TextChannelArg
         }
         step {
             prompt = embed {
@@ -55,8 +55,8 @@ var guildSetupConversation = conversation {
                             "my moderator functions."
                 }
                 setColor(Color.magenta)
-                expect = RoleArg
             }
+            expect = RoleArg
         }
     }
 
