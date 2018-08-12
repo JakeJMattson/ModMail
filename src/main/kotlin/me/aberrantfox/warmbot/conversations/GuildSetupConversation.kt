@@ -2,8 +2,10 @@ package me.aberrantfox.warmbot.conversations
 
 
 import me.aberrantfox.kjdautils.api.dsl.embed
+import me.aberrantfox.kjdautils.internal.command.arguments.RoleArg
+import me.aberrantfox.kjdautils.internal.command.arguments.TextChannelArg
+import me.aberrantfox.warmbot.commands.ChannelCategoryArg
 import me.aberrantfox.warmbot.dsl.Convo
-import me.aberrantfox.warmbot.dsl.Step
 import me.aberrantfox.warmbot.dsl.conversation
 import me.aberrantfox.warmbot.services.GuildConfiguration
 import me.aberrantfox.warmbot.services.saveConfiguration
@@ -32,8 +34,8 @@ var guildSetupConversation = conversation {
                     name = "Step 1"
                     value = "Please provide the **ID** for the category you'd like me to create report channels in."
                 }
-                expectedResponseType = Step.ResponseType.Category
             }
+            expect = ChannelCategoryArg
         }
         step {
             prompt = embed {
@@ -42,8 +44,8 @@ var guildSetupConversation = conversation {
                     value = "Now, I need the **ID** of the **channel** you'd like me to send archived reports to."
                 }
                 setColor(Color.magenta)
-                expectedResponseType = Step.ResponseType.Channel
             }
+            expect = TextChannelArg
         }
         step {
             prompt = embed {
@@ -53,8 +55,8 @@ var guildSetupConversation = conversation {
                             "my moderator functions."
                 }
                 setColor(Color.magenta)
-                expectedResponseType = Step.ResponseType.Role
             }
+            expect = RoleArg
         }
     }
 
@@ -63,12 +65,18 @@ var guildSetupConversation = conversation {
         val archiveChannel = it.responses.component2() as TextChannel
         val staffRole = it.responses.component3() as Role
 
-        it.config.guildConfigurations.add(
-                GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, "!!", staffRole.name))
-        saveConfiguration(it.config)
+        if (reportCategory.guild.id == it.guildId && archiveChannel.guild.id == it.guildId && staffRole.guild.id == it.guildId) {
+            it.config.guildConfigurations.add(
+                    GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, "!!", staffRole.name))
+            saveConfiguration(it.config)
 
-        it.respond(
-                "Congratulations, I'm successfully configured for use. Remember, as the guild owner, you can adjust these values at any time.")
+            it.respond(
+                    "Congratulations, I'm successfully configured for use. Remember, as the guild owner, you can adjust these values at any time.")
+        } else {
+            it.respond(
+                    "**Error** :: One or more provided values did not belong to the guild you started this conversation in. " +
+                            "Please run the setup again and provide valid values.")
+        }
         return@onComplete
     }
 }

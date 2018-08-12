@@ -1,22 +1,24 @@
 package me.aberrantfox.warmbot.services
 
-import me.aberrantfox.kjdautils.extensions.stdlib.trimToID
-import me.aberrantfox.kjdautils.internal.command.tryRetrieveSnowflake
+import me.aberrantfox.kjdautils.api.dsl.CommandEvent
+import me.aberrantfox.kjdautils.api.dsl.CommandsContainer
+import me.aberrantfox.kjdautils.api.dsl.KJDAConfiguration
+import me.aberrantfox.kjdautils.internal.command.ArgumentResult
+import me.aberrantfox.kjdautils.internal.command.cleanCommandMessage
 import me.aberrantfox.warmbot.dsl.Conversation
 import me.aberrantfox.warmbot.dsl.ConversationStateContainer
 import me.aberrantfox.warmbot.dsl.Convo
 import me.aberrantfox.warmbot.dsl.Step
 import net.dv8tion.jda.core.JDA
+import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.MessageEmbed
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent
 import org.reflections.Reflections
 import org.reflections.scanners.FieldAnnotationsScanner
 
-sealed class ResponseResult {
-    data class Error(val errorMessage: String) : ResponseResult()
-}
 
-class ConversationService(val jda: JDA, val configuration: Configuration, val reportService: ReportService) {
+class ConversationService(val jda: JDA, val configuration: Configuration, private val reportService: ReportService,
+                          private val config: KJDAConfiguration) {
 
     private var availableConversations = mutableListOf<Conversation>()
     private val activeConversations = mutableListOf<ConversationStateContainer>()
@@ -50,9 +52,10 @@ class ConversationService(val jda: JDA, val configuration: Configuration, val re
         val conversationState = getConversationState(userId)
         val currentStep = getCurrentStep(conversationState)
         val totalSteps = conversationState.conversation.steps.size
-        val response = parseResponse(event.message.contentStripped.trim(), getCurrentStep(conversationState))
+        val response = parseResponse(event.message, getCurrentStep(conversationState))
 
-        if (response is ResponseResult.Error) {
+        if (response is ArgumentResult.Error) {
+            sendToUser(userId, response.error)
             sendToUser(userId, currentStep.prompt)
         } else {
             conversationState.responses.add(response)
@@ -66,30 +69,21 @@ class ConversationService(val jda: JDA, val configuration: Configuration, val re
         }
     }
 
-    private fun parseResponse(message: String, step: Step): Any {
+    private fun parseResponse(message: Message, step: Step): Any {
+        val commandStruct = cleanCommandMessage(message.contentRaw, config)
+        val commandEvent = CommandEvent(commandStruct, message, commandStruct.commandArgs, CommandsContainer())
+        val result = step.expect.convert(message.contentStripped, commandEvent.commandStruct.commandArgs, commandEvent)
 
-        when (message.isNotEmpty()) {
-            step.expectedResponseType == Step.ResponseType.Channel -> {
-                return tryRetrieveSnowflake(jda) { it.getTextChannelById(message.trimToID()) }
-                        ?: return ResponseResult.Error("Couldn't retrieve text channel with parameter :: $message")
+        return when (result) {
+            is ArgumentResult.Single -> {
+                result.result
             }
-            step.expectedResponseType == Step.ResponseType.Guild -> {
-                return tryRetrieveSnowflake(jda) { it.getGuildById(message.trimToID()) }
-                        ?: return ResponseResult.Error("Couldn't retrieve guild with parameter :: $message")
+            is ArgumentResult.Multiple -> {
+                result.result
             }
-            step.expectedResponseType == Step.ResponseType.User -> {
-                return tryRetrieveSnowflake(jda) { it.getUserById(message.trimToID()) }
-                        ?: return ResponseResult.Error("Couldn't retrieve user with parameter :: $message")
+            is ArgumentResult.Error -> {
+                result
             }
-            step.expectedResponseType == Step.ResponseType.Category -> {
-                return tryRetrieveSnowflake(jda) { it.getCategoryById(message.trimToID()) }
-                        ?: return ResponseResult.Error("Couldn't retrieve category with parameter :: $message")
-            }
-            step.expectedResponseType == Step.ResponseType.Role -> {
-                return tryRetrieveSnowflake(jda) { it.getRoleById(it.getRolesByName(message, true).first().id) }
-                        ?: return ResponseResult.Error("Couldn't retrieve role with name :: $message")
-            }
-            else -> return message
         }
     }
 
@@ -105,10 +99,10 @@ class ConversationService(val jda: JDA, val configuration: Configuration, val re
     }
 
     fun registerConversations(path: String) =
-        Reflections(path, FieldAnnotationsScanner()).getFieldsAnnotatedWith(Convo::class.java).forEach {
-            it.trySetAccessible()
-            availableConversations.add(it.get(it) as Conversation)
-        }
+            Reflections(path, FieldAnnotationsScanner()).getFieldsAnnotatedWith(Convo::class.java).forEach {
+                it.trySetAccessible()
+                availableConversations.add(it.get(it) as Conversation)
+            }
 }
 
 
