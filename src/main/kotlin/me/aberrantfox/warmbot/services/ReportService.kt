@@ -19,7 +19,7 @@ data class QueuedReport(val messages: Vector<String> = Vector(), val user: Strin
 
 class ReportService(val jda: JDA, private val config: Configuration) {
 
-    private val reports = Vector<Report>()
+    val reports = Vector<Report>()
     private val queuedReports = Vector<QueuedReport>()
 
     fun isReportChannel(channelId: String) = reports.any { it.channelId == channelId }

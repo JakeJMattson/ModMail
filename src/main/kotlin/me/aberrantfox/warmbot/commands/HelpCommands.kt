@@ -37,6 +37,11 @@ fun helpCommands() = commands {
                 }
 
                 field {
+                    name = "CloseAll"
+                    value = "Close all currently open report channels. Can be invoked in any channel (report or otherwise)."
+                }
+
+                field {
                     name = "Archive"
                     value = "Archive the contents of the report as a text document in the archive channel."
                 }

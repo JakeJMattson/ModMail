@@ -22,6 +22,25 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
         }
     }
 
+    command("closeall") {
+        execute {
+
+            val reports = reportService.reports
+
+            if (reports.size == 0) {
+                it.respond("There are no reports to close.")
+                return@execute
+            }
+
+            for (report in reports) {
+                reportService.sendReportClosedEmbed(report)
+                it.jda.getTextChannelById(report.channelId).delete().queue()
+            }
+
+            it.respond("All reports (${reports.size}) closed successfully.")
+        }
+    }
+
     command("archive") {
         execute {
 
