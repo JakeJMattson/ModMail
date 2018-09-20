@@ -33,7 +33,8 @@ private fun start(config: Configuration) = startBot(
             ConversationListener(conversationService, reportService),
             ResponseListener(reportService, config.guildConfigurations),
             ChannelDeletionListener(reportService),
-            GuildJoinListener(conversationService, config))
+            GuildJoinListener(conversationService, config),
+            GuildLeaveListener(reportService, config))
 
     registerInjectionObject(reportService, config)
     registerInjectionObject(conversationService, config)
