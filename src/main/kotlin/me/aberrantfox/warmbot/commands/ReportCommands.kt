@@ -32,12 +32,18 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
                 return@execute
             }
 
+            var closeCount = 0
+
             for (report in reports) {
+                if (report.guildId != it.message.guild.id)
+                    continue
+
                 reportService.sendReportClosedEmbed(report)
                 it.jda.getTextChannelById(report.channelId).delete().queue()
+                closeCount++
             }
 
-            it.respond("All reports (${reports.size}) closed successfully.")
+            it.respond("$closeCount report(s) closed successfully.")
         }
     }
 
