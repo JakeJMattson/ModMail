@@ -24,6 +24,8 @@ private fun start(config: Configuration) = startBot(
         config.token) {
 
     val reportService = ReportService(jda, config)
+    reportService.loadReports()
+
     val conversationService = ConversationService(jda, config, reportService, this.config)
 
     conversationService.registerConversations("me.aberrantfox.warmbot")
