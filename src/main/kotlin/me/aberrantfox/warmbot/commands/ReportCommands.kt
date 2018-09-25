@@ -32,14 +32,13 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
                 return@execute
             }
 
+            val currentGuild = it.message.guild.id
+            val reportsFromGuild = reports.filter { it.guildId == currentGuild }
             var closeCount = 0
 
-            for (report in reports) {
-                if (report.guildId != it.message.guild.id)
-                    continue
-
-                reportService.sendReportClosedEmbed(report)
-                it.jda.getTextChannelById(report.channelId).delete().queue()
+            reportsFromGuild.forEach {
+                reportService.sendReportClosedEmbed(it)
+                reportService.jda.getTextChannelById(it.channelId).delete().queue()
                 closeCount++
             }
 
