@@ -53,7 +53,9 @@ class ReportService(val jda: JDA, private val config: Configuration) {
 
             val newReport = Report(user.id, channel.id, guild.id)
             reports.add(newReport)
-            File("$reportDir/${channel.id} - ${user.name}.json").writeText(gson.toJson(newReport))
+
+            if (config.recoverReports)
+                File("$reportDir/${channel.id} - ${user.name}.json").writeText(gson.toJson(newReport))
 
             queuedReports.removeAll { it.user == user.id }
         }
@@ -61,7 +63,9 @@ class ReportService(val jda: JDA, private val config: Configuration) {
 
     fun removeReport(channel: String) {
         reports.removeAll { it.channelId == channel }
-        reportDir.listFiles().first { file -> file.name.startsWith(channel) }.delete()
+
+        if (config.recoverReports)
+            reportDir.listFiles().first { file -> file.name.startsWith(channel) }.delete()
     }
 
     fun receiveFromUser(userObject: User, message: String) {
@@ -133,6 +137,15 @@ class ReportService(val jda: JDA, private val config: Configuration) {
     }
 
     fun loadReports() {
+
+        if (!config.recoverReports) {
+            if (reportDir.exists()) {
+                reportDir.deleteRecursively()
+            }
+
+            return
+        }
+
         if (!reportDir.exists()) {
             reportDir.mkdirs()
             return
