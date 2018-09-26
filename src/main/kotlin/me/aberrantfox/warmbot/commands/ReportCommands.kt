@@ -26,14 +26,14 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
         execute {
 
             val reports = reportService.reports
+            val currentGuild = it.message.guild.id
+            val reportsFromGuild = reports.filter { it.guildId == currentGuild }
 
-            if (reports.size == 0) {
+            if (reportsFromGuild.isEmpty()) {
                 it.respond("There are no reports to close.")
                 return@execute
             }
 
-            val currentGuild = it.message.guild.id
-            val reportsFromGuild = reports.filter { it.guildId == currentGuild }
             var closeCount = 0
 
             reportsFromGuild.forEach {
