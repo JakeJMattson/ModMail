@@ -137,12 +137,8 @@ class ReportService(val jda: JDA, private val config: Configuration) {
     }
 
     fun loadReports() {
-
-        if (!config.recoverReports) {
-            if (reportDir.exists()) {
-                reportDir.deleteRecursively()
-            }
-
+        if (!config.recoverReports && reportDir.exists()) {
+            reportDir.deleteRecursively()
             return
         }
 
@@ -155,12 +151,10 @@ class ReportService(val jda: JDA, private val config: Configuration) {
             val report = gson.fromJson(it.readText(), Report::class.java)
 
             //If text channel was deleted while bot was offline, delete report file
-            if (jda.getTextChannelById(report.channelId) == null) {
-                it.delete()
-            }
-            else {
+            if (jda.getTextChannelById(report.channelId) != null)
                 reports.addElement(report)
-            }
+            else
+                it.delete()
         }
     }
 }
