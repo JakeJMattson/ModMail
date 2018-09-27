@@ -26,18 +26,23 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
         execute {
 
             val reports = reportService.reports
+            val currentGuild = it.message.guild.id
+            val reportsFromGuild = reports.filter { it.guildId == currentGuild }
 
-            if (reports.size == 0) {
+            if (reportsFromGuild.isEmpty()) {
                 it.respond("There are no reports to close.")
                 return@execute
             }
 
-            for (report in reports) {
-                reportService.sendReportClosedEmbed(report)
-                it.jda.getTextChannelById(report.channelId).delete().queue()
+            var closeCount = 0
+
+            reportsFromGuild.forEach {
+                reportService.sendReportClosedEmbed(it)
+                reportService.jda.getTextChannelById(it.channelId).delete().queue()
+                closeCount++
             }
 
-            it.respond("All reports (${reports.size}) closed successfully.")
+            it.respond("$closeCount report(s) closed successfully.")
         }
     }
 
