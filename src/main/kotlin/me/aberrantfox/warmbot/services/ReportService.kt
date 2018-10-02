@@ -1,5 +1,6 @@
 package me.aberrantfox.warmbot.services
 
+import com.google.gson.GsonBuilder
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.descriptor
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
@@ -11,6 +12,7 @@ import net.dv8tion.jda.core.entities.MessageEmbed
 import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.entities.User
 import java.awt.Color
+import java.io.File
 import java.util.*
 
 data class Report(val user: String, val channelId: String, val guildId: String)
@@ -18,6 +20,9 @@ data class Report(val user: String, val channelId: String, val guildId: String)
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
 class ReportService(val jda: JDA, private val config: Configuration) {
+
+    private val reportDir = File("reports/")
+    private val gson = GsonBuilder().setPrettyPrinting().create()
 
     val reports = Vector<Report>()
     private val queuedReports = Vector<QueuedReport>()
@@ -45,13 +50,22 @@ class ReportService(val jda: JDA, private val config: Configuration) {
             queuedReports.first { it.user == user.id }.messages.forEach {
                 (channel as TextChannel).sendMessage(it).queue()
             }
-            reports.add(Report(user.id, channel.id, guild.id))
+
+            val newReport = Report(user.id, channel.id, guild.id)
+            reports.add(newReport)
+
+            if (config.recoverReports)
+                File("$reportDir/${channel.id} - ${user.name}.json").writeText(gson.toJson(newReport))
+
             queuedReports.removeAll { it.user == user.id }
         }
     }
 
     fun removeReport(channel: String) {
         reports.removeAll { it.channelId == channel }
+
+        if (config.recoverReports)
+            reportDir.listFiles().first { file -> file.name.startsWith(channel) }.delete()
     }
 
     fun receiveFromUser(userObject: User, message: String) {
@@ -120,5 +134,27 @@ class ReportService(val jda: JDA, private val config: Configuration) {
 
     fun getCommonGuilds(userObject: User): List<Guild> {
         return userObject.mutualGuilds.filter { g -> g.id in config.guildConfigurations.associateBy { it.guildId } }
+    }
+
+    fun loadReports() {
+        if (!config.recoverReports && reportDir.exists()) {
+            reportDir.deleteRecursively()
+            return
+        }
+
+        if (!reportDir.exists()) {
+            reportDir.mkdirs()
+            return
+        }
+
+        reportDir.listFiles().forEach {
+            val report = gson.fromJson(it.readText(), Report::class.java)
+
+            //If text channel was deleted while bot was offline, delete report file
+            if (jda.getTextChannelById(report.channelId) != null)
+                reports.addElement(report)
+            else
+                it.delete()
+        }
     }
 }

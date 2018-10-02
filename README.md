@@ -54,7 +54,8 @@ Below, you can find the configuration fields explained, if you want to set up a 
 ```json
 {
 	"token": "This should be the bot token",
-	"maxOpenReports": 50, -- this is the max number of reports that can be opened in any configured guild. 
+	"maxOpenReports": 50, -- this is the max number of reports that can be opened in any configured guild.
+	"recoverReports": true, -- whether or not the reports will be recovered if the bot goes offline. Saves to disk if true.
 	"guildConfigurations": [{
 			"guildId": "This is the guild your instance of the bot will run on - it should be the guild ID",
 			"reportCategory": "This is the category in which report channels will be made - it should be the report category ID",
@@ -74,7 +75,8 @@ You will have to add an additional guild configuration for each guild you intend
 ```json
 {
 	"token": "This should be the bot token",
-	"maxOpenReports": 50, -- this is the max number of reports that can be opened in any configured guild. 
+	"maxOpenReports": 50, -- this is the max number of reports that can be opened in any configured guild.
+	"recoverReports": true, -- whether or not the reports will be recovered if the bot goes offline. Saves to disk if true.
 	"guildConfigurations": [{
 			"guildId": "This is the guild your instance of the bot will run on - it should be the guild ID",
 			"reportCategory": "This is the category in which report channels will be made - it should be the report category ID",
