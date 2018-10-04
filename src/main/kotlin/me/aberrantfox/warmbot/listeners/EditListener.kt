@@ -35,6 +35,8 @@ class EditListener(private val reportService: ReportService) {
 
 		privateChannel.deleteMessageById(targetMessage).queue()
 		report.messages.remove(event.messageId)
+
+		reportService.writeReportToFile(report)
 	}
 
 	@Subscribe
@@ -93,6 +95,8 @@ class EditListener(private val reportService: ReportService) {
 			if (report.queuedMessageId != null) {
 				report.messages[report.queuedMessageId!!] = event.messageId
 				report.queuedMessageId = null
+
+				reportService.writeReportToFile(report)
 			}
 		}
 	}
@@ -111,6 +115,8 @@ class EditListener(private val reportService: ReportService) {
 			if (report.queuedMessageId != null) {
 				report.messages[report.queuedMessageId!!] = event.messageId
 				report.queuedMessageId = null
+
+				reportService.writeReportToFile(report)
 			}
 		}
 	}
