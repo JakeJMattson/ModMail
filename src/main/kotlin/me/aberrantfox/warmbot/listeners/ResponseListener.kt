@@ -27,6 +27,6 @@ class ResponseListener(private val reportService: ReportService, private val gui
             return
         }
 
-        reportService.sendToUser(channel.id, event.message.fullContent())
+        reportService.sendToUser(channel.id, event.message)
     }
 }

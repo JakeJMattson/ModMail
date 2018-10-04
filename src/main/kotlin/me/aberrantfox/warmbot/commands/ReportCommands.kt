@@ -60,11 +60,12 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
 
             val archiveChannel = it.jda.getTextChannelById(relevantGuild.archiveChannel)
             val targetChannel = it.jda.getTextChannelById(it.channel.id)
+            val reportChannel = reportService.getReportByChannel(it.channel.id)
 
             archiveChannel.sendFile(it.channel.archiveString(relevantGuild.prefix).toByteArray(),
                     "$${it.channel.name}.txt").queue {
-                reportService.sendReportClosedEmbed(reportService.getReportByChannel(it.channel.id))
-                (targetChannel as TextChannel).delete().queue()
+                reportService.sendReportClosedEmbed(reportChannel)
+                targetChannel.delete().queue()
             }
         }
     }

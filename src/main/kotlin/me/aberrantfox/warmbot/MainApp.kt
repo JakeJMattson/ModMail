@@ -34,6 +34,7 @@ private fun start(config: Configuration) = startBot(
             ReportListener(reportService, conversationService),
             ConversationListener(conversationService, reportService),
             ResponseListener(reportService, config.guildConfigurations),
+            EditListener(reportService),
             ChannelDeletionListener(reportService),
             GuildJoinListener(conversationService, config),
             GuildLeaveListener(reportService, config))

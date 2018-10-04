@@ -6,16 +6,15 @@ import me.aberrantfox.kjdautils.extensions.jda.descriptor
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
 import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
 import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
-import net.dv8tion.jda.core.JDA
-import net.dv8tion.jda.core.entities.Guild
-import net.dv8tion.jda.core.entities.MessageEmbed
-import net.dv8tion.jda.core.entities.TextChannel
-import net.dv8tion.jda.core.entities.User
+import me.aberrantfox.warmbot.extensions.fullContent
+import net.dv8tion.jda.core.*
+import net.dv8tion.jda.core.entities.*
 import java.awt.Color
 import java.io.File
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
-data class Report(val user: String, val channelId: String, val guildId: String)
+data class Report(val user: String, val channelId: String, val guildId: String, val messages: MutableMap<String, String>, var queuedMessageId: String?)
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
@@ -32,7 +31,7 @@ class ReportService(val jda: JDA, private val config: Configuration) {
     fun getReportByChannel(channelId: String): Report = reports.first { it.channelId == channelId }
     fun getReportByUserId(userId: String): Report = reports.first { it.user == userId }
 
-    fun addReport(user: User, guild: Guild) {
+    fun addReport(user: User, guild: Guild, firstMessage: Message) {
 
         val guildConfiguration = config.guildConfigurations.first { g -> g.guildId == guild.id }
         val reportCategory = jda.getCategoryById(guildConfiguration.reportCategory)
@@ -47,11 +46,19 @@ class ReportService(val jda: JDA, private val config: Configuration) {
         }
 
         reportCategory.createTextChannel(user.name).queue { channel ->
-            queuedReports.first { it.user == user.id }.messages.forEach {
-                (channel as TextChannel).sendMessage(it).queue()
+            channel as TextChannel
+
+            val openingMessage = embed {
+                addField("New Report Opened!", "${user.descriptor()} :: ${user.asMention}", false)
+                setColor(Color.green)
             }
 
-            val newReport = Report(user.id, channel.id, guild.id)
+            channel.sendMessage(openingMessage).queue()
+            queuedReports.first { it.user == user.id }.messages.forEach {
+                channel.sendMessage(it).queue()
+            }
+
+            val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap(), firstMessage.id)
             reports.add(newReport)
 
             if (config.recoverReports)
@@ -68,12 +75,14 @@ class ReportService(val jda: JDA, private val config: Configuration) {
             reportDir.listFiles().first { file -> file.name.startsWith(channel) }.delete()
     }
 
-    fun receiveFromUser(userObject: User, message: String) {
+    fun receiveFromUser(userObject: User, message: Message) {
         val user = userObject.id
-        val safeMessage = message.sanitiseMentions()
+        val safeMessage = message.fullContent().trim().sanitiseMentions()
+
         if (reports.any { it.user == user }) {
             val report = reports.first { it.user == user }
             jda.getTextChannelById(report.channelId).sendMessage(safeMessage).queue()
+            report.queuedMessageId = message.id
 
             return
         }
@@ -82,19 +91,19 @@ class ReportService(val jda: JDA, private val config: Configuration) {
 
         if (queued == null) {
             val vector = Vector<String>()
-            vector.add("${userObject.descriptor()} :: ${userObject.asMention}")
-            vector.add(safeMessage.sanitiseMentions())
+            vector.add(safeMessage)
             queuedReports.add(QueuedReport(vector, user))
         } else {
-            queued.messages.addElement(safeMessage.sanitiseMentions())
+            queued.messages.addElement(safeMessage)
         }
     }
 
-    fun sendToUser(channelId: String, message: String) {
+    fun sendToUser(channelId: String, message: Message) {
         val report = reports.firstOrNull { it.channelId == channelId }
 
         if (report != null) {
-            jda.getUserById(report.user).sendPrivateMessage(message, DefaultLogger())
+            jda.getUserById(report.user).sendPrivateMessage(message.fullContent(), DefaultLogger())
+            report.queuedMessageId = message.id
         }
     }
 
