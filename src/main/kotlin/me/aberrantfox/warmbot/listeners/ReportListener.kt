@@ -6,13 +6,13 @@ import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.extensions.fullContent
 import me.aberrantfox.warmbot.services.ConversationService
 import me.aberrantfox.warmbot.services.ReportService
-import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.core.entities.*
 
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent
 
 class ReportListener(private val reportService: ReportService, private val conversationService: ConversationService) {
 
-    private val heldMessages = mutableMapOf<String, String>()
+    private val heldMessages = mutableMapOf<String, Message>()
 
     @Subscribe
     fun onPrivateMessageReceived(event: PrivateMessageReceivedEvent) {
@@ -20,23 +20,22 @@ class ReportListener(private val reportService: ReportService, private val conve
         if (event.author.isBot)
             return
 
-
         if (conversationService.hasConversation(event.author.id))
             return
 
         val user = event.author
-        val message = event.message.fullContent().trim()
+        val message = event.message
+        val content = message.fullContent().trim()
         val commonGuilds = reportService.getCommonGuilds(event.author)
 
         if (reportService.hasReportChannel(user.id)) {
             reportService.receiveFromUser(user, message)
-        } else if (commonGuilds.size > 1 && isNumericArgument(message)) {
-            if (isGuildSelectionValid(commonGuilds, message.toInt())) {
-                reportService.addReport(user, commonGuilds[message.toInt()])
-                reportService.receiveFromUser(user,
-                        heldMessages.getOrDefault(user.id,
-                                "**Error :: Could not retrieve initial message from user.**"))
-                user.sendPrivateMessage(reportService.buildReportOpenedEmbed(commonGuilds[message.toInt()]), DefaultLogger())
+        } else if (commonGuilds.size > 1 && isNumericArgument(content)) {
+            if (isGuildSelectionValid(commonGuilds, content.toInt())) {
+                val firstMessage = heldMessages.get(user.id)!!
+                reportService.addReport(user, commonGuilds[content.toInt()], firstMessage)
+                reportService.receiveFromUser(user, firstMessage)
+                user.sendPrivateMessage(reportService.buildReportOpenedEmbed(commonGuilds[content.toInt()]), DefaultLogger())
                 heldMessages.remove(user.id)
             } else {
                 user.sendPrivateMessage(
@@ -47,7 +46,7 @@ class ReportListener(private val reportService: ReportService, private val conve
             heldMessages[user.id] = message
             user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds), DefaultLogger())
         } else {
-            reportService.addReport(user, commonGuilds.first())
+            reportService.addReport(user, commonGuilds.first(), message)
             reportService.receiveFromUser(user, message)
             user.sendPrivateMessage(reportService.buildReportOpenedEmbed(commonGuilds.first()), DefaultLogger())
         }
