@@ -17,6 +17,9 @@ class EditListener(private val reportService: ReportService) {
 		if (!reportService.isReportChannel(event.channel.id))
 			return
 
+		if (event.author.id == reportService.jda.selfUser.id)
+			return
+
 		val report = reportService.getReportByChannel(event.channel.id)
 		val privateChannel = reportService.jda.privateChannels.first { it.user.id == report.user }
 		val targetMessage = report.messages[event.messageId]
@@ -79,6 +82,7 @@ class EditListener(private val reportService: ReportService) {
 		}
 
 		channel.sendMessage(embed).queue()
+		channel.editMessageById(targetMessage, event.message).queue()
 	}
 
 	@Subscribe
