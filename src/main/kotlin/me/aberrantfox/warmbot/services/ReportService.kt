@@ -2,12 +2,11 @@ package me.aberrantfox.warmbot.services
 
 import com.google.gson.GsonBuilder
 import me.aberrantfox.kjdautils.api.dsl.embed
-import me.aberrantfox.kjdautils.extensions.jda.descriptor
-import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
+import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
 import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.extensions.fullContent
-import net.dv8tion.jda.core.*
+import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
 import java.awt.Color
 import java.io.File
@@ -60,9 +59,7 @@ class ReportService(val jda: JDA, private val config: Configuration) {
 
             val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap(), firstMessage.id)
             reports.add(newReport)
-
-            if (config.recoverReports)
-                File("$reportDir/${channel.id} - ${user.name}.json").writeText(gson.toJson(newReport))
+            writeReportToFile(newReport)
 
             queuedReports.removeAll { it.user == user.id }
         }
@@ -165,5 +162,10 @@ class ReportService(val jda: JDA, private val config: Configuration) {
             else
                 it.delete()
         }
+    }
+
+    fun writeReportToFile(report: Report) {
+        if (config.recoverReports)
+            File("$reportDir/${report.channelId}.json").writeText(gson.toJson(report))
     }
 }
