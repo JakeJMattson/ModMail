@@ -1,12 +1,9 @@
 package me.aberrantfox.warmbot.listeners
 
 import me.aberrantfox.kjdautils.api.dsl.CommandEvent
-import me.aberrantfox.kjdautils.internal.command.Fail
-import me.aberrantfox.kjdautils.internal.command.Pass
-import me.aberrantfox.warmbot.services.GuildConfiguration
-import me.aberrantfox.warmbot.services.hasGuildConfiguration
+import me.aberrantfox.kjdautils.internal.command.*
+import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.TextChannel
-
 
 fun produceIsStaffMemberPrecondition(guildConfigurations: List<GuildConfiguration>) = { event: CommandEvent ->
 
@@ -33,7 +30,9 @@ fun produceIsStaffMemberPrecondition(guildConfigurations: List<GuildConfiguratio
 fun produceIsGuildOwnerPrecondition() = { event: CommandEvent ->
 
     val command = event.container.commands[event.commandStruct.commandName]
-    if (command!!.category == "Configuration") {
+    if (command == null)
+        Pass
+    else if (command.category == "Configuration") {
         if (event.channel is TextChannel) {
             val textChannel = event.channel as TextChannel
             val relevantGuild = event.jda.getGuildById(textChannel.guild.id)
