@@ -1,15 +1,62 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.dsl.CommandSet
-import me.aberrantfox.kjdautils.api.dsl.commands
+import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
+import me.aberrantfox.kjdautils.internal.command.arguments.*
+import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.extensions.archiveString
-import me.aberrantfox.warmbot.services.Configuration
-import me.aberrantfox.warmbot.services.ReportService
-import net.dv8tion.jda.core.entities.TextChannel
-
+import me.aberrantfox.warmbot.services.*
+import net.dv8tion.jda.core.entities.*
+import java.awt.Color
 
 @CommandSet
 fun reportCommands(reportService: ReportService, configuration: Configuration) = commands {
+    command("open") {
+        expect(arg(UserArg), arg(SentenceArg))
+        execute { event ->
+
+            val targetUser = event.args.component1() as User
+            val message = event.args.component2() as String
+            val guild = event.message.guild
+
+            if (targetUser.isBot) {
+                event.respond("The target user is a bot.")
+                return@execute
+            }
+
+            if (!guild.isMember(targetUser)) {
+                event.respond("The target user is not in this guild.")
+                return@execute
+            }
+
+            if (reportService.hasReportChannel(targetUser.id)) {
+                event.respond("The target user already has an open report.")
+                return@execute
+            }
+
+            targetUser.openPrivateChannel().queue {
+                if (!targetUser.hasPrivateChannel()) {
+                    event.respond("Unable to contact the target user. DM's may be disabled.")
+                    return@queue
+                }
+
+                event.respond("Channel opened!")
+
+                val embed = embed{
+                    setColor(Color.green)
+                    setThumbnail(guild.iconUrl)
+                    addField("You've received a message from the staff of ${guild.name}!",
+                        "This is a two-way communication medium between you and the entire staff team. " +
+                                "Reply directly into this channel and your message will be forwarded to them.",
+                        false)
+                }
+
+                targetUser.sendPrivateMessage(embed, DefaultLogger())
+                targetUser.sendPrivateMessage(message, DefaultLogger())
+            }
+        }
+    }
+
     command("close") {
         execute {
             if (!(reportService.isReportChannel(it.channel.id))) {
