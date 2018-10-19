@@ -30,7 +30,7 @@ class ReportService(val jda: JDA, private val config: Configuration) {
     fun getReportByChannel(channelId: String): Report = reports.first { it.channelId == channelId }
     fun getReportByUserId(userId: String): Report = reports.first { it.user == userId }
 
-    fun addReport(user: User, guild: Guild, firstMessage: Message) {
+    fun addReport(user: User, guild: Guild, firstMessage: Message?) {
 
         val guildConfiguration = config.guildConfigurations.first { g -> g.guildId == guild.id }
         val reportCategory = jda.getCategoryById(guildConfiguration.reportCategory)
@@ -57,7 +57,7 @@ class ReportService(val jda: JDA, private val config: Configuration) {
                 channel.sendMessage(it).queue()
             }
 
-            val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap(), firstMessage.id)
+            val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap(), firstMessage?.id)
             reports.add(newReport)
             writeReportToFile(newReport)
 
