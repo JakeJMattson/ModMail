@@ -35,13 +35,8 @@ fun reportCommands(reportService: ReportService, config: Configuration) = comman
                 return@execute
             }
 
-            targetUser.openPrivateChannel().queue {
-                if (!targetUser.hasPrivateChannel()) {
-                    event.respond("Unable to contact the target user. DM's may be disabled.")
-                    return@queue
-                }
-
-                val userEmbed = embed{
+            targetUser.openPrivateChannel().queue outerQueue@ {
+                val userEmbed = embed {
                     setColor(Color.green)
                     setThumbnail(guild.iconUrl)
                     addField("You've received a message from the staff of ${guild.name}!",
@@ -61,24 +56,33 @@ fun reportCommands(reportService: ReportService, config: Configuration) = comman
                 val guildConfiguration = config.guildConfigurations.first { g -> g.guildId == guild.id }
                 val reportCategory = reportService.jda.getCategoryById(guildConfiguration.reportCategory)
 
-                reportCategory.createTextChannel(targetUser.name).queue { channel ->
-                    channel as TextChannel
+                targetUser.sendPrivateMessage(userEmbed, DefaultLogger())
+                targetUser.sendPrivateMessage(message, DefaultLogger())
 
-                    val openingMessage = embed {
-                        addField("New Report Opened!", "${event.author.descriptor()} :: ${event.author.asMention}", false)
-                        setColor(Color.green)
+                it.getMessageById(it.latestMessageId).queue {
+                    if (it.contentRaw != message) {
+                        event.respond("Unable to contact the target user. DM's may be disabled.")
+                        return@queue
                     }
 
-                    channel.sendMessage(openingMessage).queue()
+                    reportCategory.createTextChannel(targetUser.name).queue { channel ->
+                        channel as TextChannel
 
-                    val newReport = Report(targetUser.id, channel.id, guild.id, ConcurrentHashMap(), null)
-                    reportService.reports.add(newReport)
-                    reportService.writeReportToFile(newReport)
+                        val openingMessage = embed {
+                            addField("New Report Opened!", "${event.author.descriptor()} :: ${event.author.asMention}",
+                                false)
+                            setColor(Color.green)
+                        }
 
-                    targetUser.sendPrivateMessage(userEmbed, DefaultLogger())
-                    targetUser.sendPrivateMessage(message, DefaultLogger())
-                    channel.sendMessage(staffEmbed).queue()
-                    event.respond("Channel opened at: ${channel.asMention}")
+                        channel.sendMessage(openingMessage).queue()
+                        channel.sendMessage(staffEmbed).queue()
+
+                        val newReport = Report(targetUser.id, channel.id, guild.id, ConcurrentHashMap(), null)
+                        reportService.reports.add(newReport)
+                        reportService.writeReportToFile(newReport)
+
+                        event.respond("Channel opened at: ${channel.asMention}")
+                    }
                 }
             }
         }
