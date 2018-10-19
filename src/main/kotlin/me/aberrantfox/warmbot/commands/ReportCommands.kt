@@ -1,16 +1,17 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
+import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.extensions.archiveString
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
 import java.awt.Color
+import java.util.concurrent.ConcurrentHashMap
 
 @CommandSet
-fun reportCommands(reportService: ReportService, configuration: Configuration) = commands {
+fun reportCommands(reportService: ReportService, config: Configuration) = commands {
     command("open") {
         expect(arg(UserArg), arg(SentenceArg))
         execute { event ->
@@ -40,9 +41,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
                     return@queue
                 }
 
-                event.respond("Channel opened!")
-
-                val embed = embed{
+                val userEmbed = embed{
                     setColor(Color.green)
                     setThumbnail(guild.iconUrl)
                     addField("You've received a message from the staff of ${guild.name}!",
@@ -51,8 +50,36 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
                         false)
                 }
 
-                targetUser.sendPrivateMessage(embed, DefaultLogger())
-                targetUser.sendPrivateMessage(message, DefaultLogger())
+                val staffEmbed = embed {
+                    setColor(Color.yellow)
+                    addField("This report was opened by a staff member!",
+                        "Report opened by **${event.author.name}** (${event.author.id})",
+                        false)
+                    addField("Initial Message", message, false)
+                }
+
+                val guildConfiguration = config.guildConfigurations.first { g -> g.guildId == guild.id }
+                val reportCategory = reportService.jda.getCategoryById(guildConfiguration.reportCategory)
+
+                reportCategory.createTextChannel(targetUser.name).queue { channel ->
+                    channel as TextChannel
+
+                    val openingMessage = embed {
+                        addField("New Report Opened!", "${event.author.descriptor()} :: ${event.author.asMention}", false)
+                        setColor(Color.green)
+                    }
+
+                    channel.sendMessage(openingMessage).queue()
+
+                    val newReport = Report(targetUser.id, channel.id, guild.id, ConcurrentHashMap(), null)
+                    reportService.reports.add(newReport)
+                    reportService.writeReportToFile(newReport)
+
+                    targetUser.sendPrivateMessage(userEmbed, DefaultLogger())
+                    targetUser.sendPrivateMessage(message, DefaultLogger())
+                    channel.sendMessage(staffEmbed).queue()
+                    event.respond("Channel opened at: ${channel.asMention}")
+                }
             }
         }
     }
@@ -104,7 +131,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
                 return@execute
             }
 
-            val relevantGuild = configuration.guildConfigurations.first { g ->
+            val relevantGuild = config.guildConfigurations.first { g ->
                 g.guildId == reportService.getReportByChannel(it.channel.id).guildId
             }
 
