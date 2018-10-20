@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap
 @CommandSet
 fun reportCommands(reportService: ReportService, config: Configuration) = commands {
     command("open") {
-        description = "Open a report with the target user and the provided initial message."
+        description = "Open a report with the target user and send the provided initial message."
         expect(arg(UserArg), arg(SentenceArg))
         execute { event ->
             val targetUser = event.args.component1() as User
