@@ -1,19 +1,15 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.dsl.CommandSet
-import me.aberrantfox.kjdautils.api.dsl.commands
-import me.aberrantfox.kjdautils.internal.command.arguments.WordArg
-import me.aberrantfox.kjdautils.internal.command.arguments.TextChannelArg
+import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.entities.Category
-import net.dv8tion.jda.core.entities.Role
-import net.dv8tion.jda.core.entities.TextChannel
-
+import net.dv8tion.jda.core.entities.*
 
 @CommandSet("Configuration")
 fun configurationCommands(conversationService: ConversationService, configuration: Configuration) = commands {
 
     command("setreportcategory") {
+        description = "Set the category where new reports will be opened."
         expect(ChannelCategoryArg)
         execute {
             val reportCategory = it.args.component1() as Category
@@ -35,6 +31,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
     }
 
     command("setarchivechannel") {
+        description = "Set the channel where transcribed reports will be sent when archived."
         expect(TextChannelArg)
         execute {
             val archiveChannel = it.args.component1() as TextChannel
@@ -54,6 +51,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
     }
 
     command("setstaffrole") {
+        description = "Specify the role required to use this bot."
         expect(WordArg)
         execute {
             val staffRoleName = it.args.component1() as String
@@ -78,6 +76,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
     }
 
     command("setup") {
+        description = "Initiate a setup conversation to set all required values for this bot."
         execute {
             val eventChannel = it.channel as TextChannel
 

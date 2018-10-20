@@ -1,16 +1,14 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.dsl.CommandSet
-import me.aberrantfox.kjdautils.api.dsl.commands
+import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.warmbot.extensions.archiveString
-import me.aberrantfox.warmbot.services.Configuration
-import me.aberrantfox.warmbot.services.ReportService
+import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.TextChannel
-
 
 @CommandSet
 fun reportCommands(reportService: ReportService, configuration: Configuration) = commands {
     command("close") {
+        description = "Close the report channel that this command is invoked in. Alternatively, delete the channel."
         execute {
             if (!(reportService.isReportChannel(it.channel.id))) {
                 it.respond(
@@ -23,6 +21,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
     }
 
     command("closeall") {
+        description = "Close all currently open reports. Can be invoked in any channel."
         execute {
 
             val reports = reportService.reports
@@ -47,6 +46,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
     }
 
     command("archive") {
+        description = "Archive the contents of the report as a text document in the archive channel."
         execute {
 
             if (!(reportService.isReportChannel(it.channel.id))) {
