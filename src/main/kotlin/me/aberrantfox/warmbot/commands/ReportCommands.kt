@@ -89,6 +89,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
     }
 
     command("close") {
+        description = "Close the report channel that this command is invoked in. Alternatively, delete the channel."
         execute {
             if (!(reportService.isReportChannel(it.channel.id))) {
                 it.respond(
@@ -101,6 +102,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
     }
 
     command("closeall") {
+        description = "Close all currently open reports. Can be invoked in any channel."
         execute {
 
             val reports = reportService.reports
@@ -125,6 +127,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
     }
 
     command("archive") {
+        description = "Archive the contents of the report as a text document in the archive channel."
         execute {
 
             if (!(reportService.isReportChannel(it.channel.id))) {
