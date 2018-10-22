@@ -11,7 +11,7 @@ import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
 @CommandSet
-fun reportCommands(reportService: ReportService, config: Configuration) = commands {
+fun reportCommands(reportService: ReportService, configuration: Configuration) = commands {
     command("open") {
         description = "Open a report with the target user and send the provided initial message."
         expect(arg(UserArg), arg(SentenceArg))
@@ -53,7 +53,7 @@ fun reportCommands(reportService: ReportService, config: Configuration) = comman
                     addField("Initial Message", message, false)
                 }
 
-                val guildConfiguration = config.guildConfigurations.first { g -> g.guildId == guild.id }
+                val guildConfiguration = configuration.guildConfigurations.first { g -> g.guildId == guild.id }
                 val reportCategory = reportService.jda.getCategoryById(guildConfiguration.reportCategory)
 
                 targetUser.sendPrivateMessage(userEmbed, DefaultLogger())
@@ -132,7 +132,7 @@ fun reportCommands(reportService: ReportService, config: Configuration) = comman
                 return@execute
             }
 
-            val relevantGuild = config.guildConfigurations.first { g ->
+            val relevantGuild = configuration.guildConfigurations.first { g ->
                 g.guildId == reportService.getReportByChannel(it.channel.id).guildId
             }
 
