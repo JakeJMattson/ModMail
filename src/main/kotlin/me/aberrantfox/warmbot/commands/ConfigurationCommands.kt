@@ -57,7 +57,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
         expect(WordArg)
         execute {
             val staffRoleName = it.args.component1() as String
-            val staffRole = it.jda.getRolesByName(staffRoleName, true).first()
+            val staffRole = it.jda.getRolesByName(staffRoleName, true).firstOrNull()
 
             if (staffRole != null) {
                 if (hasGuildConfiguration(configuration.guildConfigurations, staffRole.guild.id)) {
@@ -65,7 +65,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
                             staffRole.name
 
                     saveConfiguration(configuration)
-                    it.respond("Successfully the staff role to :: ${staffRole.name}")
+                    it.respond("Successfully set the staff role to :: ${staffRole.name}")
                 } else {
                     it.respond(
                             "No guild configuration found, please go through the setup process before using this command.")
