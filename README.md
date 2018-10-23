@@ -95,3 +95,39 @@ You will have to add an additional guild configuration for each guild you intend
 }
 ```
 
+###### Commands: 
+<details>
+<summary>Configuration</summary>
+
+`Note: These commands can only be run by the owner of the guild.`
+
+| Command           | Arguments     | Effect |
+| ------            | ------        | ------ |
+| Setup             | (none)        | Initiate the setup conversation. |
+| SetReportCategory | Category ID   | Set the category where new reports will be opened. |
+| SetArchiveChannel | Channel ID    | Set the channel where reports will be archived. |
+| SetStaffRole      | Role name     | Set the role required to use this bot. |
+
+</details>
+<details>
+<summary>Report</summary>
+
+| Command   | Arguments | Effect |
+| ------    | ------    | ------ |
+| Open      | User ID   | Open a report with the target user. |
+| Close     | (none)`*` | Close report. |
+| CloseAll  | (none)    | Close all reports in the current guild. |
+| Archive   | (none)`*` | Transcribe report to text (closes report). |
+
+`*The invocation channel must be a report channel.`
+</details>
+<details>
+<summary>Utility</summary>
+
+| Command   | Arguments | Effect |
+| ------    | ------    | ------ |
+| Author    | (none)    | Display the author of the bot. |
+| Ping      | (none)    | Display the status of the bot. |
+| Source    | (none)    | Display the source code via a GitLab link. |
+
+</details>
