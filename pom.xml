@@ -9,14 +9,14 @@
     <version>1.5.1</version>
 
     <properties>
-        <kotlin.version>1.2.41</kotlin.version>
+        <kotlin.version>1.2.61</kotlin.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.gitlab.Aberrantfox</groupId>
+            <groupId>com.gitlab.aberrantfox</groupId>
             <artifactId>KUtils</artifactId>
-            <version>0.8.7</version>
+            <version>0.9.1</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

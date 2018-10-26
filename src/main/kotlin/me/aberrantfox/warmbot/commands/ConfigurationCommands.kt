@@ -2,11 +2,11 @@ package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.commands
+import me.aberrantfox.kjdautils.internal.command.ConversationService
 import me.aberrantfox.kjdautils.internal.command.arguments.WordArg
 import me.aberrantfox.kjdautils.internal.command.arguments.TextChannelArg
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.Category
-import net.dv8tion.jda.core.entities.Role
 import net.dv8tion.jda.core.entities.TextChannel
 
 
