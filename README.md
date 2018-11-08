@@ -112,7 +112,6 @@ You will have to add an additional guild configuration for each guild you intend
 
 | Command   | Arguments | Effect                                    |
 | ------    | ------    | ------                                    |
-| Open      | User ID   | Open a report with the target user.       |
 | Close     | (none)`*` | Close report.                             |
 | CloseAll  | (none)    | Close all reports in the current guild.   |
 | Archive   | (none)`*` | Transcribe report to text (closes report).|
