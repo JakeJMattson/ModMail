@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
 fun reportCommands(reportService: ReportService, configuration: Configuration) = commands {
     command("open") {
         description = "Open a report with the target user and send the provided initial message."
-        expect(arg(UserArg), arg(SentenceArg))
+        expect(arg(UserArg), arg(SentenceArg("Initial Message"), optional = true, default = ""))
         execute { event ->
             val targetUser = event.args.component1() as User
             val message = event.args.component2() as String
@@ -45,22 +45,26 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
                         false)
                 }
 
+                val embedMessage = if (message.isEmpty()) "<No initial message provided>" else message
+
                 val staffEmbed = embed {
                     setColor(Color.yellow)
                     addField("This report was opened by a staff member!",
                         "Report opened by **${event.author.name}** (${event.author.id})",
                         false)
-                    addField("Initial Message", message, false)
+                    addField("Initial Message", embedMessage, false)
                 }
 
                 val guildConfiguration = configuration.guildConfigurations.first { g -> g.guildId == guild.id }
                 val reportCategory = reportService.jda.getCategoryById(guildConfiguration.reportCategory)
 
                 targetUser.sendPrivateMessage(userEmbed, DefaultLogger())
-                targetUser.sendPrivateMessage(message, DefaultLogger())
 
-                it.getMessageById(it.latestMessageId).queue {
-                    if (it.contentRaw != message) {
+                if (message.isNotEmpty())
+                    targetUser.sendPrivateMessage(message, DefaultLogger())
+
+                it.getMessageById(it.latestMessageId).queue { latestMessage ->
+                    if (latestMessage.contentRaw.trim() != message.trim() && latestMessage.embeds.isNotEmpty()) {
                         event.respond("Unable to contact the target user. DM's may be disabled.")
                         return@queue
                     }
