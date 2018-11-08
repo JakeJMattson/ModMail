@@ -94,6 +94,10 @@ class EditListener(private val reportService: ReportService) {
 				return
 
 			val user = reportService.jda.getPrivateChannelById(event.message.channel.id).user.id
+
+			if (!reportService.hasReportChannel(user))
+				return
+
 			val report = reportService.getReportByUserId(user)
 
 			if (report.queuedMessageId != null) {
