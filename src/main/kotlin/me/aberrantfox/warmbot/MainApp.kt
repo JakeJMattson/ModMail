@@ -3,8 +3,7 @@ package me.aberrantfox.warmbot
 import me.aberrantfox.kjdautils.api.startBot
 import me.aberrantfox.warmbot.listeners.*
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.JDA
-import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.*
 import net.dv8tion.jda.core.entities.Game
 
 
@@ -20,14 +19,14 @@ fun main(args: Array<String>) {
     start(config)
 }
 
-private fun start(config: Configuration) = startBot(
-        config.token) {
+private fun start(config: Configuration) = startBot(config.token) {
 
-    val reportService = ReportService(jda, config)
+    val loggingService = LoggingService(jda, config)
+
+    val reportService = ReportService(jda, config, loggingService)
     reportService.loadReports()
 
     val conversationService = ConversationService(jda, config, reportService, this.config)
-
     conversationService.registerConversations("me.aberrantfox.warmbot")
 
     registerListeners(
@@ -41,6 +40,7 @@ private fun start(config: Configuration) = startBot(
 
     registerInjectionObject(reportService, config)
     registerInjectionObject(conversationService, config)
+    registerInjectionObject(loggingService, config)
 
     registerCommands("me.aberrantfox.warmbot", "!!")
     registerCommandPreconditions(produceIsStaffMemberPrecondition(config.guildConfigurations),
@@ -50,6 +50,8 @@ private fun start(config: Configuration) = startBot(
         addOverrides(jda, it)
     }
     jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
+
+    loggingService.logStartup()
 }
 
 private fun addOverrides(jda: JDA, config: GuildConfiguration) {
