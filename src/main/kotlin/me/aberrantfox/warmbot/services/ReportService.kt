@@ -17,7 +17,7 @@ data class Report(val user: String, val channelId: String, val guildId: String, 
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
-class ReportService(val jda: JDA, private val config: Configuration) {
+class ReportService(val jda: JDA, private val config: Configuration, val loggingService: LoggingService) {
 
     private val reportDir = File("reports/")
     private val gson = GsonBuilder().setPrettyPrinting().create()
@@ -59,6 +59,7 @@ class ReportService(val jda: JDA, private val config: Configuration) {
 
             val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap(), firstMessage.id)
             reports.add(newReport)
+            loggingService.logMemberOpen(newReport)
             writeReportToFile(newReport)
 
             queuedReports.removeAll { it.user == user.id }
