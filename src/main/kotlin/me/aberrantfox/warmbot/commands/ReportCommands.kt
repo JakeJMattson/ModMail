@@ -5,7 +5,7 @@ import me.aberrantfox.warmbot.extensions.archiveString
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.TextChannel
 
-@CommandSet
+@CommandSet("report")
 fun reportCommands(reportService: ReportService, configuration: Configuration) = commands {
     command("close") {
         description = "Close the report channel that this command is invoked in. Alternatively, delete the channel."

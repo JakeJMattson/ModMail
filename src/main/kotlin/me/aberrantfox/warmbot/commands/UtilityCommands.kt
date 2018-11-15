@@ -6,20 +6,12 @@ import me.aberrantfox.kjdautils.extensions.jda.fullName
 import java.awt.Color
 import java.util.*
 
-object Project {
-    data class Properties(val version: String, val author: String, val repository: String)
-    val properties: Properties
+private data class Properties(val version: String, val author: String, val repository: String)
+private val propFile = Properties::class.java.getResource("/properties.json").readText()
+private val Project = Gson().fromJson(propFile, Properties::class.java)
+private val startTime = Date()
 
-    init {
-        val propertiesClass = Properties::class.java
-        val propFile = propertiesClass.getResource("/properties.json").readText()
-        properties = Gson().fromJson(propFile, propertiesClass)
-    }
-}
-
-val startTime = Date()
-
-@CommandSet
+@CommandSet("utility")
 fun utilityCommands() = commands {
     command("ping") {
         description = "Check the status of the bot."
@@ -29,23 +21,23 @@ fun utilityCommands() = commands {
     }
 
     command("version") {
-        description = "Display the bot version -- this is updated via maven filtering."
+        description = "Display the bot version."
         execute {
-            it.respond("**Running version**: ${Project.properties.version}")
+            it.respond("**Running version**: ${Project.version}")
         }
     }
 
     command("author") {
-        description = "Display project author -- this is updated via maven filtering."
+        description = "Display project author."
         execute {
-            it.respond("**Project author**: ${Project.properties.author}")
+            it.respond("**Project author**: ${Project.author}")
         }
     }
 
     command("source") {
         description = "Display the source code via a GitLab link."
         execute {
-            it.respond(Project.properties.repository)
+            it.respond(Project.repository)
         }
     }
 
@@ -55,12 +47,12 @@ fun utilityCommands() = commands {
             it.respond(embed {
                 title(it.jda.selfUser.fullName())
                 description("A Discord report management bot.")
-                setColor(Color.red)
+                setColor(Color.green)
                 setThumbnail(it.jda.selfUser.effectiveAvatarUrl)
 
                 field {
                     name = "Creator"
-                    value = Project.properties.author
+                    value = Project.author
                     inline = false
                 }
                 field {
@@ -69,8 +61,13 @@ fun utilityCommands() = commands {
                     inline = false
                 }
                 field {
-                    name = "Repository link"
-                    value = Project.properties.repository
+                    name = "Source"
+                    value = Project.repository
+                    inline = false
+                }
+                field {
+                    name = "Version"
+                    value = Project.version
                     inline = false
                 }
             })
