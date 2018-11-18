@@ -2,9 +2,9 @@ package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
+import me.aberrantfox.kjdautils.internal.command.ConversationService
 import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.extensions.fullContent
-import me.aberrantfox.warmbot.services.ConversationService
 import me.aberrantfox.warmbot.services.ReportService
 import net.dv8tion.jda.core.entities.*
 
