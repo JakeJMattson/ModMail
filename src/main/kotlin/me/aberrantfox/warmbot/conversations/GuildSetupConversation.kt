@@ -1,21 +1,15 @@
 package me.aberrantfox.warmbot.conversations
 
 
-import me.aberrantfox.kjdautils.api.dsl.embed
-import me.aberrantfox.kjdautils.internal.command.arguments.RoleArg
-import me.aberrantfox.kjdautils.internal.command.arguments.TextChannelArg
+import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.warmbot.commands.ChannelCategoryArg
-import me.aberrantfox.warmbot.dsl.Convo
-import me.aberrantfox.warmbot.dsl.conversation
-import me.aberrantfox.warmbot.services.GuildConfiguration
-import me.aberrantfox.warmbot.services.saveConfiguration
-import net.dv8tion.jda.core.entities.Category
-import net.dv8tion.jda.core.entities.Role
-import net.dv8tion.jda.core.entities.TextChannel
+import me.aberrantfox.warmbot.services.*
+import net.dv8tion.jda.core.entities.*
 import java.awt.Color
 
 @Convo
-var guildSetupConversation = conversation {
+fun guildSetupConversation() = conversation {
 
     name = "guild-setup"
     description = "Conversation that takes place with a user whenever the bot joins a new guild."
@@ -66,9 +60,13 @@ var guildSetupConversation = conversation {
         val staffRole = it.responses.component3() as Role
 
         if (reportCategory.guild.id == it.guildId && archiveChannel.guild.id == it.guildId && staffRole.guild.id == it.guildId) {
-            it.config.guildConfigurations.add(
-                    GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, "!!", staffRole.name))
-            saveConfiguration(it.config)
+
+            val config = loadConfiguration()!!
+
+            config.guildConfigurations.add(
+                GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, "!!", staffRole.name))
+
+            saveConfiguration(config)
 
             it.respond(
                     "Congratulations, I'm successfully configured for use. Remember, as the guild owner, you can adjust these values at any time.")

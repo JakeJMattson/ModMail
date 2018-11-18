@@ -17,7 +17,7 @@ data class Report(val user: String, val channelId: String, val guildId: String, 
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
-class ReportService(val jda: JDA, private val config: Configuration) {
+class ReportService(val jda: JDA, val config: Configuration) {
 
     private val reportDir = File("reports/")
     private val gson = GsonBuilder().setPrettyPrinting().create()
