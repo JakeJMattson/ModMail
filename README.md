@@ -125,3 +125,6 @@ You will have to add an additional guild configuration for each guild you intend
 | Author    | (none)    | Display the author of the bot.            |
 | Ping      | (none)    | Display the status of the bot.            |
 | Source    | (none)    | Display the source code via a GitLab link.|
+| Version   | (none)    | Display the current running version.      |
+| BotInfo   | (none)    | Display a summary or bot information.     |
+| Uptime    | (none)    | Display the amount of time online.        |
