@@ -5,7 +5,7 @@ import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
 
-@CommandSet("Configuration")
+@CommandSet("configuration")
 fun configurationCommands(conversationService: ConversationService, configuration: Configuration) = commands {
 
     command("setreportcategory") {
