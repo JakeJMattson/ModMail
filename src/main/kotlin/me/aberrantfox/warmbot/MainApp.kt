@@ -1,12 +1,9 @@
 package me.aberrantfox.warmbot
 
 import me.aberrantfox.kjdautils.api.startBot
-import me.aberrantfox.kjdautils.internal.command.ConversationService
-import me.aberrantfox.warmbot.conversations.guildSetupConversation
 import me.aberrantfox.warmbot.listeners.*
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.JDA
-import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.*
 import net.dv8tion.jda.core.entities.Game
 
 
@@ -22,18 +19,19 @@ fun main(args: Array<String>) {
 }
 
 private fun start(config: Configuration) = startBot(config.token) {
+
     val reportService = ReportService(jda, config).apply {  loadReports() }
-    val conversationService = ConversationService(jda, this.config).apply {
-        registerConversations("me.aberrant.warmbot.conversations")
-    }
 
-    registerInjectionObject(reportService, config, config.guildConfigurations, conversationService)
+	registerInjectionObject(reportService, config)
+	registerInjectionObject(conversationService, config)
 
-    configure {
-        prefix = "!!"
-        commandPath = "me.aberrantfox.warmbot.commands"
-        listenerPath = "me.aberrantfox.warmbot.listeners"
-    }
+	val warmbot = "me.aberrantfox.warmbot."
+	configure {
+		prefix = "!!"
+		commandPath = warmbot + "commands"
+		listenerPath = warmbot + "listeners"
+		conversationPath = warmbot + "conversations"
+	}
 
     registerCommandPreconditions(produceIsStaffMemberPrecondition(config.guildConfigurations), produceIsGuildOwnerPrecondition())
 
