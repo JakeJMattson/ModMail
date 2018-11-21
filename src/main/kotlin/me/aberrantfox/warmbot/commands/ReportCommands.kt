@@ -53,10 +53,12 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
 					reportCategory.createTextChannel(targetUser.name).queue { channel ->
 						channel as TextChannel
 
-						if (message.isEmpty())
-							message = "<No initial message provided>"
-						else
+						var initialMessage = "<No initial message provided>"
+
+						if (message.isNotEmpty()) {
+							initialMessage = message
 							targetUser.sendPrivateMessage(message, DefaultLogger())
+						}
 
 						channel.sendMessage(
 							embed {
@@ -66,13 +68,12 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
 								addField("This report was opened by a staff member!",
 									"${event.author.descriptor()} :: ${event.author.asMention}",
 									false)
-								addField("Initial Message", message, false)
+								addField("Initial Message", initialMessage, false)
 								setColor(Color.green)
 							}).queue()
 
 						val newReport = Report(targetUser.id, channel.id, guild.id, ConcurrentHashMap(), null)
-						reportService.reports.add(newReport)
-						reportService.writeReportToFile(newReport)
+						reportService.addReport(newReport)
 
 						event.respond("Channel opened at: ${channel.asMention}")
 					}

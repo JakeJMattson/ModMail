@@ -65,6 +65,11 @@ class ReportService(val jda: JDA, private val config: Configuration) {
         }
     }
 
+    fun addReport(report: Report) {
+        reports.add(report)
+        writeReportToFile(report)
+    }
+
     fun removeReport(channel: String) {
         reports.removeAll { it.channelId == channel }
 
