@@ -20,7 +20,7 @@ fun reportCommands(configuration: Configuration, reportService: ReportService, l
 
             reportService.sendReportClosedEmbed(reportService.getReportByChannel(it.channel.id))
             (it.channel as TextChannel).delete().queue()
-            loggingService.logClose(report, it.author)
+            loggingService.close(report, it.author)
         }
     }
 
@@ -44,7 +44,7 @@ fun reportCommands(configuration: Configuration, reportService: ReportService, l
                 reportService.sendReportClosedEmbed(it)
                 reportService.jda.getTextChannelById(it.channelId).delete().queue()
                 closeCount++
-                loggingService.logClose(it, author)
+                loggingService.close(it, author)
             }
 
             it.respond("$closeCount report(s) closed successfully.")
@@ -74,7 +74,7 @@ fun reportCommands(configuration: Configuration, reportService: ReportService, l
                 targetChannel.delete().queue()
             }
 
-            loggingService.logArchive(report, it.author)
+            loggingService.archive(report, it.author)
         }
     }
 }

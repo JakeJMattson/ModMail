@@ -12,7 +12,7 @@ class LoggingService(val jda: JDA, private val config: Configuration) {
 	private val archiveFormat = "Report (%s) archived by %s"
 	private val closeFormat = "Report (%s) closed by %s"
 
-	fun logStartup() {
+	fun startup() {
 		config.guildConfigurations.filter { it.loggingConfiguration != null }.forEach {
 			val logConfig = it.loggingConfiguration!!
 
@@ -21,21 +21,21 @@ class LoggingService(val jda: JDA, private val config: Configuration) {
 		}
 	}
 
-	fun logMemberOpen(report: Report) {
+	fun memberOpen(report: Report) {
 		val logConfig = getLogConfig(report.guildId) ?: return
 
 		if (logConfig.logMemberOpen)
 			log(logConfig.loggingChannel, memberOpenFormat.format(getDescriptor(report)))
 	}
 
-	fun logArchive(report: Report, staff: User) {
+	fun archive(report: Report, staff: User) {
 		val logConfig = getLogConfig(report.guildId) ?: return
 
 		if (logConfig.logArchive)
 			log(logConfig.loggingChannel, archiveFormat.format(getDescriptor(report), staff.descriptor()))
 	}
 
-	fun logClose(report: Report, staff: User) {
+	fun close(report: Report, staff: User) {
 		val logConfig = getLogConfig(report.guildId) ?: return
 
 		if (logConfig.logClose)
