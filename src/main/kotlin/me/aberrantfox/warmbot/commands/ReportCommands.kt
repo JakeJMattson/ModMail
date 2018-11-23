@@ -12,12 +12,43 @@ import java.util.concurrent.ConcurrentHashMap
 
 @CommandSet
 fun reportCommands(reportService: ReportService, configuration: Configuration) = commands {
+
+	fun openReport(event: CommandEvent, targetUser: User, message: String, guildId: String) {
+		val guildConfiguration = configuration.guildConfigurations.first { g -> g.guildId == guildId }
+		val reportCategory = reportService.jda.getCategoryById(guildConfiguration.reportCategory)
+
+		reportCategory.createTextChannel(targetUser.name).queue { channel ->
+			channel as TextChannel
+
+			var initialMessage = "<No initial message provided>"
+
+			if (message.isNotEmpty()) {
+				initialMessage = message
+				targetUser.sendPrivateMessage(message, DefaultLogger())
+			}
+
+			channel.sendMessage(embed {
+				setColor(Color.green)
+				addField("New Report Opened!",
+					"${targetUser.descriptor()} :: ${targetUser.asMention}",
+					false)
+				addField("This report was opened by a staff member!",
+					"${event.author.descriptor()} :: ${event.author.asMention}",
+					false)
+				addField("Initial Message", initialMessage, false)
+			}).queue()
+
+			reportService.addReport(Report(targetUser.id, channel.id, guildId, ConcurrentHashMap()))
+			event.respond("Channel opened at: ${channel.asMention}")
+		}
+	}
+
 	command("open") {
 		description = "Open a report with the target user and send the provided initial message."
 		expect(arg(UserArg), arg(SentenceArg("Initial Message"), optional = true, default = ""))
 		execute { event ->
 			val targetUser = event.args.component1() as User
-			var message = event.args.component2() as String
+			val message = event.args.component2() as String
 			val guild = event.message.guild
 
 			if (targetUser.isBot) {
@@ -46,35 +77,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
 
 			targetUser.openPrivateChannel().queue {
 				it.sendMessage(userEmbed).queue({
-					val guildConfiguration = configuration.guildConfigurations.first { g -> g.guildId == guild.id }
-					val reportCategory = reportService.jda.getCategoryById(guildConfiguration.reportCategory)
-
-					reportCategory.createTextChannel(targetUser.name).queue { channel ->
-						channel as TextChannel
-
-						var initialMessage = "<No initial message provided>"
-
-						if (message.isNotEmpty()) {
-							initialMessage = message
-							targetUser.sendPrivateMessage(message, DefaultLogger())
-						}
-
-						channel.sendMessage(
-							embed {
-								addField("New Report Opened!",
-									"${targetUser.descriptor()} :: ${targetUser.asMention}",
-									false)
-								addField("This report was opened by a staff member!",
-									"${event.author.descriptor()} :: ${event.author.asMention}",
-									false)
-								addField("Initial Message", initialMessage, false)
-								setColor(Color.green)
-							}).queue()
-
-						reportService.addReport(Report(targetUser.id, channel.id, guild.id, ConcurrentHashMap()))
-
-						event.respond("Channel opened at: ${channel.asMention}")
-					}
+					openReport(event, targetUser, message, guild.id)
 				},
 				{
 					event.respond("Unable to contact the target user. Direct messages are disabled.")
