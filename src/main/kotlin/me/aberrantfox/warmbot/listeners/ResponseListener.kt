@@ -1,16 +1,17 @@
 package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
-import me.aberrantfox.warmbot.services.GuildConfiguration
-import me.aberrantfox.warmbot.services.ReportService
+import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-class ResponseListener(private val reportService: ReportService, private val guildConfigurations: List<GuildConfiguration>) {
+class ResponseListener(private val reportService: ReportService, private val configuration: Configuration) {
     @Subscribe
     fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
         if (event.author.isBot) {
             return
         }
+
+        val guildConfigurations = configuration.guildConfigurations
 
         if(!guildConfigurations.any { g -> g.guildId == event.guild.id})
             return
