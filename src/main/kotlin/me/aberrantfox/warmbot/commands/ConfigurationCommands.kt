@@ -1,6 +1,7 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.internal.command.ConversationService
 import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
