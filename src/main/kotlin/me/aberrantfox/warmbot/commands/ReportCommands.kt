@@ -46,7 +46,6 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
 
 			targetUser.openPrivateChannel().queue {
 				it.sendMessage(userEmbed).queue({
-
 					val guildConfiguration = configuration.guildConfigurations.first { g -> g.guildId == guild.id }
 					val reportCategory = reportService.jda.getCategoryById(guildConfiguration.reportCategory)
 
@@ -72,8 +71,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
 								setColor(Color.green)
 							}).queue()
 
-						val newReport = Report(targetUser.id, channel.id, guild.id, ConcurrentHashMap(), null)
-						reportService.addReport(newReport)
+						reportService.addReport(Report(targetUser.id, channel.id, guild.id, ConcurrentHashMap()))
 
 						event.respond("Channel opened at: ${channel.asMention}")
 					}
