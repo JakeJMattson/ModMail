@@ -13,7 +13,7 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-data class Report(val user: String, val channelId: String, val guildId: String, val messages: MutableMap<String, String>, var queuedMessageId: String?)
+data class Report(val user: String, val channelId: String, val guildId: String, val messages: MutableMap<String, String>, var queuedMessageId: String? = null)
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
@@ -63,6 +63,11 @@ class ReportService(val jda: JDA, val config: Configuration) {
 
             queuedReports.removeAll { it.user == user.id }
         }
+    }
+
+    fun addReport(report: Report) {
+        reports.add(report)
+        writeReportToFile(report)
     }
 
     fun removeReport(channel: String) {
