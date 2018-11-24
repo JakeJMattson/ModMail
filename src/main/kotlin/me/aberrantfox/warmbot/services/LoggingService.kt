@@ -12,7 +12,7 @@ class LoggingService(val jda: JDA, private val config: Configuration) {
 	private val archiveFormat = "Report (%s) archived by %s"
 	private val closeFormat = "Report (%s) closed by %s"
 
-	fun startup() {
+	fun emitReadyMessage() {
 		config.guildConfigurations.filter { it.loggingConfiguration != null }.forEach {
 			val logConfig = it.loggingConfiguration!!
 
