@@ -3,11 +3,12 @@ package me.aberrantfox.warmbot.services
 import com.google.gson.GsonBuilder
 import java.io.File
 
-data class LoggingConfiguration(var loggingChannel: String = "insert-id",
+data class LoggingConfiguration(val loggingChannel: String = "insert-id",
                                 val logStartup: Boolean = true,
-                                var logMemberOpen: Boolean = true,
-                                var logArchive: Boolean = true,
-                                var logClose: Boolean = true)
+                                val logMemberOpen: Boolean = true,
+                                val logStaffOpen: Boolean = true,
+                                val logArchive: Boolean = true,
+                                val logClose: Boolean = true)
 
 data class GuildConfiguration(var guildId: String = "insert-id",
                               var reportCategory: String = "insert-id",

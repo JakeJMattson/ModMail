@@ -9,6 +9,7 @@ class LoggingService(val jda: JDA, private val config: Configuration) {
 
 	private val startupFormat = "Bot successfully initialized!"
 	private val memberOpenFormat = "New report opened by %s"
+	private val staffOpenFormat = "Report (%s) opened by %s"
 	private val archiveFormat = "Report (%s) archived by %s"
 	private val closeFormat = "Report (%s) closed by %s"
 
@@ -26,6 +27,13 @@ class LoggingService(val jda: JDA, private val config: Configuration) {
 
 		if (logConfig.logMemberOpen)
 			log(logConfig.loggingChannel, memberOpenFormat.format(getDescriptor(report)))
+	}
+
+	fun staffOpen(report: Report, staff: User) {
+		val logConfig = getLogConfig(report.guildId) ?: return
+
+		if (logConfig.logStaffOpen)
+			log(logConfig.loggingChannel, staffOpenFormat.format(getDescriptor(report), staff.descriptor()))
 	}
 
 	fun archive(report: Report, staff: User) {
