@@ -53,7 +53,7 @@ class LoggingService(val jda: JDA, private val config: Configuration) {
 	private fun getLogConfig(guildId: String)
 			= config.guildConfigurations.first { guildId == it.guildId }.loggingConfiguration
 
-	private fun getDescriptor(report: Report) = report.user.idToUser(jda).descriptor()
+	private fun getDescriptor(report: Report) = report.userId.idToUser(jda).descriptor()
 
 	private fun log(logChannelId: String, message: String)= jda.getTextChannelById(logChannelId).sendMessage(message).queue()
 }

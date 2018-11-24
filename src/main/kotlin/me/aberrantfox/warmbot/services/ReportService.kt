@@ -13,7 +13,11 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-data class Report(val user: String, val channelId: String, val guildId: String, val messages: MutableMap<String, String>, var queuedMessageId: String? = null)
+data class Report(val userId: String,
+                  val channelId: String,
+                  val guildId: String,
+                  val messages: MutableMap<String, String>,
+                  var queuedMessageId: String? = null)
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
@@ -26,16 +30,16 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
     private val queuedReports = Vector<QueuedReport>()
 
     fun isReportChannel(channelId: String) = reports.any { it.channelId == channelId }
-    fun hasReportChannel(userId: String) = reports.any { it.user == userId } || queuedReports.any { it.user == userId }
+    fun hasReportChannel(userId: String) = reports.any { it.userId == userId } || queuedReports.any { it.user == userId }
     fun getReportByChannel(channelId: String): Report = reports.first { it.channelId == channelId }
-    fun getReportByUserId(userId: String): Report = reports.first { it.user == userId }
+    fun getReportByUserId(userId: String): Report = reports.first { it.userId == userId }
 
     fun addReport(user: User, guild: Guild, firstMessage: Message) {
 
         val guildConfiguration = config.guildConfigurations.first { g -> g.guildId == guild.id }
         val reportCategory = jda.getCategoryById(guildConfiguration.reportCategory)
 
-        if (reports.none { it.user == user.id }) {
+        if (reports.none { it.userId == user.id }) {
             if (reports.filter { it.guildId == guild.id }.size == config.maxOpenReports)
                 return
         }
@@ -82,8 +86,8 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
         val user = userObject.id
         val safeMessage = message.fullContent().trim().sanitiseMentions()
 
-        if (reports.any { it.user == user }) {
-            val report = reports.first { it.user == user }
+        if (reports.any { it.userId == user }) {
+            val report = reports.first { it.userId == user }
             jda.getTextChannelById(report.channelId).sendMessage(safeMessage).queue()
             report.queuedMessageId = message.id
 
@@ -105,7 +109,7 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
         val report = reports.firstOrNull { it.channelId == channelId }
 
         if (report != null) {
-            jda.getUserById(report.user).sendPrivateMessage(message.fullContent(), DefaultLogger())
+            jda.getUserById(report.userId).sendPrivateMessage(message.fullContent(), DefaultLogger())
             report.queuedMessageId = message.id
         }
     }
@@ -137,7 +141,7 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
     }
 
     fun sendReportClosedEmbed(report: Report) {
-        jda.getUserById(report.user).sendPrivateMessage(embed {
+        jda.getUserById(report.userId).sendPrivateMessage(embed {
             setColor(Color.LIGHT_GRAY)
             setAuthor("The staff of ${jda.getGuildById(report.guildId).name} have closed this report.")
             setDescription("If you continue to reply, a new report will be created.")
