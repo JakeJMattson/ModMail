@@ -7,13 +7,7 @@ import net.dv8tion.jda.core.*
 import net.dv8tion.jda.core.entities.Game
 
 fun main(args: Array<String>) {
-    val config = loadConfiguration()
-
-    if (config == null) {
-        println("Please fill in the configuration file (config/config.json)")
-        return
-    }
-
+    val config = loadConfiguration() ?: return
     start(config)
 }
 
