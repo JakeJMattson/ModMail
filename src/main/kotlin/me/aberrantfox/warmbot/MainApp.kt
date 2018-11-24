@@ -43,7 +43,7 @@ private fun start(config: Configuration) = startBot(config.token) {
 
     jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
 
-    loggingService.logStartup()
+    loggingService.startup()
 }
 
 private fun addOverrides(jda: JDA, config: GuildConfiguration) {

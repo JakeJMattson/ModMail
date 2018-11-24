@@ -59,7 +59,7 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
 
             val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap(), firstMessage.id)
             reports.add(newReport)
-            loggingService.logMemberOpen(newReport)
+            loggingService.memberOpen(newReport)
             writeReportToFile(newReport)
 
             queuedReports.removeAll { it.user == user.id }
