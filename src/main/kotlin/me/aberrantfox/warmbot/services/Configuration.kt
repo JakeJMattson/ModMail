@@ -3,13 +3,22 @@ package me.aberrantfox.warmbot.services
 import com.google.gson.GsonBuilder
 import java.io.File
 
+data class LoggingConfiguration(var loggingChannel: String = "insert-id",
+                                val logStartup: Boolean = true,
+                                var logMemberOpen: Boolean = true,
+                                var logArchive: Boolean = true,
+                                var logClose: Boolean = true)
+
 data class GuildConfiguration(var guildId: String = "insert-id",
                               var reportCategory: String = "insert-id",
                               var archiveChannel: String = "insert-id",
                               var prefix: String = "!",
-                              var staffRoleName: String = "Staff")
+                              var staffRoleName: String = "Staff",
+                              var loggingConfiguration: LoggingConfiguration? = LoggingConfiguration())
 
-data class Configuration(val token: String, val maxOpenReports: Int, val recoverReports: Boolean,
+data class Configuration(val token: String,
+                         val maxOpenReports: Int,
+                         val recoverReports: Boolean,
                          var guildConfigurations: MutableList<GuildConfiguration>)
 
 private val gson = GsonBuilder().setPrettyPrinting().create()

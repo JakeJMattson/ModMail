@@ -20,10 +20,12 @@ fun main(args: Array<String>) {
 
 private fun start(config: Configuration) = startBot(config.token) {
 
+    val loggingService = LoggingService(jda, config)
     val reportService = ReportService(jda, config).apply {  loadReports() }
 
-	registerInjectionObject(reportService, config)
-	registerInjectionObject(conversationService, config)
+    registerInjectionObject(reportService, config)
+    registerInjectionObject(conversationService, config)
+    registerInjectionObject(loggingService, config)
 
 	val warmbot = "me.aberrantfox.warmbot."
 	configure {
@@ -40,6 +42,8 @@ private fun start(config: Configuration) = startBot(config.token) {
     }
 
     jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
+
+    loggingService.emitReadyMessage()
 }
 
 private fun addOverrides(jda: JDA, config: GuildConfiguration) {

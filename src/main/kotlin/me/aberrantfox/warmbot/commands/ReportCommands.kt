@@ -11,7 +11,7 @@ import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
 @CommandSet("report")
-fun reportCommands(reportService: ReportService, configuration: Configuration) = commands {
+fun reportCommands(reportService: ReportService, configuration: Configuration, loggingService: LoggingService) = commands {
 
 	fun openReport(event: CommandEvent, targetUser: User, message: String, guildId: String) {
 		val guildConfiguration = configuration.guildConfigurations.first { g -> g.guildId == guildId }
@@ -94,8 +94,12 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
                         "Nice try, but you can't close a channel that isn't a report. That would be silly. Don't do silly things.")
                 return@execute
             }
+
+            val report = reportService.getReportByChannel(it.channel.id)
+
             reportService.sendReportClosedEmbed(reportService.getReportByChannel(it.channel.id))
             (it.channel as TextChannel).delete().queue()
+            loggingService.close(report, it.author)
         }
     }
 
@@ -106,6 +110,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
             val reports = reportService.reports
             val currentGuild = it.message.guild.id
             val reportsFromGuild = reports.filter { it.guildId == currentGuild }
+            val author = it.author
 
             if (reportsFromGuild.isEmpty()) {
                 it.respond("There are no reports to close.")
@@ -118,6 +123,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
                 reportService.sendReportClosedEmbed(it)
                 reportService.jda.getTextChannelById(it.channelId).delete().queue()
                 closeCount++
+                loggingService.close(it, author)
             }
 
             it.respond("$closeCount report(s) closed successfully.")
@@ -139,13 +145,15 @@ fun reportCommands(reportService: ReportService, configuration: Configuration) =
 
             val archiveChannel = it.jda.getTextChannelById(relevantGuild.archiveChannel)
             val targetChannel = it.jda.getTextChannelById(it.channel.id)
-            val reportChannel = reportService.getReportByChannel(it.channel.id)
+            val report = reportService.getReportByChannel(it.channel.id)
 
             archiveChannel.sendFile(it.channel.archiveString(relevantGuild.prefix).toByteArray(),
                     "$${it.channel.name}.txt").queue {
-                reportService.sendReportClosedEmbed(reportChannel)
+                reportService.sendReportClosedEmbed(report)
                 targetChannel.delete().queue()
             }
+
+            loggingService.archive(report, it.author)
         }
     }
 }
