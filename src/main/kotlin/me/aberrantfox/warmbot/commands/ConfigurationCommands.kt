@@ -22,10 +22,8 @@ fun configurationCommands(conversationService: ConversationService, configuratio
 
                 saveConfiguration(configuration)
                 it.respond("Successfully set report category to :: ${reportCategory.name}")
-            } else {
-                it.respond(
-                        "No guild configuration found, please go through the setup process before using this command.")
-            }
+            } else
+                displayNoConfig(it)
 
             return@execute
         }
@@ -43,10 +41,9 @@ fun configurationCommands(conversationService: ConversationService, configuratio
 
                 saveConfiguration(configuration)
                 it.respond("Successfully the archive channel to :: ${archiveChannel.name}")
-            } else {
-                it.respond(
-                        "No guild configuration found, please go through the setup process before using this command.")
-            }
+            } else
+                displayNoConfig(it)
+
             return@execute
         }
     }
@@ -65,10 +62,8 @@ fun configurationCommands(conversationService: ConversationService, configuratio
 
                     saveConfiguration(configuration)
                     it.respond("Successfully set the staff role to :: ${staffRole.name}")
-                } else {
-                    it.respond(
-                            "No guild configuration found, please go through the setup process before using this command.")
-                }
+                } else
+                    displayNoConfig(it)
             } else {
                 it.respond("Could not find a role named :: $staffRoleName")
             }
@@ -79,10 +74,10 @@ fun configurationCommands(conversationService: ConversationService, configuratio
     command("setup") {
         description = "Initiate a setup conversation to set all required values for this bot."
         execute {
-            val eventChannel = it.channel as TextChannel
+            val guildId = it.guild!!.id
 
-            if (!hasGuildConfiguration(configuration.guildConfigurations, eventChannel.guild.id))
-                conversationService.createConversation(it.author.id, eventChannel.guild.id, "guild-setup")
+            if (!hasGuildConfiguration(configuration.guildConfigurations, guildId))
+                conversationService.createConversation(it.author.id, guildId, "guild-setup")
             else
                 it.respond(
                         "I'm already setup for use in this guild, please use the appropriate commands to change specific settings.")
@@ -91,3 +86,5 @@ fun configurationCommands(conversationService: ConversationService, configuratio
     }
 }
 
+fun displayNoConfig(event: CommandEvent)
+        = event.respond("No guild configuration found, please go through the setup process before using this command.")
