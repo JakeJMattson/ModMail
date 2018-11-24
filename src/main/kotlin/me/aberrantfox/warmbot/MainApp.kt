@@ -6,7 +6,6 @@ import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.*
 import net.dv8tion.jda.core.entities.Game
 
-
 fun main(args: Array<String>) {
     val config = loadConfiguration()
 
@@ -21,11 +20,10 @@ fun main(args: Array<String>) {
 private fun start(config: Configuration) = startBot(config.token) {
 
     val loggingService = LoggingService(jda, config)
-    val reportService = ReportService(jda, config).apply {  loadReports() }
+    val reportService = ReportService(jda, config, loggingService).apply {  loadReports() }
 
-    registerInjectionObject(reportService, config)
-    registerInjectionObject(conversationService, config)
-    registerInjectionObject(loggingService, config)
+    registerInjectionObject(loggingService, reportService, conversationService, config)
+	registerCommandPreconditions(produceIsStaffMemberPrecondition(config.guildConfigurations), produceIsGuildOwnerPrecondition())
 
 	val warmbot = "me.aberrantfox.warmbot."
 	configure {
@@ -35,14 +33,11 @@ private fun start(config: Configuration) = startBot(config.token) {
 		conversationPath = warmbot + "conversations"
 	}
 
-    registerCommandPreconditions(produceIsStaffMemberPrecondition(config.guildConfigurations), produceIsGuildOwnerPrecondition())
-
     config.guildConfigurations.forEach {
         addOverrides(jda, it)
     }
 
     jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
-
     loggingService.emitReadyMessage()
 }
 
