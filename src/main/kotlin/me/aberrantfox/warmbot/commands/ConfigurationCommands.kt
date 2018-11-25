@@ -14,16 +14,16 @@ fun configurationCommands(conversationService: ConversationService, configuratio
         expect(ChannelCategoryArg)
         execute {
             val reportCategory = it.args.component1() as Category
-            val eventChannel = it.channel as TextChannel
+            val guildConfig = getGuildConfig(configuration.guildConfigurations, reportCategory.guild.id)
 
-            if (hasGuildConfiguration(configuration.guildConfigurations, eventChannel.guild.id)) {
-                configuration.guildConfigurations.first { g -> g.guildId == eventChannel.guild.id }.reportCategory =
-                        reportCategory.id
-
-                saveConfiguration(configuration)
-                it.respond("Successfully set report category to :: ${reportCategory.name}")
-            } else
+            if (guildConfig == null) {
                 displayNoConfig(it)
+                return@execute
+            }
+
+            guildConfig.reportCategory = reportCategory.id
+            saveConfiguration(configuration)
+            it.respond("Successfully set report category to :: ${reportCategory.name}")
 
             return@execute
         }
@@ -34,15 +34,16 @@ fun configurationCommands(conversationService: ConversationService, configuratio
         expect(TextChannelArg)
         execute {
             val archiveChannel = it.args.component1() as TextChannel
+            val guildConfig = getGuildConfig(configuration.guildConfigurations, archiveChannel.guild.id)
 
-            if (hasGuildConfiguration(configuration.guildConfigurations, archiveChannel.guild.id)) {
-                configuration.guildConfigurations.first { g -> g.guildId == archiveChannel.guild.id }.archiveChannel =
-                        archiveChannel.id
-
-                saveConfiguration(configuration)
-                it.respond("Successfully the archive channel to :: ${archiveChannel.name}")
-            } else
+            if (guildConfig == null) {
                 displayNoConfig(it)
+                return@execute
+            }
+
+            guildConfig.archiveChannel = archiveChannel.id
+            saveConfiguration(configuration)
+            it.respond("Successfully the archive channel to :: ${archiveChannel.name}")
 
             return@execute
         }
@@ -55,18 +56,22 @@ fun configurationCommands(conversationService: ConversationService, configuratio
             val staffRoleName = it.args.component1() as String
             val staffRole = it.jda.getRolesByName(staffRoleName, true).firstOrNull()
 
-            if (staffRole != null) {
-                if (hasGuildConfiguration(configuration.guildConfigurations, staffRole.guild.id)) {
-                    configuration.guildConfigurations.first { g -> g.guildId == staffRole.guild.id }.staffRoleName =
-                            staffRole.name
-
-                    saveConfiguration(configuration)
-                    it.respond("Successfully set the staff role to :: ${staffRole.name}")
-                } else
-                    displayNoConfig(it)
-            } else {
+            if (staffRole == null) {
                 it.respond("Could not find a role named :: $staffRoleName")
+                return@execute
             }
+
+            val guildConfig = getGuildConfig(configuration.guildConfigurations, it.guild!!.id)
+
+            if (guildConfig == null) {
+                displayNoConfig(it)
+                return@execute
+            }
+            
+            guildConfig.staffRoleName = staffRole.name
+            saveConfiguration(configuration)
+            it.respond("Successfully set the staff role to :: ${staffRole.name}")
+
             return@execute
         }
     }
