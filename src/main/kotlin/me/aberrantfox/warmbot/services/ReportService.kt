@@ -26,13 +26,14 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
     private val reportDir = File("reports/")
     private val gson = GsonBuilder().setPrettyPrinting().create()
 
-    val reports = Vector<Report>()
+    private val reports = Vector<Report>()
     private val queuedReports = Vector<QueuedReport>()
 
     fun isReportChannel(channelId: String) = reports.any { it.channelId == channelId }
     fun hasReportChannel(userId: String) = reports.any { it.userId == userId } || queuedReports.any { it.user == userId }
     fun getReportByChannel(channelId: String): Report = reports.first { it.channelId == channelId }
     fun getReportByUserId(userId: String): Report = reports.first { it.userId == userId }
+    fun getReportsFromGuild(guildId: String) = reports.filter { it.guildId == guildId }
 
     fun addReport(user: User, guild: Guild, firstMessage: Message) {
 
@@ -73,13 +74,6 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
     fun addReport(report: Report) {
         reports.add(report)
         writeReportToFile(report)
-    }
-
-    fun removeReport(channel: String) {
-        reports.removeAll { it.channelId == channel }
-
-        if (config.recoverReports)
-            reportDir.listFiles().first { file -> file.name.startsWith(channel) }.delete()
     }
 
     fun receiveFromUser(userObject: User, message: Message) {
@@ -140,7 +134,16 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
         }
     }
 
-    fun sendReportClosedEmbed(report: Report) {
+    fun getCommonGuilds(userObject: User): List<Guild> {
+        return userObject.mutualGuilds.filter { g -> g.id in config.guildConfigurations.associateBy { it.guildId } }
+    }
+
+    fun closeReport(report: Report) {
+        sendReportClosedEmbed(report)
+        removeReport(report)
+    }
+
+    private fun sendReportClosedEmbed(report: Report) {
         jda.getUserById(report.userId).sendPrivateMessage(embed {
             setColor(Color.LIGHT_GRAY)
             setAuthor("The staff of ${jda.getGuildById(report.guildId).name} have closed this report.")
@@ -148,8 +151,11 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
         }, DefaultLogger())
     }
 
-    fun getCommonGuilds(userObject: User): List<Guild> {
-        return userObject.mutualGuilds.filter { g -> g.id in config.guildConfigurations.associateBy { it.guildId } }
+    private fun removeReport(report: Report) {
+        reports.remove(report)
+
+        val file = reportDir.listFiles().firstOrNull { it.name.startsWith(report.channelId) } ?: return
+        file.delete()
     }
 
     fun loadReports() {
