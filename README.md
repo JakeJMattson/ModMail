@@ -62,6 +62,15 @@ Add an additional guild configuration for each guild you intend to support.
 	        "archiveChannel": "ID of channel where archived reports will be sent",
 	        "prefix": "The command prefix for this guild, e.g. !",
 	        "staffRoleName": "Role required to use the bot"
+	        "loggingConfiguration": 
+	        {
+                    "loggingChannel": "ID of channel where messages will be logged",
+                    "logStartup": "log when the bot initializes",
+                    "logMemberOpen": "log when a member open a report",
+                    "logStaffOpen": "log when a staff member open a report",
+                    "logArchive": "log when a report is archived",
+                    "logClose": "log when a report is closed"
+	        }
 	    },
 	    {
 	        <Additional guilds>
