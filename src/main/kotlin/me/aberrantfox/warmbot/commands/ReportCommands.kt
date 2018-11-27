@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
 fun reportCommands(reportService: ReportService, configuration: Configuration, loggingService: LoggingService) = commands {
 
 	fun openReport(event: CommandEvent, targetUser: User, message: String, guildId: String) {
-		val guildConfiguration = configuration.guildConfigurations.first { g -> g.guildId == guildId }
+		val guildConfiguration = configuration.getGuildConfig(guildId)!!
 		val reportCategory = reportService.jda.getCategoryById(guildConfiguration.reportCategory)
 
 		reportCategory.createTextChannel(targetUser.name).queue { channel ->
@@ -135,10 +135,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
                 return@execute
             }
 
-            val relevantGuild = configuration.guildConfigurations.first { g ->
-                g.guildId == reportService.getReportByChannel(it.channel.id).guildId
-            }
-
+            val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
             val archiveChannel = it.jda.getTextChannelById(relevantGuild.archiveChannel)
             val targetChannel = it.jda.getTextChannelById(it.channel.id)
             val report = reportService.getReportByChannel(it.channel.id)

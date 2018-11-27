@@ -1,6 +1,5 @@
 package me.aberrantfox.warmbot.services
 
-import com.google.gson.GsonBuilder
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
@@ -24,8 +23,6 @@ data class QueuedReport(val messages: Vector<String> = Vector(), val user: Strin
 class ReportService(val jda: JDA, private val config: Configuration, val loggingService: LoggingService) {
 
     private val reportDir = File("reports/")
-    private val gson = GsonBuilder().setPrettyPrinting().create()
-
     private val reports = Vector<Report>()
     private val queuedReports = Vector<QueuedReport>()
 
@@ -37,11 +34,11 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
 
     fun addReport(user: User, guild: Guild, firstMessage: Message) {
 
-        val guildConfiguration = config.guildConfigurations.first { g -> g.guildId == guild.id }
+        val guildConfiguration = config.getGuildConfig(guild.id)!!
         val reportCategory = jda.getCategoryById(guildConfiguration.reportCategory)
 
         if (reports.none { it.userId == user.id }) {
-            if (reports.filter { it.guildId == guild.id }.size == config.maxOpenReports)
+            if (getReportsFromGuild(guild.id).size == config.maxOpenReports)
                 return
         }
 
@@ -63,9 +60,8 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
             }
 
             val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap(), firstMessage.id)
-            reports.add(newReport)
+            addReport(newReport)
             loggingService.memberOpen(newReport)
-            writeReportToFile(newReport)
 
             queuedReports.removeAll { it.user == user.id }
         }
@@ -80,8 +76,10 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
         val user = userObject.id
         val safeMessage = message.fullContent().trim().sanitiseMentions()
 
-        if (reports.any { it.userId == user }) {
-            val report = reports.first { it.userId == user }
+        hasReportChannel(user)
+
+        if (hasReportChannel(user)) {
+            val report = getReportByUserId(user)
             jda.getTextChannelById(report.channelId).sendMessage(safeMessage).queue()
             report.queuedMessageId = message.id
 
@@ -100,16 +98,14 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
     }
 
     fun sendToUser(channelId: String, message: Message) {
-        val report = reports.firstOrNull { it.channelId == channelId }
+        val report = getReportByChannel(channelId)
 
-        if (report != null) {
-            jda.getUserById(report.userId).sendPrivateMessage(message.fullContent(), DefaultLogger())
-            report.queuedMessageId = message.id
-        }
+        jda.getUserById(report.userId).sendPrivateMessage(message.fullContent(), DefaultLogger())
+        report.queuedMessageId = message.id
     }
 
-    fun buildGuildChoiceEmbed(commonGuilds: List<Guild>): MessageEmbed {
-        return embed {
+    fun buildGuildChoiceEmbed(commonGuilds: List<Guild>) =
+        embed {
             setColor(Color.CYAN)
             setAuthor("Please choose which server's staff you'd like to contact.")
             setThumbnail(jda.selfUser.avatarUrl)
@@ -123,33 +119,26 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
                 }
             }
         }
-    }
 
-    fun buildReportOpenedEmbed(guildObject: Guild): MessageEmbed {
-        return embed {
+    fun buildReportOpenedEmbed(guildObject: Guild) =
+        embed {
             setColor(Color.PINK)
             setAuthor("You've successfully opened a report with the staff of ${guildObject.name}")
             description("Someone will respond shortly, please be patient.")
             setThumbnail(guildObject.iconUrl)
         }
-    }
-
-    fun getCommonGuilds(userObject: User): List<Guild> {
-        return userObject.mutualGuilds.filter { g -> g.id in config.guildConfigurations.associateBy { it.guildId } }
-    }
 
     fun closeReport(report: Report) {
         sendReportClosedEmbed(report)
         removeReport(report)
     }
 
-    private fun sendReportClosedEmbed(report: Report) {
+    private fun sendReportClosedEmbed(report: Report) =
         jda.getUserById(report.userId).sendPrivateMessage(embed {
             setColor(Color.LIGHT_GRAY)
             setAuthor("The staff of ${jda.getGuildById(report.guildId).name} have closed this report.")
             setDescription("If you continue to reply, a new report will be created.")
-        }, DefaultLogger())
-    }
+        })
 
     private fun removeReport(report: Report) {
         reports.remove(report)
@@ -174,7 +163,7 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
 
             //If text channel was deleted while bot was offline, delete report file
             if (jda.getTextChannelById(report.channelId) != null)
-                reports.addElement(report)
+                reports.add(report)
             else
                 it.delete()
         }

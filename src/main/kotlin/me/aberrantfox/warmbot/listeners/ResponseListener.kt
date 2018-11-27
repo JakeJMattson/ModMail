@@ -10,7 +10,7 @@ class ResponseListener(private val reportService: ReportService, private val con
         if (event.author.isBot)
             return
 
-        val guildConfig = configuration.guildConfigurations.firstOrNull { it.guildId == event.guild.id} ?: return
+        val guildConfig = configuration.getGuildConfig(event.guild.id) ?: return
 
         if (event.message.contentRaw.startsWith(guildConfig.prefix))
             return
