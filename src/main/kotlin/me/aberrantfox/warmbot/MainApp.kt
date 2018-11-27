@@ -17,7 +17,6 @@ private fun start(config: Configuration) = startBot(config.token) {
     val reportService = ReportService(jda, config, loggingService).apply {  loadReports() }
 
     registerInjectionObject(loggingService, reportService, conversationService, config)
-	registerCommandPreconditions(produceIsStaffMemberPrecondition(config), produceIsGuildOwnerPrecondition())
 
 	val warmbot = "me.aberrantfox.warmbot."
 	configure {
@@ -26,6 +25,8 @@ private fun start(config: Configuration) = startBot(config.token) {
 		listenerPath = warmbot + "listeners"
 		conversationPath = warmbot + "conversations"
 	}
+
+	registerCommandPreconditions(produceIsStaffMemberPrecondition(config), produceIsGuildOwnerPrecondition())
 
     config.guildConfigurations.forEach {
         addOverrides(jda, it)
