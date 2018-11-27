@@ -21,6 +21,11 @@ data class Configuration(val token: String = "insert-token-here",
                          val maxOpenReports: Int = 50,
                          val recoverReports: Boolean = true,
                          var guildConfigurations: MutableList<GuildConfiguration> = mutableListOf(GuildConfiguration()))
+{
+    fun hasGuildConfig(guildId: String) = getGuildConfig(guildId) != null
+    fun getGuildConfig(guildId: String) = guildConfigurations.firstOrNull { it.guildId == guildId }
+    fun save() = configFile.writeText(gson.toJson(this))
+}
 
 private val gson = GsonBuilder().setPrettyPrinting().create()
 private val configDir = File("config/")
@@ -35,11 +40,3 @@ fun loadConfiguration(): Configuration? =
     }
     else
         gson.fromJson(configFile.readText(), Configuration::class.java)
-
-fun saveConfiguration(config: Configuration) = configFile.writeText(gson.toJson(config))
-
-fun hasGuildConfiguration(guildConfigurations: List<GuildConfiguration>, guildId: String) =
-    guildConfigurations.any { it.guildId == guildId }
-
-fun getGuildConfig(guildConfigurations: List<GuildConfiguration>, guildId: String) =
-    guildConfigurations.firstOrNull { it.guildId == guildId }

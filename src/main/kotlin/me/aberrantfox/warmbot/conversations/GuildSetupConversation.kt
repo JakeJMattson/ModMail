@@ -66,7 +66,7 @@ fun guildSetupConversation() = conversation {
             config.guildConfigurations.add(
                 GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, "!!", staffRole.name))
 
-            saveConfiguration(config)
+            config.save()
 
             it.respond(
                     "Congratulations, I'm successfully configured for use. Remember, as the guild owner, you can adjust these values at any time.")

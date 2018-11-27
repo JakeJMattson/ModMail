@@ -3,7 +3,7 @@ package me.aberrantfox.warmbot.commands
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.ConversationService
 import me.aberrantfox.kjdautils.internal.command.arguments.*
-import me.aberrantfox.warmbot.services.*
+import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.*
 
 @CommandSet("configuration")
@@ -14,7 +14,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
         expect(ChannelCategoryArg)
         execute {
             val reportCategory = it.args.component1() as Category
-            val guildConfig = getGuildConfig(configuration.guildConfigurations, reportCategory.guild.id)
+            val guildConfig = configuration.getGuildConfig(reportCategory.guild.id)
 
             if (guildConfig == null) {
                 displayNoConfig(it)
@@ -22,7 +22,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
             }
 
             guildConfig.reportCategory = reportCategory.id
-            saveConfiguration(configuration)
+            configuration.save()
             it.respond("Successfully set report category to :: ${reportCategory.name}")
 
             return@execute
@@ -34,7 +34,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
         expect(TextChannelArg)
         execute {
             val archiveChannel = it.args.component1() as TextChannel
-            val guildConfig = getGuildConfig(configuration.guildConfigurations, archiveChannel.guild.id)
+            val guildConfig = configuration.getGuildConfig(archiveChannel.guild.id)
 
             if (guildConfig == null) {
                 displayNoConfig(it)
@@ -42,7 +42,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
             }
 
             guildConfig.archiveChannel = archiveChannel.id
-            saveConfiguration(configuration)
+            configuration.save()
             it.respond("Successfully the archive channel to :: ${archiveChannel.name}")
 
             return@execute
@@ -61,7 +61,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
                 return@execute
             }
 
-            val guildConfig = getGuildConfig(configuration.guildConfigurations, it.guild!!.id)
+            val guildConfig = configuration.getGuildConfig(it.message.guild.id)
 
             if (guildConfig == null) {
                 displayNoConfig(it)
@@ -69,7 +69,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
             }
             
             guildConfig.staffRoleName = staffRole.name
-            saveConfiguration(configuration)
+            configuration.save()
             it.respond("Successfully set the staff role to :: ${staffRole.name}")
 
             return@execute
@@ -81,7 +81,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
         execute {
             val guildId = it.guild!!.id
 
-            if (!hasGuildConfiguration(configuration.guildConfigurations, guildId))
+            if (!configuration.hasGuildConfig(guildId))
                 conversationService.createConversation(it.author.id, guildId, "guild-setup")
             else
                 it.respond(

@@ -17,7 +17,7 @@ private fun start(config: Configuration) = startBot(config.token) {
     val reportService = ReportService(jda, config, loggingService).apply {  loadReports() }
 
     registerInjectionObject(loggingService, reportService, conversationService, config)
-	registerCommandPreconditions(produceIsStaffMemberPrecondition(config.guildConfigurations), produceIsGuildOwnerPrecondition())
+	registerCommandPreconditions(produceIsStaffMemberPrecondition(config), produceIsGuildOwnerPrecondition())
 
 	val warmbot = "me.aberrantfox.warmbot."
 	configure {
