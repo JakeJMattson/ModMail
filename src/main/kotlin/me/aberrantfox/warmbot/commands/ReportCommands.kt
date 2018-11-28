@@ -140,7 +140,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
             val targetChannel = it.jda.getTextChannelById(it.channel.id)
             val report = reportService.getReportByChannel(it.channel.id)
 
-            archiveChannel.sendFile(it.channel.archiveString(relevantGuild.prefix).toByteArray(),
+            archiveChannel.sendFile(it.channel.archiveString(configuration.prefix).toByteArray(),
                     "$${it.channel.name}.txt").queue {
                 targetChannel.delete().queue()
             }

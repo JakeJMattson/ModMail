@@ -20,7 +20,7 @@ private fun start(config: Configuration) = startBot(config.token) {
 
 	val warmbot = "me.aberrantfox.warmbot."
 	configure {
-		prefix = "!!"
+		prefix = config.prefix
 		commandPath = warmbot + "commands"
 		listenerPath = warmbot + "listeners"
 		conversationPath = warmbot + "conversations"

@@ -13,11 +13,11 @@ data class LoggingConfiguration(val loggingChannel: String = "insert-id",
 data class GuildConfiguration(var guildId: String = "insert-id",
                               var reportCategory: String = "insert-id",
                               var archiveChannel: String = "insert-id",
-                              var prefix: String = "!",
                               var staffRoleName: String = "Staff",
                               var loggingConfiguration: LoggingConfiguration? = LoggingConfiguration())
 
 data class Configuration(val token: String = "insert-token-here",
+                         val prefix: String = "!",
                          val maxOpenReports: Int = 50,
                          val recoverReports: Boolean = true,
                          var guildConfigurations: MutableList<GuildConfiguration> = mutableListOf(GuildConfiguration()))

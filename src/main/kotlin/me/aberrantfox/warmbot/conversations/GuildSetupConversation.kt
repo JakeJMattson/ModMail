@@ -64,7 +64,7 @@ fun guildSetupConversation() = conversation {
             val config = loadConfiguration()!!
 
             config.guildConfigurations.add(
-                GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, "!!", staffRole.name))
+                GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, staffRole.name))
 
             config.save()
 
