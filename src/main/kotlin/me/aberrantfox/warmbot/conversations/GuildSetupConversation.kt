@@ -1,9 +1,7 @@
 package me.aberrantfox.warmbot.conversations
 
-
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.arguments.*
-import me.aberrantfox.warmbot.commands.ChannelCategoryArg
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
 import java.awt.Color
