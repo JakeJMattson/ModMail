@@ -2,17 +2,17 @@ package me.aberrantfox.warmbot.listeners
 
 import me.aberrantfox.kjdautils.api.dsl.CommandEvent
 import me.aberrantfox.kjdautils.internal.command.*
-import me.aberrantfox.warmbot.services.*
+import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.TextChannel
 
-fun produceIsStaffMemberPrecondition(guildConfigurations: List<GuildConfiguration>) = { event: CommandEvent ->
+fun produceIsStaffMemberPrecondition(configuration: Configuration) = { event: CommandEvent ->
 
     if (event.channel is TextChannel) {
         val textChannel = event.channel as TextChannel
-        if (!hasGuildConfiguration(guildConfigurations, textChannel.guild.id)) {
+        if (!configuration.hasGuildConfig(textChannel.guild.id)) {
             Pass
         } else {
-            val relevantGuildConfiguration = guildConfigurations.first { g -> g.guildId == textChannel.guild.id }
+            val relevantGuildConfiguration = configuration.getGuildConfig(textChannel.guild.id)!!
             val relevantGuild = event.jda.getGuildById(textChannel.guild.id)
             val staffRole = relevantGuild.getRolesByName(relevantGuildConfiguration.staffRoleName, true).first()
             val memberAuthor = relevantGuild.getMember(event.author)

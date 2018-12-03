@@ -1,9 +1,7 @@
 package me.aberrantfox.warmbot.conversations
 
-
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.arguments.*
-import me.aberrantfox.warmbot.commands.ChannelCategoryArg
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
 import java.awt.Color
@@ -64,9 +62,9 @@ fun guildSetupConversation() = conversation {
             val config = loadConfiguration()!!
 
             config.guildConfigurations.add(
-                GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, "!!", staffRole.name))
+                GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, staffRole.name))
 
-            saveConfiguration(config)
+            config.save()
 
             it.respond(
                     "Congratulations, I'm successfully configured for use. Remember, as the guild owner, you can adjust these values at any time.")

@@ -14,18 +14,19 @@ import java.util.concurrent.ConcurrentHashMap
 fun reportCommands(reportService: ReportService, configuration: Configuration, loggingService: LoggingService) = commands {
 
 	fun openReport(event: CommandEvent, targetUser: User, message: String, guildId: String) {
-		val guildConfiguration = configuration.guildConfigurations.first { g -> g.guildId == guildId }
+		val guildConfiguration = configuration.getGuildConfig(guildId)!!
 		val reportCategory = reportService.jda.getCategoryById(guildConfiguration.reportCategory)
 
 		reportCategory.createTextChannel(targetUser.name).queue { channel ->
 			channel as TextChannel
 
-			var initialMessage = "<No initial message provided>"
-
-			if (message.isNotEmpty()) {
-				initialMessage = message
-				targetUser.sendPrivateMessage(message, DefaultLogger())
-			}
+			val initialMessage =
+				if (message.isNotEmpty()) {
+					targetUser.sendPrivateMessage(message, DefaultLogger())
+					message
+				}
+				else
+					"<No initial message provided>"
 
 			channel.sendMessage(embed {
 				setColor(Color.green)
@@ -38,8 +39,11 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 				addField("Initial Message", initialMessage, false)
 			}).queue()
 
-			reportService.addReport(Report(targetUser.id, channel.id, guildId, ConcurrentHashMap()))
+			val newReport = Report(targetUser.id, channel.id, guildId, ConcurrentHashMap())
+			reportService.addReport(newReport)
+
 			event.respond("Channel opened at: ${channel.asMention}")
+			loggingService.staffOpen(newReport, event.author)
 		}
 	}
 
@@ -96,8 +100,6 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
             }
 
             val report = reportService.getReportByChannel(it.channel.id)
-
-            reportService.sendReportClosedEmbed(reportService.getReportByChannel(it.channel.id))
             (it.channel as TextChannel).delete().queue()
             loggingService.close(report, it.author)
         }
@@ -107,9 +109,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
         description = "Close all currently open reports. Can be invoked in any channel."
         execute {
 
-            val reports = reportService.reports
-            val currentGuild = it.message.guild.id
-            val reportsFromGuild = reports.filter { it.guildId == currentGuild }
+            val reportsFromGuild = reportService.getReportsFromGuild(it.message.guild.id)
             val author = it.author
 
             if (reportsFromGuild.isEmpty()) {
@@ -117,16 +117,12 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
                 return@execute
             }
 
-            var closeCount = 0
-
             reportsFromGuild.forEach {
-                reportService.sendReportClosedEmbed(it)
                 reportService.jda.getTextChannelById(it.channelId).delete().queue()
-                closeCount++
                 loggingService.close(it, author)
             }
 
-            it.respond("$closeCount report(s) closed successfully.")
+            it.respond("${reportsFromGuild.size} report(s) closed successfully.")
         }
     }
 
@@ -139,17 +135,13 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
                 return@execute
             }
 
-            val relevantGuild = configuration.guildConfigurations.first { g ->
-                g.guildId == reportService.getReportByChannel(it.channel.id).guildId
-            }
-
+            val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
             val archiveChannel = it.jda.getTextChannelById(relevantGuild.archiveChannel)
             val targetChannel = it.jda.getTextChannelById(it.channel.id)
             val report = reportService.getReportByChannel(it.channel.id)
 
-            archiveChannel.sendFile(it.channel.archiveString(relevantGuild.prefix).toByteArray(),
+            archiveChannel.sendFile(it.channel.archiveString(configuration.prefix).toByteArray(),
                     "$${it.channel.name}.txt").queue {
-                reportService.sendReportClosedEmbed(report)
                 targetChannel.delete().queue()
             }
 

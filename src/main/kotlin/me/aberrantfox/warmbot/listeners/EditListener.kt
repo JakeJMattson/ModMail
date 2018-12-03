@@ -21,7 +21,7 @@ class EditListener(private val reportService: ReportService) {
 			return
 
 		val report = reportService.getReportByChannel(event.channel.id)
-		val privateChannel = reportService.jda.privateChannels.first { it.user.id == report.user }
+		val privateChannel = reportService.jda.privateChannels.first { it.user.id == report.userId }
 		val targetMessage = report.messages[event.messageId]
 
 		privateChannel.editMessageById(targetMessage, event.message).queue()
@@ -34,7 +34,7 @@ class EditListener(private val reportService: ReportService) {
 
 		val report = reportService.getReportByChannel(event.channel.id)
 		val targetMessage = report.messages[event.messageId] ?: return
-		val privateChannel = reportService.jda.privateChannels.first { it.user.id == report.user }
+		val privateChannel = reportService.jda.privateChannels.first { it.user.id == report.userId }
 
 		privateChannel.deleteMessageById(targetMessage).queue()
 		report.messages.remove(event.messageId)

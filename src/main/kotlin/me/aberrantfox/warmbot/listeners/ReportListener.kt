@@ -26,7 +26,7 @@ class ReportListener(private val reportService: ReportService, private val conve
         val user = event.author
         val message = event.message
         val content = message.fullContent().trim()
-        val commonGuilds = reportService.getCommonGuilds(event.author)
+        val commonGuilds = event.author.mutualGuilds
 
         if (reportService.hasReportChannel(user.id)) {
             reportService.receiveFromUser(user, message)

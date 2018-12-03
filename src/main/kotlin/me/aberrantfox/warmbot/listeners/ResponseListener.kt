@@ -7,25 +7,13 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 class ResponseListener(private val reportService: ReportService, private val configuration: Configuration) {
     @Subscribe
     fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
-        if (event.author.isBot) {
-            return
-        }
-
-        val guildConfigurations = configuration.guildConfigurations
-
-        if(!guildConfigurations.any { g -> g.guildId == event.guild.id})
+        if (event.author.isBot)
             return
 
-        if (event.message.contentRaw.startsWith(guildConfigurations.first { g -> g.guildId == event.guild.id}.prefix)) {
+        if (event.message.contentRaw.startsWith(configuration.prefix))
             return
-        }
 
-        val channel = event.channel
-
-        if (!(reportService.isReportChannel(channel.id))) {
-            return
-        }
-
-        reportService.sendToUser(channel.id, event.message)
+        if (reportService.isReportChannel(event.channel.id))
+            reportService.sendToUser(event.channel.id, event.message)
     }
 }
