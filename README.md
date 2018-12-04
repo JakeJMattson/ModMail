@@ -1,35 +1,44 @@
-## WarmBot - A helpful report management discord bot
+## WarmBot - A report management Discord bot
 
 ### What is WarmBot?
-WarmBot is as described above. A report management bot. It provides a primary communication system between **your server staff**
-and **your users**. 
+WarmBot is a report management bot designed to provide a communication system between server staff and other members.
+In an ordinary server, users typically need to ping or message a staff member in order to get an issue resolved.
+This creates even more complications; the target staff member may not: be online, know the answer, care to respond, or countless other issues.
+Other staff may be a perfect fit for the issue, but the member has no way of knowing who to message.
+This can lead to passing around screenshots of conversations, information duplication, and in short, a big mess.
+WarmBot fixes this.
 
 ### How does it work?
+First the bot is paced at the top of the server where the users can see it.
+It acts as a beacon for questions.
+<br>
 
-Say any given user on your server has a problem. In an ordinary server, they have to ping you or message you, or message a staff member
-in order to get the problem solved. This is bad because the staff member might not be online, and they might not know the answer to
-the question, whereas another staff member may, so screenshot passing ensues and that just causes duplication, repeating information - 
-it's a mess. Introducing WarmBot:
-
-#### The user sees this
 ![WarmBot](https://i.imgur.com/EJEC0Eu.png)
 
-#### They send it a message and it opens a communication channel with that user like so
+Next, the user sends it a message. 
+This opens a communication channel between the user and every staff on the server in the form of a private channel.
+
 ![Channel Example](https://i.imgur.com/NUCtmNZ.png)
 
-At this point:
- - Anyone with access to the created text channel can talk with the user through the bot
- - The user can send messages to the bot, and it'll be piped to that channel.
+Any messages the users sends the bot are automatically sent to that channel.
+Anyone with access to this private channel can talk with the user through the bot.
+Talking through WarmBot has the added benefit of masking staff identities.
+If things become hostile, the user will have no idea who they're talking to.
 
-#### What happens when the report is finished? 
-You have three options here:
- - Simply delete the channel
- - In the channel, type !!close - this will do the same as delete the channel
- - Type !!archive - This will automatically take a copy of the conversation, and pipe it to the archive channel in the form of a text document. You can go and download this later for reference.
+#### Closing a report
+
+##### From Discord
+ * Delete the private channel - WarmBot will detect the event and close the report for you.
+ 
+
+##### Using commands
+ * In the report channel, `close` - This has the same effect as deleting the channel.
+ * In the report channel, `archive` - Transcribes the report to text, archives it, then closes the report.
+ * In any staff channels, `closeall` - Closes all open reports in the server.
 
 ##### Requirements to build
- - Java 9/10
- - Maven on the command line
+ - Java 8 or higher
+ - Maven CLI or IDE support
 
 #### Installation guide
 1. Git pull the repository or download the zip.
@@ -41,17 +50,16 @@ You have three options here:
 7. Run the command `java -jar <jarname>` - replace <jarname> with the file name.
 8. This will generate a default config, use the below guide to configure the bot correctly, then re-run this command.
 
-#### How do I configure it
+##### Configuration
 
 Below, you can find an explanation of each configuration field.
 WarmBot can be configured for use with multiple guilds.
 Add an additional guild configuration for each guild you intend to support. 
 
-##### Configuration: 
-
 ```json
 {
 	"token": "Your bot token",
+	"prefix": "The command prefix for this guild, e.g. !",
 	"maxOpenReports": "The max number of reports that can be opened in any configured guild",
 	"recoverReports": "Whether or not the reports will be recovered if the bot goes offline. Saves to disk if true",
 	"guildConfigurations": 
@@ -60,7 +68,6 @@ Add an additional guild configuration for each guild you intend to support.
 	        "guildId": "ID of the guild you wish to use the bot in",
 	        "reportCategory": "ID of the category in which report channels will be created",
 	        "archiveChannel": "ID of channel where archived reports will be sent",
-	        "prefix": "The command prefix for this guild, e.g. !",
 	        "staffRoleName": "Role required to use the bot"
 	        "loggingConfiguration": 
 	        {
@@ -97,7 +104,7 @@ Add an additional guild configuration for each guild you intend to support.
 | Command   | Arguments | Effect                                    |
 | ------    | ------    | ------                                    |
 | Open      | User ID   | Open a report with the target user.       |
-| Close     | (none)`*` | Close report.                             |
+| Close     | (none)`*` | Close report and notify user.             |
 | CloseAll  | (none)    | Close all reports in the current guild.   |
 | Archive   | (none)`*` | Transcribe report to text (closes report).|
 
