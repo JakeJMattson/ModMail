@@ -14,6 +14,7 @@ data class GuildConfiguration(var guildId: String = "insert-id",
                               var reportCategory: String = "insert-id",
                               var archiveChannel: String = "insert-id",
                               var staffRoleName: String = "Staff",
+                              var autoCloseSeconds: Long = 10800, //3 hours
                               var loggingConfiguration: LoggingConfiguration? = LoggingConfiguration())
 
 data class Configuration(val token: String = "insert-token-here",
@@ -27,7 +28,7 @@ data class Configuration(val token: String = "insert-token-here",
     fun save() = configFile.writeText(gson.toJson(this))
 }
 
-val gson = GsonBuilder().setPrettyPrinting().create()
+private val gson = GsonBuilder().setPrettyPrinting().create()
 private val configDir = File("config/")
 private val configFile = File("${configDir.name}/config.json")
 
