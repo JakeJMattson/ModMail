@@ -21,6 +21,7 @@ data class Report(
     @Expose val guildId: String,
     @Expose val messages: MutableMap<String, String>,
     @Expose var queuedMessageId: String? = null,
+    @Expose var shouldAutoClose: Boolean,
             var timer: Timer? = null)
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
@@ -65,7 +66,8 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
                 channel.sendMessage(it).queue()
             }
 
-            val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap(), firstMessage.id)
+            val autoClose = config.getGuildConfig(guild.id)!!.shouldAutoClose
+            val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap(), firstMessage.id, autoClose)
             addReport(newReport)
             loggingService.memberOpen(newReport)
 
@@ -115,14 +117,16 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
         if (report.timer != null)
             report.timer!!.cancel()
 
+        if (!report.shouldAutoClose)
+            return
+
         report.timer = Timer()
 
         val millis = config.getGuildConfig(report.guildId)!!.autoCloseSeconds * 1000
 
         report.timer!!.schedule(millis) {
-            jda.getUserById(report.userId).sendPrivateMessage(embed {
-                jda.getTextChannelById(report.channelId).delete().queue()
-            })
+            loggingService.autoClose(report)
+            jda.getTextChannelById(report.channelId).delete().queue()
         }
     }
 

@@ -14,6 +14,7 @@ data class GuildConfiguration(var guildId: String = "insert-id",
                               var reportCategory: String = "insert-id",
                               var archiveChannel: String = "insert-id",
                               var staffRoleName: String = "Staff",
+                              var shouldAutoClose: Boolean = false,
                               var autoCloseSeconds: Long = 10800, //3 hours
                               var loggingConfiguration: LoggingConfiguration? = LoggingConfiguration())
 

@@ -12,6 +12,7 @@ class LoggingService(val jda: JDA, private val config: Configuration) {
 	private val staffOpenFormat = "Report (%s) opened by %s"
 	private val archiveFormat = "Report (%s) archived by %s"
 	private val closeFormat = "Report (%s) closed by %s"
+	private val autoCloseFormat = "Report (%s) closed automatically"
 
 	fun emitReadyMessage() {
 		config.guildConfigurations.filter { it.loggingConfiguration != null }.forEach {
@@ -48,6 +49,13 @@ class LoggingService(val jda: JDA, private val config: Configuration) {
 
 		if (logConfig.logClose)
 			log(logConfig.loggingChannel, closeFormat.format(getName(report), staff.fullName()))
+	}
+
+	fun autoClose(report: Report) {
+		val logConfig = getLogConfig(report.guildId) ?: return
+
+		if (logConfig.logClose)
+			log(logConfig.loggingChannel, autoCloseFormat.format(getName(report)))
 	}
 
 	private fun getLogConfig(guildId: String)
