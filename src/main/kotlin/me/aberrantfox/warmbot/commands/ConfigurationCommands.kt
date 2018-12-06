@@ -5,9 +5,24 @@ import me.aberrantfox.kjdautils.internal.command.ConversationService
 import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.*
+import kotlin.math.roundToLong
 
 @CommandSet("configuration")
 fun configurationCommands(conversationService: ConversationService, configuration: Configuration) = commands {
+
+    command("setup") {
+        description = "Initiate a setup conversation to set all required values for this bot."
+        execute {
+            val guildId = it.guild!!.id
+
+            if (!configuration.hasGuildConfig(guildId))
+                conversationService.createConversation(it.author.id, guildId, "guild-setup")
+            else
+                it.respond(
+                    "I'm already setup for use in this guild, please use the appropriate commands to change specific settings.")
+            return@execute
+        }
+    }
 
     command("setreportcategory") {
         description = "Set the category where new reports will be opened."
@@ -76,16 +91,23 @@ fun configurationCommands(conversationService: ConversationService, configuratio
         }
     }
 
-    command("setup") {
-        description = "Initiate a setup conversation to set all required values for this bot."
+    command("setautoclose") {
+        description = "Set the amount of time required for a report to close automatically from inactivity."
+        expect(TimeStringArg)
         execute {
-            val guildId = it.guild!!.id
+            val time = it.args.component1()
+            val seconds = (time as Double).roundToLong()
+            val guildConfig = configuration.getGuildConfig(it.message.guild.id)
 
-            if (!configuration.hasGuildConfig(guildId))
-                conversationService.createConversation(it.author.id, guildId, "guild-setup")
-            else
-                it.respond(
-                        "I'm already setup for use in this guild, please use the appropriate commands to change specific settings.")
+            if (guildConfig == null) {
+                displayNoConfig(it)
+                return@execute
+            }
+
+            guildConfig.autoCloseSeconds = seconds
+            configuration.save()
+            it.respond("Successfully set the auto close timer to $seconds seconds")
+
             return@execute
         }
     }
