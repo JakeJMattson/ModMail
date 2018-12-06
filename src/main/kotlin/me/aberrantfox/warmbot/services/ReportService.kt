@@ -117,7 +117,9 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
 
         report.timer = Timer()
 
-        report.timer!!.schedule(1000 * 10) {
+        val millis = config.getGuildConfig(report.guildId)!!.autoCloseSeconds * 1000
+
+        report.timer!!.schedule(millis) {
             jda.getUserById(report.userId).sendPrivateMessage(embed {
                 jda.getTextChannelById(report.channelId).delete().queue()
             })
