@@ -125,6 +125,7 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
         val millis = config.getGuildConfig(report.guildId)!!.autoCloseSeconds * 1000
 
         report.timer!!.schedule(millis) {
+            loggingService.autoClose(report)
             jda.getTextChannelById(report.channelId).delete().queue()
         }
     }
