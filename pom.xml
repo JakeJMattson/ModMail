@@ -15,6 +15,7 @@
         <kotlin.version>1.2.41</kotlin.version>
         <slf4j.nop.version>1.7.25</slf4j.nop.version>
         <kutils.version>0.9.3</kutils.version>
+        <velocity.version>1.7</velocity.version>
     </properties>
 
     <dependencies>
@@ -49,6 +50,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.nop.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>${velocity.version}</version>
         </dependency>
     </dependencies>
 

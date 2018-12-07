@@ -4,6 +4,7 @@ import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.ConversationService
 import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.warmbot.messages.Localisation
+import me.aberrantfox.warmbot.messages.dynMessage
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.*
 
@@ -23,7 +24,10 @@ fun configurationCommands(conversationService: ConversationService, configuratio
 
             guildConfig.reportCategory = reportCategory.id
             configuration.save()
-            it.respond("Successfully set report category to :: ${reportCategory.name}")
+            it.respond(
+                    Localisation.messages.dynMessage({REPORT_ARCHIVE_SUCCESSFUL},
+                    hashMapOf("reportName" to reportCategory.name))
+            )
 
             return@execute
         }
