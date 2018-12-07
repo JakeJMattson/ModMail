@@ -6,7 +6,6 @@ import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.User
 
 class LoggingService(val jda: JDA, private val config: Configuration) {
-
 	private val startupFormat = "Bot successfully initialized!"
 	private val memberOpenFormat = "New report opened by %s"
 	private val staffOpenFormat = "Report (%s) opened by %s"
