@@ -26,7 +26,7 @@ private fun start(config: Configuration) = startBot(config.token) {
 		conversationPath = warmbot + "conversations"
 	}
 
-	registerCommandPreconditions(produceIsStaffMemberPrecondition(config), produceIsGuildOwnerPrecondition())
+	registerCommandPreconditions(produceIsStaffChannelPrecondition(config), produceIsStaffMemberPrecondition(config), produceIsGuildOwnerPrecondition())
 
     config.guildConfigurations.forEach {
         addOverrides(jda, it)
