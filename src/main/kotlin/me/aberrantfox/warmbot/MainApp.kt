@@ -11,6 +11,8 @@ fun main(args: Array<String>) {
     start(config)
 }
 
+const val Root = "me.aberrantfox.warmbot."
+
 private fun start(config: Configuration) = startBot(config.token) {
 
     val loggingService = LoggingService(jda, config)
@@ -18,12 +20,11 @@ private fun start(config: Configuration) = startBot(config.token) {
 
     registerInjectionObject(loggingService, reportService, conversationService, config)
 
-	val warmbot = "me.aberrantfox.warmbot."
 	configure {
 		prefix = config.prefix
-		commandPath = warmbot + "commands"
-		listenerPath = warmbot + "listeners"
-		conversationPath = warmbot + "conversations"
+		commandPath = "${Root}commands"
+		listenerPath = "${Root}listeners"
+		conversationPath = "${Root}conversations"
 	}
 
 	registerCommandPreconditions(produceIsStaffChannelPrecondition(config), produceIsStaffMemberPrecondition(config), produceIsGuildOwnerPrecondition())
