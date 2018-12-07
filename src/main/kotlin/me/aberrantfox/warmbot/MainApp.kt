@@ -29,9 +29,7 @@ private fun start(config: Configuration) = startBot(config.token) {
 
 	registerCommandPreconditions(produceIsStaffChannelPrecondition(config), produceIsStaffMemberPrecondition(config), produceIsGuildOwnerPrecondition())
 
-    config.guildConfigurations.forEach {
-        addOverrides(jda, it)
-    }
+    config.guildConfigurations.forEach { addOverrides(jda, it) }
 
     jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
     loggingService.emitReadyMessage()
