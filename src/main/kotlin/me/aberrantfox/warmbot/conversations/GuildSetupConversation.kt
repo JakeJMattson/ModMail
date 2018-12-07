@@ -31,7 +31,7 @@ fun guildSetupConversation() = conversation {
         }
         step {
             prompt = embed {
-                setTitle("Step 2")
+                setTitle("Setup Archive Channel")
                 field {
                     value = "Now, I need the **ID** of the **channel** you'd like me to send archived reports to."
                 }
@@ -41,7 +41,7 @@ fun guildSetupConversation() = conversation {
         }
         step {
             prompt = embed {
-                setTitle("Step 3")
+                setTitle("Who can use me?")
                 field {
                     value = "Now, I need the **Name** of the role you give your staff members so that they can access " +
                             "my moderator functions."

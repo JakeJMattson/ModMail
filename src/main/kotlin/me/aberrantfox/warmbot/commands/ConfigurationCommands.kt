@@ -3,14 +3,14 @@ package me.aberrantfox.warmbot.commands
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.ConversationService
 import me.aberrantfox.kjdautils.internal.command.arguments.*
+import me.aberrantfox.warmbot.messages.Localisation
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.*
 
 @CommandSet("configuration")
 fun configurationCommands(conversationService: ConversationService, configuration: Configuration) = commands {
-
     command("setreportcategory") {
-        description = "Set the category where new reports will be opened."
+        description = Localisation.messages.SET_REPORT_CATEGORY_DESCRIPTION
         expect(ChannelCategoryArg)
         execute {
             val reportCategory = it.args.component1() as Category
