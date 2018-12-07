@@ -1,4 +1,6 @@
 {
   "SET_REPORT_CATEGORY_DESCRIPTION": "Set the category where new reports will be opened.",
+  "SET_ARCHIVE_CHANNEL_DESCRIPTION": "Set the channel where transcribed reports will be sent when archived.",
+  "ARCHIVE_CHANNEL_SET_SUCCESSFUL": "Successfully the archive channel to :: ${archiveChannel.name}",
   "REPORT_ARCHIVE_SUCCESSFUL": "Successfully set report category to :: ${reportName}"
 }

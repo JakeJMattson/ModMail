@@ -3,15 +3,14 @@ package me.aberrantfox.warmbot.commands
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.ConversationService
 import me.aberrantfox.kjdautils.internal.command.arguments.*
-import me.aberrantfox.warmbot.messages.Localisation
-import me.aberrantfox.warmbot.messages.dynMessage
+import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.*
 
 @CommandSet("configuration")
 fun configurationCommands(conversationService: ConversationService, configuration: Configuration) = commands {
     command("setreportcategory") {
-        description = Localisation.messages.SET_REPORT_CATEGORY_DESCRIPTION
+        description = Locale.messages.SET_REPORT_CATEGORY_DESCRIPTION
         expect(ChannelCategoryArg)
         execute {
             val reportCategory = it.args.component1() as Category
@@ -24,17 +23,15 @@ fun configurationCommands(conversationService: ConversationService, configuratio
 
             guildConfig.reportCategory = reportCategory.id
             configuration.save()
-            it.respond(
-                    Localisation.messages.dynMessage({REPORT_ARCHIVE_SUCCESSFUL},
-                    hashMapOf("reportName" to reportCategory.name))
-            )
+            val response = Locale.inject({REPORT_ARCHIVE_SUCCESSFUL}, "reportName" to reportCategory.name)
+            it.respond(response)
 
             return@execute
         }
     }
 
     command("setarchivechannel") {
-        description = "Set the channel where transcribed reports will be sent when archived."
+        description = Locale.messages.SET_ARCHIVE_CHANNEL_DESCRIPTION
         expect(TextChannelArg)
         execute {
             val archiveChannel = it.args.component1() as TextChannel
@@ -47,7 +44,8 @@ fun configurationCommands(conversationService: ConversationService, configuratio
 
             guildConfig.archiveChannel = archiveChannel.id
             configuration.save()
-            it.respond("Successfully the archive channel to :: ${archiveChannel.name}")
+            val response = Locale.inject({ ARCHIVE_CHANNEL_SET_SUCCESSFUL }, "archiveChannel" to archiveChannel.name)
+            it.respond(response)
 
             return@execute
         }
