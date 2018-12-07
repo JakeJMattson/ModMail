@@ -11,13 +11,13 @@ WarmBot fixes this.
 
 ## How does it work?
 ### As a member
-When the user needs to talk to staff, they just send the bot a message. 
-This opens a communication channel between the user and every staff on the server in the form of a private channel.
-Any messages the user sends the bot are automatically sent to that channel.
-This will appear to them as if it were any other direct message.
+When any member needs to talk to staff, they just send the bot a message. 
+This creates a private channel on the server that are referred to as "reports".
+Any messages the member sends the bot are automatically sent to their report channel.
+To them, this will appear the same way as any other direct message.
 
 ### As staff
-Once a report is open, all you need to do is type into the report channel.
+Once a report is open, all you need to do is type into the channel.
 The message will be sent directly to the user via the bot.
 Anyone with access to this private channel can talk with the user through the bot.
 Talking through WarmBot has the added benefit of masking staff identities.
@@ -26,7 +26,7 @@ If things become hostile, the user will have no idea who they're talking to.
 #### Closing a report
 
 ##### From Discord
- * Delete the private channel - WarmBot will detect the event and close the report for you.
+ * Delete the channel - WarmBot will detect the event and close the report for you.
 
 ##### Using commands
  * In the report channel, `close` - This has the same effect as deleting the channel.
