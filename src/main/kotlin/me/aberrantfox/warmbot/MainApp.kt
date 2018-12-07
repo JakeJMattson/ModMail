@@ -14,7 +14,6 @@ fun main(args: Array<String>) {
 const val Root = "me.aberrantfox.warmbot."
 
 private fun start(config: Configuration) = startBot(config.token) {
-
     val loggingService = LoggingService(jda, config)
     val reportService = ReportService(jda, config, loggingService).apply {  loadReports() }
 
