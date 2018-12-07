@@ -1,21 +1,17 @@
-## WarmBot - A report management Discord bot
+# WarmBot - A report management Discord bot
 
-### What is WarmBot?
 WarmBot is a report management bot designed to provide a communication system between server staff and other members.
 In an ordinary server, users typically need to ping or message a staff member in order to get an issue resolved.
-This creates even more complications; the target staff member may not: be online, know the answer, care to respond, or countless other issues.
-Other staff may be a perfect fit for the issue, but the member has no way of knowing who to message.
+This can create complications, such as the staff member not being online, not knowing the answer, being too busy to respond, or countless other issues.
+Other staff may be a perfect fit for the issue, but the member has no way of knowing who to message or ping.
 This can lead to passing around screenshots of conversations, information duplication, and in short, a big mess.
 WarmBot fixes this.
-
-### How does it work?
-First the bot is paced at the top of the server where the users can see it.
-It acts as a beacon for questions.
 <br>
-
 ![WarmBot](https://i.imgur.com/EJEC0Eu.png)
 
-Next, the user sends it a message. 
+### How does it work?
+Ideally, the bot is placed at the top of the server where the users can see it.
+When the user needs to talk to staff, they just send the bot a message. 
 This opens a communication channel between the user and every staff on the server in the form of a private channel.
 
 ![Channel Example](https://i.imgur.com/NUCtmNZ.png)
