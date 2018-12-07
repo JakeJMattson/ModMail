@@ -9,20 +9,19 @@
     <version>1.5.1</version>
 
     <properties>
-        <!-- Project properties -->
         <project.author>Fox#0001</project.author>
         <project.repository>https://gitlab.com/AberrantFox/WarmBot</project.repository>
-
-        <!-- Version Numbers -->
         <java.version>1.9</java.version>
         <kotlin.version>1.2.41</kotlin.version>
+        <slf4j.nop.version>1.7.25</slf4j.nop.version>
+        <kutils.version>0.9.3</kutils.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.gitlab.aberrantfox</groupId>
             <artifactId>KUtils</artifactId>
-            <version>0.9.3</version>
+            <version>${kutils.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -34,6 +33,22 @@
             <artifactId>kotlin-test</artifactId>
             <version>${kotlin.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>${slf4j.nop.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.nop.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.nop.version}</version>
         </dependency>
     </dependencies>
 
