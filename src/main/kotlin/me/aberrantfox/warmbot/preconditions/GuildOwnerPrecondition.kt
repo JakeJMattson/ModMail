@@ -6,7 +6,6 @@ import me.aberrantfox.kjdautils.internal.command.Pass
 import net.dv8tion.jda.core.entities.TextChannel
 
 fun produceIsGuildOwnerPrecondition() = { event: CommandEvent ->
-
     val command = event.container.commands[event.commandStruct.commandName]
     if (command == null)
         Pass

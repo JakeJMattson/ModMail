@@ -7,7 +7,6 @@ import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.TextChannel
 
 fun produceIsStaffMemberPrecondition(configuration: Configuration) = { event: CommandEvent ->
-
     if (event.channel is TextChannel) {
         val textChannel = event.channel as TextChannel
         if (!configuration.hasGuildConfig(textChannel.guild.id)) {
