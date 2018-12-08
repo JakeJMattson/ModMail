@@ -7,5 +7,6 @@
   "COULD_NOT_FIND_ROLE": "Could not find a role named :: ${staffRoleName}",
   "SET_STAFF_ROLE_SUCCESSFUL": "Successfully set the staff role to :: ${staffRoleName}",
   "SETUP_DESCRIPTION": "Initiate a setup conversation to set all required values for this bot.",
-  "NO_CONFIG": "No guild configuration found, please go through the setup process before using this command."
+  "NO_CONFIG": "No guild configuration found, please go through the setup process before using this command.",
+  "COMMON_NO_MESSAGE": "<No initial message provided>"
 }
