@@ -2,5 +2,10 @@
   "SET_REPORT_CATEGORY_DESCRIPTION": "Set the category where new reports will be opened.",
   "SET_ARCHIVE_CHANNEL_DESCRIPTION": "Set the channel where transcribed reports will be sent when archived.",
   "ARCHIVE_CHANNEL_SET_SUCCESSFUL": "Successfully the archive channel to :: ${archiveChannel.name}",
-  "REPORT_ARCHIVE_SUCCESSFUL": "Successfully set report category to :: ${reportName}"
+  "REPORT_ARCHIVE_SUCCESSFUL": "Successfully set report category to :: ${reportName}",
+  "SET_STAFF_ROLE_DESCRIPTION": "Specify the role required to use this bot.",
+  "COULD_NOT_FIND_ROLE": "Could not find a role named :: ${staffRoleName}",
+  "SET_STAFF_ROLE_SUCCESSFUL": "Successfully set the staff role to :: ${staffRoleName}",
+  "SETUP_DESCRIPTION": "Initiate a setup conversation to set all required values for this bot.",
+  "NO_CONFIG": "No guild configuration found, please go through the setup process before using this command."
 }

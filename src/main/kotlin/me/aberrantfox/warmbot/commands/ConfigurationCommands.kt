@@ -52,14 +52,15 @@ fun configurationCommands(conversationService: ConversationService, configuratio
     }
 
     command("setstaffrole") {
-        description = "Specify the role required to use this bot."
+        description = Locale.messages.SET_STAFF_ROLE_DESCRIPTION
         expect(WordArg)
         execute {
             val staffRoleName = it.args.component1() as String
             val staffRole = it.jda.getRolesByName(staffRoleName, true).firstOrNull()
 
             if (staffRole == null) {
-                it.respond("Could not find a role named :: $staffRoleName")
+                val response = Locale.inject({ COULD_NOT_FIND_ROLE }, "staffRoleName" to staffRoleName)
+                it.respond(response)
                 return@execute
             }
 
@@ -72,26 +73,27 @@ fun configurationCommands(conversationService: ConversationService, configuratio
             
             guildConfig.staffRoleName = staffRole.name
             configuration.save()
-            it.respond("Successfully set the staff role to :: ${staffRole.name}")
+            val response = Locale.inject({ SET_STAFF_ROLE_SUCCESSFUL },"staffRoleName" to staffRole.name)
+            it.respond(response)
 
             return@execute
         }
     }
 
     command("setup") {
-        description = "Initiate a setup conversation to set all required values for this bot."
+        description = Locale.messages.SETUP_DESCRIPTION
         execute {
             val guildId = it.guild!!.id
 
-            if (!configuration.hasGuildConfig(guildId))
+            if (!configuration.hasGuildConfig(guildId)) {
                 conversationService.createConversation(it.author.id, guildId, "guild-setup")
-            else
-                it.respond(
-                        "I'm already setup for use in this guild, please use the appropriate commands to change specific settings.")
+            } else {
+                it.respond(Locale.messages.SETUP_DESCRIPTION)
+            }
+
             return@execute
         }
     }
 }
 
-fun displayNoConfig(event: CommandEvent)
-        = event.respond("No guild configuration found, please go through the setup process before using this command.")
+fun displayNoConfig(event: CommandEvent) = event.respond(Locale.messages.NO_CONFIG)
