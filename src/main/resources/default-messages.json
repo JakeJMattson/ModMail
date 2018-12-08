@@ -8,5 +8,7 @@
   "SET_STAFF_ROLE_SUCCESSFUL": "Successfully set the staff role to :: ${staffRoleName}",
   "SETUP_DESCRIPTION": "Initiate a setup conversation to set all required values for this bot.",
   "NO_CONFIG": "No guild configuration found, please go through the setup process before using this command.",
-  "COMMON_NO_MESSAGE": "<No initial message provided>"
+  "COMMON_NO_MESSAGE": "<No initial message provided>",
+  "FAIL_TEXT_CHANNEL_ONLY": "This command cannot be used in a private message, it must be invoked from a server channel.",
+  "FAIL_MUST_BE_GUILD_OWNER": "You must be the owner of the guild in order to use this command."
 }

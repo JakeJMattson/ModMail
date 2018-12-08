@@ -11,5 +11,7 @@ class Messages (
     val REPORT_ARCHIVE_SUCCESSFUL: String,
     val ARCHIVE_CHANNEL_SET_SUCCESSFUL: String,
     val COULD_NOT_FIND_ROLE: String,
-    val NO_CONFIG: String
+    val NO_CONFIG: String,
+    val FAIL_TEXT_CHANNEL_ONLY: String,
+    val FAIL_MUST_BE_GUILD_OWNER: String
 )
