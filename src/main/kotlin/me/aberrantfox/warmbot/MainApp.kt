@@ -1,7 +1,9 @@
 package me.aberrantfox.warmbot
 
 import me.aberrantfox.kjdautils.api.startBot
-import me.aberrantfox.warmbot.listeners.*
+import me.aberrantfox.warmbot.preconditions.produceIsGuildOwnerPrecondition
+import me.aberrantfox.warmbot.preconditions.produceIsStaffChannelPrecondition
+import me.aberrantfox.warmbot.preconditions.produceIsStaffMemberPrecondition
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.*
 import net.dv8tion.jda.core.entities.Game
@@ -26,7 +28,11 @@ private fun start(config: Configuration) = startBot(config.token) {
 		conversationPath = "${Root}conversations"
 	}
 
-	registerCommandPreconditions(produceIsStaffChannelPrecondition(config), produceIsStaffMemberPrecondition(config), produceIsGuildOwnerPrecondition())
+	registerCommandPreconditions(
+            produceIsStaffChannelPrecondition(config),
+            produceIsStaffMemberPrecondition(config),
+            produceIsGuildOwnerPrecondition()
+    )
 
     config.guildConfigurations.forEach { addOverrides(jda, it) }
 
