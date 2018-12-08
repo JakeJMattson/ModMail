@@ -11,14 +11,12 @@ fun produceIsStaffChannelPrecondition(configuration: Configuration) = exit@{ eve
 
     val textChannel = event.channel as TextChannel
 
-    if (configuration.hasGuildConfig(textChannel.guild.id)) {
-        val relevantGuildConfiguration = configuration.getGuildConfig(textChannel.guild.id)!!
-        val relevantGuild = event.jda.getGuildById(textChannel.guild.id)
-        val staffRole = relevantGuild.getRolesByName(relevantGuildConfiguration.staffRoleName, true).first()
-        val perms = textChannel.getPermissionOverride(staffRole)
+    if ( !(configuration.hasGuildConfig(textChannel.guild.id)) ) return@exit Pass
 
-        if (perms == null) Fail() else Pass
-    } else {
-        Pass
-    }
+    val relevantGuildConfiguration = configuration.getGuildConfig(textChannel.guild.id)!!
+    val relevantGuild = event.jda.getGuildById(textChannel.guild.id)
+    val staffRole = relevantGuild.getRolesByName(relevantGuildConfiguration.staffRoleName, true).first()
+    val perms = textChannel.getPermissionOverride(staffRole)
+
+    return@exit if (perms == null) Fail() else Pass
 }

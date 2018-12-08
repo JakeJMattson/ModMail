@@ -13,5 +13,7 @@ class Messages (
     val COULD_NOT_FIND_ROLE: String,
     val NO_CONFIG: String,
     val FAIL_TEXT_CHANNEL_ONLY: String,
-    val FAIL_MUST_BE_GUILD_OWNER: String
+    val FAIL_MUST_BE_GUILD_OWNER: String,
+    val MISSING_STAFF_ROLE: String,
+    val NO_PERMISSIONS: String
 )
