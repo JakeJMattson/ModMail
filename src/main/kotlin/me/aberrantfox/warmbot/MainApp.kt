@@ -1,7 +1,9 @@
 package me.aberrantfox.warmbot
 
 import me.aberrantfox.kjdautils.api.startBot
-import me.aberrantfox.warmbot.listeners.*
+import me.aberrantfox.warmbot.preconditions.produceIsGuildOwnerPrecondition
+import me.aberrantfox.warmbot.preconditions.produceIsStaffChannelPrecondition
+import me.aberrantfox.warmbot.preconditions.produceIsStaffMemberPrecondition
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.*
 import net.dv8tion.jda.core.entities.Game
@@ -11,26 +13,28 @@ fun main(args: Array<String>) {
     start(config)
 }
 
-private fun start(config: Configuration) = startBot(config.token) {
+const val Root = "me.aberrantfox.warmbot."
 
+private fun start(config: Configuration) = startBot(config.token) {
     val loggingService = LoggingService(jda, config)
     val reportService = ReportService(jda, config, loggingService).apply {  loadReports() }
 
     registerInjectionObject(loggingService, reportService, conversationService, config)
 
-	val warmbot = "me.aberrantfox.warmbot."
 	configure {
 		prefix = config.prefix
-		commandPath = warmbot + "commands"
-		listenerPath = warmbot + "listeners"
-		conversationPath = warmbot + "conversations"
+		commandPath = "${Root}commands"
+		listenerPath = "${Root}listeners"
+		conversationPath = "${Root}conversations"
 	}
 
-	registerCommandPreconditions(produceIsStaffChannelPrecondition(config), produceIsStaffMemberPrecondition(config), produceIsGuildOwnerPrecondition())
+	registerCommandPreconditions(
+            produceIsStaffChannelPrecondition(config),
+            produceIsStaffMemberPrecondition(config),
+            produceIsGuildOwnerPrecondition()
+    )
 
-    config.guildConfigurations.forEach {
-        addOverrides(jda, it)
-    }
+    config.guildConfigurations.forEach { addOverrides(jda, it) }
 
     jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
     loggingService.emitReadyMessage()

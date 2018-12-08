@@ -5,6 +5,7 @@ import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.extensions.archiveString
+import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
 import java.awt.Color
@@ -24,9 +25,9 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 				if (message.isNotEmpty()) {
 					targetUser.sendPrivateMessage(message, DefaultLogger())
 					message
-				}
-				else
-					"<No initial message provided>"
+				} else {
+                    Locale.messages.COMMON_NO_MESSAGE
+                }
 
 			channel.sendMessage(embed {
 				setColor(Color.green)

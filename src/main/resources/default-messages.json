@@ -1,0 +1,16 @@
+{
+  "SET_REPORT_CATEGORY_DESCRIPTION": "Set the category where new reports will be opened.",
+  "SET_ARCHIVE_CHANNEL_DESCRIPTION": "Set the channel where transcribed reports will be sent when archived.",
+  "ARCHIVE_CHANNEL_SET_SUCCESSFUL": "Successfully the archive channel to :: ${archiveChannel.name}",
+  "REPORT_ARCHIVE_SUCCESSFUL": "Successfully set report category to :: ${reportName}",
+  "SET_STAFF_ROLE_DESCRIPTION": "Specify the role required to use this bot.",
+  "COULD_NOT_FIND_ROLE": "Could not find a role named :: ${staffRoleName}",
+  "SET_STAFF_ROLE_SUCCESSFUL": "Successfully set the staff role to :: ${staffRoleName}",
+  "SETUP_DESCRIPTION": "Initiate a setup conversation to set all required values for this bot.",
+  "NO_CONFIG": "No guild configuration found, please go through the setup process before using this command.",
+  "COMMON_NO_MESSAGE": "<No initial message provided>",
+  "FAIL_TEXT_CHANNEL_ONLY": "This command cannot be used in a private message, it must be invoked from a server channel.",
+  "FAIL_MUST_BE_GUILD_OWNER": "You must be the owner of the guild in order to use this command.",
+  "MISSING_STAFF_ROLE": "You do not have the staff role.",
+  "NO_PERMISSIONS": "Did you really think I'd let you do that? \uD83E\uDD14"
+}

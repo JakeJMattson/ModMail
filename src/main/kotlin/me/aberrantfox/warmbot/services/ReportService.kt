@@ -1,5 +1,6 @@
 package me.aberrantfox.warmbot.services
 
+import com.google.gson.GsonBuilder
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
@@ -21,7 +22,7 @@ data class Report(val userId: String,
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
 class ReportService(val jda: JDA, private val config: Configuration, val loggingService: LoggingService) {
-
+    private val gson = GsonBuilder().setPrettyPrinting().create()
     private val reportDir = File("reports/")
     private val reports = Vector<Report>()
     private val queuedReports = Vector<QueuedReport>()
@@ -33,7 +34,6 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
     fun getReportsFromGuild(guildId: String) = reports.filter { it.guildId == guildId }
 
     fun addReport(user: User, guild: Guild, firstMessage: Message) {
-
         val guildConfiguration = config.getGuildConfig(guild.id)!!
         val reportCategory = jda.getCategoryById(guildConfiguration.reportCategory)
 
@@ -47,23 +47,7 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
         }
 
         reportCategory.createTextChannel(user.name).queue { channel ->
-            channel as TextChannel
-
-            val openingMessage = embed {
-                addField("New Report Opened!", "${user.descriptor()} :: ${user.asMention}", false)
-                setColor(Color.green)
-            }
-
-            channel.sendMessage(openingMessage).queue()
-            queuedReports.first { it.user == user.id }.messages.forEach {
-                channel.sendMessage(it).queue()
-            }
-
-            val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap(), firstMessage.id)
-            addReport(newReport)
-            loggingService.memberOpen(newReport)
-
-            queuedReports.removeAll { it.user == user.id }
+            createReportChannel(channel as TextChannel, user, firstMessage, guild)
         }
     }
 
@@ -120,8 +104,7 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
             }
         }
 
-    fun buildReportOpenedEmbed(guildObject: Guild) =
-        embed {
+    fun buildReportOpenedEmbed(guildObject: Guild)= embed {
             setColor(Color.PINK)
             setAuthor("You've successfully opened a report with the staff of ${guildObject.name}")
             description("Someone will respond shortly, please be patient.")
@@ -158,19 +141,34 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
             return
         }
 
-        reportDir.listFiles().forEach {
-            val report = gson.fromJson(it.readText(), Report::class.java)
-
-            //If text channel was deleted while bot was offline, delete report file
-            if (jda.getTextChannelById(report.channelId) != null)
-                reports.add(report)
-            else
-                it.delete()
-        }
+        cleanDeadReports()
     }
 
     fun writeReportToFile(report: Report) {
         if (config.recoverReports)
             File("$reportDir/${report.channelId}.json").writeText(gson.toJson(report))
+    }
+
+    private fun cleanDeadReports() = reportDir.listFiles().forEach {
+        val report = gson.fromJson(it.readText(), Report::class.java)
+        if (jda.getTextChannelById(report.channelId) != null) reports.add(report) else it.delete()
+    }
+
+    private fun createReportChannel(channel: TextChannel, user: User, firstMessage: Message, guild: Guild) {
+        val openingMessage = embed {
+            addField("New Report Opened!", "${user.descriptor()} :: ${user.asMention}", false)
+            setColor(Color.green)
+        }
+
+        channel.sendMessage(openingMessage).queue()
+        queuedReports.first { it.user == user.id }.messages.forEach {
+            channel.sendMessage(it).queue()
+        }
+
+        val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap(), firstMessage.id)
+        addReport(newReport)
+        loggingService.memberOpen(newReport)
+
+        queuedReports.removeAll { it.user == user.id }
     }
 }
