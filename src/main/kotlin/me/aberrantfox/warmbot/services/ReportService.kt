@@ -1,6 +1,7 @@
 package me.aberrantfox.warmbot.services
 
 import com.google.gson.GsonBuilder
+import com.google.gson.annotations.Expose
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
@@ -12,17 +13,22 @@ import java.awt.Color
 import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.concurrent.schedule
 
-data class Report(val userId: String,
-                  val channelId: String,
-                  val guildId: String,
-                  val messages: MutableMap<String, String>,
-                  var queuedMessageId: String? = null)
+data class Report(
+    @Expose val userId: String,
+    @Expose val channelId: String,
+    @Expose val guildId: String,
+    @Expose val messages: MutableMap<String, String>,
+    @Expose var queuedMessageId: String? = null,
+    @Expose var shouldAutoClose: Boolean,
+            var timer: Timer? = null)
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
 class ReportService(val jda: JDA, private val config: Configuration, val loggingService: LoggingService) {
-    private val gson = GsonBuilder().setPrettyPrinting().create()
+
+    private val gson = GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create()
     private val reportDir = File("reports/")
     private val reports = Vector<Report>()
     private val queuedReports = Vector<QueuedReport>()
@@ -60,12 +66,15 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
         val user = userObject.id
         val safeMessage = message.fullContent().trim().sanitiseMentions()
 
-        hasReportChannel(user)
-
         if (hasReportChannel(user)) {
             val report = getReportByUserId(user)
             jda.getTextChannelById(report.channelId).sendMessage(safeMessage).queue()
             report.queuedMessageId = message.id
+
+            if (report.timer != null) {
+                report.timer!!.cancel()
+                report.timer = null
+            }
 
             return
         }
@@ -86,6 +95,21 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
 
         jda.getUserById(report.userId).sendPrivateMessage(message.fullContent(), DefaultLogger())
         report.queuedMessageId = message.id
+
+        if (report.timer != null)
+            report.timer!!.cancel()
+
+        if (!report.shouldAutoClose)
+            return
+
+        report.timer = Timer()
+
+        val millis = config.getGuildConfig(report.guildId)!!.autoCloseSeconds * 1000
+
+        report.timer!!.schedule(millis) {
+            loggingService.autoClose(report)
+            jda.getTextChannelById(report.channelId).delete().queue()
+        }
     }
 
     fun buildGuildChoiceEmbed(commonGuilds: List<Guild>) =

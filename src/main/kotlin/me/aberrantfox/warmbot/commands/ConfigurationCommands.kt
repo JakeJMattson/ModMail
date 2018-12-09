@@ -6,9 +6,24 @@ import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.*
+import kotlin.math.roundToLong
 
 @CommandSet("configuration")
 fun configurationCommands(conversationService: ConversationService, configuration: Configuration) = commands {
+
+    command("setup") {
+        description = Locale.messages.SETUP_DESCRIPTION
+        execute {
+            val guildId = it.guild!!.id
+
+            if (!configuration.hasGuildConfig(guildId))
+                conversationService.createConversation(it.author.id, guildId, "guild-setup")
+            else
+                displayNoConfig(it)
+            return@execute
+        }
+    }
+
     command("setreportcategory") {
         description = Locale.messages.SET_REPORT_CATEGORY_DESCRIPTION
         expect(ChannelCategoryArg)
@@ -80,10 +95,44 @@ fun configurationCommands(conversationService: ConversationService, configuratio
         }
     }
 
-    command("setup") {
-        description = Locale.messages.SETUP_DESCRIPTION
+    command("autoclose") {
+        description = "Set the auto-close feature on/off for all new reports."
+        expect(ChoiceArg(name="Status", choices=*arrayOf("enable", "disable")))
         execute {
-            val guildId = it.guild!!.id
+            val input = (it.args.component1() as String).toLowerCase()
+            val isEnabled = input == "enable"
+
+            val guildConfig = configuration.getGuildConfig(it.message.guild.id)
+
+            if (guildConfig == null) {
+                displayNoConfig(it)
+                return@execute
+            }
+
+            guildConfig.shouldAutoClose = isEnabled
+            configuration.save()
+            it.respond("Auto close is now ${input}d")
+
+            return@execute
+        }
+    }
+
+    command("autoclosetimer") {
+        description = "Set the amount of time required for a report to close automatically from inactivity."
+        expect(TimeStringArg)
+        execute {
+            val time = it.args.component1()
+            val seconds = (time as Double).roundToLong()
+            val guildConfig = configuration.getGuildConfig(it.message.guild.id)
+
+            if (guildConfig == null) {
+                displayNoConfig(it)
+                return@execute
+            }
+
+            guildConfig.autoCloseSeconds = seconds
+            configuration.save()
+            it.respond("Successfully set the auto close timer to $seconds seconds")
 
             if (!configuration.hasGuildConfig(guildId)) {
                 conversationService.createConversation(it.author.id, guildId, "guild-setup")

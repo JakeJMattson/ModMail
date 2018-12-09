@@ -40,7 +40,8 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 				addField("Initial Message", initialMessage, false)
 			}).queue()
 
-			val newReport = Report(targetUser.id, channel.id, guildId, ConcurrentHashMap())
+			val autoClose = guildConfiguration.shouldAutoClose
+			val newReport = Report(targetUser.id, channel.id, guildId, ConcurrentHashMap(), null, autoClose)
 			reportService.addReport(newReport)
 
 			event.respond("Channel opened at: ${channel.asMention}")
