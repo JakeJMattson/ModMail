@@ -91,7 +91,29 @@ fun configurationCommands(conversationService: ConversationService, configuratio
         }
     }
 
-    command("setautoclose") {
+    command("autoclose") {
+        description = "Set the auto-close feature on/off for all new reports."
+        expect(ChoiceArg(name="Status", choices=*arrayOf("enable", "disable")))
+        execute {
+            val input = (it.args.component1() as String).toLowerCase()
+            val isEnabled = input == "enable"
+
+            val guildConfig = configuration.getGuildConfig(it.message.guild.id)
+
+            if (guildConfig == null) {
+                displayNoConfig(it)
+                return@execute
+            }
+
+            guildConfig.shouldAutoClose = isEnabled
+            configuration.save()
+            it.respond("Auto close is now ${input}d")
+
+            return@execute
+        }
+    }
+
+    command("autoclosetimer") {
         description = "Set the amount of time required for a report to close automatically from inactivity."
         expect(TimeStringArg)
         execute {
