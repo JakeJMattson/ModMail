@@ -10,7 +10,7 @@ WarmBot fixes this.
 ![WarmBot](https://i.imgur.com/EJEC0Eu.png)
 
 ## Reports
-Reports are private text channels that allow all of the staff team to communicate with a single member.
+Reports are private text channels that allow the entire staff team to communicate with a single member.
 You can have as many of these as you want (limited by configuration and Discord).
 <br>
 ![Reports](https://i.imgur.com/7vgwc9E.png)
@@ -20,6 +20,8 @@ You can have as many of these as you want (limited by configuration and Discord)
 ### Opening a report
 To open a report as a member, simply message the bot.
 A new report will be opened automatically.
+
+![Member](https://i.imgur.com/tf9k6PI.png)
 
 ### Using a report
 Once a report is opened, you can respond to the bot as if it were any other conversation.
@@ -35,6 +37,8 @@ Once a report is opened, anyone with access to this private channel can talk wit
 Talking through WarmBot has the added benefit of masking staff identities.
 If things become hostile, the user will have no idea who they're talking to.
 
+![Staff](https://i.imgur.com/tRLMPwj.png)
+
 #### Closing a report
 ##### From Discord
  * Delete the channel - WarmBot will detect the event and close the report for you.
@@ -42,7 +46,6 @@ If things become hostile, the user will have no idea who they're talking to.
 ##### Using commands
  * In the report channel, `close` - This has the same effect as deleting the channel.
  * In the report channel, `archive` - Transcribes the report to text, archives it, then closes the report.
- * In any staff channels, `closeall` - Closes all open reports in the server.
 
 ##### Automatically
 Reports can be configured to automatically close a set time after the most recent staff response.
