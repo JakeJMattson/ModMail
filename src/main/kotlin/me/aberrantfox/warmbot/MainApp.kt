@@ -1,9 +1,6 @@
 package me.aberrantfox.warmbot
 
 import me.aberrantfox.kjdautils.api.startBot
-import me.aberrantfox.warmbot.preconditions.produceIsGuildOwnerPrecondition
-import me.aberrantfox.warmbot.preconditions.produceIsStaffChannelPrecondition
-import me.aberrantfox.warmbot.preconditions.produceIsStaffMemberPrecondition
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.Permission
@@ -24,12 +21,6 @@ private fun start(config: Configuration) = startBot(config.token) {
 		prefix = config.prefix
         globalPath = "me.aberrantfox.warmbot"
 	}
-
-	registerCommandPreconditions(
-            produceIsStaffChannelPrecondition(config),
-            produceIsStaffMemberPrecondition(config),
-            produceIsGuildOwnerPrecondition()
-    )
 
     config.guildConfigurations.forEach { addOverrides(jda, it) }
 
