@@ -5,15 +5,14 @@ import me.aberrantfox.warmbot.preconditions.produceIsGuildOwnerPrecondition
 import me.aberrantfox.warmbot.preconditions.produceIsStaffChannelPrecondition
 import me.aberrantfox.warmbot.preconditions.produceIsStaffMemberPrecondition
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.*
+import net.dv8tion.jda.core.JDA
+import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Game
 
 fun main(args: Array<String>) {
     val config = loadConfiguration() ?: return
     start(config)
 }
-
-const val Root = "me.aberrantfox.warmbot."
 
 private fun start(config: Configuration) = startBot(config.token) {
     val loggingService = LoggingService(jda, config)
@@ -23,9 +22,7 @@ private fun start(config: Configuration) = startBot(config.token) {
 
 	configure {
 		prefix = config.prefix
-		commandPath = "${Root}commands"
-		listenerPath = "${Root}listeners"
-		conversationPath = "${Root}conversations"
+        globalPath = "me.aberrantfox.warmbot"
 	}
 
 	registerCommandPreconditions(

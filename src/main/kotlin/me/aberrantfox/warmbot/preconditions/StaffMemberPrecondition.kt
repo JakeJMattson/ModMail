@@ -1,12 +1,14 @@
 package me.aberrantfox.warmbot.preconditions
 
 import me.aberrantfox.kjdautils.api.dsl.CommandEvent
+import me.aberrantfox.kjdautils.api.dsl.Precondition
 import me.aberrantfox.kjdautils.internal.command.Fail
 import me.aberrantfox.kjdautils.internal.command.Pass
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.TextChannel
 
+@Precondition
 fun produceIsStaffMemberPrecondition(configuration: Configuration) = exit@{ event: CommandEvent ->
     if (event.channel !is TextChannel) return@exit Fail(Locale.messages.NO_PERMISSIONS)
 

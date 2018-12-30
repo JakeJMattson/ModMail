@@ -1,6 +1,7 @@
 package me.aberrantfox.warmbot.preconditions
 
 import me.aberrantfox.kjdautils.api.dsl.CommandEvent
+import me.aberrantfox.kjdautils.api.dsl.Precondition
 import me.aberrantfox.kjdautils.internal.command.Fail
 import me.aberrantfox.kjdautils.internal.command.Pass
 import me.aberrantfox.warmbot.messages.Locale
@@ -8,6 +9,7 @@ import net.dv8tion.jda.core.entities.TextChannel
 
 private const val Category = "Configuration"
 
+@Precondition
 fun produceIsGuildOwnerPrecondition() = exit@{ event: CommandEvent ->
     val command = event.container.commands[event.commandStruct.commandName] ?: return@exit Pass
 
