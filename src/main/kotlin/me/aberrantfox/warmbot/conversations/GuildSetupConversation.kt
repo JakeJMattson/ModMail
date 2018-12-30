@@ -15,13 +15,11 @@ fun guildSetupConversation(config: Configuration) = conversation {
     steps {
         step {
             prompt = embed {
-                setTitle("Let's Get Setup.")
-                field {
-                    value = "I'm here to help you setup this bot for use on your server. Please follow the prompts." +
-                            " If you make a mistake, you can adjust the provided values using commands later."
-                }
-                setColor(Color.magenta)
-                addBlankField(true)
+                title("Let's Get Setup.")
+                color(Color.magenta)
+                description("I'm here to help you setup this bot for use on your server. Please follow the prompts." +
+                        " If you make a mistake, you can adjust the provided values using commands later.")
+
                 field {
                     name = "Step 1"
                     value = "Please provide the **ID** for the category you'd like me to create report channels in."
@@ -31,22 +29,19 @@ fun guildSetupConversation(config: Configuration) = conversation {
         }
         step {
             prompt = embed {
-                setTitle("Setup Archive Channel")
-                field {
-                    value = "Now, I need the **ID** of the **channel** you'd like me to send archived reports to."
-                }
-                setColor(Color.magenta)
+                title("Setup Archive Channel")
+                color(Color.magenta)
+                description("Now, I need the **ID** of the **channel** you'd like me to send archived reports to.")
+
             }
             expect = TextChannelArg
         }
         step {
             prompt = embed {
-                setTitle("Who can use me?")
-                field {
-                    value = "Now, I need the **Name** of the role you give your staff members so that they can access " +
-                            "my moderator functions."
-                }
-                setColor(Color.magenta)
+                title("Who can use me?")
+                color(Color.magenta)
+                setDescription("Now, I need the **Name** of the role you give your staff members so that they can access " +
+                        "my moderator functions.")
             }
             expect = RoleArg
         }
@@ -56,21 +51,21 @@ fun guildSetupConversation(config: Configuration) = conversation {
         val reportCategory = it.responses.component1() as Category
         val archiveChannel = it.responses.component2() as TextChannel
         val staffRole = it.responses.component3() as Role
+        val GUILD_SETUP_FAIL = "**Error** :: The %s provided did not belong to the guild you started this conversation in."
 
-        if (reportCategory.guild.id == it.guildId && archiveChannel.guild.id == it.guildId && staffRole.guild.id == it.guildId) {
+        it.respond(
+            when {
+                reportCategory.guild.id != it.guildId -> GUILD_SETUP_FAIL.format("report category")
+                archiveChannel.guild.id != it.guildId -> GUILD_SETUP_FAIL.format("archive channel")
+                staffRole.guild.id != it.guildId -> GUILD_SETUP_FAIL.format("staff role")
+                else -> {
+                    config.guildConfigurations.add(GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, staffRole.name))
+                    config.save()
+                    "Successfully configured for use! As the guild owner, you can adjust these values at any time."
+                }
+            }
+        )
 
-            config.guildConfigurations.add(
-                GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, staffRole.name))
-
-            config.save()
-
-            it.respond(
-                    "Congratulations, I'm successfully configured for use. Remember, as the guild owner, you can adjust these values at any time.")
-        } else {
-            it.respond(
-                    "**Error** :: One or more provided values did not belong to the guild you started this conversation in. " +
-                            "Please run the setup again and provide valid values.")
-        }
         return@onComplete
     }
 }
