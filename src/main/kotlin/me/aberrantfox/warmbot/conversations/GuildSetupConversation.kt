@@ -7,7 +7,7 @@ import net.dv8tion.jda.core.entities.*
 import java.awt.Color
 
 @Convo
-fun guildSetupConversation() = conversation {
+fun guildSetupConversation(config: Configuration) = conversation {
 
     name = "guild-setup"
     description = "Conversation that takes place with a user whenever the bot joins a new guild."
@@ -58,8 +58,6 @@ fun guildSetupConversation() = conversation {
         val staffRole = it.responses.component3() as Role
 
         if (reportCategory.guild.id == it.guildId && archiveChannel.guild.id == it.guildId && staffRole.guild.id == it.guildId) {
-
-            val config = loadConfiguration()!!
 
             config.guildConfigurations.add(
                 GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, staffRole.name))
