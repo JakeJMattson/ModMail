@@ -1,10 +1,13 @@
 package me.aberrantfox.warmbot.services
 
+import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.extensions.jda.fullName
-import me.aberrantfox.kjdautils.extensions.stdlib.*
+import me.aberrantfox.kjdautils.extensions.stdlib.idToUser
+import me.aberrantfox.kjdautils.extensions.stdlib.isLong
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.User
 
+@Service
 class LoggingService(val jda: JDA, private val config: Configuration) {
 	private val startupFormat = "Bot successfully initialized!"
 	private val memberOpenFormat = "New report opened by %s"
@@ -12,7 +15,11 @@ class LoggingService(val jda: JDA, private val config: Configuration) {
 	private val archiveFormat = "Report (%s) archived by %s"
 	private val closeFormat = "Report (%s) closed by %s"
 
-	fun emitReadyMessage() {
+	init {
+	    emitReadyMessage()
+	}
+
+	private fun emitReadyMessage() {
 		config.guildConfigurations.filter { it.loggingConfiguration != null }.forEach {
 			val logConfig = it.loggingConfiguration!!
 
