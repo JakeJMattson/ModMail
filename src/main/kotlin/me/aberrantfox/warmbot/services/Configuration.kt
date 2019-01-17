@@ -1,8 +1,6 @@
 package me.aberrantfox.warmbot.services
 
-import com.google.gson.GsonBuilder
 import me.aberrantfox.kjdautils.api.annotation.Data
-import java.io.File
 
 data class LoggingConfiguration(val loggingChannel: String = "insert-id",
                                 val logStartup: Boolean = true,
@@ -24,8 +22,4 @@ data class Configuration(val prefix: String = "!",
                          var guildConfigurations: MutableList<GuildConfiguration> = mutableListOf(GuildConfiguration())) {
     fun hasGuildConfig(guildId: String) = getGuildConfig(guildId) != null
     fun getGuildConfig(guildId: String) = guildConfigurations.firstOrNull { it.guildId == guildId }
-    fun save() = configFile.writeText(gson.toJson(this))
 }
-
-private val gson = GsonBuilder().setPrettyPrinting().create()
-private val configFile = File("config/config.json")

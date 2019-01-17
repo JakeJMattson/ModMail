@@ -2,12 +2,13 @@ package me.aberrantfox.warmbot.conversations
 
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.arguments.*
+import me.aberrantfox.kjdautils.internal.di.PersistenceService
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
 import java.awt.Color
 
 @Convo
-fun guildSetupConversation(config: Configuration) = conversation {
+fun guildSetupConversation(config: Configuration, persistenceService: PersistenceService) = conversation {
 
     name = "guild-setup"
     description = "Conversation that takes place with a user whenever the bot joins a new guild."
@@ -60,7 +61,7 @@ fun guildSetupConversation(config: Configuration) = conversation {
                 staffRole.guild.id != it.guildId -> GUILD_SETUP_FAIL.format("staff role")
                 else -> {
                     config.guildConfigurations.add(GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, staffRole.name))
-                    config.save()
+                    persistenceService.save(config)
                     "Successfully configured for use! As the guild owner, you can adjust these values at any time."
                 }
             }
