@@ -14,7 +14,7 @@
         <java.version>1.9</java.version>
         <kotlin.version>1.3.10</kotlin.version>
         <slf4j.nop.version>1.7.25</slf4j.nop.version>
-        <kutils.version>0.9.13</kutils.version>
+        <kutils.version>0.9.14</kutils.version>
         <velocity.version>1.7</velocity.version>
         <spek.version>2.0.0-alpha.2</spek.version>
         <mockito.version>2.0.0</mockito.version>
