@@ -38,6 +38,7 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
     fun getReportByChannel(channelId: String): Report = reports.first { it.channelId == channelId }
     fun getReportByUserId(userId: String): Report = reports.first { it.userId == userId }
     fun getReportsFromGuild(guildId: String) = reports.filter { it.guildId == guildId }
+    fun getCommonGuilds(userObject: User): List<Guild> = userObject.mutualGuilds.filter { it.id in config.guildConfigurations.associateBy { it.guildId } }
 
     fun addReport(user: User, guild: Guild, firstMessage: Message) {
         val guildConfiguration = config.getGuildConfig(guild.id)!!
