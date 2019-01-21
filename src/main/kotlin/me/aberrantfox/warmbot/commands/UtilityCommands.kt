@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.extensions.jda.fullName
 import java.awt.Color
-import java.util.*
+import java.util.Date
 
 private data class Properties(val version: String, val author: String, val repository: String)
 private val propFile = Properties::class.java.getResource("/properties.json").readText()
@@ -14,6 +14,7 @@ private val startTime = Date()
 @CommandSet("utility")
 fun utilityCommands() = commands {
     command("ping") {
+        requiresGuild = true
         description = "Check the status of the bot."
         execute {
             it.respond("pong! (${it.jda.ping}ms)")
@@ -21,6 +22,7 @@ fun utilityCommands() = commands {
     }
 
     command("version") {
+        requiresGuild = true
         description = "Display the bot version."
         execute {
             it.respond("**Running version**: ${Project.version}")
@@ -28,6 +30,7 @@ fun utilityCommands() = commands {
     }
 
     command("author") {
+        requiresGuild = true
         description = "Display project author."
         execute {
             it.respond("**Project author**: ${Project.author}")
@@ -35,6 +38,7 @@ fun utilityCommands() = commands {
     }
 
     command("source") {
+        requiresGuild = true
         description = "Display the source code via a GitLab link."
         execute {
             it.respond(Project.repository)
@@ -42,6 +46,7 @@ fun utilityCommands() = commands {
     }
 
     command("botinfo") {
+        requiresGuild = true
         description = "Display the bot information."
         execute {
             it.respond(embed {
@@ -75,6 +80,7 @@ fun utilityCommands() = commands {
     }
 
     command("uptime") {
+        requiresGuild = true
         description = "Displays how long the bot has been running."
         execute {
             val milliseconds = Date().time - startTime.time

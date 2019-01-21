@@ -11,6 +11,7 @@ import net.dv8tion.jda.core.entities.*
 @CommandSet("configuration")
 fun configurationCommands(configuration: Configuration, persistenceService: PersistenceService, conversationService: ConversationService) = commands {
     command("setreportcategory") {
+        requiresGuild = true
         description = Locale.messages.SET_REPORT_CATEGORY_DESCRIPTION
         expect(ChannelCategoryArg)
         execute {
@@ -32,6 +33,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     }
 
     command("setarchivechannel") {
+        requiresGuild = true
         description = Locale.messages.SET_ARCHIVE_CHANNEL_DESCRIPTION
         expect(TextChannelArg)
         execute {
@@ -53,6 +55,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     }
 
     command("setstaffrole") {
+        requiresGuild = true
         description = Locale.messages.SET_STAFF_ROLE_DESCRIPTION
         expect(WordArg)
         execute {
@@ -82,6 +85,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     }
 
     command("setup") {
+        requiresGuild = true
         description = Locale.messages.SETUP_DESCRIPTION
         execute {
             val guildId = it.guild!!.id

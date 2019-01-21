@@ -49,6 +49,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 	}
 
 	command("open") {
+		requiresGuild = true
 		description = "Open a report with the target user and send the provided initial message."
 		expect(arg(UserArg), arg(SentenceArg("Initial Message"), optional = true, default = ""))
 		execute { event ->
@@ -92,6 +93,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 	}
 
     command("close") {
+		requiresGuild = true
         description = "Close the report channel that this command is invoked in. Alternatively, delete the channel."
         execute {
             if (!(reportService.isReportChannel(it.channel.id))) {
@@ -107,6 +109,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
     }
 
     command("closeall") {
+		requiresGuild = true
         description = "Close all currently open reports. Can be invoked in any channel."
         execute {
 
@@ -128,6 +131,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
     }
 
     command("archive") {
+		requiresGuild = true
         description = "Archive the contents of the report as a text document in the archive channel."
         execute {
 
