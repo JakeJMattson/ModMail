@@ -1,6 +1,7 @@
 package me.aberrantfox.warmbot.services
 
 import com.google.gson.GsonBuilder
+import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
@@ -10,7 +11,7 @@ import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
 import java.awt.Color
 import java.io.File
-import java.util.*
+import java.util.Vector
 import java.util.concurrent.ConcurrentHashMap
 
 data class Report(val userId: String,
@@ -21,17 +22,23 @@ data class Report(val userId: String,
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
+@Service
 class ReportService(val jda: JDA, private val config: Configuration, val loggingService: LoggingService) {
     private val gson = GsonBuilder().setPrettyPrinting().create()
     private val reportDir = File("reports/")
     private val reports = Vector<Report>()
     private val queuedReports = Vector<QueuedReport>()
 
+    init {
+        loadReports()
+    }
+
     fun isReportChannel(channelId: String) = reports.any { it.channelId == channelId }
     fun hasReportChannel(userId: String) = reports.any { it.userId == userId } || queuedReports.any { it.user == userId }
     fun getReportByChannel(channelId: String): Report = reports.first { it.channelId == channelId }
     fun getReportByUserId(userId: String): Report = reports.first { it.userId == userId }
     fun getReportsFromGuild(guildId: String) = reports.filter { it.guildId == guildId }
+    fun getCommonGuilds(userObject: User): List<Guild> = userObject.mutualGuilds.filter { it.id in config.guildConfigurations.associateBy { it.guildId } }
 
     fun addReport(user: User, guild: Guild, firstMessage: Message) {
         val guildConfiguration = config.getGuildConfig(guild.id)!!
@@ -130,7 +137,7 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
         file.delete()
     }
 
-    fun loadReports() {
+    private fun loadReports() {
         if (!config.recoverReports && reportDir.exists()) {
             reportDir.deleteRecursively()
             return

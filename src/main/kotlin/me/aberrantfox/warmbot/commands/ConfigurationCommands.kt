@@ -3,13 +3,15 @@ package me.aberrantfox.warmbot.commands
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.ConversationService
 import me.aberrantfox.kjdautils.internal.command.arguments.*
+import me.aberrantfox.kjdautils.internal.di.PersistenceService
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.*
 
 @CommandSet("configuration")
-fun configurationCommands(conversationService: ConversationService, configuration: Configuration) = commands {
+fun configurationCommands(configuration: Configuration, persistenceService: PersistenceService, conversationService: ConversationService) = commands {
     command("setreportcategory") {
+        requiresGuild = true
         description = Locale.messages.SET_REPORT_CATEGORY_DESCRIPTION
         expect(ChannelCategoryArg)
         execute {
@@ -22,7 +24,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
             }
 
             guildConfig.reportCategory = reportCategory.id
-            configuration.save()
+            persistenceService.save(configuration)
             val response = Locale.inject({REPORT_ARCHIVE_SUCCESSFUL}, "reportName" to reportCategory.name)
             it.respond(response)
 
@@ -31,6 +33,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
     }
 
     command("setarchivechannel") {
+        requiresGuild = true
         description = Locale.messages.SET_ARCHIVE_CHANNEL_DESCRIPTION
         expect(TextChannelArg)
         execute {
@@ -43,7 +46,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
             }
 
             guildConfig.archiveChannel = archiveChannel.id
-            configuration.save()
+            persistenceService.save(configuration)
             val response = Locale.inject({ ARCHIVE_CHANNEL_SET_SUCCESSFUL }, "archiveChannel" to archiveChannel.name)
             it.respond(response)
 
@@ -52,6 +55,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
     }
 
     command("setstaffrole") {
+        requiresGuild = true
         description = Locale.messages.SET_STAFF_ROLE_DESCRIPTION
         expect(WordArg)
         execute {
@@ -72,7 +76,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
             }
             
             guildConfig.staffRoleName = staffRole.name
-            configuration.save()
+            persistenceService.save(configuration)
             val response = Locale.inject({ SET_STAFF_ROLE_SUCCESSFUL },"staffRoleName" to staffRole.name)
             it.respond(response)
 
@@ -81,6 +85,7 @@ fun configurationCommands(conversationService: ConversationService, configuratio
     }
 
     command("setup") {
+        requiresGuild = true
         description = Locale.messages.SETUP_DESCRIPTION
         execute {
             val guildId = it.guild!!.id
