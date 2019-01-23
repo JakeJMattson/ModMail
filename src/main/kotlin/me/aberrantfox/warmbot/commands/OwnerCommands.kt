@@ -12,7 +12,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     command("whitelist") {
         requiresGuild = true
         expect(GuildArg)
-        description = "Whitelist a guild."
+        description = "Add a guild to the whitelist."
         execute {
             val targetGuild = it.args.component1() as Guild
 
@@ -23,7 +23,25 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
             configuration.whitelist.add(targetGuild.id)
             persistenceService.save(configuration)
-            it.respond("Successfully whitelisted ${targetGuild.name}")
+            it.respond("Successfully added `${targetGuild.name}` to the whitelist.")
+        }
+    }
+
+    command("unwhitelist") {
+        requiresGuild = true
+        expect(GuildArg)
+        description = "Remove a guild from the whitelist."
+        execute {
+            val targetGuild = it.args.component1() as Guild
+
+            if (!configuration.whitelist.contains(targetGuild.id)) {
+                it.respond("${targetGuild.name} (${targetGuild.id}) is not whitelisted.")
+                return@execute
+            }
+
+            configuration.whitelist.remove(targetGuild.id)
+            persistenceService.save(configuration)
+            it.respond("Successfully removed `${targetGuild.name}` from the whitelist.")
         }
     }
 }
