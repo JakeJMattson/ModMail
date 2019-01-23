@@ -9,7 +9,7 @@ import net.dv8tion.jda.core.entities.Guild
 
 @CommandSet("owner")
 fun configurationCommands(configuration: Configuration, persistenceService: PersistenceService) = commands {
-    command("whitelist") {
+    command("Whitelist") {
         requiresGuild = true
         expect(GuildArg)
         description = "Add a guild to the whitelist."
@@ -27,7 +27,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         }
     }
 
-    command("unwhitelist") {
+    command("UnWhitelist") {
         requiresGuild = true
         expect(GuildArg)
         description = "Remove a guild from the whitelist."
