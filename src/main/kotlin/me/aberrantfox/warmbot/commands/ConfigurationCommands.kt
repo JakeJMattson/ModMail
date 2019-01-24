@@ -83,22 +83,6 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
             return@execute
         }
     }
-
-    command("Setup") {
-        requiresGuild = true
-        description = Locale.messages.SETUP_DESCRIPTION
-        execute {
-            val guildId = it.guild!!.id
-
-            if (!configuration.hasGuildConfig(guildId)) {
-                conversationService.createConversation(it.author.id, guildId, "guild-setup")
-            } else {
-                it.respond(Locale.messages.SETUP_DESCRIPTION)
-            }
-
-            return@execute
-        }
-    }
 }
 
 fun displayNoConfig(event: CommandEvent) = event.respond(Locale.messages.NO_CONFIG)

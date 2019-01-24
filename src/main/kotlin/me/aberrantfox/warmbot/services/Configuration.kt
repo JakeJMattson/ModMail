@@ -2,7 +2,7 @@ package me.aberrantfox.warmbot.services
 
 import me.aberrantfox.kjdautils.api.annotation.Data
 
-data class LoggingConfiguration(val loggingChannel: String = "insert-id",
+data class LoggingConfiguration(var loggingChannel: String = "insert-id",
                                 val logStartup: Boolean = true,
                                 val logMemberOpen: Boolean = true,
                                 val logStaffOpen: Boolean = true,
