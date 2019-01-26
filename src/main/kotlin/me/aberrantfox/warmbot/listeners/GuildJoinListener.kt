@@ -12,10 +12,11 @@ class GuildJoinListener(val configuration: Configuration, private val conversati
     fun onGuildJoin(event: GuildJoinEvent) {
         if (!configuration.hasGuildConfig(event.guild.id)) {
             Timer().schedule(15000) {
-                if (event.guild.id in configuration.whitelist)
+                if (event.guild.id in configuration.whitelist) {
                     conversationService.createConversation(event.guild.owner.user.id, event.guild.id, "guild-setup")
-                else
+                } else {
                     event.guild.leave().queue()
+                }
             }
         }
     }
