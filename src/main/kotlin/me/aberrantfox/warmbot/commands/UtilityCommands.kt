@@ -13,7 +13,7 @@ private val startTime = Date()
 
 @CommandSet("utility")
 fun utilityCommands() = commands {
-    command("ping") {
+    command("Ping") {
         requiresGuild = true
         description = "Check the status of the bot."
         execute {
@@ -21,7 +21,7 @@ fun utilityCommands() = commands {
         }
     }
 
-    command("version") {
+    command("Version") {
         requiresGuild = true
         description = "Display the bot version."
         execute {
@@ -29,7 +29,7 @@ fun utilityCommands() = commands {
         }
     }
 
-    command("author") {
+    command("Author") {
         requiresGuild = true
         description = "Display project author."
         execute {
@@ -37,7 +37,7 @@ fun utilityCommands() = commands {
         }
     }
 
-    command("source") {
+    command("Source") {
         requiresGuild = true
         description = "Display the source code via a GitLab link."
         execute {
@@ -45,7 +45,7 @@ fun utilityCommands() = commands {
         }
     }
 
-    command("botinfo") {
+    command("BotInfo") {
         requiresGuild = true
         description = "Display the bot information."
         execute {
@@ -79,7 +79,7 @@ fun utilityCommands() = commands {
         }
     }
 
-    command("uptime") {
+    command("Uptime") {
         requiresGuild = true
         description = "Displays how long the bot has been running."
         execute {

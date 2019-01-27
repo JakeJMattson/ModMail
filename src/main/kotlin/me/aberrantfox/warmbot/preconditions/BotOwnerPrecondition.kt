@@ -3,22 +3,20 @@ package me.aberrantfox.warmbot.preconditions
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.*
 import me.aberrantfox.warmbot.messages.Locale
+import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.TextChannel
 
-private const val Category = "configuration"
+private const val Category = "owner"
 
 @Precondition
-fun produceIsGuildOwnerPrecondition() = exit@{ event: CommandEvent ->
+fun produceIsBotOwnerPrecondition(configuration: Configuration) = exit@{ event: CommandEvent ->
     val command = event.container.commands[event.commandStruct.commandName] ?: return@exit Pass
 
     if(command.category != Category) return@exit Pass
 
     if(event.channel !is TextChannel) return@exit Fail(Locale.messages.FAIL_TEXT_CHANNEL_ONLY)
 
-    val textChannel = event.channel as TextChannel
-    val relevantGuild = event.jda.getGuildById(textChannel.guild.id)
+    if(configuration.ownerId == event.author.id) return@exit Pass
 
-    if(relevantGuild.owner.user.id == event.author.id) return@exit Pass
-
-    return@exit Fail(Locale.messages.FAIL_MUST_BE_GUILD_OWNER)
+    return@exit Fail("You must be the owner of this bot to use this command.")
 }

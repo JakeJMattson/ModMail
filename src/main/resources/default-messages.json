@@ -12,5 +12,7 @@
   "FAIL_TEXT_CHANNEL_ONLY": "This command cannot be used in a private message, it must be invoked from a server channel.",
   "FAIL_MUST_BE_GUILD_OWNER": "You must be the owner of the guild in order to use this command.",
   "MISSING_STAFF_ROLE": "You do not have the staff role.",
-  "NO_PERMISSIONS": "Did you really think I'd let you do that? \uD83E\uDD14"
+  "NO_PERMISSIONS": "Did you really think I'd let you do that? \uD83E\uDD14",
+  "NOT_WHITELISTED": "This guild is not whitelisted.",
+  "NOT_CONFIGURED": "This guild is not configured for use."
 }

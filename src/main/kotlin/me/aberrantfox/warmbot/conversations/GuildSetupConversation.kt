@@ -33,7 +33,6 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
                 title("Setup Archive Channel")
                 color(Color.magenta)
                 description("Now, I need the **ID** of the **channel** you'd like me to send archived reports to.")
-
             }
             expect = TextChannelArg
         }
@@ -46,12 +45,21 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
             }
             expect = RoleArg
         }
+        step {
+            prompt = embed {
+                title("Setup Logging Channel")
+                color(Color.magenta)
+                description("Now, I need the **ID** of the **channel** you'd like me to log information to.")
+            }
+            expect = TextChannelArg
+        }
     }
 
     onComplete {
         val reportCategory = it.responses.component1() as Category
         val archiveChannel = it.responses.component2() as TextChannel
         val staffRole = it.responses.component3() as Role
+        val loggingChannel = it.responses.component4() as TextChannel
         val GUILD_SETUP_FAIL = "**Error** :: The %s provided did not belong to the guild you started this conversation in."
 
         it.respond(
@@ -59,8 +67,11 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
                 reportCategory.guild.id != it.guildId -> GUILD_SETUP_FAIL.format("report category")
                 archiveChannel.guild.id != it.guildId -> GUILD_SETUP_FAIL.format("archive channel")
                 staffRole.guild.id != it.guildId -> GUILD_SETUP_FAIL.format("staff role")
+                loggingChannel.guild.id != it.guildId ->  GUILD_SETUP_FAIL.format("logging channel")
                 else -> {
-                    config.guildConfigurations.add(GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, staffRole.name))
+                    val guildConfiguration = GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, staffRole.name)
+                    guildConfiguration.loggingConfiguration!!.loggingChannel = loggingChannel.id
+                    config.guildConfigurations.add(guildConfiguration)
                     persistenceService.save(config)
                     "Successfully configured for use! As the guild owner, you can adjust these values at any time."
                 }

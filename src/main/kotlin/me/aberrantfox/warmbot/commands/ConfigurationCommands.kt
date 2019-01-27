@@ -10,7 +10,7 @@ import net.dv8tion.jda.core.entities.*
 
 @CommandSet("configuration")
 fun configurationCommands(configuration: Configuration, persistenceService: PersistenceService, conversationService: ConversationService) = commands {
-    command("setreportcategory") {
+    command("SetReportCategory") {
         requiresGuild = true
         description = Locale.messages.SET_REPORT_CATEGORY_DESCRIPTION
         expect(ChannelCategoryArg)
@@ -32,7 +32,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         }
     }
 
-    command("setarchivechannel") {
+    command("SetArchiveChannel") {
         requiresGuild = true
         description = Locale.messages.SET_ARCHIVE_CHANNEL_DESCRIPTION
         expect(TextChannelArg)
@@ -54,7 +54,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         }
     }
 
-    command("setstaffrole") {
+    command("SetStaffRole") {
         requiresGuild = true
         description = Locale.messages.SET_STAFF_ROLE_DESCRIPTION
         expect(WordArg)
@@ -79,22 +79,6 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
             persistenceService.save(configuration)
             val response = Locale.inject({ SET_STAFF_ROLE_SUCCESSFUL },"staffRoleName" to staffRole.name)
             it.respond(response)
-
-            return@execute
-        }
-    }
-
-    command("setup") {
-        requiresGuild = true
-        description = Locale.messages.SETUP_DESCRIPTION
-        execute {
-            val guildId = it.guild!!.id
-
-            if (!configuration.hasGuildConfig(guildId)) {
-                conversationService.createConversation(it.author.id, guildId, "guild-setup")
-            } else {
-                it.respond(Locale.messages.SETUP_DESCRIPTION)
-            }
 
             return@execute
         }
