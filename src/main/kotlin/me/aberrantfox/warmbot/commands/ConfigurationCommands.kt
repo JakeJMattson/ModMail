@@ -16,12 +16,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         expect(ChannelCategoryArg)
         execute {
             val reportCategory = it.args.component1() as Category
-            val guildConfig = configuration.getGuildConfig(reportCategory.guild.id)
-
-            if (guildConfig == null) {
-                displayNoConfig(it)
-                return@execute
-            }
+            val guildConfig = configuration.getGuildConfig(reportCategory.guild.id)!!
 
             guildConfig.reportCategory = reportCategory.id
             persistenceService.save(configuration)
@@ -38,12 +33,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         expect(TextChannelArg)
         execute {
             val archiveChannel = it.args.component1() as TextChannel
-            val guildConfig = configuration.getGuildConfig(archiveChannel.guild.id)
-
-            if (guildConfig == null) {
-                displayNoConfig(it)
-                return@execute
-            }
+            val guildConfig = configuration.getGuildConfig(archiveChannel.guild.id)!!
 
             guildConfig.archiveChannel = archiveChannel.id
             persistenceService.save(configuration)
@@ -68,13 +58,8 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
                 return@execute
             }
 
-            val guildConfig = configuration.getGuildConfig(it.message.guild.id)
+            val guildConfig = configuration.getGuildConfig(it.message.guild.id)!!
 
-            if (guildConfig == null) {
-                displayNoConfig(it)
-                return@execute
-            }
-            
             guildConfig.staffRoleName = staffRole.name
             persistenceService.save(configuration)
             val response = Locale.inject({ SET_STAFF_ROLE_SUCCESSFUL },"staffRoleName" to staffRole.name)
