@@ -54,27 +54,10 @@ fun utilityCommands() = commands {
                 description("A Discord report management bot.")
                 setColor(Color.green)
                 setThumbnail(it.jda.selfUser.effectiveAvatarUrl)
-
-                field {
-                    name = "Creator"
-                    value = Project.author
-                    inline = false
-                }
-                field {
-                    name = "Contributors"
-                    value = "Elliott#0001, JakeyWakey#1569"
-                    inline = false
-                }
-                field {
-                    name = "Source"
-                    value = Project.repository
-                    inline = false
-                }
-                field {
-                    name = "Version"
-                    value = Project.version
-                    inline = false
-                }
+                addField("Creator", Project.author, false)
+                addField("Contributors", "Elliott#0001, JakeyWakey#1569", false)
+                addField("Source", Project.repository, false)
+                addField("Version", Project.version, false)
             })
         }
     }
