@@ -67,8 +67,6 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
         val user = userObject.id
         val safeMessage = message.fullContent().trim().sanitiseMentions()
 
-        hasReportChannel(user)
-
         if (hasReportChannel(user)) {
             val report = getReportByUserId(user)
             jda.getTextChannelById(report.channelId).sendMessage(safeMessage).queue()

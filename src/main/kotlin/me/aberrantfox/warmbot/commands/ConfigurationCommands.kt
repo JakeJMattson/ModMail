@@ -69,5 +69,3 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         }
     }
 }
-
-fun displayNoConfig(event: CommandEvent) = event.respond(Locale.messages.NO_CONFIG)
