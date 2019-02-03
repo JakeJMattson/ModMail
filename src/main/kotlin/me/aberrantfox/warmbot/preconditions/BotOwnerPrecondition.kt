@@ -18,5 +18,5 @@ fun produceIsBotOwnerPrecondition(configuration: Configuration) = exit@{ event: 
 
     if(configuration.ownerId == event.author.id) return@exit Pass
 
-    return@exit Fail("You must be the owner of this bot to use this command.")
+    return@exit Fail(Locale.messages.FAIL_MUST_BE_BOT_OWNER)
 }

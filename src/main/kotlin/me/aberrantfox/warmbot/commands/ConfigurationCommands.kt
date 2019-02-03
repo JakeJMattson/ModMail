@@ -50,7 +50,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
             val staffRole = it.jda.getRolesByName(staffRoleName, true).firstOrNull()
 
             if (staffRole == null) {
-                val response = Locale.inject({ COULD_NOT_FIND_ROLE }, "staffRoleName" to staffRoleName)
+                val response = Locale.inject({ FAIL_COULD_NOT_FIND_ROLE }, "staffRoleName" to staffRoleName)
                 it.respond(response)
                 return@execute
             }

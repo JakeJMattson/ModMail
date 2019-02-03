@@ -16,7 +16,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 
     command("Close") {
 		requiresGuild = true
-        description = "Close the report channel that this command is invoked in. Alternatively, delete the channel."
+        description = Locale.messages.CLOSE_DESCRIPTION
         execute {
             val report = reportService.getReportByChannel(it.channel.id)
             (it.channel as TextChannel).delete().queue()
@@ -26,7 +26,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 
     command("Archive") {
 		requiresGuild = true
-        description = "Archive the contents of the report as a text document in the archive channel."
+        description = Locale.messages.ARCHIVE_DESCRIPTION
         execute {
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
             val archiveChannel = it.jda.getTextChannelById(relevantGuild.archiveChannel)
@@ -44,7 +44,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 
 	command("Note") {
 		requiresGuild = true
-		description = "Produce a note in a report channel in the form of an embed."
+		description = Locale.messages.NOTE_DESCRIPTION
 		expect(SentenceArg)
 		execute {
 			it.respond(
@@ -63,7 +63,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 	}
 }
 
-@CommandSet("report helpers")
+@CommandSet("ReportHelpers")
 fun reportHelperCommands(reportService: ReportService, configuration: Configuration, loggingService: LoggingService) = commands {
 
 	fun openReport(event: CommandEvent, targetUser: User, message: String, guildId: String) {
@@ -78,7 +78,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 						targetUser.sendPrivateMessage(message, DefaultLogger())
 						message
 					} else {
-						Locale.messages.COMMON_NO_MESSAGE
+						Locale.messages.DEFAULT_INITIAL_MESSAGE
 					}
 
 			channel.sendMessage(embed {
@@ -102,35 +102,24 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 
 	command("Open") {
 		requiresGuild = true
-		description = "Open a report with the target user and send the provided initial message."
+		description = Locale.messages.OPEN_DESCRIPTION
 		expect(arg(UserArg), arg(SentenceArg("Initial Message"), optional = true, default = ""))
 		execute { event ->
 			val targetUser = event.args.component1() as User
 			val message = event.args.component2() as String
 			val guild = event.message.guild
+			val hasReport = reportService.hasReportChannel(targetUser.id)
 
-			if (targetUser.isBot) {
-				event.respond("The target user is a bot.")
-				return@execute
-			}
+			if (targetUser.isBot) return@execute event.respond("The target user is a bot.")
 
-			if (!guild.isMember(targetUser)) {
-				event.respond("The target user is not in this guild.")
-				return@execute
-			}
+			if (!guild.isMember(targetUser)) return@execute event.respond("The target user is not in this guild.")
 
-			if (reportService.hasReportChannel(targetUser.id)) {
-				event.respond("The target user already has an open report.")
-				return@execute
-			}
+			if (hasReport) return@execute event.respond("The target user already has an open report.")
 
 			val userEmbed = embed {
 				setColor(Color.green)
 				setThumbnail(guild.iconUrl)
-				addField("You've received a message from the staff of ${guild.name}!",
-						"This is a two-way communication medium between you and the entire staff team. " +
-								"Reply directly into this channel and your message will be forwarded to them.",
-						false)
+				addField("You've received a message from the staff of ${guild.name}!", Locale.messages.BOT_DESCRIPTION, false)
 			}
 
 			targetUser.openPrivateChannel().queue {
@@ -146,7 +135,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 
 	command("CloseAll") {
 		requiresGuild = true
-		description = "Close all currently open reports. Can be invoked in any channel."
+		description = Locale.messages.CLOSE_ALL_DESCRIPTION
 		execute {
 			val reportsFromGuild = reportService.getReportsFromGuild(it.message.guild.id)
 

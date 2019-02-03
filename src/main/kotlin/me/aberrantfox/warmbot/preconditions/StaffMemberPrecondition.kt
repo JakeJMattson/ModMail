@@ -8,7 +8,7 @@ import net.dv8tion.jda.core.entities.TextChannel
 
 @Precondition
 fun produceIsStaffMemberPrecondition(configuration: Configuration) = exit@{ event: CommandEvent ->
-    if (event.channel !is TextChannel) return@exit Fail(Locale.messages.NO_PERMISSIONS)
+    if (event.channel !is TextChannel) return@exit Fail(Locale.messages.FAIL_TEXT_CHANNEL_ONLY)
 
     val guildId = (event.channel as TextChannel).guild.id
 
@@ -19,5 +19,5 @@ fun produceIsStaffMemberPrecondition(configuration: Configuration) = exit@{ even
     val staffRole = relevantGuild.getRolesByName(relevantGuildConfiguration.staffRoleName, true).first()
     val memberAuthor = relevantGuild.getMember(event.author)
 
-    return@exit if (memberAuthor.roles.contains(staffRole)) Pass else Fail(Locale.messages.MISSING_STAFF_ROLE)
+    return@exit if (memberAuthor.roles.contains(staffRole)) Pass else Fail(Locale.messages.FAIL_MISSING_STAFF_ROLE)
 }
