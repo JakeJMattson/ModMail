@@ -13,5 +13,5 @@ fun produceIsValidGuildPrecondition(configuration: Configuration) = exit@{ event
 
     if (!configuration.hasGuildConfig(guildId)) return@exit Fail(Locale.messages.FAIL_GUILD_NOT_CONFIGURED)
 
-    Pass
+    return@exit Pass
 }

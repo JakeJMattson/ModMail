@@ -12,9 +12,8 @@ fun produceIsReportPrecondition(reportService: ReportService) = exit@{ event: Co
 
     if(command.category != Category) return@exit Pass
 
-    if (!reportService.isReportChannel(event.channel.id))
-        return@exit Fail("This command must be invoked inside a report.")
+    if (!reportService.isReportChannel(event.channel.id)) return@exit Fail("This command must be invoked inside a report.")
 
-Pass
+    return@exit Pass
 }
 

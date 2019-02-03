@@ -1,9 +1,7 @@
 package me.aberrantfox.warmbot.preconditions
 
-import me.aberrantfox.kjdautils.api.dsl.CommandEvent
-import me.aberrantfox.kjdautils.api.dsl.Precondition
-import me.aberrantfox.kjdautils.internal.command.Fail
-import me.aberrantfox.kjdautils.internal.command.Pass
+import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.internal.command.*
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.TextChannel
 
@@ -13,12 +11,11 @@ fun produceIsStaffChannelPrecondition(configuration: Configuration) = exit@{ eve
 
     val textChannel = event.channel as TextChannel
 
-    if ( !(configuration.hasGuildConfig(textChannel.guild.id)) ) return@exit Pass
+    val guildConfig = configuration.getGuildConfig(textChannel.guild.id) ?: return@exit Pass
 
-    val relevantGuildConfiguration = configuration.getGuildConfig(textChannel.guild.id)!!
-    val relevantGuild = event.jda.getGuildById(textChannel.guild.id)
-    val staffRole = relevantGuild.getRolesByName(relevantGuildConfiguration.staffRoleName, true).first()
-    val perms = textChannel.getPermissionOverride(staffRole)
+    val staffRole = textChannel.guild.getRolesByName(guildConfig.staffRoleName, true).first()
 
-    return@exit if (perms == null) Fail() else Pass
+    textChannel.getPermissionOverride(staffRole) ?: return@exit Fail()
+
+    return@exit Pass
 }

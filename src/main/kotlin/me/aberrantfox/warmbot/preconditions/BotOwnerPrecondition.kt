@@ -16,7 +16,7 @@ fun produceIsBotOwnerPrecondition(configuration: Configuration) = exit@{ event: 
 
     if(event.channel !is TextChannel) return@exit Fail(Locale.messages.FAIL_TEXT_CHANNEL_ONLY)
 
-    if(configuration.ownerId == event.author.id) return@exit Pass
+    if(configuration.ownerId != event.author.id) return@exit Fail(Locale.messages.FAIL_MUST_BE_BOT_OWNER)
 
-    return@exit Fail(Locale.messages.FAIL_MUST_BE_BOT_OWNER)
+    return@exit Pass
 }
