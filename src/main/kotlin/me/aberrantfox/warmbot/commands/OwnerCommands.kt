@@ -8,7 +8,7 @@ import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.Guild
 
 @CommandSet("owner")
-fun configurationCommands(configuration: Configuration, persistenceService: PersistenceService) = commands {
+fun ownerCommands(configuration: Configuration, persistenceService: PersistenceService) = commands {
     command("Whitelist") {
         requiresGuild = true
         description = "Add a guild to the whitelist."
@@ -42,6 +42,23 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
             configuration.whitelist.remove(targetGuild.id)
             persistenceService.save(configuration)
             it.respond("Successfully removed `${targetGuild.name}` from the whitelist.")
+        }
+    }
+
+    command("ShowWhitelist") {
+        requiresGuild = true
+        description = "Display all guilds in the whitelist."
+        execute {
+            val jda = it.jda
+
+            it.respond(
+                StringBuilder().apply {
+                    configuration.whitelist.forEach {
+                        val guild = jda.getGuildById(it)
+                        this.appendln("${guild.id} (${guild.name})")
+                    }
+                }.toString()
+            )
         }
     }
 }
