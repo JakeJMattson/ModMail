@@ -18,12 +18,6 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 		requiresGuild = true
         description = "Close the report channel that this command is invoked in. Alternatively, delete the channel."
         execute {
-            if (!reportService.isReportChannel(it.channel.id)) {
-                it.respond(
-                        "Nice try, but you can't close a channel that isn't a report. That would be silly. Don't do silly things.")
-                return@execute
-            }
-
             val report = reportService.getReportByChannel(it.channel.id)
             (it.channel as TextChannel).delete().queue()
             loggingService.close(report, it.author)
@@ -34,11 +28,6 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 		requiresGuild = true
         description = "Archive the contents of the report as a text document in the archive channel."
         execute {
-            if (!reportService.isReportChannel(it.channel.id)) {
-                it.respond("You can't archive something that isn't a report...")
-                return@execute
-            }
-
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
             val archiveChannel = it.jda.getTextChannelById(relevantGuild.archiveChannel)
             val targetChannel = it.jda.getTextChannelById(it.channel.id)
@@ -55,14 +44,9 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 
 	command("Note") {
 		requiresGuild = true
-		description = "Archive the contents of the report as a text document in the archive channel."
+		description = "Produce a note in a report channel in the form of an embed."
 		expect(SentenceArg)
 		execute {
-			if (!reportService.isReportChannel(it.channel.id)) {
-				it.respond("You can't archive something that isn't a report...")
-				return@execute
-			}
-
 			it.respond(
 				embed {
 					field {
