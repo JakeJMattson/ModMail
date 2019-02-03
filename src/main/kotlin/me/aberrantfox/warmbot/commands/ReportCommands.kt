@@ -96,7 +96,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 		requiresGuild = true
         description = "Close the report channel that this command is invoked in. Alternatively, delete the channel."
         execute {
-            if (!(reportService.isReportChannel(it.channel.id))) {
+            if (!reportService.isReportChannel(it.channel.id)) {
                 it.respond(
                         "Nice try, but you can't close a channel that isn't a report. That would be silly. Don't do silly things.")
                 return@execute
@@ -112,7 +112,6 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 		requiresGuild = true
         description = "Close all currently open reports. Can be invoked in any channel."
         execute {
-
             val reportsFromGuild = reportService.getReportsFromGuild(it.message.guild.id)
             val author = it.author
 
@@ -135,7 +134,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
         description = "Archive the contents of the report as a text document in the archive channel."
         execute {
 
-            if (!(reportService.isReportChannel(it.channel.id))) {
+            if (!reportService.isReportChannel(it.channel.id)) {
                 it.respond("You can't archive something that isn't a report...")
                 return@execute
             }
@@ -153,4 +152,29 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
             loggingService.archive(report, it.author)
         }
     }
+
+	command("Note") {
+		requiresGuild = true
+		description = "Archive the contents of the report as a text document in the archive channel."
+		expect(SentenceArg)
+		execute {
+			if (!reportService.isReportChannel(it.channel.id)) {
+				it.respond("You can't archive something that isn't a report...")
+				return@execute
+			}
+
+			it.respond(
+				embed {
+					field {
+						name = "New note added by ${it.author.fullName()} (${it.author.id})"
+						value = it.args.component1() as String
+						inline = false
+					}
+					color(Color.ORANGE)
+				}
+			)
+
+			it.message.delete().queue()
+		}
+	}
 }
