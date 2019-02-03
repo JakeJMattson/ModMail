@@ -66,15 +66,9 @@ class EditListener(private val reportService: ReportService) {
 		val guildMessage = channel.getMessageById(targetMessage).complete()
 
 		val embed = embed {
-
 			addField("Edit Detected!", "The user has performed a message edit.", false)
-
-			createFields("Old Content", trimMessage(guildMessage)).forEach {
-				addField(it)
-			}
-			createFields("New Content", trimMessage(event.message)).forEach {
-				addField(it)
-			}
+			createFields("Old Content", trimMessage(guildMessage)).forEach { addField(it) }
+			createFields("New Content", trimMessage(event.message)).forEach { addField(it) }
 			setColor(Color.YELLOW)
 		}
 

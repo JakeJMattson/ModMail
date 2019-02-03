@@ -1,9 +1,7 @@
 package me.aberrantfox.warmbot.preconditions
 
-import me.aberrantfox.kjdautils.api.dsl.CommandEvent
-import me.aberrantfox.kjdautils.api.dsl.Precondition
-import me.aberrantfox.kjdautils.internal.command.Fail
-import me.aberrantfox.kjdautils.internal.command.Pass
+import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.internal.command.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.TextChannel
@@ -12,12 +10,12 @@ import net.dv8tion.jda.core.entities.TextChannel
 fun produceIsStaffMemberPrecondition(configuration: Configuration) = exit@{ event: CommandEvent ->
     if (event.channel !is TextChannel) return@exit Fail(Locale.messages.NO_PERMISSIONS)
 
-    val textChannel = event.channel as TextChannel
+    val guildId = (event.channel as TextChannel).guild.id
 
-    if (!configuration.hasGuildConfig(textChannel.guild.id)) return@exit Pass
+    if (!configuration.hasGuildConfig(guildId)) return@exit Pass
 
-    val relevantGuildConfiguration = configuration.getGuildConfig(textChannel.guild.id)!!
-    val relevantGuild = event.jda.getGuildById(textChannel.guild.id)
+    val relevantGuildConfiguration = configuration.getGuildConfig(guildId)!!
+    val relevantGuild = event.jda.getGuildById(guildId)
     val staffRole = relevantGuild.getRolesByName(relevantGuildConfiguration.staffRoleName, true).first()
     val memberAuthor = relevantGuild.getMember(event.author)
 

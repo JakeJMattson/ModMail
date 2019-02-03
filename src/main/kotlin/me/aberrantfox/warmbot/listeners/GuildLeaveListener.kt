@@ -11,7 +11,7 @@ class GuildLeaveListener(private val reportService: ReportService, val configura
 	fun onGuildLeave(event: GuildMemberLeaveEvent) {
 		val user = event.user.id
 
-        if( !(reportService.hasReportChannel(user)) ) return
+        if(!reportService.hasReportChannel(user)) return
 
         val reportId = reportService.getReportByUserId(user).channelId
         val reportChannel = reportService.jda.getTextChannelById(reportId)
@@ -21,11 +21,7 @@ class GuildLeaveListener(private val reportService: ReportService, val configura
 	}
 
     private fun createResponse(message: String) = embed {
-        field {
-            name = "User no longer in server!"
-            value = "This user $message the server."
-            inline = false
-        }
+        addField("User no longer in server!", "This user $message the server.", false)
         setColor(Color.red)
     }
 }

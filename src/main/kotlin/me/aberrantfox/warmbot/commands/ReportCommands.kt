@@ -137,9 +137,9 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 				it.sendMessage(userEmbed).queue({
 					openReport(event, targetUser, message, guild.id)
 				},
-						{
-							event.respond("Unable to contact the target user. Direct messages are disabled.")
-						})
+				{
+					event.respond("Unable to contact the target user. Direct messages are disabled.")
+				})
 			}
 		}
 	}
@@ -149,16 +149,15 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 		description = "Close all currently open reports. Can be invoked in any channel."
 		execute {
 			val reportsFromGuild = reportService.getReportsFromGuild(it.message.guild.id)
-			val author = it.author
 
 			if (reportsFromGuild.isEmpty()) {
 				it.respond("There are no reports to close.")
 				return@execute
 			}
 
-			reportsFromGuild.forEach {
-				reportService.jda.getTextChannelById(it.channelId).delete().queue()
-				loggingService.close(it, author)
+			reportsFromGuild.forEach {report ->
+				reportService.jda.getTextChannelById(report.channelId).delete().queue()
+				loggingService.close(report, it.author)
 			}
 
 			it.respond("${reportsFromGuild.size} report(s) closed successfully.")

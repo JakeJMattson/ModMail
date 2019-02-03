@@ -58,9 +58,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
                 return@execute
             }
 
-            val guildConfig = configuration.getGuildConfig(it.message.guild.id)!!
-
-            guildConfig.staffRoleName = staffRole.name
+            configuration.getGuildConfig(it.message.guild.id)!!.staffRoleName = staffRole.name
             persistenceService.save(configuration)
             val response = Locale.inject({ SET_STAFF_ROLE_SUCCESSFUL },"staffRoleName" to staffRole.name)
             it.respond(response)
