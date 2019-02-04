@@ -23,15 +23,13 @@ data class Report(val userId: String,
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
 @Service
-class ReportService(val jda: JDA, private val config: Configuration, val loggingService: LoggingService) {
+class ReportService(val jda: JDA, private val config: Configuration, private val loggingService: LoggingService) {
     private val gson = GsonBuilder().setPrettyPrinting().create()
     private val reportDir = File("reports/")
     private val reports = Vector<Report>()
     private val queuedReports = Vector<QueuedReport>()
 
-    init {
-        loadReports()
-    }
+    init { loadReports() }
 
     fun isReportChannel(channelId: String) = reports.any { it.channelId == channelId }
     fun hasReportChannel(userId: String) = reports.any { it.userId == userId } || queuedReports.any { it.user == userId }
@@ -41,18 +39,9 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
     fun getCommonGuilds(userObject: User): List<Guild> = userObject.mutualGuilds.filter { it.id in config.guildConfigurations.associateBy { it.guildId } }
 
     fun addReport(user: User, guild: Guild, firstMessage: Message) {
-        val guildConfiguration = config.getGuildConfig(guild.id)!!
-        val reportCategory = jda.getCategoryById(guildConfiguration.reportCategory)
+        if (getReportsFromGuild(guild.id).size == config.maxOpenReports || guild.textChannels.size >= 250) return
 
-        if (reports.none { it.userId == user.id }) {
-            if (getReportsFromGuild(guild.id).size == config.maxOpenReports)
-                return
-        }
-
-        if (guild.textChannels.size >= 250) {
-            return
-        }
-
+        val reportCategory = jda.getCategoryById(config.getGuildConfig(guild.id)?.reportCategory)
         reportCategory.createTextChannel(user.name).queue { channel ->
             createReportChannel(channel as TextChannel, user, firstMessage, guild)
         }
@@ -99,7 +88,6 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
             setAuthor("Please choose which server's staff you'd like to contact.")
             setThumbnail(jda.selfUser.avatarUrl)
             description("Respond with the number that correlates with the desired server to get started.")
-            addBlankField(true)
 
             commonGuilds.forEachIndexed { index, guild ->
                 field {
@@ -109,7 +97,8 @@ class ReportService(val jda: JDA, private val config: Configuration, val logging
             }
         }
 
-    fun buildReportOpenedEmbed(guildObject: Guild)= embed {
+    fun buildReportOpenedEmbed(guildObject: Guild) =
+        embed {
             setColor(Color.PINK)
             setAuthor("You've successfully opened a report with the staff of ${guildObject.name}")
             description("Someone will respond shortly, please be patient.")
