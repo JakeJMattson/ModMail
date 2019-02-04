@@ -3,7 +3,7 @@ package me.aberrantfox.warmbot.listeners
 import com.google.common.eventbus.Subscribe
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
-import me.aberrantfox.warmbot.extensions.fullContent
+import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.services.ReportService
 import net.dv8tion.jda.core.entities.*
 import net.dv8tion.jda.core.events.message.guild.*
@@ -16,10 +16,10 @@ class EditListener(private val reportService: ReportService) {
 	fun onGuildMessageUpdate(event: GuildMessageUpdateEvent) {
 		if (!reportService.isReportChannel(event.channel.id)) return
 
-		if (event.author.id == reportService.jda.selfUser.id) return
+		if (event.author.id == selfUser().id) return
 
 		val report = reportService.getReportByChannel(event.channel.id)
-		val privateChannel = reportService.jda.privateChannels.first { it.user.id == report.userId }
+		val privateChannel = getPrivateChannels().first { it.user.id == report.userId }
 		val targetMessage = report.messages[event.messageId]
 
 		privateChannel.editMessageById(targetMessage, event.message).queue()
@@ -31,7 +31,7 @@ class EditListener(private val reportService: ReportService) {
 
 		val report = reportService.getReportByChannel(event.channel.id)
 		val targetMessage = report.messages[event.messageId] ?: return
-		val privateChannel = reportService.jda.privateChannels.first { it.user.id == report.userId }
+		val privateChannel = getPrivateChannels().first { it.user.id == report.userId }
 
 		privateChannel.deleteMessageById(targetMessage).queue()
 		report.messages.remove(event.messageId)
@@ -46,7 +46,7 @@ class EditListener(private val reportService: ReportService) {
 		event.privateChannel ?: return
 
 		val report = reportService.getReportByUserId(event.user.id)
-		val channel = reportService.jda.getTextChannelById(report.channelId)
+		val channel = report.channelId.idToTextChannel()
 
 		channel.sendTyping().queue()
 	}
@@ -62,7 +62,7 @@ class EditListener(private val reportService: ReportService) {
 
 		val report = reportService.getReportByUserId(event.author.id)
 		val targetMessage = report.messages[event.messageId] ?: return
-		val channel = reportService.jda.getTextChannelById(report.channelId)
+		val channel = report.channelId.idToTextChannel()
 		val guildMessage = channel.getMessageById(targetMessage).complete()
 
 		val embed = embed {
@@ -78,10 +78,10 @@ class EditListener(private val reportService: ReportService) {
 
 	@Subscribe
 	fun onPrivateMessageReceived(event: PrivateMessageReceivedEvent) {
-		if (event.author.id == reportService.jda.selfUser.id) {
+		if (event.author.id == selfUser().id) {
 			if (event.message.embeds.isNotEmpty()) return
 
-			val user = reportService.jda.getPrivateChannelById(event.message.channel.id).user.id
+			val user = event.channel.id.idToPrivateChannel().user.id
 
 			if (!reportService.hasReportChannel(user)) return
 
@@ -98,7 +98,7 @@ class EditListener(private val reportService: ReportService) {
 
 	@Subscribe
 	fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
-		if (event.author.id == reportService.jda.selfUser.id) {
+		if (event.author.id == selfUser().id) {
 			if (event.message.embeds.isNotEmpty()) return
 
 			if (!reportService.isReportChannel(event.channel.id)) return

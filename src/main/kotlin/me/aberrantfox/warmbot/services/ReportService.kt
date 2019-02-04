@@ -6,7 +6,7 @@ import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
 import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
-import me.aberrantfox.warmbot.extensions.fullContent
+import me.aberrantfox.warmbot.extensions.*
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
 import java.awt.Color
@@ -23,7 +23,7 @@ data class Report(val userId: String,
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
 @Service
-class ReportService(val jda: JDA, private val config: Configuration, private val loggingService: LoggingService) {
+class ReportService(private val jda: JDA, private val config: Configuration, private val loggingService: LoggingService) {
     private val gson = GsonBuilder().setPrettyPrinting().create()
     private val reportDir = File("reports/")
     private val reports = Vector<Report>()
@@ -41,7 +41,7 @@ class ReportService(val jda: JDA, private val config: Configuration, private val
     fun addReport(user: User, guild: Guild, firstMessage: Message) {
         if (getReportsFromGuild(guild.id).size == config.maxOpenReports || guild.textChannels.size >= 250) return
 
-        val reportCategory = jda.getCategoryById(config.getGuildConfig(guild.id)?.reportCategory)
+        val reportCategory = config.getGuildConfig(guild.id)?.reportCategory!!.idToCategory()
         reportCategory.createTextChannel(user.name).queue { channel ->
             createReportChannel(channel as TextChannel, user, firstMessage, guild)
         }
@@ -78,7 +78,7 @@ class ReportService(val jda: JDA, private val config: Configuration, private val
     fun sendToUser(channelId: String, message: Message) {
         val report = getReportByChannel(channelId)
 
-        jda.getUserById(report.userId).sendPrivateMessage(message.fullContent(), DefaultLogger())
+        report.userId.idToUser().sendPrivateMessage(message.fullContent(), DefaultLogger())
         report.queuedMessageId = message.id
     }
 
@@ -86,7 +86,7 @@ class ReportService(val jda: JDA, private val config: Configuration, private val
         embed {
             setColor(Color.CYAN)
             setAuthor("Please choose which server's staff you'd like to contact.")
-            setThumbnail(jda.selfUser.avatarUrl)
+            setThumbnail(selfUser().avatarUrl)
             description("Respond with the number that correlates with the desired server to get started.")
 
             commonGuilds.forEachIndexed { index, guild ->
@@ -111,9 +111,9 @@ class ReportService(val jda: JDA, private val config: Configuration, private val
     }
 
     private fun sendReportClosedEmbed(report: Report) =
-        jda.getUserById(report.userId).sendPrivateMessage(embed {
+        report.userId.idToUser().sendPrivateMessage(embed {
             setColor(Color.LIGHT_GRAY)
-            setAuthor("The staff of ${jda.getGuildById(report.guildId).name} have closed this report.")
+            setAuthor("The staff of ${report.guildId.idToGuild().name} have closed this report.")
             setDescription("If you continue to reply, a new report will be created.")
         })
 

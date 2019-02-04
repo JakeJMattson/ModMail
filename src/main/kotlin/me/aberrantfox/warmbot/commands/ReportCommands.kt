@@ -4,7 +4,7 @@ import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
-import me.aberrantfox.warmbot.extensions.archiveString
+import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
@@ -68,7 +68,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 
 	fun openReport(event: CommandEvent, targetUser: User, message: String, guildId: String) {
 		val guildConfiguration = configuration.getGuildConfig(guildId)!!
-		val reportCategory = reportService.jda.getCategoryById(guildConfiguration.reportCategory)
+		val reportCategory = guildConfiguration.reportCategory.idToCategory()
 
 		reportCategory.createTextChannel(targetUser.name).queue { channel ->
 			channel as TextChannel
@@ -145,7 +145,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 			}
 
 			reportsFromGuild.forEach {report ->
-				reportService.jda.getTextChannelById(report.channelId).delete().queue()
+				report.channelId.idToTextChannel().delete().queue()
 				loggingService.close(report, it.author)
 			}
 

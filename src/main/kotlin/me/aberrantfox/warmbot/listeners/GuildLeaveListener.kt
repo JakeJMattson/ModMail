@@ -2,6 +2,7 @@ package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
 import me.aberrantfox.kjdautils.api.dsl.embed
+import me.aberrantfox.warmbot.extensions.idToTextChannel
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent
 import java.awt.Color
@@ -14,10 +15,9 @@ class GuildLeaveListener(private val reportService: ReportService, val configura
         if(!reportService.hasReportChannel(user)) return
 
         val reportId = reportService.getReportByUserId(user).channelId
-        val reportChannel = reportService.jda.getTextChannelById(reportId)
         val message = if(event.guild.banList.complete().any { it.user.id == user }) "was banned from" else "has left"
 
-        reportChannel.sendMessage(createResponse(message)).queue()
+        reportId.idToTextChannel().sendMessage(createResponse(message)).queue()
 	}
 
     private fun createResponse(message: String) = embed {
