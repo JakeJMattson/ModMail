@@ -6,9 +6,7 @@ import net.dv8tion.jda.core.JDA
 private lateinit var jda: JDA
 
 @Service
-class JdaContainter(jdaInstance: JDA) {
-    init { jda = jdaInstance }
-}
+class JdaInitializer(jdaInstance: JDA) { init { jda = jdaInstance } }
 
 fun String.idToUser() = jda.getUserById(this)
 fun String.idToTextChannel() = jda.getTextChannelById(this)

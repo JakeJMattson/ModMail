@@ -11,13 +11,13 @@ private const val Category = "configuration"
 fun produceIsGuildOwnerPrecondition() = exit@{ event: CommandEvent ->
     val command = event.container.commands[event.commandStruct.commandName] ?: return@exit Pass
 
-    if(command.category != Category) return@exit Pass
+    if (command.category != Category) return@exit Pass
 
-    if(event.channel !is TextChannel) return@exit Fail(Locale.messages.FAIL_TEXT_CHANNEL_ONLY)
+    if (event.channel !is TextChannel) return@exit Fail(Locale.messages.FAIL_TEXT_CHANNEL_ONLY)
 
     val textChannel = event.channel as TextChannel
 
-    if(textChannel.guild.ownerId != event.author.id) return@exit Fail(Locale.messages.FAIL_MUST_BE_GUILD_OWNER)
+    if (textChannel.guild.ownerId != event.author.id) return@exit Fail(Locale.messages.FAIL_MUST_BE_GUILD_OWNER)
 
     return@exit Pass
 }

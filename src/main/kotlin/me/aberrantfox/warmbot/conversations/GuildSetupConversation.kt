@@ -20,7 +20,7 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
                 title("Let's Get Setup.")
                 color(Color.magenta)
                 description("I'm here to help you setup this bot for use on your server. Please follow the prompts." +
-                        " If you make a mistake, you can adjust the provided values using commands later.")
+                    " If you make a mistake, you can adjust the provided values using commands later.")
 
                 field {
                     name = "Step 1"
@@ -42,7 +42,7 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
                 title("Who can use me?")
                 color(Color.magenta)
                 setDescription("Now, I need the **Name** of the role you give your staff members so that they can access " +
-                        "my moderator functions.")
+                    "my moderator functions.")
             }
             expect = RoleArg
         }
@@ -64,10 +64,10 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
 
         it.respond(
             when {
-                reportCategory.guild.id != it.guildId -> Locale.inject({FAIL_GUILD_SETUP}, "field" to "report category")
-                archiveChannel.guild.id != it.guildId -> Locale.inject({FAIL_GUILD_SETUP}, "field" to "archive channel")
-                staffRole.guild.id != it.guildId -> Locale.inject({FAIL_GUILD_SETUP}, "field" to "staff role")
-                loggingChannel.guild.id != it.guildId -> Locale.inject({FAIL_GUILD_SETUP}, "field" to "logging channel")
+                reportCategory.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "report category")
+                archiveChannel.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "archive channel")
+                staffRole.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "staff role")
+                loggingChannel.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "logging channel")
                 else -> {
                     val guildConfiguration = GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, staffRole.name)
                     guildConfiguration.loggingConfiguration!!.loggingChannel = loggingChannel.id

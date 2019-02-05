@@ -12,104 +12,104 @@ import net.dv8tion.jda.core.events.user.UserTypingEvent
 import java.awt.Color
 
 class EditListener(private val reportService: ReportService) {
-	@Subscribe
-	fun onGuildMessageUpdate(event: GuildMessageUpdateEvent) {
-		if (!reportService.isReportChannel(event.channel.id)) return
+    @Subscribe
+    fun onGuildMessageUpdate(event: GuildMessageUpdateEvent) {
+        if (!reportService.isReportChannel(event.channel.id)) return
 
-		if (event.author.id == selfUser().id) return
+        if (event.author.id == selfUser().id) return
 
-		val report = reportService.getReportByChannel(event.channel.id)
-		val privateChannel = getPrivateChannels().first { it.user.id == report.userId }
-		val targetMessage = report.messages[event.messageId]
+        val report = reportService.getReportByChannel(event.channel.id)
+        val privateChannel = getPrivateChannels().first { it.user.id == report.userId }
+        val targetMessage = report.messages[event.messageId]
 
-		privateChannel.editMessageById(targetMessage, event.message).queue()
-	}
+        privateChannel.editMessageById(targetMessage, event.message).queue()
+    }
 
-	@Subscribe
-	fun onGuildMessageDelete(event: GuildMessageDeleteEvent) {
-		if (!reportService.isReportChannel(event.channel.id)) return
+    @Subscribe
+    fun onGuildMessageDelete(event: GuildMessageDeleteEvent) {
+        if (!reportService.isReportChannel(event.channel.id)) return
 
-		val report = reportService.getReportByChannel(event.channel.id)
-		val targetMessage = report.messages[event.messageId] ?: return
-		val privateChannel = getPrivateChannels().first { it.user.id == report.userId }
+        val report = reportService.getReportByChannel(event.channel.id)
+        val targetMessage = report.messages[event.messageId] ?: return
+        val privateChannel = getPrivateChannels().first { it.user.id == report.userId }
 
-		privateChannel.deleteMessageById(targetMessage).queue()
-		report.messages.remove(event.messageId)
+        privateChannel.deleteMessageById(targetMessage).queue()
+        report.messages.remove(event.messageId)
 
-		reportService.writeReportToFile(report)
-	}
+        reportService.writeReportToFile(report)
+    }
 
-	@Subscribe
-	fun onUserTypingEvent(event: UserTypingEvent) {
-		if (!reportService.hasReportChannel(event.user.id)) return
+    @Subscribe
+    fun onUserTypingEvent(event: UserTypingEvent) {
+        if (!reportService.hasReportChannel(event.user.id)) return
 
-		event.privateChannel ?: return
+        event.privateChannel ?: return
 
-		val report = reportService.getReportByUserId(event.user.id)
+        val report = reportService.getReportByUserId(event.user.id)
 
-		report.channelId.idToTextChannel().sendTyping().queue()
-	}
+        report.channelId.idToTextChannel().sendTyping().queue()
+    }
 
-	@Subscribe
-	fun onPrivateMessageUpdate(event: PrivateMessageUpdateEvent) {
-		if (!reportService.hasReportChannel(event.author.id)) return
+    @Subscribe
+    fun onPrivateMessageUpdate(event: PrivateMessageUpdateEvent) {
+        if (!reportService.hasReportChannel(event.author.id)) return
 
-		fun trimMessage(message: Message) = message.fullContent().trimEnd().sanitiseMentions()
-		fun createFields(title: String, message: String) = message.chunked(1024).mapIndexed { index, chunk ->
-			MessageEmbed.Field(if (index == 0) title else "(cont)", chunk, false)
-		}
+        fun trimMessage(message: Message) = message.fullContent().trimEnd().sanitiseMentions()
+        fun createFields(title: String, message: String) = message.chunked(1024).mapIndexed { index, chunk ->
+            MessageEmbed.Field(if (index == 0) title else "(cont)", chunk, false)
+        }
 
-		val report = reportService.getReportByUserId(event.author.id)
-		val targetMessage = report.messages[event.messageId] ?: return
-		val channel = report.channelId.idToTextChannel()
-		val guildMessage = channel.getMessageById(targetMessage).complete()
+        val report = reportService.getReportByUserId(event.author.id)
+        val targetMessage = report.messages[event.messageId] ?: return
+        val channel = report.channelId.idToTextChannel()
+        val guildMessage = channel.getMessageById(targetMessage).complete()
 
-		val embed = embed {
-			addField("Edit Detected!", "The user has performed a message edit.", false)
-			createFields("Old Content", trimMessage(guildMessage)).forEach { addField(it) }
-			createFields("New Content", trimMessage(event.message)).forEach { addField(it) }
-			setColor(Color.YELLOW)
-		}
+        val embed = embed {
+            addField("Edit Detected!", "The user has performed a message edit.", false)
+            createFields("Old Content", trimMessage(guildMessage)).forEach { addField(it) }
+            createFields("New Content", trimMessage(event.message)).forEach { addField(it) }
+            setColor(Color.YELLOW)
+        }
 
-		channel.sendMessage(embed).queue()
-		channel.editMessageById(targetMessage, event.message).queue()
-	}
+        channel.sendMessage(embed).queue()
+        channel.editMessageById(targetMessage, event.message).queue()
+    }
 
-	@Subscribe
-	fun onPrivateMessageReceived(event: PrivateMessageReceivedEvent) {
-		if (event.author.id == selfUser().id) {
-			if (event.message.embeds.isNotEmpty()) return
+    @Subscribe
+    fun onPrivateMessageReceived(event: PrivateMessageReceivedEvent) {
+        if (event.author.id == selfUser().id) {
+            if (event.message.embeds.isNotEmpty()) return
 
-			val user = event.channel.id.idToPrivateChannel().user.id
+            val user = event.channel.id.idToPrivateChannel().user.id
 
-			if (!reportService.hasReportChannel(user)) return
+            if (!reportService.hasReportChannel(user)) return
 
-			val report = reportService.getReportByUserId(user)
+            val report = reportService.getReportByUserId(user)
 
-			if (report.queuedMessageId != null) {
-				report.messages[report.queuedMessageId!!] = event.messageId
-				report.queuedMessageId = null
+            if (report.queuedMessageId != null) {
+                report.messages[report.queuedMessageId!!] = event.messageId
+                report.queuedMessageId = null
 
-				reportService.writeReportToFile(report)
-			}
-		}
-	}
+                reportService.writeReportToFile(report)
+            }
+        }
+    }
 
-	@Subscribe
-	fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
-		if (event.author.id == selfUser().id) {
-			if (event.message.embeds.isNotEmpty()) return
+    @Subscribe
+    fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
+        if (event.author.id == selfUser().id) {
+            if (event.message.embeds.isNotEmpty()) return
 
-			if (!reportService.isReportChannel(event.channel.id)) return
+            if (!reportService.isReportChannel(event.channel.id)) return
 
-			val report = reportService.getReportByChannel(event.channel.id)
+            val report = reportService.getReportByChannel(event.channel.id)
 
-			if (report.queuedMessageId != null) {
-				report.messages[report.queuedMessageId!!] = event.messageId
-				report.queuedMessageId = null
+            if (report.queuedMessageId != null) {
+                report.messages[report.queuedMessageId!!] = event.messageId
+                report.queuedMessageId = null
 
-				reportService.writeReportToFile(report)
-			}
-		}
-	}
+                reportService.writeReportToFile(report)
+            }
+        }
+    }
 }

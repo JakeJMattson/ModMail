@@ -1,4 +1,3 @@
-
 import com.google.common.eventbus.Subscribe
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
 import me.aberrantfox.kjdautils.extensions.stdlib.isInteger
@@ -27,7 +26,7 @@ class ReportListener(private val reportService: ReportService, private val conve
                 reportService.receiveFromUser(user, message)
             }
             sentChoice.contains(user.id) -> {
-                if(!content.isInteger()) {
+                if (!content.isInteger()) {
                     user.sendPrivateMessage("Choice must be an number.")
                     user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds))
                     return
@@ -35,7 +34,7 @@ class ReportListener(private val reportService: ReportService, private val conve
 
                 val selection = content.toInt()
 
-                if(selection !in 0..commonGuilds.lastIndex) {
+                if (selection !in 0..commonGuilds.lastIndex) {
                     user.sendPrivateMessage("Choice must be a valid guild ID.")
                     user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds))
                     return

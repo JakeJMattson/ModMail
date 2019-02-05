@@ -7,7 +7,7 @@ import net.dv8tion.jda.core.entities.TextChannel
 
 @Precondition
 fun produceIsStaffChannelPrecondition(configuration: Configuration) = exit@{ event: CommandEvent ->
-    if(event.channel !is TextChannel) return@exit Fail()
+    if (event.channel !is TextChannel) return@exit Fail()
 
     val textChannel = event.channel as TextChannel
 

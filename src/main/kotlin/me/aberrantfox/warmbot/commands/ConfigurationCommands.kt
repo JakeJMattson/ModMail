@@ -18,9 +18,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
             configuration.getGuildConfig(reportCategory.guild.id)!!.reportCategory = reportCategory.id
             persistenceService.save(configuration)
-            it.respond(Locale.inject({REPORT_ARCHIVE_SUCCESSFUL}, "reportName" to reportCategory.name))
-
-            return@execute
+            it.respond(Locale.inject({ REPORT_ARCHIVE_SUCCESSFUL }, "reportName" to reportCategory.name))
         }
     }
 
@@ -34,8 +32,6 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
             configuration.getGuildConfig(archiveChannel.guild.id)!!.archiveChannel = archiveChannel.id
             persistenceService.save(configuration)
             it.respond(Locale.inject({ ARCHIVE_CHANNEL_SET_SUCCESSFUL }, "archiveChannel" to archiveChannel.name))
-
-            return@execute
         }
     }
 
@@ -51,9 +47,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
             configuration.getGuildConfig(it.message.guild.id)!!.staffRoleName = staffRole.name
             persistenceService.save(configuration)
-            it.respond(Locale.inject({ SET_STAFF_ROLE_SUCCESSFUL },"staffRoleName" to staffRole.name))
-
-            return@execute
+            it.respond(Locale.inject({ SET_STAFF_ROLE_SUCCESSFUL }, "staffRoleName" to staffRole.name))
         }
     }
 }

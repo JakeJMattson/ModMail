@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
 @CommandSet("report")
 fun reportCommands(reportService: ReportService, configuration: Configuration, loggingService: LoggingService) = commands {
     command("Close") {
-		requiresGuild = true
+        requiresGuild = true
         description = Locale.messages.CLOSE_DESCRIPTION
         execute {
             val report = reportService.getReportByChannel(it.channel.id)
@@ -24,7 +24,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
     }
 
     command("Archive") {
-		requiresGuild = true
+        requiresGuild = true
         description = Locale.messages.ARCHIVE_DESCRIPTION
         execute {
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
@@ -33,7 +33,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
             val report = reportService.getReportByChannel(it.channel.id)
 
             archiveChannel.sendFile(it.channel.archiveString(configuration.prefix).toByteArray(),
-                    "$${it.channel.name}.txt").queue {
+                "$${it.channel.name}.txt").queue {
                 targetChannel.delete().queue()
             }
 
@@ -41,109 +41,109 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
         }
     }
 
-	command("Note") {
-		requiresGuild = true
-		description = Locale.messages.NOTE_DESCRIPTION
-		expect(SentenceArg)
-		execute {
-			it.respond(
-				embed {
-					field {
-						name = "New note added by ${it.author.fullName()} (${it.author.id})"
-						value = it.args.component1() as String
-						inline = false
-					}
-					color(Color.ORANGE)
-				}
-			)
+    command("Note") {
+        requiresGuild = true
+        description = Locale.messages.NOTE_DESCRIPTION
+        expect(SentenceArg)
+        execute {
+            it.respond(
+                embed {
+                    field {
+                        name = "New note added by ${it.author.fullName()} (${it.author.id})"
+                        value = it.args.component1() as String
+                        inline = false
+                    }
+                    color(Color.ORANGE)
+                }
+            )
 
-			it.message.delete().queue()
-		}
-	}
+            it.message.delete().queue()
+        }
+    }
 }
 
 @CommandSet("ReportHelpers")
 fun reportHelperCommands(reportService: ReportService, configuration: Configuration, loggingService: LoggingService) = commands {
-	fun openReport(event: CommandEvent, targetUser: User, message: String, guildId: String) {
-		val reportCategory = configuration.getGuildConfig(guildId)!!.reportCategory.idToCategory()
+    fun openReport(event: CommandEvent, targetUser: User, message: String, guildId: String) {
+        val reportCategory = configuration.getGuildConfig(guildId)!!.reportCategory.idToCategory()
 
-		reportCategory.createTextChannel(targetUser.name).queue { channel ->
-			channel as TextChannel
+        reportCategory.createTextChannel(targetUser.name).queue { channel ->
+            channel as TextChannel
 
-			val initialMessage =
-					if (message.isNotEmpty()) {
-						targetUser.sendPrivateMessage(message, DefaultLogger())
-						message
-					} else {
-						Locale.messages.DEFAULT_INITIAL_MESSAGE
-					}
+            val initialMessage =
+                if (message.isNotEmpty()) {
+                    targetUser.sendPrivateMessage(message, DefaultLogger())
+                    message
+                } else {
+                    Locale.messages.DEFAULT_INITIAL_MESSAGE
+                }
 
-			channel.sendMessage(embed {
-				setColor(Color.green)
-				addField("New Report Opened!",
-						"${targetUser.descriptor()} :: ${targetUser.asMention}",
-						false)
-				addField("This report was opened by a staff member!",
-						"${event.author.descriptor()} :: ${event.author.asMention}",
-						false)
-				addField("Initial Message", initialMessage, false)
-			}).queue()
+            channel.sendMessage(embed {
+                setColor(Color.green)
+                addField("New Report Opened!",
+                    "${targetUser.descriptor()} :: ${targetUser.asMention}",
+                    false)
+                addField("This report was opened by a staff member!",
+                    "${event.author.descriptor()} :: ${event.author.asMention}",
+                    false)
+                addField("Initial Message", initialMessage, false)
+            }).queue()
 
-			val newReport = Report(targetUser.id, channel.id, guildId, ConcurrentHashMap())
-			reportService.addReport(newReport)
+            val newReport = Report(targetUser.id, channel.id, guildId, ConcurrentHashMap())
+            reportService.addReport(newReport)
 
-			event.respond("Channel opened at: ${channel.asMention}")
-			loggingService.staffOpen(newReport, event.author)
-		}
-	}
+            event.respond("Channel opened at: ${channel.asMention}")
+            loggingService.staffOpen(newReport, event.author)
+        }
+    }
 
-	command("Open") {
-		requiresGuild = true
-		description = Locale.messages.OPEN_DESCRIPTION
-		expect(arg(UserArg), arg(SentenceArg("Initial Message"), optional = true))
-		execute { event ->
-			val targetUser = event.args.component1() as User
-			val message = event.args.component2() as String
-			val guild = event.message.guild
-			val hasReport = reportService.hasReportChannel(targetUser.id)
+    command("Open") {
+        requiresGuild = true
+        description = Locale.messages.OPEN_DESCRIPTION
+        expect(arg(UserArg), arg(SentenceArg("Initial Message"), optional = true))
+        execute { event ->
+            val targetUser = event.args.component1() as User
+            val message = event.args.component2() as String
+            val guild = event.message.guild
+            val hasReport = reportService.hasReportChannel(targetUser.id)
 
-			if (targetUser.isBot) return@execute event.respond("The target user is a bot.")
+            if (targetUser.isBot) return@execute event.respond("The target user is a bot.")
 
-			if (!guild.isMember(targetUser)) return@execute event.respond("The target user is not in this guild.")
+            if (!guild.isMember(targetUser)) return@execute event.respond("The target user is not in this guild.")
 
-			if (hasReport) return@execute event.respond("The target user already has an open report.")
+            if (hasReport) return@execute event.respond("The target user already has an open report.")
 
-			val userEmbed = embed {
-				setColor(Color.green)
-				setThumbnail(guild.iconUrl)
-				addField("You've received a message from the staff of ${guild.name}!", Locale.messages.BOT_DESCRIPTION, false)
-			}
+            val userEmbed = embed {
+                setColor(Color.green)
+                setThumbnail(guild.iconUrl)
+                addField("You've received a message from the staff of ${guild.name}!", Locale.messages.BOT_DESCRIPTION, false)
+            }
 
-			targetUser.openPrivateChannel().queue {
-				it.sendMessage(userEmbed).queue({
-					openReport(event, targetUser, message, guild.id)
-				},
-				{
-					event.respond("Unable to contact the target user. Direct messages are disabled.")
-				})
-			}
-		}
-	}
+            targetUser.openPrivateChannel().queue {
+                it.sendMessage(userEmbed).queue({
+                    openReport(event, targetUser, message, guild.id)
+                },
+                    {
+                        event.respond("Unable to contact the target user. Direct messages are disabled.")
+                    })
+            }
+        }
+    }
 
-	command("CloseAll") {
-		requiresGuild = true
-		description = Locale.messages.CLOSE_ALL_DESCRIPTION
-		execute {
-			val reportsFromGuild = reportService.getReportsFromGuild(it.message.guild.id)
+    command("CloseAll") {
+        requiresGuild = true
+        description = Locale.messages.CLOSE_ALL_DESCRIPTION
+        execute {
+            val reportsFromGuild = reportService.getReportsFromGuild(it.message.guild.id)
 
-			if (reportsFromGuild.isEmpty()) return@execute it.respond("There are no reports to close.")
+            if (reportsFromGuild.isEmpty()) return@execute it.respond("There are no reports to close.")
 
-			reportsFromGuild.forEach {report ->
-				report.channelId.idToTextChannel().delete().queue()
-				loggingService.close(report, it.author)
-			}
+            reportsFromGuild.forEach { report ->
+                report.channelId.idToTextChannel().delete().queue()
+                loggingService.close(report, it.author)
+            }
 
-			it.respond("${reportsFromGuild.size} report(s) closed successfully.")
-		}
-	}
+            it.respond("${reportsFromGuild.size} report(s) closed successfully.")
+        }
+    }
 }
