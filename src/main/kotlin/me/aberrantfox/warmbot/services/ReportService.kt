@@ -7,7 +7,6 @@ import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
 import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.extensions.*
-import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
 import java.awt.Color
 import java.io.File
@@ -23,7 +22,7 @@ data class Report(val userId: String,
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
 @Service
-class ReportService(private val jda: JDA, private val config: Configuration, private val loggingService: LoggingService) {
+class ReportService(private val config: Configuration, private val loggingService: LoggingService) {
     private val gson = GsonBuilder().setPrettyPrinting().create()
     private val reportDir = File("reports/")
     private val reports = Vector<Report>()
@@ -37,6 +36,25 @@ class ReportService(private val jda: JDA, private val config: Configuration, pri
     fun getReportByUserId(userId: String): Report = reports.first { it.userId == userId }
     fun getReportsFromGuild(guildId: String) = reports.filter { it.guildId == guildId }
     fun getCommonGuilds(userObject: User): List<Guild> = userObject.mutualGuilds.filter { it.id in config.guildConfigurations.associateBy { it.guildId } }
+
+    private fun loadReports() {
+        if (!config.recoverReports && reportDir.exists()) {
+            reportDir.deleteRecursively()
+            return
+        }
+
+        if (!reportDir.exists()) {
+            reportDir.mkdirs()
+            return
+        }
+
+        cleanDeadReports()
+    }
+
+    private fun cleanDeadReports() = reportDir.listFiles().forEach {
+        val report = gson.fromJson(it.readText(), Report::class.java)
+        if (report.channelId.idToTextChannel() != null) reports.add(report) else it.delete()
+    }
 
     fun addReport(user: User, guild: Guild, firstMessage: Message) {
         if (getReportsFromGuild(guild.id).size == config.maxOpenReports || guild.textChannels.size >= 250) return
@@ -58,7 +76,7 @@ class ReportService(private val jda: JDA, private val config: Configuration, pri
 
         if (hasReportChannel(user)) {
             val report = getReportByUserId(user)
-            jda.getTextChannelById(report.channelId).sendMessage(safeMessage).queue()
+            report.channelId.idToTextChannel().sendMessage(safeMessage).queue()
             report.queuedMessageId = message.id
 
             return
@@ -105,47 +123,9 @@ class ReportService(private val jda: JDA, private val config: Configuration, pri
             setThumbnail(guildObject.iconUrl)
         }
 
-    fun closeReport(report: Report) {
-        sendReportClosedEmbed(report)
-        removeReport(report)
-    }
-
-    private fun sendReportClosedEmbed(report: Report) =
-        report.userId.idToUser().sendPrivateMessage(embed {
-            setColor(Color.LIGHT_GRAY)
-            setAuthor("The staff of ${report.guildId.idToGuild().name} have closed this report.")
-            setDescription("If you continue to reply, a new report will be created.")
-        })
-
-    private fun removeReport(report: Report) {
-        reports.remove(report)
-
-        val file = reportDir.listFiles().firstOrNull { it.name.startsWith(report.channelId) } ?: return
-        file.delete()
-    }
-
-    private fun loadReports() {
-        if (!config.recoverReports && reportDir.exists()) {
-            reportDir.deleteRecursively()
-            return
-        }
-
-        if (!reportDir.exists()) {
-            reportDir.mkdirs()
-            return
-        }
-
-        cleanDeadReports()
-    }
-
     fun writeReportToFile(report: Report) {
         if (config.recoverReports)
             File("$reportDir/${report.channelId}.json").writeText(gson.toJson(report))
-    }
-
-    private fun cleanDeadReports() = reportDir.listFiles().forEach {
-        val report = gson.fromJson(it.readText(), Report::class.java)
-        if (jda.getTextChannelById(report.channelId) != null) reports.add(report) else it.delete()
     }
 
     private fun createReportChannel(channel: TextChannel, user: User, firstMessage: Message, guild: Guild) {
@@ -164,5 +144,22 @@ class ReportService(private val jda: JDA, private val config: Configuration, pri
         loggingService.memberOpen(newReport)
 
         queuedReports.removeAll { it.user == user.id }
+    }
+
+    fun closeReport(report: Report) {
+        sendReportClosedEmbed(report)
+        removeReport(report)
+    }
+
+    private fun sendReportClosedEmbed(report: Report) =
+        report.userId.idToUser().sendPrivateMessage(embed {
+            setColor(Color.LIGHT_GRAY)
+            setAuthor("The staff of ${report.guildId.idToGuild().name} have closed this report.")
+            setDescription("If you continue to reply, a new report will be created.")
+        })
+
+    private fun removeReport(report: Report) {
+        reports.remove(report)
+        reportDir.listFiles().firstOrNull { it.name.startsWith(report.channelId) }?.delete()
     }
 }

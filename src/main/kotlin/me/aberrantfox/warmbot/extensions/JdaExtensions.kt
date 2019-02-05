@@ -1,14 +1,21 @@
 package me.aberrantfox.warmbot.extensions
 
+import me.aberrantfox.kjdautils.api.annotation.Service
 import net.dv8tion.jda.core.JDA
 
-lateinit var conversionJDA: JDA
+private lateinit var jda: JDA
 
-fun String.idToUser() = conversionJDA.getUserById(this)
-fun String.idToTextChannel() = conversionJDA.getTextChannelById(this)
-fun String.idToPrivateChannel() = conversionJDA.getPrivateChannelById(this)
-fun String.idToCategory() = conversionJDA.getCategoryById(this)
-fun String.idToGuild() = conversionJDA.getGuildById(this)
+@Service
+class JdaContainter(jdaInstance: JDA) {
+    init { jda = jdaInstance }
+}
 
-fun selfUser() = conversionJDA.selfUser
-fun getPrivateChannels() = conversionJDA.privateChannels
+fun String.idToUser() = jda.getUserById(this)
+fun String.idToTextChannel() = jda.getTextChannelById(this)
+fun String.idToPrivateChannel() = jda.getPrivateChannelById(this)
+fun String.idToCategory() = jda.getCategoryById(this)
+fun String.idToGuild() = jda.getGuildById(this)
+fun String.nameToRole() = jda.getRolesByName(this, true).firstOrNull()
+
+fun selfUser() = jda.selfUser
+fun getPrivateChannels() = jda.privateChannels

@@ -46,9 +46,8 @@ class EditListener(private val reportService: ReportService) {
 		event.privateChannel ?: return
 
 		val report = reportService.getReportByUserId(event.user.id)
-		val channel = report.channelId.idToTextChannel()
 
-		channel.sendTyping().queue()
+		report.channelId.idToTextChannel().sendTyping().queue()
 	}
 
 	@Subscribe

@@ -13,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap
 
 @CommandSet("report")
 fun reportCommands(reportService: ReportService, configuration: Configuration, loggingService: LoggingService) = commands {
-
     command("Close") {
 		requiresGuild = true
         description = Locale.messages.CLOSE_DESCRIPTION
@@ -29,8 +28,8 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
         description = Locale.messages.ARCHIVE_DESCRIPTION
         execute {
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
-            val archiveChannel = it.jda.getTextChannelById(relevantGuild.archiveChannel)
-            val targetChannel = it.jda.getTextChannelById(it.channel.id)
+            val archiveChannel = relevantGuild.archiveChannel.idToTextChannel()
+            val targetChannel = it.channel.id.idToTextChannel()
             val report = reportService.getReportByChannel(it.channel.id)
 
             archiveChannel.sendFile(it.channel.archiveString(configuration.prefix).toByteArray(),
@@ -65,10 +64,8 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
 
 @CommandSet("ReportHelpers")
 fun reportHelperCommands(reportService: ReportService, configuration: Configuration, loggingService: LoggingService) = commands {
-
 	fun openReport(event: CommandEvent, targetUser: User, message: String, guildId: String) {
-		val guildConfiguration = configuration.getGuildConfig(guildId)!!
-		val reportCategory = guildConfiguration.reportCategory.idToCategory()
+		val reportCategory = configuration.getGuildConfig(guildId)!!.reportCategory.idToCategory()
 
 		reportCategory.createTextChannel(targetUser.name).queue { channel ->
 			channel as TextChannel
@@ -103,7 +100,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 	command("Open") {
 		requiresGuild = true
 		description = Locale.messages.OPEN_DESCRIPTION
-		expect(arg(UserArg), arg(SentenceArg("Initial Message"), optional = true, default = ""))
+		expect(arg(UserArg), arg(SentenceArg("Initial Message"), optional = true))
 		execute { event ->
 			val targetUser = event.args.component1() as User
 			val message = event.args.component2() as String
@@ -139,10 +136,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 		execute {
 			val reportsFromGuild = reportService.getReportsFromGuild(it.message.guild.id)
 
-			if (reportsFromGuild.isEmpty()) {
-				it.respond("There are no reports to close.")
-				return@execute
-			}
+			if (reportsFromGuild.isEmpty()) return@execute it.respond("There are no reports to close.")
 
 			reportsFromGuild.forEach {report ->
 				report.channelId.idToTextChannel().delete().queue()

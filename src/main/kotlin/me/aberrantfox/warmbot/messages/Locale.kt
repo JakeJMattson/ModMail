@@ -3,9 +3,7 @@ package me.aberrantfox.warmbot.messages
 import com.google.gson.GsonBuilder
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
-import java.io.File
-import java.io.StringReader
-import java.io.StringWriter
+import java.io.*
 
 private const val resourcePath = "/default-messages.json"
 private val filePath = "config${File.separatorChar}messages.json"
@@ -22,22 +20,21 @@ object Locale {
     private val engine = VelocityEngine()
 
     fun inject(message: Messages.() -> String, vararg properties: Pair<String, String>): String {
-        val _message = messages.message()
         val context = VelocityContext().apply { properties.forEach { put(it.first, it.second) } }
-        val reader = StringReader(_message)
-        val writer = StringWriter()
+        val reader = StringReader(messages.message())
 
-        engine.evaluate(context, writer, templateName, reader)
-
-        return writer.toString()
+        return StringWriter().apply {
+            engine.evaluate(context, this, templateName, reader)
+        }.toString()
     }
 
-    private fun load() =
+    private fun load() = updateMessages(
         if (localFile.exists()) {
-            updateMessages(localFile.readText())
+            localFile.readText()
         } else {
-            updateMessages(Messages::class.java.getResource(resourcePath).readText())
+            Messages::class.java.getResource(resourcePath).readText()
         }
+    )
 
     private fun updateMessages(json: String) {
         messages = gson.fromJson(json, Messages::class.java)

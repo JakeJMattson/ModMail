@@ -18,8 +18,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
             configuration.getGuildConfig(reportCategory.guild.id)!!.reportCategory = reportCategory.id
             persistenceService.save(configuration)
-            val response = Locale.inject({REPORT_ARCHIVE_SUCCESSFUL}, "reportName" to reportCategory.name)
-            it.respond(response)
+            it.respond(Locale.inject({REPORT_ARCHIVE_SUCCESSFUL}, "reportName" to reportCategory.name))
 
             return@execute
         }
@@ -34,8 +33,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
             configuration.getGuildConfig(archiveChannel.guild.id)!!.archiveChannel = archiveChannel.id
             persistenceService.save(configuration)
-            val response = Locale.inject({ ARCHIVE_CHANNEL_SET_SUCCESSFUL }, "archiveChannel" to archiveChannel.name)
-            it.respond(response)
+            it.respond(Locale.inject({ ARCHIVE_CHANNEL_SET_SUCCESSFUL }, "archiveChannel" to archiveChannel.name))
 
             return@execute
         }
@@ -49,16 +47,11 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
             val staffRoleName = it.args.component1() as String
             val staffRole = it.jda.getRolesByName(staffRoleName, true).firstOrNull()
 
-            if (staffRole == null) {
-                val response = Locale.inject({ FAIL_COULD_NOT_FIND_ROLE }, "staffRoleName" to staffRoleName)
-                it.respond(response)
-                return@execute
-            }
+            staffRole ?: return@execute it.respond(Locale.inject({ FAIL_COULD_NOT_FIND_ROLE }, "staffRoleName" to staffRoleName))
 
             configuration.getGuildConfig(it.message.guild.id)!!.staffRoleName = staffRole.name
             persistenceService.save(configuration)
-            val response = Locale.inject({ SET_STAFF_ROLE_SUCCESSFUL },"staffRoleName" to staffRole.name)
-            it.respond(response)
+            it.respond(Locale.inject({ SET_STAFF_ROLE_SUCCESSFUL },"staffRoleName" to staffRole.name))
 
             return@execute
         }

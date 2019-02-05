@@ -2,13 +2,13 @@ package me.aberrantfox.warmbot.services
 
 import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.extensions.jda.fullName
-import me.aberrantfox.kjdautils.extensions.stdlib.*
+import me.aberrantfox.kjdautils.extensions.stdlib.isLong
+import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
-import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.User
 
 @Service
-class LoggingService(val jda: JDA, private val config: Configuration) {
+class LoggingService(private val config: Configuration) {
 
 	init {
 	    emitReadyMessage()
@@ -52,11 +52,11 @@ class LoggingService(val jda: JDA, private val config: Configuration) {
 
 	private fun getLogConfig(guildId: String) = config.getGuildConfig(guildId)!!.loggingConfiguration
 
-	private fun getName(report: Report) = report.userId.idToUser(jda).fullName()
+	private fun getName(report: Report) = report.userId.idToUser().fullName()
 
 	private fun log(logChannelId: String, message: String) {
 		if (logChannelId.isLong()) {
-			val channel = jda.getTextChannelById(logChannelId) ?: return
+			val channel = logChannelId.idToTextChannel() ?: return
 			channel.sendMessage(message).queue()
 		}
 	}

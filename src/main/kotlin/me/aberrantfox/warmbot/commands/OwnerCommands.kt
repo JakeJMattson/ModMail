@@ -4,6 +4,7 @@ import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.extensions.stdlib.trimToID
 import me.aberrantfox.kjdautils.internal.command.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
+import me.aberrantfox.warmbot.extensions.idToGuild
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.Guild
 
@@ -16,10 +17,8 @@ fun ownerCommands(configuration: Configuration, persistenceService: PersistenceS
         execute {
             val targetGuild = it.args.component1() as Guild
 
-            if (configuration.whitelist.contains(targetGuild.id)) {
-                it.respond("${targetGuild.name} (${targetGuild.id}) is already whitelisted.")
-                return@execute
-            }
+            if (configuration.whitelist.contains(targetGuild.id))
+                return@execute it.respond("${targetGuild.name} (${targetGuild.id}) is already whitelisted.")
 
             configuration.whitelist.add(targetGuild.id)
             persistenceService.save(configuration)
@@ -34,10 +33,8 @@ fun ownerCommands(configuration: Configuration, persistenceService: PersistenceS
         execute {
             val targetGuild = it.args.component1() as Guild
 
-            if (!configuration.whitelist.contains(targetGuild.id)) {
-                it.respond("${targetGuild.name} (${targetGuild.id}) is not whitelisted.")
-                return@execute
-            }
+            if (!configuration.whitelist.contains(targetGuild.id))
+                return@execute it.respond("${targetGuild.name} (${targetGuild.id}) is not whitelisted.")
 
             configuration.whitelist.remove(targetGuild.id)
             persistenceService.save(configuration)
@@ -49,12 +46,10 @@ fun ownerCommands(configuration: Configuration, persistenceService: PersistenceS
         requiresGuild = true
         description = "Display all guilds in the whitelist."
         execute {
-            val jda = it.jda
-
             it.respond(
                 StringBuilder().apply {
                     configuration.whitelist.forEach {
-                        val guild = jda.getGuildById(it)
+                        val guild = it.idToGuild()
                         this.appendln("${guild.id} (${guild.name})")
                     }
                 }.toString()
