@@ -15,5 +15,7 @@ fun String.idToCategory() = jda.getCategoryById(this)
 fun String.idToGuild() = jda.getGuildById(this)
 fun String.nameToRole() = jda.getRolesByName(this, true).firstOrNull()
 
+fun String.isValidChannel() = try { this.idToTextChannel(); true } catch (e: Exception) { false }
+
 fun selfUser() = jda.selfUser
 fun getPrivateChannels() = jda.privateChannels
