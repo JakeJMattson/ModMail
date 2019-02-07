@@ -80,14 +80,20 @@ Below you can find a list and explanation of all available commands.
 
 ### Report
 
+`The invocation channel must be a report channel.`
+
+| Command   | Arguments | Effect                                    |
+| ------    | ------    | ------                                    |
+| Close     | (none)    | Close report and notify user.             |
+| Archive   | (none)    | Transcribe report to text (closes report).|
+| Note      | (none)    | Produce a note in the form of an embed.   |
+
+### Report Helpers
+
 | Command   | Arguments | Effect                                    |
 | ------    | ------    | ------                                    |
 | Open      | User ID   | Open a report with the target user.       |
-| Close     | (none)`*` | Close report and notify user.             |
 | CloseAll  | (none)    | Close all reports in the current guild.   |
-| Archive   | (none)`*` | Transcribe report to text (closes report).|
-
-`*The invocation channel must be a report channel.`
 
 ### Utility
 
