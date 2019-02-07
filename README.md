@@ -47,10 +47,6 @@ If things become hostile, the user will have no idea who they're talking to.
  * In the report channel, `close` - This has the same effect as deleting the channel.
  * In the report channel, `archive` - Transcribes the report to text, archives it, then closes the report.
 
-##### Automatically
-Reports can be configured to automatically close a set time after the most recent staff response.
-This feature will close "dead reports" where the issue has been resolved but the report was not closed.
-
 ## Setup
 Refer to [warmbotsetup.md](warmbotsetup.md) for full setup instructions.
 
@@ -59,7 +55,7 @@ Below you can find a list and explanation of all available commands.
 
 ### Owner
 
-`Note: These commands can only be run by the owner of the bot.`
+`These commands can only be run by the owner of the bot.`
 
 | Command       | Arguments | Effect                                |
 | ------        | ------    | ------                                |
@@ -69,7 +65,7 @@ Below you can find a list and explanation of all available commands.
 
 ### Configuration
 
-`Note: These commands can only be run by the owner of the guild.`
+`These commands can only be run by the owner of the guild.`
 
 | Command           | Arguments     | Effect                                            |
 | ------            | ------        | ------                                            |
@@ -80,7 +76,7 @@ Below you can find a list and explanation of all available commands.
 
 ### Report
 
-`The invocation channel must be a report channel.`
+`These commands can only be run in a report channel.`
 
 | Command   | Arguments | Effect                                    |
 | ------    | ------    | ------                                    |
