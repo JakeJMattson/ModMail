@@ -57,6 +57,16 @@ Refer to [warmbotsetup.md](warmbotsetup.md) for full setup instructions.
 ## Commands
 Below you can find a list and explanation of all available commands.
 
+### Owner
+
+`Note: These commands can only be run by the owner of the bot.`
+
+| Command       | Arguments | Effect                                |
+| ------        | ------    | ------                                |
+| Whitelist     | Guild ID  | Add a guild to the whitelist.         |
+| UnWhitelist   | Guild ID  | Remove a guild from the whitelist.    |
+| ShowWhitelist | (none)    | Display all guilds in the whitelist.  |
+
 ### Configuration
 
 `Note: These commands can only be run by the owner of the guild.`
