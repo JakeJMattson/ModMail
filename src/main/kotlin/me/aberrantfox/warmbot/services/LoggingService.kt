@@ -2,64 +2,37 @@ package me.aberrantfox.warmbot.services
 
 import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.extensions.jda.fullName
-import me.aberrantfox.kjdautils.extensions.stdlib.idToUser
-import me.aberrantfox.kjdautils.extensions.stdlib.isLong
-import net.dv8tion.jda.core.JDA
+import me.aberrantfox.warmbot.extensions.*
+import me.aberrantfox.warmbot.messages.Locale
 import net.dv8tion.jda.core.entities.User
 
 @Service
-class LoggingService(val jda: JDA, private val config: Configuration) {
-	private val startupFormat = "Bot successfully initialized!"
-	private val memberOpenFormat = "New report opened by %s"
-	private val staffOpenFormat = "Report (%s) opened by %s"
-	private val archiveFormat = "Report (%s) archived by %s"
-	private val closeFormat = "Report (%s) closed by %s"
+class LoggingService(private val config: Configuration) {
+    init {
+        config.guildConfigurations.filter { it.loggingConfiguration.loggingChannel.isValidChannel() }.forEach {
+            it.loggingConfiguration.apply { if (logStartup) log(loggingChannel, Locale.messages.STARTUP_LOG) }
+        }
+    }
 
-	init {
-	    emitReadyMessage()
-	}
+    fun memberOpen(report: Report) = getLogConfig(report.guildId).apply {
+        if (logMemberOpen) log(loggingChannel, Locale.inject({ MEMBER_OPEN_LOG }, "user".pairTo(report)))
+    }
 
-	private fun emitReadyMessage() {
-		config.guildConfigurations.filter { it.loggingConfiguration != null }.forEach {
-			val logConfig = it.loggingConfiguration!!
+    fun staffOpen(report: Report, staff: User) = getLogConfig(report.guildId).apply {
+        if (logStaffOpen) log(loggingChannel, Locale.inject({ STAFF_OPEN_LOG }, "user".pairTo(report), "staff".pairTo(staff)))
+    }
 
-			if (logConfig.logStartup) log(logConfig.loggingChannel, startupFormat)
-		}
-	}
+    fun archive(report: Report, staff: User) = getLogConfig(report.guildId).apply {
+        if (logArchive) log(loggingChannel, Locale.inject({ ARCHIVE_LOG }, "user".pairTo(report), "staff".pairTo(staff)))
+    }
 
-	fun memberOpen(report: Report) {
-		val logConfig = getLogConfig(report.guildId) ?: return
+    fun close(report: Report, staff: User) = getLogConfig(report.guildId).apply {
+        if (logClose) log(loggingChannel, Locale.inject({ CLOSE_LOG }, "user".pairTo(report), "staff".pairTo(staff)))
+    }
 
-		if (logConfig.logMemberOpen) log(logConfig.loggingChannel, memberOpenFormat.format(getName(report)))
-	}
+    private fun String.pairTo(user: User) = this to user.fullName()
+    private fun String.pairTo(report: Report) = this.pairTo(report.userId.idToUser())
 
-	fun staffOpen(report: Report, staff: User) {
-		val logConfig = getLogConfig(report.guildId) ?: return
-
-		if (logConfig.logStaffOpen) log(logConfig.loggingChannel, staffOpenFormat.format(getName(report), staff.fullName()))
-	}
-
-	fun archive(report: Report, staff: User) {
-		val logConfig = getLogConfig(report.guildId) ?: return
-
-		if (logConfig.logArchive) log(logConfig.loggingChannel, archiveFormat.format(getName(report), staff.fullName()))
-	}
-
-	fun close(report: Report, staff: User) {
-		val logConfig = getLogConfig(report.guildId) ?: return
-
-		if (logConfig.logClose) log(logConfig.loggingChannel, closeFormat.format(getName(report), staff.fullName()))
-	}
-
-	private fun getLogConfig(guildId: String)
-            = config.guildConfigurations.first { guildId == it.guildId }.loggingConfiguration
-
-	private fun getName(report: Report) = report.userId.idToUser(jda).fullName()
-
-	private fun log(logChannelId: String, message: String) {
-		if (logChannelId.isLong()) {
-			val channel = jda.getTextChannelById(logChannelId) ?: return
-			channel.sendMessage(message).queue()
-		}
-	}
+    private fun getLogConfig(guildId: String) = config.getGuildConfig(guildId)!!.loggingConfiguration
+    private fun log(logChannelId: String, message: String) = logChannelId.idToTextChannel().sendMessage(message).queue()
 }

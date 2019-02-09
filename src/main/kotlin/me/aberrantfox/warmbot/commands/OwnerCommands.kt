@@ -4,22 +4,21 @@ import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.extensions.stdlib.trimToID
 import me.aberrantfox.kjdautils.internal.command.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
+import me.aberrantfox.warmbot.extensions.idToGuild
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.Guild
 
 @CommandSet("owner")
-fun configurationCommands(configuration: Configuration, persistenceService: PersistenceService) = commands {
+fun ownerCommands(configuration: Configuration, persistenceService: PersistenceService) = commands {
     command("Whitelist") {
         requiresGuild = true
-        expect(GuildArg)
         description = "Add a guild to the whitelist."
+        expect(GuildArg)
         execute {
             val targetGuild = it.args.component1() as Guild
 
-            if (configuration.whitelist.contains(targetGuild.id)) {
-                it.respond("${targetGuild.name} (${targetGuild.id}) is already whitelisted.")
-                return@execute
-            }
+            if (configuration.whitelist.contains(targetGuild.id))
+                return@execute it.respond("${targetGuild.name} (${targetGuild.id}) is already whitelisted.")
 
             configuration.whitelist.add(targetGuild.id)
             persistenceService.save(configuration)
@@ -29,19 +28,32 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
     command("UnWhitelist") {
         requiresGuild = true
-        expect(GuildArg)
         description = "Remove a guild from the whitelist."
+        expect(GuildArg)
         execute {
             val targetGuild = it.args.component1() as Guild
 
-            if (!configuration.whitelist.contains(targetGuild.id)) {
-                it.respond("${targetGuild.name} (${targetGuild.id}) is not whitelisted.")
-                return@execute
-            }
+            if (!configuration.whitelist.contains(targetGuild.id))
+                return@execute it.respond("${targetGuild.name} (${targetGuild.id}) is not whitelisted.")
 
             configuration.whitelist.remove(targetGuild.id)
             persistenceService.save(configuration)
             it.respond("Successfully removed `${targetGuild.name}` from the whitelist.")
+        }
+    }
+
+    command("ShowWhitelist") {
+        requiresGuild = true
+        description = "Display all guilds in the whitelist."
+        execute {
+            it.respond(
+                StringBuilder().apply {
+                    configuration.whitelist.forEach {
+                        val guild = it.idToGuild()
+                        this.appendln("${guild.id} (${guild.name})")
+                    }
+                }.toString()
+            )
         }
     }
 }

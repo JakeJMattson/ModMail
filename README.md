@@ -47,19 +47,25 @@ If things become hostile, the user will have no idea who they're talking to.
  * In the report channel, `close` - This has the same effect as deleting the channel.
  * In the report channel, `archive` - Transcribes the report to text, archives it, then closes the report.
 
-##### Automatically
-Reports can be configured to automatically close a set time after the most recent staff response.
-This feature will close "dead reports" where the issue has been resolved but the report was not closed.
-
 ## Setup
 Refer to [warmbotsetup.md](warmbotsetup.md) for full setup instructions.
 
 ## Commands
 Below you can find a list and explanation of all available commands.
 
+### Owner
+
+`These commands can only be run by the owner of the bot.`
+
+| Command       | Arguments | Effect                                |
+| ------        | ------    | ------                                |
+| Whitelist     | Guild ID  | Add a guild to the whitelist.         |
+| UnWhitelist   | Guild ID  | Remove a guild from the whitelist.    |
+| ShowWhitelist | (none)    | Display all guilds in the whitelist.  |
+
 ### Configuration
 
-`Note: These commands can only be run by the owner of the guild.`
+`These commands can only be run by the owner of the guild.`
 
 | Command           | Arguments     | Effect                                            |
 | ------            | ------        | ------                                            |
@@ -70,14 +76,20 @@ Below you can find a list and explanation of all available commands.
 
 ### Report
 
+`These commands can only be run in a report channel.`
+
+| Command   | Arguments | Effect                                    |
+| ------    | ------    | ------                                    |
+| Close     | (none)    | Close report and notify user.             |
+| Archive   | (none)    | Transcribe report to text (closes report).|
+| Note      | (none)    | Produce a note in the form of an embed.   |
+
+### Report Helpers
+
 | Command   | Arguments | Effect                                    |
 | ------    | ------    | ------                                    |
 | Open      | User ID   | Open a report with the target user.       |
-| Close     | (none)`*` | Close report and notify user.             |
 | CloseAll  | (none)    | Close all reports in the current guild.   |
-| Archive   | (none)`*` | Transcribe report to text (closes report).|
-
-`*The invocation channel must be a report channel.`
 
 ### Utility
 
