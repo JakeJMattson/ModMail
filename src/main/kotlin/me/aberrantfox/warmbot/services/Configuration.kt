@@ -13,14 +13,14 @@ data class GuildConfiguration(var guildId: String = "insert-id",
                               var reportCategory: String = "insert-id",
                               var archiveChannel: String = "insert-id",
                               var staffRoleName: String = "Staff",
-                              var loggingConfiguration: LoggingConfiguration? = LoggingConfiguration())
+                              var loggingConfiguration: LoggingConfiguration = LoggingConfiguration())
 
 @Data("config/config.json")
 data class Configuration(val ownerId: String = "insert-id",
                          val prefix: String = "!",
                          val maxOpenReports: Int = 50,
                          val recoverReports: Boolean = true,
-                         val whitelist: MutableList<String> = ArrayList<String>(),
+                         val whitelist: MutableList<String> = ArrayList(),
                          var guildConfigurations: MutableList<GuildConfiguration> = mutableListOf(GuildConfiguration())) {
     fun hasGuildConfig(guildId: String) = getGuildConfig(guildId) != null
     fun getGuildConfig(guildId: String) = guildConfigurations.firstOrNull { it.guildId == guildId }
