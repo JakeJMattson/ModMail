@@ -7,7 +7,7 @@ import me.aberrantfox.warmbot.messages.Locale
 import net.dv8tion.jda.core.entities.User
 
 @Service
-class LoggingService(private val config: Configuration) {
+class LoggingService(private val config: Configuration, jdaInitializer: JdaInitializer) {
     init {
         config.guildConfigurations.filter { it.loggingConfiguration.loggingChannel.isValidChannel() }.forEach {
             it.loggingConfiguration.apply { if (logStartup) log(loggingChannel, Locale.messages.STARTUP_LOG) }

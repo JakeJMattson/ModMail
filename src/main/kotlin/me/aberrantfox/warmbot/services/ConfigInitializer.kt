@@ -5,7 +5,7 @@ import me.aberrantfox.warmbot.extensions.*
 import net.dv8tion.jda.core.Permission
 
 @Service
-class ConfigInitializer(configuration: Configuration) {
+class ConfigInitializer(configuration: Configuration, jdaInitializer: JdaInitializer) {
     init {
         configuration.guildConfigurations.forEach { addOverrides(it) }
     }
