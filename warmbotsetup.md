@@ -1,6 +1,4 @@
-## Requirements to build
-
-## Installation guide
+## Discord Guide
 
 ### Server Setup
 If you don't already have one, create a Discord server for the bot to run on. 
@@ -20,30 +18,46 @@ Create a bot account in the [developers](https://discordapp.com/developers/appli
 - Save changes
 
 ### Add Bot
-- Visit the [permissions](https://discordapi.com/permissions.html) page. Required permissions have been configured for you.
+- Visit the [permissions](https://discordapi.com/permissions.html) page.
 - Under "OAth URL Generator" enter the bot's client ID that you got earlier.
 - Click the link to add it to your server.
 - It is recommended to place it at the top of your server so members can see it.
 
-## Configuration
+## Build Guide
+
+### Build Requirements
+
+* [IntelliJ](https://www.jetbrains.com/idea/download/#section=windows) or another Maven compatible IDE.
+* [Java 11](https://jdk.java.net/11/) or your preferred version.
+
+### Building
+
+Import the project as a Maven project. Maven will handle all dependencies for you and prepare the project.
+When running the project for the first time, the config file will be created for you.
+Please fill it out and run the bot again. If you don't understand the fields, consult the section below.
+Once your configuration is complete, you can run the bot again.
+If everything was set up properly, your bot should now be up and running!
+
+### Configuration
 
 Below, you can find an explanation of each configuration field.
-WarmBot can be configured for use with multiple guilds.
-Add an additional guild configuration for each guild you intend to support. 
 
 ```json
 {
-	"token": "Your bot token",
+	"ownerId": "The ID of the bot owner - has access to the whitelist commands",
 	"prefix": "The command prefix for this guild, e.g. !",
 	"maxOpenReports": "The max number of reports that can be opened in any configured guild",
 	"recoverReports": "Whether or not the reports will be recovered if the bot goes offline. Saves to disk if true",
-	"guildConfigurations": 
-	[
+	"whitelist": [
+	    "ID of a guild allowed to use this bot.", 
+	    "<Additional guilds>"
+        ],
+	"guildConfigurations": [
 	    {
 	        "guildId": "ID of the guild you wish to use the bot in",
 	        "reportCategory": "ID of the category in which report channels will be created",
 	        "archiveChannel": "ID of channel where archived reports will be sent",
-	        "staffRoleName": "Role required to use the bot"
+	        "staffRoleName": "Name of the role required to use the bot"
 	        "loggingConfiguration": 
 	        {
                     "loggingChannel": "ID of channel where messages will be logged",
@@ -55,7 +69,7 @@ Add an additional guild configuration for each guild you intend to support.
 	        }
 	    },
 	    {
-	        <Additional guilds>
+	        "<Additional guilds>"
 	    }
 	]
 }
