@@ -9,7 +9,8 @@ import java.util.Timer
 import kotlin.concurrent.schedule
 
 @Service
-class GuildService(private val configuration: Configuration, private val conversationService: ConversationService, jdaInitializer: JdaInitializer) {
+class GuildService(private val configuration: Configuration, private val conversationService: ConversationService,
+                   private val persistenceService: PersistenceService, jdaInitializer: JdaInitializer) {
     init { consolidateWhitelist() }
 
     fun cleanseGuilds() =
