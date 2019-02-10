@@ -22,7 +22,9 @@ data class Report(val userId: String,
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
 @Service
-class ReportService(private val config: Configuration, private val loggingService: LoggingService, jdaInitializer: JdaInitializer) {
+class ReportService(private val config: Configuration,
+                    private val loggingService: LoggingService,
+                    jdaInitializer: JdaInitializer) {
     private val gson = GsonBuilder().setPrettyPrinting().create()
     private val reportDir = File("reports/")
     private val reports = Vector<Report>()
