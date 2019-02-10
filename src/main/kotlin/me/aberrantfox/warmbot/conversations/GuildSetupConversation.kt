@@ -73,7 +73,7 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
                     guildConfiguration.loggingConfiguration.loggingChannel = loggingChannel.id
                     config.guildConfigurations.add(guildConfiguration)
                     persistenceService.save(config)
-                    "Successfully configured for use! As the guild owner, you can adjust these values at any time."
+                    Locale.messages.GUILD_SETUP_SUCCESSFUL
                 }
             }
         )

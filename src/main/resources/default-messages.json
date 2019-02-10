@@ -12,6 +12,7 @@
   "ARCHIVE_CHANNEL_SET_SUCCESSFUL": "Successfully the archive channel to :: ${archiveChannel}",
   "REPORT_ARCHIVE_SUCCESSFUL": "Successfully set report category to :: ${reportName}",
   "SET_STAFF_ROLE_SUCCESSFUL": "Successfully set the staff role to :: ${staffRoleName}",
+  "GUILD_SETUP_SUCCESSFUL": "Successfully configured for use! As the guild owner, you can adjust these values at any time.",
 
   "FAIL_GUILD_SETUP": "**Error** :: The ${field} provided did not belong to the guild you started this conversation in.",
   "FAIL_MUST_BE_BOT_OWNER": "You must be the owner of this bot to use this command.",

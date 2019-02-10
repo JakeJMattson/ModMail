@@ -2,6 +2,7 @@ package me.aberrantfox.warmbot.services
 
 import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.internal.command.ConversationService
+import me.aberrantfox.kjdautils.internal.di.PersistenceService
 import me.aberrantfox.warmbot.extensions.*
 import net.dv8tion.jda.core.entities.Guild
 import java.util.Timer
@@ -16,6 +17,7 @@ class GuildService(private val configuration: Configuration, private val convers
             if (it.id !in configuration.whitelist) {
                 it.leave().queue()
                 configuration.guildConfigurations.remove(configuration.getGuildConfig(it.id))
+                persistenceService.save(configuration)
             }
         }
 

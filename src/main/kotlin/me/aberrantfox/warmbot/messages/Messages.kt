@@ -16,6 +16,7 @@ class Messages (
         val ARCHIVE_CHANNEL_SET_SUCCESSFUL: String,
         val REPORT_ARCHIVE_SUCCESSFUL: String,
         val SET_STAFF_ROLE_SUCCESSFUL: String,
+        val GUILD_SETUP_SUCCESSFUL: String,
 
         //Fail messages
         val FAIL_GUILD_SETUP: String,
