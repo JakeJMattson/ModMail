@@ -34,7 +34,6 @@ class GuildService(private val configuration: Configuration, private val convers
 
     private fun consolidateWhitelist() = configuration.apply {
         guildConfigurations.forEach { if (it.guildId !in whitelist) whitelist.add(it.guildId) }
-        whitelist.filter { !hasGuildConfig(it) }.forEach { startSetupConversation(it.idToGuild()) }
         guilds().filter { !hasGuildConfig(it.id) && it.id !in whitelist }.forEach { initOrLeave(it) }
     }
 }
