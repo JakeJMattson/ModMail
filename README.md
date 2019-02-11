@@ -16,21 +16,22 @@ You can have as many of these as you want (limited by configuration and Discord)
 ![Reports](https://i.imgur.com/7vgwc9E.png)
 <br>
 
-## Member experience
-### Opening a report
+## Member Experience
+### Opening a Report
 To open a report as a member, simply message the bot.
 A new report will be opened automatically.
 
 ![Member](https://i.imgur.com/tf9k6PI.png)
 
-### Using a report
+### Using a Report
 Once a report is opened, you can respond to the bot as if it were any other conversation.
 All messages sent to the bot will be forwarded to your report channel for staff to see.
 
-## Staff experience
-### Opening a report
+## Staff Experience
+### Opening a Report
 If a report needs to be opened from the staff side, you can use the `open` command.
 This will attempt to create a new report with the target user.
+This can be useful if you see a member misbehaving on the server but don't want to reprimand them publicly.
 
 ### Using a report
 Once a report is opened, anyone with access to this private channel can talk with the user through the bot.
@@ -69,7 +70,6 @@ Below you can find a list and explanation of all available commands.
 
 | Command           | Arguments     | Effect                                            |
 | ------            | ------        | ------                                            |
-| Setup             | (none)        | Initiate the setup conversation.                  |
 | SetReportCategory | Category ID   | Set the category where new reports will be opened.|
 | SetArchiveChannel | Channel ID    | Set the channel where reports will be archived.   |
 | SetStaffRole      | Role name     | Set the role required to use this bot.            |
