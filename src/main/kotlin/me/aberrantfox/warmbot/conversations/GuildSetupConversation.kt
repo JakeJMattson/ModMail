@@ -70,10 +70,10 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
                 loggingChannel.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "logging channel")
                 else -> {
                     val guildConfiguration = GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, staffRole.name)
-                    guildConfiguration.loggingConfiguration!!.loggingChannel = loggingChannel.id
+                    guildConfiguration.loggingConfiguration.loggingChannel = loggingChannel.id
                     config.guildConfigurations.add(guildConfiguration)
                     persistenceService.save(config)
-                    "Successfully configured for use! As the guild owner, you can adjust these values at any time."
+                    Locale.messages.GUILD_SETUP_SUCCESSFUL
                 }
             }
         )

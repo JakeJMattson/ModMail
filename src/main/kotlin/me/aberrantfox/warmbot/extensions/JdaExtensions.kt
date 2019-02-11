@@ -19,3 +19,4 @@ fun String.isValidChannel() = try { this.idToTextChannel(); true } catch (e: Exc
 
 fun selfUser() = jda.selfUser
 fun getPrivateChannels() = jda.privateChannels
+fun guilds() = jda.guilds

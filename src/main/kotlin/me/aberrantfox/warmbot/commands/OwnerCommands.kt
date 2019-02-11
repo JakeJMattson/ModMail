@@ -5,11 +5,11 @@ import me.aberrantfox.kjdautils.extensions.stdlib.trimToID
 import me.aberrantfox.kjdautils.internal.command.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
 import me.aberrantfox.warmbot.extensions.idToGuild
-import me.aberrantfox.warmbot.services.Configuration
+import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.Guild
 
 @CommandSet("owner")
-fun ownerCommands(configuration: Configuration, persistenceService: PersistenceService) = commands {
+fun ownerCommands(configuration: Configuration, guildService: GuildService, persistenceService: PersistenceService) = commands {
     command("Whitelist") {
         requiresGuild = true
         description = "Add a guild to the whitelist."
@@ -39,6 +39,8 @@ fun ownerCommands(configuration: Configuration, persistenceService: PersistenceS
             configuration.whitelist.remove(targetGuild.id)
             persistenceService.save(configuration)
             it.respond("Successfully removed `${targetGuild.name}` from the whitelist.")
+
+            guildService.cleanseGuilds()
         }
     }
 
