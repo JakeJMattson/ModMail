@@ -1,3 +1,5 @@
+package me.aberrantfox.warmbot.listeners
+
 import com.google.common.eventbus.Subscribe
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
 import me.aberrantfox.kjdautils.extensions.stdlib.isInteger
