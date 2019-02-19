@@ -9,6 +9,7 @@ fun main(args: Array<String>) {
     startBot(token) {
         configure {
             prefix = "!"
+            globalPath = "me.aberrantfox.warmbot"
         }
 
         jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
