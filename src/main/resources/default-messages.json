@@ -18,6 +18,7 @@
   "FAIL_MUST_BE_BOT_OWNER": "You must be the owner of this bot to use this command.",
   "FAIL_MUST_BE_GUILD_OWNER": "You must be the owner of the guild to use this command.",
   "FAIL_TEXT_CHANNEL_ONLY": "This command cannot be used in a private message, it must be invoked from a server channel.",
+  "FAIL_COMMAND_NOT_IN_GUILD": "Commands must be executed inside a guild.",
   "FAIL_COULD_NOT_FIND_ROLE": "Could not find a role named :: ${staffRoleName}",
   "FAIL_MISSING_STAFF_ROLE": "You do not have the staff role.",
   "FAIL_GUILD_NOT_WHITELISTED": "This guild is not whitelisted.",

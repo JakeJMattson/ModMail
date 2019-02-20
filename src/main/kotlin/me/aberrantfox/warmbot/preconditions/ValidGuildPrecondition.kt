@@ -7,7 +7,7 @@ import me.aberrantfox.warmbot.services.Configuration
 
 @Precondition
 fun produceIsValidGuildPrecondition(configuration: Configuration) = exit@{ event: CommandEvent ->
-    val guildId = event.guild!!.id
+    val guildId = event.guild?.id ?: return@exit Fail(Locale.messages.FAIL_COMMAND_NOT_IN_GUILD)
 
     if (guildId !in configuration.whitelist) return@exit Fail(Locale.messages.FAIL_GUILD_NOT_WHITELISTED)
 
