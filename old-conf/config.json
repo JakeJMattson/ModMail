@@ -1,0 +1,21 @@
+{
+  "prefix": "!",
+  "maxOpenReports": 50,
+  "recoverReports": true,
+  "guildConfigurations": [
+    {
+      "guildId": "520435308462997506",
+      "reportCategory": "520435735120183298",
+      "archiveChannel": "520436090046251011",
+      "staffRoleName": "Staff",
+      "loggingConfiguration": {
+        "loggingChannel": "520436189262643210",
+        "logStartup": true,
+        "logMemberOpen": true,
+        "logStaffOpen": true,
+        "logArchive": true,
+        "logClose": true
+      }
+    }
+  ]
+}

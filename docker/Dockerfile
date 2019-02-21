@@ -2,7 +2,7 @@
 # docker build -t warmbot:latest -f docker/Dockerfile --no-cache .
 
 # Run it -- specifying the token is required.
-# docker run -e BOT_TOKEN='a valid discord bot token' warmbot:latest
+# docker run -e BOT_TOKEN='Your_token_here' -v /home/fox/dev/kotlin/WarmBot/config:/config warmbot:latest
 
 FROM maven:3.6.0-jdk-11-slim AS build
 
@@ -16,6 +16,7 @@ FROM openjdk:12
 
 ENV BOT_TOKEN=UNSET
 
+RUN mkdir /config/
 COPY --from=build /target/WarmBot-2.0.0-jar-with-dependencies.jar /Warmbot.jar
 
 CMD /usr/bin/java -jar /Warmbot.jar $BOT_TOKEN
