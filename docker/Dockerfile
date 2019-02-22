@@ -1,9 +1,3 @@
-# Build this image
-# docker build -t warmbot:latest -f docker/Dockerfile --no-cache .
-
-# Run it -- specifying the token is required.
-# docker run -e BOT_TOKEN='Your_token_here' -v /home/fox/dev/kotlin/WarmBot/config:/config warmbot:latest
-
 FROM maven:3.6.0-jdk-11-slim AS build
 
 COPY pom.xml /pom.xml
