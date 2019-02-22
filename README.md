@@ -100,3 +100,11 @@ Below you can find a list and explanation of all available commands.
 | Version   | (none)    | Display the current running version.      |
 | BotInfo   | (none)    | Display a summary or bot information.     |
 | Uptime    | (none)    | Display the amount of time online.        |
+
+### Run and build with docker
+Docker files are conveniently provided. 
+
+`./scripts/build.sh` will produce the image warmbot:latest
+
+`./scripts/run.sh` will the build the entire bot inside the container
+and proceed to run the bot. This script takes the bot token as an argument.
