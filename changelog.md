@@ -40,6 +40,7 @@
 * The help system was upgraded through KUtils to be interactive.
 * New reports start with embeds instead of plain text.
 * The archive command can now handle embeds.
+* Docker now available for deployments
 ```
 
 # **Version 1.5.1 and earlier**
