@@ -104,7 +104,14 @@ Below you can find a list and explanation of all available commands.
 ### Run and build with docker
 Docker files are conveniently provided. 
 
+`cd` into the root of the project `/Warmbot`
+
+# Build
 `./scripts/build.sh` will produce the image warmbot:latest
 
+# Run
 `./scripts/run.sh` will the build the entire bot inside the container
 and proceed to run the bot. This script takes the bot token as an argument.
+
+# Deploy (Build and run in one go)
+`./scripts/deploy.sh` will do both of the above steps together in one shot.
