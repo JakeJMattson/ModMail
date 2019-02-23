@@ -48,7 +48,8 @@ If things become hostile, the user will have no idea who they're talking to.
  * In the report channel, `archive` - Transcribes the report to text, archives it, then closes the report.
 
 ## Setup
-Refer to [warmbotsetup.md](warmbotsetup.md) for full setup instructions.
+This is for developers: Refer to [warmbotsetup.md](warmbotsetup.md) for full setup instructions.
+Users should scroll down to [here instead](#docker)
 
 ## Commands
 Below you can find a list and explanation of all available commands.
@@ -101,17 +102,26 @@ Below you can find a list and explanation of all available commands.
 | BotInfo   | (none)    | Display a summary or bot information.     |
 | Uptime    | (none)    | Display the amount of time online.        |
 
-### Run and build with docker
-Docker files are conveniently provided. 
 
-`cd` into the root of the project `/Warmbot`
+## How to deploy a Warmbot instance
 
-# Build
-`./scripts/build.sh` will produce the image warmbot:latest
+#### tl;dr for those of you who know docker
+1. Clone and cd into the root `cd /Warmbot`
+2. `./scripts/deploy.sh <YOUR_BOT_TOKEN> <ABSOLUTE_PATH_TO_CONFIG_FOLDER>`
 
-# Run
-`./scripts/run.sh` will the build the entire bot inside the container
-and proceed to run the bot. This script takes the bot token as an argument.
+#### Lengthy explanation for those of you new to docker
 
-# Deploy (Build and run in one go)
-`./scripts/deploy.sh` will do both of the above steps together in one shot.
+If you want to run a warmbot instance yourself, thankfully this is very easy. The steps are listed 
+below
+1. Firstly download and install docker.
+2. Clone this repository: `git clone https://gitlab.com/Aberrantfox/WarmBot.git` - you can also just 
+ download and extract the zip file.
+3. Open a terminal or command prompt
+4. `cd /Warmbot` - cd into the directory
+5. `./scripts/deploy.sh <YOUR_BOT_TOKEN> <CONFIG_PATH>` 
+    - replace <YOUR_BOT_TOKEN> with a valid discord bot token.
+    - replace <CONFIG_PATH> with a path to where you want the bot configuration to be.
+      It's recommended to just make a folder called `/home/me/config`.
+6. Example run `./scripts/deploy.sh aokspdf.okwepofk.34p1o32kpo,pqo.sASDAwd /home/me/config`
+   *note: The token is fake :)* 
+ 
