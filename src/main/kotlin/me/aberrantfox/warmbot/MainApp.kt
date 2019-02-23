@@ -6,6 +6,11 @@ import net.dv8tion.jda.core.entities.Game
 fun main(args: Array<String>) {
     val token = args.first()
 
+    if(token == "UNSET") {
+        println("You must specify the token with the -e flag when running via docker.")
+        System.exit(-1)
+    }
+
     startBot(token) {
         configure {
             prefix = "!"

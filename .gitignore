@@ -4,3 +4,4 @@ target/
 config/
 reports/
 velocity.log
+old-conf/
