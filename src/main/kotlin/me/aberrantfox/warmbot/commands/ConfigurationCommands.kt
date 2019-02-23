@@ -2,91 +2,52 @@ package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.arguments.*
-import me.aberrantfox.warmbot.services.*
+import me.aberrantfox.kjdautils.internal.di.PersistenceService
+import me.aberrantfox.warmbot.messages.Locale
+import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.*
 
-@CommandSet("Configuration")
-fun configurationCommands(conversationService: ConversationService, configuration: Configuration) = commands {
-
-    command("setreportcategory") {
-        description = "Set the category where new reports will be opened."
+@CommandSet("configuration")
+fun configurationCommands(configuration: Configuration, persistenceService: PersistenceService) = commands {
+    command("SetReportCategory") {
+        requiresGuild = true
+        description = Locale.messages.SET_REPORT_CATEGORY_DESCRIPTION
         expect(ChannelCategoryArg)
         execute {
             val reportCategory = it.args.component1() as Category
-            val eventChannel = it.channel as TextChannel
 
-            if (hasGuildConfiguration(configuration.guildConfigurations, eventChannel.guild.id)) {
-                configuration.guildConfigurations.first { g -> g.guildId == eventChannel.guild.id }.reportCategory =
-                        reportCategory.id
-
-                saveConfiguration(configuration)
-                it.respond("Successfully set report category to :: ${reportCategory.name}")
-            } else {
-                it.respond(
-                        "No guild configuration found, please go through the setup process before using this command.")
-            }
-
-            return@execute
+            configuration.getGuildConfig(reportCategory.guild.id)!!.reportCategory = reportCategory.id
+            persistenceService.save(configuration)
+            it.respond(Locale.inject({ REPORT_ARCHIVE_SUCCESSFUL }, "reportName" to reportCategory.name))
         }
     }
 
-    command("setarchivechannel") {
-        description = "Set the channel where transcribed reports will be sent when archived."
+    command("SetArchiveChannel") {
+        requiresGuild = true
+        description = Locale.messages.SET_ARCHIVE_CHANNEL_DESCRIPTION
         expect(TextChannelArg)
         execute {
             val archiveChannel = it.args.component1() as TextChannel
 
-            if (hasGuildConfiguration(configuration.guildConfigurations, archiveChannel.guild.id)) {
-                configuration.guildConfigurations.first { g -> g.guildId == archiveChannel.guild.id }.archiveChannel =
-                        archiveChannel.id
-
-                saveConfiguration(configuration)
-                it.respond("Successfully the archive channel to :: ${archiveChannel.name}")
-            } else {
-                it.respond(
-                        "No guild configuration found, please go through the setup process before using this command.")
-            }
-            return@execute
+            configuration.getGuildConfig(archiveChannel.guild.id)!!.archiveChannel = archiveChannel.id
+            persistenceService.save(configuration)
+            it.respond(Locale.inject({ ARCHIVE_CHANNEL_SET_SUCCESSFUL }, "archiveChannel" to archiveChannel.name))
         }
     }
 
-    command("setstaffrole") {
-        description = "Specify the role required to use this bot."
+    command("SetStaffRole") {
+        requiresGuild = true
+        description = Locale.messages.SET_STAFF_ROLE_DESCRIPTION
         expect(WordArg)
         execute {
             val staffRoleName = it.args.component1() as String
             val staffRole = it.jda.getRolesByName(staffRoleName, true).firstOrNull()
 
-            if (staffRole != null) {
-                if (hasGuildConfiguration(configuration.guildConfigurations, staffRole.guild.id)) {
-                    configuration.guildConfigurations.first { g -> g.guildId == staffRole.guild.id }.staffRoleName =
-                            staffRole.name
+            staffRole ?: return@execute it.respond(Locale.inject({ FAIL_COULD_NOT_FIND_ROLE }, "staffRoleName" to staffRoleName))
 
-                    saveConfiguration(configuration)
-                    it.respond("Successfully set the staff role to :: ${staffRole.name}")
-                } else {
-                    it.respond(
-                            "No guild configuration found, please go through the setup process before using this command.")
-                }
-            } else {
-                it.respond("Could not find a role named :: $staffRoleName")
-            }
-            return@execute
-        }
-    }
-
-    command("setup") {
-        description = "Initiate a setup conversation to set all required values for this bot."
-        execute {
-            val eventChannel = it.channel as TextChannel
-
-            if (!hasGuildConfiguration(configuration.guildConfigurations, eventChannel.guild.id))
-                conversationService.createConversation(it.author.id, eventChannel.guild.id, "guild-setup")
-            else
-                it.respond(
-                        "I'm already setup for use in this guild, please use the appropriate commands to change specific settings.")
-            return@execute
+            configuration.getGuildConfig(it.message.guild.id)!!.staffRoleName = staffRole.name
+            persistenceService.save(configuration)
+            it.respond(Locale.inject({ SET_STAFF_ROLE_SUCCESSFUL }, "staffRoleName" to staffRole.name))
         }
     }
 }
-

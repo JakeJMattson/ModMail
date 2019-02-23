@@ -1,66 +1,22 @@
 package me.aberrantfox.warmbot
 
 import me.aberrantfox.kjdautils.api.startBot
-import me.aberrantfox.warmbot.listeners.*
-import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.JDA
-import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Game
 
-
 fun main(args: Array<String>) {
+    val token = args.first()
 
-    val config = loadConfiguration()
-
-    if (config == null) {
-        println("Please fill in the configuration file (config/config.json)")
-        return
+    if(token == "UNSET") {
+        println("You must specify the token with the -e flag when running via docker.")
+        System.exit(-1)
     }
 
-    start(config)
-}
+    startBot(token) {
+        configure {
+            prefix = "!"
+            globalPath = "me.aberrantfox.warmbot"
+        }
 
-private fun start(config: Configuration) = startBot(
-        config.token) {
-
-    val reportService = ReportService(jda, config)
-    reportService.loadReports()
-
-    val conversationService = ConversationService(jda, config, reportService, this.config)
-
-    conversationService.registerConversations("me.aberrantfox.warmbot")
-
-    registerListeners(
-            ReportListener(reportService, conversationService),
-            ConversationListener(conversationService, reportService),
-            ResponseListener(reportService, config.guildConfigurations),
-            EditListener(reportService),
-            ChannelDeletionListener(reportService),
-            GuildJoinListener(conversationService, config),
-            GuildLeaveListener(reportService, config))
-
-    registerInjectionObject(reportService, config)
-    registerInjectionObject(conversationService, config)
-
-    registerCommands("me.aberrantfox.warmbot", "!!")
-    registerCommandPreconditions(produceIsStaffMemberPrecondition(config.guildConfigurations),
-            produceIsGuildOwnerPrecondition())
-
-    config.guildConfigurations.forEach {
-        addOverrides(jda, it)
+        jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
     }
-    jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
-}
-
-private fun addOverrides(jda: JDA, config: GuildConfiguration) {
-
-    val staffRole = jda.getRolesByName(config.staffRoleName, true).first()
-    val reportCategory = jda.getCategoryById(config.reportCategory)
-    val archiveChannel = jda.getTextChannelById(config.archiveChannel)
-
-    reportCategory.putPermissionOverride(staffRole).setAllow(Permission.MESSAGE_READ).queue()
-    reportCategory.putPermissionOverride(reportCategory.guild.publicRole).setDeny(Permission.MESSAGE_READ).queue()
-
-    archiveChannel.putPermissionOverride(staffRole).setAllow(Permission.MESSAGE_READ).queue()
-    archiveChannel.putPermissionOverride(reportCategory.guild.publicRole).setDeny(Permission.MESSAGE_READ).queue()
 }

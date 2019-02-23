@@ -1,14 +1,17 @@
 package me.aberrantfox.warmbot.extensions
 
-import net.dv8tion.jda.core.entities.Message
+import net.dv8tion.jda.core.entities.*
 
-fun Message.fullContent(): String {
-    val message = contentRaw
-    var attachString = "\n"
+const val embedNotation = "<---------- Embed ---------->"
 
-    if(attachments.isNotEmpty()) {
-        attachString += attachments.map { it.url }.reduce { a, b -> "$a\n $b" }
-    }
+fun Message.fullContent() = contentRaw + "\n" + attachmentsString()
 
-    return message + attachString
-}
+fun Message.attachmentsString(): String =
+        if(attachments.isNotEmpty()) attachments.map { it.url }.reduce { a, b -> "$a\n $b" } else ""
+
+fun MessageEmbed.toTextString() =
+    StringBuilder().apply {
+        appendln(embedNotation)
+        fields.forEach { append("${it.name}\n${it.value}\n") }
+        appendln(embedNotation)
+    }.toString()
