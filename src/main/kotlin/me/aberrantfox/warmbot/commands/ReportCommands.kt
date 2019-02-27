@@ -146,4 +146,30 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             it.respond("${reportsFromGuild.size} report(s) closed successfully.")
         }
     }
+
+    command("Info") {
+        requiresGuild = true
+        description = "Retrieve the requested id info from the target report channel. Fields: user, channel, guild."
+        expect(TextChannelArg, ChoiceArg("Field", "user", "channel", "guild"))
+        execute {
+            val channel = (it.args.component1() as TextChannel).id
+            val choice = it.args.component2() as String
+
+            if (!reportService.isReportChannel(channel))
+                return@execute it.respond("Target channel must be a report channel.")
+
+            val report = reportService.getReportByChannel(channel)
+
+            it.respond(
+                with (report) {
+                    when (choice) {
+                        "user" -> userId
+                        "channel" -> channelId
+                        "guild" -> guildId
+                        else -> "Invalid selection!"
+                    }
+                }
+            )
+        }
+    }
 }
