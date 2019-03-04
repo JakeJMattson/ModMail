@@ -3,20 +3,17 @@ package me.aberrantfox.warmbot.extensions
 import me.aberrantfox.kjdautils.extensions.jda.fullName
 import net.dv8tion.jda.core.entities.MessageChannel
 
-fun MessageChannel.archiveString(prefix: String) =
-    iterableHistory.reversed()
-        .filter { !it.contentRaw.toLowerCase().matches(Regex("($prefix){1,2}archive")) }
-        .joinToString(System.lineSeparator()) {
-            val stringBuilder = StringBuilder("${it.author.fullName()}: ")
-
-            if (it.embeds.isNotEmpty()) {
+fun MessageChannel.archiveString(prefix: String) = iterableHistory.reversed()
+    .filter { !it.contentRaw.toLowerCase().matches(Regex("($prefix){1,2}archive")) }
+    .joinToString(System.lineSeparator()) {
+        StringBuilder("${it.author.fullName()}: ").apply {
+            if (it.embeds.isNotEmpty() && it.author.isBot) {
                 it.embeds.forEach { embed ->
-                    stringBuilder.appendln()
-                    stringBuilder.append(embed.toTextString())
+                    this.appendln()
+                    this.append(embed.toTextString())
                 }
             } else {
-                stringBuilder.append(it.fullContent())
+                this.append(it.fullContent())
             }
-
-            stringBuilder.toString()
-        }
+        }.toString()
+    }
