@@ -37,7 +37,7 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
     }
 
     private fun String.pairTo(user: User) = this to user.fullName()
-    private fun String.pairTo(report: Report) = this.pairTo(report.userId.idToUser())
+    private fun String.pairTo(report: Report) = this.pairTo(report.reportToUser())
 
     private fun getLogConfig(guildId: String) = config.getGuildConfig(guildId)!!.loggingConfiguration
     private fun log(logChannelId: String, message: String) = logChannelId.idToTextChannel().sendMessage(message).queue()
@@ -49,11 +49,11 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
                 MessageEmbed.Field(if (index == 0) title else "(cont)", chunk, false)
             }
 
-            val channel = report.channelId.idToTextChannel().asMention
+            val channel = report.reportToChannel().asMention
             addField("Edit Detected!", "The user has performed a message edit in $channel.", false)
             createFields("Old Content", old).forEach { addField(it) }
             createFields("New Content", new).forEach { addField(it) }
-            setThumbnail(report.userId.idToUser().avatarUrl)
+            setThumbnail(report.reportToUser().avatarUrl)
             setColor(Color.YELLOW)
         }
 }

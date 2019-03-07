@@ -16,7 +16,11 @@ data class Report(val userId: String,
                   val channelId: String,
                   val guildId: String,
                   val messages: MutableMap<String, String>,
-                  var queuedMessageId: String? = null)
+                  var queuedMessageId: String? = null) {
+    fun reportToUser() = userId.idToUser()
+    fun reportToChannel() = channelId.idToTextChannel()
+    fun reportToGuild() = guildId.idToGuild()
+}
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
@@ -54,7 +58,7 @@ class ReportService(private val config: Configuration,
 
     private fun cleanDeadReports() = reportDir.listFiles().forEach {
         val report = gson.fromJson(it.readText(), Report::class.java)
-        if (report.channelId.idToTextChannel() != null) reports.add(report) else it.delete()
+        if (report.reportToChannel() != null) reports.add(report) else it.delete()
     }
 
     fun addReport(user: User, guild: Guild, firstMessage: Message) {
@@ -77,7 +81,7 @@ class ReportService(private val config: Configuration,
 
         if (hasReportChannel(user)) {
             val report = getReportByUserId(user)
-            report.channelId.idToTextChannel().sendMessage(safeMessage).queue()
+            report.reportToChannel().sendMessage(safeMessage).queue()
             report.queuedMessageId = message.id
 
             return
@@ -97,7 +101,7 @@ class ReportService(private val config: Configuration,
     fun sendToUser(channelId: String, message: Message) {
         val report = getReportByChannel(channelId)
 
-        report.userId.idToUser().sendPrivateMessage(message.fullContent(), DefaultLogger())
+        report.reportToUser().sendPrivateMessage(message.fullContent(), DefaultLogger())
         report.queuedMessageId = message.id
     }
 
@@ -154,9 +158,9 @@ class ReportService(private val config: Configuration,
     }
 
     private fun sendReportClosedEmbed(report: Report) =
-        report.userId.idToUser().sendPrivateMessage(embed {
+        report.reportToUser().sendPrivateMessage(embed {
             setColor(Color.LIGHT_GRAY)
-            setAuthor("The staff of ${report.guildId.idToGuild().name} have closed this report.")
+            setAuthor("The staff of ${report.reportToGuild().name} have closed this report.")
             setDescription("If you continue to reply, a new report will be created.")
         })
 
