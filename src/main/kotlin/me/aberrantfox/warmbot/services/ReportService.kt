@@ -133,6 +133,7 @@ class ReportService(private val config: Configuration,
     private fun createReportChannel(channel: TextChannel, user: User, firstMessage: Message, guild: Guild) {
         val openingMessage = embed {
             addField("New Report Opened!", "${user.descriptor()} :: ${user.asMention}", false)
+            setThumbnail(user.avatarUrl)
             setColor(Color.green)
         }
 
