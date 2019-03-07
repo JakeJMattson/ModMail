@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder
 import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
-import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
 import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.extensions.*
 import net.dv8tion.jda.core.entities.*
@@ -74,7 +73,7 @@ class ReportService(private val config: Configuration,
 
     fun receiveFromUser(userObject: User, message: Message) {
         val user = userObject.id
-        val safeMessage = message.fullContent().trim().sanitiseMentions()
+        val safeMessage = message.cleanContent()
 
         if (hasReportChannel(user)) {
             val report = getReportByUserId(user)

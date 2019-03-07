@@ -56,7 +56,7 @@ class EditListener(private val reportService: ReportService, private val logging
         val guildMessage = channel.getMessageById(targetMessage).complete()
 
         loggingService.edit(report, guildMessage.cleanContent(), event.message.cleanContent())
-        channel.editMessageById(targetMessage, event.message).queue()
+        channel.editMessageById(targetMessage, event.message.cleanContent()).queue()
     }
 
     @Subscribe
