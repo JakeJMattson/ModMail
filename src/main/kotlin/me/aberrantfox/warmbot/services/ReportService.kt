@@ -24,21 +24,23 @@ data class Report(val userId: String,
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
+private val reports = Vector<Report>()
+private val queuedReports = Vector<QueuedReport>()
+
+fun User.hasReportChannel() = reports.any { it.userId == this.id } || queuedReports.any { it.user == this.id }
+fun User.userToReport() = reports.first { it.userId == this.id }
+fun MessageChannel.isReportChannel() = reports.any { it.channelId == this.id }
+fun MessageChannel.channelToReport() = reports.first { it.channelId == this.id }
+
 @Service
 class ReportService(private val config: Configuration,
                     private val loggingService: LoggingService,
                     jdaInitializer: JdaInitializer) {
     private val gson = GsonBuilder().setPrettyPrinting().create()
     private val reportDir = File("reports/")
-    private val reports = Vector<Report>()
-    private val queuedReports = Vector<QueuedReport>()
 
     init { loadReports() }
 
-    fun isReportChannel(channelId: String) = reports.any { it.channelId == channelId }
-    fun hasReportChannel(userId: String) = reports.any { it.userId == userId } || queuedReports.any { it.user == userId }
-    fun getReportByChannel(channelId: String): Report = reports.first { it.channelId == channelId }
-    fun getReportByUserId(userId: String): Report = reports.first { it.userId == userId }
     fun getReportsFromGuild(guildId: String) = reports.filter { it.guildId == guildId }
     fun getCommonGuilds(userObject: User): List<Guild> = userObject.mutualGuilds.filter { it.id in config.guildConfigurations.associateBy { it.guildId } }
 
@@ -53,12 +55,10 @@ class ReportService(private val config: Configuration,
             return
         }
 
-        cleanDeadReports()
-    }
-
-    private fun cleanDeadReports() = reportDir.listFiles().forEach {
-        val report = gson.fromJson(it.readText(), Report::class.java)
-        if (report.reportToChannel() != null) reports.add(report) else it.delete()
+        reportDir.listFiles().forEach {
+            val report = gson.fromJson(it.readText(), Report::class.java)
+            if (report.reportToChannel() != null) reports.add(report) else it.delete()
+        }
     }
 
     fun addReport(user: User, guild: Guild, firstMessage: Message) {
@@ -79,8 +79,8 @@ class ReportService(private val config: Configuration,
         val user = userObject.id
         val safeMessage = message.cleanContent()
 
-        if (hasReportChannel(user)) {
-            val report = getReportByUserId(user)
+        if (userObject.hasReportChannel()) {
+            val report = userObject.userToReport()
             report.reportToChannel().sendMessage(safeMessage).queue()
             report.queuedMessageId = message.id
 
@@ -98,8 +98,8 @@ class ReportService(private val config: Configuration,
         }
     }
 
-    fun sendToUser(channelId: String, message: Message) {
-        val report = getReportByChannel(channelId)
+    fun sendToUser(channel: MessageChannel, message: Message) {
+        val report = channel.channelToReport()
 
         report.reportToUser().sendPrivateMessage(message.fullContent(), DefaultLogger())
         report.queuedMessageId = message.id

@@ -12,12 +12,12 @@ import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
 @CommandSet("report")
-fun reportCommands(reportService: ReportService, configuration: Configuration, loggingService: LoggingService) = commands {
+fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands {
     command("Close") {
         requiresGuild = true
         description = Locale.messages.CLOSE_DESCRIPTION
         execute {
-            val report = reportService.getReportByChannel(it.channel.id)
+            val report = it.channel.channelToReport()
             (it.channel as TextChannel).delete().queue()
             loggingService.close(report, it.author)
         }
@@ -30,7 +30,7 @@ fun reportCommands(reportService: ReportService, configuration: Configuration, l
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
             val archiveChannel = relevantGuild.archiveChannel.idToTextChannel()
             val targetChannel = it.channel.id.idToTextChannel()
-            val report = reportService.getReportByChannel(it.channel.id)
+            val report = it.channel.channelToReport()
 
             archiveChannel.sendFile(it.channel.archiveString(configuration.prefix).toByteArray(),
                 "$${it.channel.name}.txt").queue {
@@ -105,13 +105,12 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             val targetUser = event.args.component1() as User
             val message = event.args.component2() as String
             val guild = event.message.guild
-            val hasReport = reportService.hasReportChannel(targetUser.id)
 
             if (targetUser.isBot) return@execute event.respond("The target user is a bot.")
 
             if (!guild.isMember(targetUser)) return@execute event.respond("The target user is not in this guild.")
 
-            if (hasReport) return@execute event.respond("The target user already has an open report.")
+            if (targetUser.hasReportChannel()) return@execute event.respond("The target user already has an open report.")
 
             val userEmbed = embed {
                 setColor(Color.green)
@@ -152,13 +151,13 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
         description = "Retrieve the requested id info from the target report channel. Fields: user, channel, guild."
         expect(TextChannelArg, ChoiceArg("Field", "user", "channel", "guild"))
         execute {
-            val channel = (it.args.component1() as TextChannel).id
+            val channel = it.args.component1() as TextChannel
             val choice = it.args.component2() as String
 
-            if (!reportService.isReportChannel(channel))
+            if (!channel.isReportChannel())
                 return@execute it.respond("Target channel must be a report channel.")
 
-            val report = reportService.getReportByChannel(channel)
+            val report = channel.channelToReport()
 
             it.respond(
                 with (report) {

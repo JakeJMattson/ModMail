@@ -5,7 +5,7 @@ import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
 import me.aberrantfox.kjdautils.extensions.stdlib.isInteger
 import me.aberrantfox.kjdautils.internal.command.ConversationService
 import me.aberrantfox.warmbot.extensions.fullContent
-import me.aberrantfox.warmbot.services.ReportService
+import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent
 
@@ -24,7 +24,7 @@ class ReportListener(private val reportService: ReportService, private val conve
         val commonGuilds = reportService.getCommonGuilds(user)
 
         when {
-            reportService.hasReportChannel(user.id) -> {
+            user.hasReportChannel() -> {
                 reportService.receiveFromUser(user, message)
             }
             sentChoice.contains(user.id) -> {
