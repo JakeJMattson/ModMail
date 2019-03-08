@@ -26,11 +26,17 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     command("Archive") {
         requiresGuild = true
         description = Locale.messages.ARCHIVE_DESCRIPTION
+        expect(arg(SentenceArg("Additional Info"), optional = true, default = ""))
         execute {
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
             val archiveChannel = relevantGuild.archiveChannel.idToTextChannel()
             val targetChannel = it.channel.id.idToTextChannel()
             val report = it.channel.channelToReport()
+
+            val note = it.args.component1() as String
+
+            if (note.isNotEmpty())
+                archiveChannel.sendMessage(note).queue()
 
             archiveChannel.sendFile(it.channel.archiveString(configuration.prefix).toByteArray(),
                 "$${it.channel.name}.txt").queue {
