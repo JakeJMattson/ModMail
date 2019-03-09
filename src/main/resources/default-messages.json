@@ -26,9 +26,9 @@
 
   "STARTUP_LOG": "Bot successfully initialized!",
   "MEMBER_OPEN_LOG": "New report opened by ${user}",
-  "STAFF_OPEN_LOG": "Report (${user}) opened by ${staff}",
-  "ARCHIVE_LOG": "Report (${user}) archived by ${staff}",
-  "CLOSE_LOG": "Report (${user}) closed by ${staff}",
+  "STAFF_OPEN_LOG": "Staff action :: ${staff} opened ${channel}",
+  "ARCHIVE_LOG": "Staff action :: ${staff} archived ${channel}",
+  "CLOSE_LOG": "Staff action :: ${staff} closed ${channel}",
 
   "DEFAULT_INITIAL_MESSAGE": "<No initial message provided>"
 }

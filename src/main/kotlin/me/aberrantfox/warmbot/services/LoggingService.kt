@@ -17,19 +17,19 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
     }
 
     fun memberOpen(report: Report) = getLogConfig(report.guildId).apply {
-        if (logMemberOpen) log(loggingChannel, Locale.inject({ MEMBER_OPEN_LOG }, "user".pairTo(report)))
+        if (logMemberOpen) log(loggingChannel, Locale.inject({ MEMBER_OPEN_LOG }, "user".pairTo(report.reportToUser())))
     }
 
-    fun staffOpen(report: Report, staff: User) = getLogConfig(report.guildId).apply {
-        if (logStaffOpen) log(loggingChannel, Locale.inject({ STAFF_OPEN_LOG }, "user".pairTo(report), "staff".pairTo(staff)))
+    fun staffOpen(guildId: String, channelName: String, staff: User) = getLogConfig(guildId).apply {
+        if (logStaffOpen) log(loggingChannel, Locale.inject({ STAFF_OPEN_LOG }, "channel" to channelName, "staff".pairTo(staff)))
     }
 
-    fun archive(report: Report, staff: User) = getLogConfig(report.guildId).apply {
-        if (logArchive) log(loggingChannel, Locale.inject({ ARCHIVE_LOG }, "user".pairTo(report), "staff".pairTo(staff)))
+    fun archive(guildId: String, channelName: String, staff: User) = getLogConfig(guildId).apply {
+        if (logArchive) log(loggingChannel, Locale.inject({ ARCHIVE_LOG }, "channel" to channelName, "staff".pairTo(staff)))
     }
 
-    fun close(report: Report, staff: User) = getLogConfig(report.guildId).apply {
-        if (logClose) log(loggingChannel, Locale.inject({ CLOSE_LOG }, "user".pairTo(report), "staff".pairTo(staff)))
+    fun close(guildId: String, channelName: String, staff: User) = getLogConfig(guildId).apply {
+        if (logClose) log(loggingChannel, Locale.inject({ CLOSE_LOG }, "channel" to channelName, "staff".pairTo(staff)))
     }
 
     fun edit(report: Report, old: String, new: String) = with(getLogConfig(report.guildId)) {
@@ -37,7 +37,6 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
     }
 
     private fun String.pairTo(user: User) = this to user.fullName()
-    private fun String.pairTo(report: Report) = this.pairTo(report.reportToUser())
 
     private fun getLogConfig(guildId: String) = config.getGuildConfig(guildId)!!.loggingConfiguration
     private fun log(logChannelId: String, message: String) = logChannelId.idToTextChannel().sendMessage(message).queue()

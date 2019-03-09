@@ -17,9 +17,10 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         requiresGuild = true
         description = Locale.messages.CLOSE_DESCRIPTION
         execute {
-            val report = it.channel.channelToReport()
-            (it.channel as TextChannel).delete().queue()
-            loggingService.close(report, it.author)
+            val channel = it.channel as TextChannel
+
+            channel.delete().queue()
+            loggingService.close(it.guild!!.id, channel.name, it.author)
         }
     }
 
@@ -30,8 +31,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         execute {
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
             val archiveChannel = relevantGuild.archiveChannel.idToTextChannel()
-            val targetChannel = it.channel.id.idToTextChannel()
-            val report = it.channel.channelToReport()
+            val channel = it.channel.id.idToTextChannel()
 
             val note = it.args.component1() as String
 
@@ -40,10 +40,10 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
             archiveChannel.sendFile(it.channel.archiveString(configuration.prefix).toByteArray(),
                 "$${it.channel.name}.txt").queue {
-                targetChannel.delete().queue()
+                channel.delete().queue()
             }
 
-            loggingService.archive(report, it.author)
+            loggingService.archive(it.guild!!.id, channel.name, it.author)
         }
     }
 
@@ -99,7 +99,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             reportService.addReport(newReport)
 
             event.respond("Channel opened at: ${channel.asMention}")
-            loggingService.staffOpen(newReport, event.author)
+            loggingService.staffOpen(guildId, channel.name, event.author)
         }
     }
 
@@ -144,8 +144,10 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             if (reportsFromGuild.isEmpty()) return@execute it.respond("There are no reports to close.")
 
             reportsFromGuild.forEach { report ->
-                report.channelId.idToTextChannel().delete().queue()
-                loggingService.close(report, it.author)
+                val channel = report.channelId.idToTextChannel()
+
+                channel.delete().queue()
+                loggingService.close(it.guild!!.id, channel.name, it.author)
             }
 
             it.respond("${reportsFromGuild.size} report(s) closed successfully.")
