@@ -6,6 +6,8 @@
 * SetLoggingChannel - Set the target logging channel during runtime.
 * Info              - Access report data such as user ID's.
 * Move              - Move a target report to a different category.
+* Tag               - Prepend a tag to the name of this report channel.
+* ResetTags         - Reset a report channel to its original name.
 ```
 
 ### Misc Changes

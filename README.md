@@ -85,6 +85,8 @@ Below you can find a list and explanation of all available commands.
 | Archive   | (none)      | Transcribe report to text (closes report).|
 | Note      | (none)      | Produce a note in the form of an embed.   |
 | Move      | Category ID | Move this channel to another category.    |
+| Tag       | Word / Emote| Prepend a tag to this report channel.     |
+| ResetTags | (none)      | Remove all tags from a report channel.    |
 
 ### Report Helpers
 

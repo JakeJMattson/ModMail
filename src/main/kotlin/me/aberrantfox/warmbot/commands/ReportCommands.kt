@@ -92,6 +92,53 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             )
         }
     }
+
+    command("Tag") {
+        requiresGuild = true
+        description = "Prepend a tag to the name of this report channel."
+        expect(WordArg("Tag"))
+        execute {
+            val tag = it.args.component1() as String
+            val channel = it.channel as TextChannel
+
+            ChannelManager(channel).setName("$tag-${channel.name}").queue()
+            it.message.delete().queue()
+
+            it.respond(
+                embed {
+                    field {
+                        name = "Report Tagged!"
+                        value = "This report was tagged with :: $tag by ${it.author.fullName()}"
+                        inline = false
+                    }
+                    color(Color.ORANGE)
+                }
+            )
+        }
+    }
+
+    command("ResetTags") {
+        requiresGuild = true
+        description = "Reset a report channel to its original name."
+        execute {
+            val channel = it.channel as TextChannel
+            val originalName = channel.channelToReport().reportToUser().name
+
+            ChannelManager(channel).setName(originalName).queue()
+            it.message.delete().queue()
+
+            it.respond(
+                embed {
+                    field {
+                        name = "Tags reset!"
+                        value = "This report was reset by ${it.author.fullName()}"
+                        inline = false
+                    }
+                    color(Color.ORANGE)
+                }
+            )
+        }
+    }
 }
 
 @CommandSet("ReportHelpers")
