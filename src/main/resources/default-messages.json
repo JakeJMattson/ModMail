@@ -3,15 +3,31 @@
   "SET_REPORT_CATEGORY_DESCRIPTION": "Set the category where new reports will be opened.",
   "SET_ARCHIVE_CHANNEL_DESCRIPTION": "Set the channel where transcribed reports will be sent when archived.",
   "SET_STAFF_ROLE_DESCRIPTION": "Specify the role required to use this bot.",
+  "SET_LOGGING_CHANNEL_DESCRIPTION": "Set the channel where events will be logged.",
+  "WHITELIST_DESCRIPTION": "Add a guild to the whitelist.",
+  "UNWHITELIST_DESCRIPTION": "Remove a guild from the whitelist.",
+  "SHOW_WHITELIST_DESCRIPTION": "Display all guilds in the whitelist.",
   "CLOSE_DESCRIPTION": "Close the report channel that this command is invoked in. Alternatively, delete the channel.",
   "ARCHIVE_DESCRIPTION": "Archive the contents of the report as a text document in the archive channel.",
   "NOTE_DESCRIPTION": "Produce a note in a report channel in the form of an embed.",
+  "MOVE_DESCRIPTION": "Move a report from the current category to another category.",
+  "TAG_DESCRIPTION": "Prepend a tag to the name of this report channel.",
+  "RESET_TAGS_DESCRIPTION": "Reset a report channel to its original name.",
   "OPEN_DESCRIPTION": "Open a report with the target user and send the provided initial message.",
   "CLOSE_ALL_DESCRIPTION": "Close all currently open reports. Can be invoked in any channel.",
+  "INFO_DESCRIPTION": "Retrieve the requested id info from the target report channel. Fields: user, channel, guild.",
 
-  "ARCHIVE_CHANNEL_SET_SUCCESSFUL": "Successfully the archive channel to :: ${archiveChannel}",
-  "REPORT_ARCHIVE_SUCCESSFUL": "Successfully set report category to :: ${reportName}",
+  "PING_DESCRIPTION": "Check the status of the bot.",
+  "VERSION_DESCRIPTION": "Display the bot version.",
+  "AUTHOR_DESCRIPTION": "Display project author.",
+  "SOURCE_DESCRIPTION": "Display the source code via a GitLab link.",
+  "BOT_INFO_DESCRIPTION": "Display the bot information.",
+  "UPTIME_DESCRIPTION": "Displays how long the bot has been running.",
+
+  "SET_REPORT_CATEGORY_SUCCESSFUL": "Successfully set report category to :: ${categoryName}",
+  "SET_ARCHIVE_CHANNEL_SUCCESSFUL": "Successfully the archive channel to :: ${archiveChannel}",
   "SET_STAFF_ROLE_SUCCESSFUL": "Successfully set the staff role to :: ${staffRoleName}",
+  "SET_LOGGING_CHANNEL_SUCCESSFUL": "Successfully the logging channel to :: ${loggingChannel}",
   "GUILD_SETUP_SUCCESSFUL": "Successfully configured for use! As the guild owner, you can adjust these values at any time.",
 
   "FAIL_GUILD_SETUP": "**Error** :: The ${field} provided did not belong to the guild you started this conversation in.",
@@ -26,9 +42,9 @@
 
   "STARTUP_LOG": "Bot successfully initialized!",
   "MEMBER_OPEN_LOG": "New report opened by ${user}",
-  "STAFF_OPEN_LOG": "Report (${user}) opened by ${staff}",
-  "ARCHIVE_LOG": "Report (${user}) archived by ${staff}",
-  "CLOSE_LOG": "Report (${user}) closed by ${staff}",
+  "STAFF_OPEN_LOG": "Staff action :: ${staff} opened ${channel}",
+  "ARCHIVE_LOG": "Staff action :: ${staff} archived ${channel}",
+  "CLOSE_LOG": "Staff action :: ${staff} closed ${channel}",
 
   "DEFAULT_INITIAL_MESSAGE": "<No initial message provided>"
 }

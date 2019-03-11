@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder
 import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
-import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
 import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.extensions.*
 import net.dv8tion.jda.core.entities.*
@@ -17,9 +16,21 @@ data class Report(val userId: String,
                   val channelId: String,
                   val guildId: String,
                   val messages: MutableMap<String, String>,
-                  var queuedMessageId: String? = null)
+                  var queuedMessageId: String? = null) {
+    fun reportToUser() = userId.idToUser()
+    fun reportToChannel() = channelId.idToTextChannel()
+    fun reportToGuild() = guildId.idToGuild()
+}
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
+
+private val reports = Vector<Report>()
+private val queuedReports = Vector<QueuedReport>()
+
+fun User.hasReportChannel() = reports.any { it.userId == this.id } || queuedReports.any { it.user == this.id }
+fun User.userToReport() = reports.first { it.userId == this.id }
+fun MessageChannel.isReportChannel() = reports.any { it.channelId == this.id }
+fun MessageChannel.channelToReport() = reports.first { it.channelId == this.id }
 
 @Service
 class ReportService(private val config: Configuration,
@@ -27,15 +38,9 @@ class ReportService(private val config: Configuration,
                     jdaInitializer: JdaInitializer) {
     private val gson = GsonBuilder().setPrettyPrinting().create()
     private val reportDir = File("reports/")
-    private val reports = Vector<Report>()
-    private val queuedReports = Vector<QueuedReport>()
 
     init { loadReports() }
 
-    fun isReportChannel(channelId: String) = reports.any { it.channelId == channelId }
-    fun hasReportChannel(userId: String) = reports.any { it.userId == userId } || queuedReports.any { it.user == userId }
-    fun getReportByChannel(channelId: String): Report = reports.first { it.channelId == channelId }
-    fun getReportByUserId(userId: String): Report = reports.first { it.userId == userId }
     fun getReportsFromGuild(guildId: String) = reports.filter { it.guildId == guildId }
     fun getCommonGuilds(userObject: User): List<Guild> = userObject.mutualGuilds.filter { it.id in config.guildConfigurations.associateBy { it.guildId } }
 
@@ -50,12 +55,10 @@ class ReportService(private val config: Configuration,
             return
         }
 
-        cleanDeadReports()
-    }
-
-    private fun cleanDeadReports() = reportDir.listFiles().forEach {
-        val report = gson.fromJson(it.readText(), Report::class.java)
-        if (report.channelId.idToTextChannel() != null) reports.add(report) else it.delete()
+        reportDir.listFiles().forEach {
+            val report = gson.fromJson(it.readText(), Report::class.java)
+            if (report.reportToChannel() != null) reports.add(report) else it.delete()
+        }
     }
 
     fun addReport(user: User, guild: Guild, firstMessage: Message) {
@@ -74,11 +77,11 @@ class ReportService(private val config: Configuration,
 
     fun receiveFromUser(userObject: User, message: Message) {
         val user = userObject.id
-        val safeMessage = message.fullContent().trim().sanitiseMentions()
+        val safeMessage = message.cleanContent()
 
-        if (hasReportChannel(user)) {
-            val report = getReportByUserId(user)
-            report.channelId.idToTextChannel().sendMessage(safeMessage).queue()
+        if (userObject.hasReportChannel()) {
+            val report = userObject.userToReport()
+            report.reportToChannel().sendMessage(safeMessage).queue()
             report.queuedMessageId = message.id
 
             return
@@ -95,10 +98,10 @@ class ReportService(private val config: Configuration,
         }
     }
 
-    fun sendToUser(channelId: String, message: Message) {
-        val report = getReportByChannel(channelId)
+    fun sendToUser(channel: MessageChannel, message: Message) {
+        val report = channel.channelToReport()
 
-        report.userId.idToUser().sendPrivateMessage(message.fullContent(), DefaultLogger())
+        report.reportToUser().sendPrivateMessage(message.fullContent(), DefaultLogger())
         report.queuedMessageId = message.id
     }
 
@@ -133,6 +136,7 @@ class ReportService(private val config: Configuration,
     private fun createReportChannel(channel: TextChannel, user: User, firstMessage: Message, guild: Guild) {
         val openingMessage = embed {
             addField("New Report Opened!", "${user.descriptor()} :: ${user.asMention}", false)
+            setThumbnail(user.avatarUrl)
             setColor(Color.green)
         }
 
@@ -154,9 +158,9 @@ class ReportService(private val config: Configuration,
     }
 
     private fun sendReportClosedEmbed(report: Report) =
-        report.userId.idToUser().sendPrivateMessage(embed {
+        report.reportToUser().sendPrivateMessage(embed {
             setColor(Color.LIGHT_GRAY)
-            setAuthor("The staff of ${report.guildId.idToGuild().name} have closed this report.")
+            setAuthor("The staff of ${report.reportToGuild().name} have closed this report.")
             setDescription("If you continue to reply, a new report will be created.")
         })
 

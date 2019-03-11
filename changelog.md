@@ -1,3 +1,32 @@
+# **Version 2.0.1**
+
+### New Commands
+
+```
+* SetLoggingChannel - Set the target logging channel during runtime.
+* Info              - Access report data such as user ID's.
+* Move              - Move a target report to a different category.
+* Tag               - Prepend a tag to the name of this report channel.
+* ResetTags         - Reset a report channel to its original name.
+```
+
+### Misc Changes
+
+```
+* Added Docker deployment script and instructions for Windows.
+* Report open embeds and edit embeds now contain a user's avatar.
+* Message edits are now logged in the logging channel instead of in-place.
+* Added an argument to the archive command to allow leaving notes next to files.
+```
+
+### Bug Fixes
+```
+* Logging service - Command events used in reports where users were no longer in the server would not log due to JDA.
+* Logging service - Reports closed by channel deletion would not log due to human oversight.
+* Archiving       - Messages containing links were transcribed as empty embeds due to Discord's preview feature.
+* Editing         - Edits were intentionally not being sanitized due to lack of ping risk. They are now sanitized.
+```
+
 # **Version 2.0**
 
 ### New Features
@@ -48,16 +77,16 @@
 ### Features
 
 ```
-Basic functionality
+* Basic report functionality
 ```
 
 ### Commands
 
 ```
-Author  - Display the author of the bot.
-Source  - Display the GitLab repository link.
-Ping    - Display the network status of the bot.
-Help    - Display a basic static help menu.
-Close   - Close the report channel this command was invoked in.
-Archive - Archive the report channel this command was invoked in. This transcribes the report to a text document.
+* Author  - Display the author of the bot.
+* Source  - Display the GitLab repository link.
+* Ping    - Display the network status of the bot.
+* Help    - Display a basic static help menu.
+* Close   - Close the report channel this command was invoked in.
+* Archive - Archive the report channel this command was invoked in. This transcribes the report to a text document.
 ```

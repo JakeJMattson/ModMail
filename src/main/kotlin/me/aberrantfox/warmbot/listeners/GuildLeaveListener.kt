@@ -7,15 +7,15 @@ import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent
 import java.awt.Color
 
-class GuildLeaveListener(private val reportService: ReportService, val configuration: Configuration) {
+class GuildLeaveListener(val configuration: Configuration) {
     @Subscribe
     fun onGuildLeave(event: GuildMemberLeaveEvent) {
-        val user = event.user.id
+        val user = event.user
 
-        if (!reportService.hasReportChannel(user)) return
+        if (!event.user.hasReportChannel()) return
 
-        val reportId = reportService.getReportByUserId(user).channelId
-        val message = if (event.guild.banList.complete().any { it.user.id == user }) "was banned from" else "has left"
+        val reportId = user.userToReport().channelId
+        val message = if (event.guild.banList.complete().any { it.user.id == user.id }) "was banned from" else "has left"
 
         reportId.idToTextChannel().sendMessage(createResponse(message)).queue()
     }

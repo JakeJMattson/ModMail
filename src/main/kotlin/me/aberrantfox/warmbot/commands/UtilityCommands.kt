@@ -3,6 +3,7 @@ package me.aberrantfox.warmbot.commands
 import com.google.gson.Gson
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.extensions.jda.fullName
+import me.aberrantfox.warmbot.messages.Locale
 import java.awt.Color
 import java.util.Date
 
@@ -15,7 +16,7 @@ private val startTime = Date()
 fun utilityCommands() = commands {
     command("Ping") {
         requiresGuild = true
-        description = "Check the status of the bot."
+        description = Locale.messages.PING_DESCRIPTION
         execute {
             it.respond("pong! (${it.jda.ping}ms)")
         }
@@ -23,7 +24,7 @@ fun utilityCommands() = commands {
 
     command("Version") {
         requiresGuild = true
-        description = "Display the bot version."
+        description = Locale.messages.VERSION_DESCRIPTION
         execute {
             it.respond("**Running version**: ${Project.version}")
         }
@@ -31,7 +32,7 @@ fun utilityCommands() = commands {
 
     command("Author") {
         requiresGuild = true
-        description = "Display project author."
+        description = Locale.messages.AUTHOR_DESCRIPTION
         execute {
             it.respond("**Project author**: ${Project.author}")
         }
@@ -39,7 +40,7 @@ fun utilityCommands() = commands {
 
     command("Source") {
         requiresGuild = true
-        description = "Display the source code via a GitLab link."
+        description = Locale.messages.SOURCE_DESCRIPTION
         execute {
             it.respond(Project.repository)
         }
@@ -47,7 +48,7 @@ fun utilityCommands() = commands {
 
     command("BotInfo") {
         requiresGuild = true
-        description = "Display the bot information."
+        description = Locale.messages.BOT_INFO_DESCRIPTION
         execute {
             it.respond(embed {
                 title(it.jda.selfUser.fullName())
@@ -64,7 +65,7 @@ fun utilityCommands() = commands {
 
     command("Uptime") {
         requiresGuild = true
-        description = "Displays how long the bot has been running."
+        description = Locale.messages.UPTIME_DESCRIPTION
         execute {
             val milliseconds = Date().time - startTime.time
             val seconds = (milliseconds / 1000) % 60
