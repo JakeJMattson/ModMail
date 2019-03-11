@@ -78,11 +78,12 @@ Below you can find a list and explanation of all available commands.
 
 `These commands can only be run in a report channel.`
 
-| Command   | Arguments | Effect                                    |
-| ------    | ------    | ------                                    |
-| Close     | (none)    | Close report and notify user.             |
-| Archive   | (none)    | Transcribe report to text (closes report).|
-| Note      | (none)    | Produce a note in the form of an embed.   |
+| Command   | Arguments   | Effect                                    |
+| ------    | ------      | ------                                    |
+| Close     | (none)      | Close report and notify user.             |
+| Archive   | (none)      | Transcribe report to text (closes report).|
+| Note      | (none)      | Produce a note in the form of an embed.   |
+| Move      | Category ID | Move this channel to another category.    |
 
 ### Report Helpers
 
@@ -90,6 +91,7 @@ Below you can find a list and explanation of all available commands.
 | ------    | ------    | ------                                    |
 | Open      | User ID   | Open a report with the target user.       |
 | CloseAll  | (none)    | Close all reports in the current guild.   |
+| Info      | Channel   | Get info (ID's) from the target report.   |
 
 ### Utility
 
