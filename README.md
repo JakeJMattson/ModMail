@@ -48,8 +48,7 @@ If things become hostile, the user will have no idea who they're talking to.
  * In the report channel, `archive` - Transcribes the report to text, archives it, then closes the report.
 
 ## Setup
-This is for developers: Refer to [warmbotsetup.md](warmbotsetup.md) for full setup instructions.
-Users should scroll down to [here instead](#docker)
+Refer to [warmbotsetup.md](warmbotsetup.md) for full setup instructions.
 
 ## Commands
 Below you can find a list and explanation of all available commands.
