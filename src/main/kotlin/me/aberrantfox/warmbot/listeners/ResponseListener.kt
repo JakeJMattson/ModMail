@@ -11,8 +11,8 @@ class ResponseListener(private val reportService: ReportService, private val con
 
         if (event.message.contentRaw.startsWith(configuration.prefix)) return
 
-        if (!reportService.isReportChannel(event.channel.id)) return
+        if (!event.channel.isReportChannel()) return
 
-        reportService.sendToUser(event.channel.id, event.message)
+        reportService.sendToUser(event.channel, event.message)
     }
 }

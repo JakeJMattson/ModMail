@@ -1,24 +1,20 @@
 package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
-import me.aberrantfox.kjdautils.api.dsl.embed
-import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
 import me.aberrantfox.warmbot.extensions.*
-import me.aberrantfox.warmbot.services.ReportService
-import net.dv8tion.jda.core.entities.*
+import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.events.message.guild.*
 import net.dv8tion.jda.core.events.message.priv.*
 import net.dv8tion.jda.core.events.user.UserTypingEvent
-import java.awt.Color
 
-class EditListener(private val reportService: ReportService) {
+class EditListener(private val reportService: ReportService, private val loggingService: LoggingService) {
     @Subscribe
     fun onGuildMessageUpdate(event: GuildMessageUpdateEvent) {
-        if (!reportService.isReportChannel(event.channel.id)) return
+        if (!event.channel.isReportChannel()) return
 
         if (event.author.id == selfUser().id) return
 
-        val report = reportService.getReportByChannel(event.channel.id)
+        val report = event.channel.channelToReport()
         val privateChannel = getPrivateChannels().first { it.user.id == report.userId }
         val targetMessage = report.messages[event.messageId]
 
@@ -27,9 +23,9 @@ class EditListener(private val reportService: ReportService) {
 
     @Subscribe
     fun onGuildMessageDelete(event: GuildMessageDeleteEvent) {
-        if (!reportService.isReportChannel(event.channel.id)) return
+        if (!event.channel.isReportChannel()) return
 
-        val report = reportService.getReportByChannel(event.channel.id)
+        val report = event.channel.channelToReport()
         val targetMessage = report.messages[event.messageId] ?: return
         val privateChannel = getPrivateChannels().first { it.user.id == report.userId }
 
@@ -41,38 +37,26 @@ class EditListener(private val reportService: ReportService) {
 
     @Subscribe
     fun onUserTypingEvent(event: UserTypingEvent) {
-        if (!reportService.hasReportChannel(event.user.id)) return
+        if (!event.user.hasReportChannel()) return
 
         event.privateChannel ?: return
 
-        val report = reportService.getReportByUserId(event.user.id)
+        val report = event.user.userToReport()
 
         report.channelId.idToTextChannel().sendTyping().queue()
     }
 
     @Subscribe
     fun onPrivateMessageUpdate(event: PrivateMessageUpdateEvent) {
-        if (!reportService.hasReportChannel(event.author.id)) return
+        if (!event.author.hasReportChannel()) return
 
-        fun trimMessage(message: Message) = message.fullContent().trimEnd().sanitiseMentions()
-        fun createFields(title: String, message: String) = message.chunked(1024).mapIndexed { index, chunk ->
-            MessageEmbed.Field(if (index == 0) title else "(cont)", chunk, false)
-        }
-
-        val report = reportService.getReportByUserId(event.author.id)
+        val report = event.author.userToReport()
         val targetMessage = report.messages[event.messageId] ?: return
         val channel = report.channelId.idToTextChannel()
         val guildMessage = channel.getMessageById(targetMessage).complete()
 
-        val embed = embed {
-            addField("Edit Detected!", "The user has performed a message edit.", false)
-            createFields("Old Content", trimMessage(guildMessage)).forEach { addField(it) }
-            createFields("New Content", trimMessage(event.message)).forEach { addField(it) }
-            setColor(Color.YELLOW)
-        }
-
-        channel.sendMessage(embed).queue()
-        channel.editMessageById(targetMessage, event.message).queue()
+        loggingService.edit(report, guildMessage.cleanContent(), event.message.cleanContent())
+        channel.editMessageById(targetMessage, event.message.cleanContent()).queue()
     }
 
     @Subscribe
@@ -80,11 +64,11 @@ class EditListener(private val reportService: ReportService) {
         if (event.author.id == selfUser().id) {
             if (event.message.embeds.isNotEmpty()) return
 
-            val user = event.channel.id.idToPrivateChannel().user.id
+            val user = event.channel.id.idToPrivateChannel().user
 
-            if (!reportService.hasReportChannel(user)) return
+            if (!user.hasReportChannel()) return
 
-            val report = reportService.getReportByUserId(user)
+            val report = user.userToReport()
 
             if (report.queuedMessageId != null) {
                 report.messages[report.queuedMessageId!!] = event.messageId
@@ -100,9 +84,9 @@ class EditListener(private val reportService: ReportService) {
         if (event.author.id == selfUser().id) {
             if (event.message.embeds.isNotEmpty()) return
 
-            if (!reportService.isReportChannel(event.channel.id)) return
+            if (!event.channel.isReportChannel()) return
 
-            val report = reportService.getReportByChannel(event.channel.id)
+            val report = event.channel.channelToReport()
 
             if (report.queuedMessageId != null) {
                 report.messages[report.queuedMessageId!!] = event.messageId
