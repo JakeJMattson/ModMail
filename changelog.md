@@ -3,8 +3,9 @@
 ### New Commands
 
 ```
-* Info - Access report data such as user ID's.
-* Move - Move a target report to a different category.
+* SetLoggingChannel - Set the target logging channel during runtime.
+* Info              - Access report data such as user ID's.
+* Move              - Move a target report to a different category.
 ```
 
 ### Misc Changes

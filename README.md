@@ -73,6 +73,7 @@ Below you can find a list and explanation of all available commands.
 | SetReportCategory | Category ID   | Set the category where new reports will be opened.|
 | SetArchiveChannel | Channel ID    | Set the channel where reports will be archived.   |
 | SetStaffRole      | Role name     | Set the role required to use this bot.            |
+| SetLoggingChannel | Channel ID    | Set the channel where events should be logged.    |
 
 ### Report
 
