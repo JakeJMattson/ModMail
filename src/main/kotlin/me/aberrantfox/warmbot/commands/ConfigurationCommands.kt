@@ -18,7 +18,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
             configuration.getGuildConfig(reportCategory.guild.id)!!.reportCategory = reportCategory.id
             persistenceService.save(configuration)
-            it.respond(Locale.inject({ REPORT_ARCHIVE_SUCCESSFUL }, "reportName" to reportCategory.name))
+            it.respond(Locale.inject({ SET_REPORT_CATEGORY_SUCCESSFUL }, "categoryName" to reportCategory.name))
         }
     }
 
@@ -31,7 +31,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
             configuration.getGuildConfig(archiveChannel.guild.id)!!.archiveChannel = archiveChannel.id
             persistenceService.save(configuration)
-            it.respond(Locale.inject({ ARCHIVE_CHANNEL_SET_SUCCESSFUL }, "archiveChannel" to archiveChannel.name))
+            it.respond(Locale.inject({ SET_ARCHIVE_CHANNEL_SUCCESSFUL }, "archiveChannel" to archiveChannel.name))
         }
     }
 
@@ -53,14 +53,14 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
     command("SetLoggingChannel") {
         requiresGuild = true
-        description = "Set the channel where events will be logged."
+        description = Locale.messages.SET_LOGGING_CHANNEL_DESCRIPTION
         expect(TextChannelArg)
         execute {
             val loggingChannel = it.args.component1() as TextChannel
 
             configuration.getGuildConfig(it.message.guild.id)!!.loggingConfiguration.loggingChannel = loggingChannel.id
             persistenceService.save(configuration)
-            it.respond("Successfully set the logging channel to ${loggingChannel.name}")
+            it.respond(Locale.inject({ SET_LOGGING_CHANNEL_SUCCESSFUL }, "loggingChannel" to loggingChannel.name))
         }
     }
 }

@@ -99,7 +99,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 
     command("Info") {
         requiresGuild = true
-        description = "Retrieve the requested id info from the target report channel. Fields: user, channel, guild."
+        description = Locale.messages.INFO_DESCRIPTION
         expect(TextChannelArg("Report Channel"), ChoiceArg("Field", "user", "channel", "guild"))
         execute {
             val channel = it.args.component1() as TextChannel

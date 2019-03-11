@@ -68,7 +68,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("Move") {
         requiresGuild = true
-        description = "Move a report from the current category to another category."
+        description = Locale.messages.MOVE_DESCRIPTION
         expect(ChannelCategoryArg("Category ID"))
         execute {
             val channel = it.channel as Channel
@@ -93,8 +93,8 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("Tag") {
         requiresGuild = true
-        description = "Prepend a tag to the name of this report channel."
-        expect(WordArg("Tag"))
+        description = Locale.messages.TAG_DESCRIPTION
+        expect(WordArg("Word or Emote"))
         execute {
             val tag = it.args.component1() as String
             val channel = it.channel as TextChannel
@@ -117,7 +117,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("ResetTags") {
         requiresGuild = true
-        description = "Reset a report channel to its original name."
+        description = Locale.messages.RESET_TAGS_DESCRIPTION
         execute {
             val channel = it.channel as TextChannel
             val originalName = channel.channelToReport().reportToUser().name

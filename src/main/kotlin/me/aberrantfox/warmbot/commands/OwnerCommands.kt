@@ -5,6 +5,7 @@ import me.aberrantfox.kjdautils.extensions.stdlib.trimToID
 import me.aberrantfox.kjdautils.internal.command.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
 import me.aberrantfox.warmbot.extensions.idToGuild
+import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.Guild
 
@@ -12,7 +13,7 @@ import net.dv8tion.jda.core.entities.Guild
 fun ownerCommands(configuration: Configuration, guildService: GuildService, persistenceService: PersistenceService) = commands {
     command("Whitelist") {
         requiresGuild = true
-        description = "Add a guild to the whitelist."
+        description = Locale.messages.WHITELIST_DESCRIPTION
         expect(GuildArg)
         execute {
             val targetGuild = it.args.component1() as Guild
@@ -28,7 +29,7 @@ fun ownerCommands(configuration: Configuration, guildService: GuildService, pers
 
     command("UnWhitelist") {
         requiresGuild = true
-        description = "Remove a guild from the whitelist."
+        description = Locale.messages.UNWHITELIST_DESCRIPTION
         expect(GuildArg)
         execute {
             val targetGuild = it.args.component1() as Guild
@@ -46,7 +47,7 @@ fun ownerCommands(configuration: Configuration, guildService: GuildService, pers
 
     command("ShowWhitelist") {
         requiresGuild = true
-        description = "Display all guilds in the whitelist."
+        description = Locale.messages.SHOW_WHITELIST_DESCRIPTION
         execute {
             it.respond(
                 StringBuilder().apply {
