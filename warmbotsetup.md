@@ -38,6 +38,56 @@ Please fill it out and run the bot again. If you don't understand the fields, co
 Once your configuration is complete, you can run the bot again.
 If everything was set up properly, your bot should now be up and running!
 
+## Deploy Guide
+
+### Windows
+
+#### Abridged version
+
+1. Clone and cd into the root `cd /WarmBot`
+2. `%CD%/scripts/deploy.bat <YOUR_BOT_TOKEN> <ABSOLUTE_PATH_TO_CONFIG_FOLDER>`
+
+#### Full version
+
+1. Download and install the docker toolbox.
+2. Clone this repository: `git clone https://gitlab.com/Aberrantfox/WarmBot.git` - 
+    you can also just download and extract the zip file.
+3. Open the command prompt
+4. `cd /WarmBot` - cd into the directory
+5. `%CD%/scripts/deploy.bat <YOUR_BOT_TOKEN> <CONFIG_PATH>` 
+    - replace <YOUR_BOT_TOKEN> with a valid discord bot token.
+    - replace <CONFIG_PATH> with a path to where you want the bot configuration to be.
+    
+    **Important:** The paths required for a correct deployment on Windows are very specific.
+    In order to mount correctly, the folder on your local machine must be within the shared folders of the VM.
+    By default, the shared folder list is exclusively `C:\Users`. This includes all subdirectories. 
+    It also requires a very specific format - using forward slashes, instead of the traditional Windows format.
+    It's recommended to make a folder with a similar path to this: `/c/Users/account/warmbot` to store configurations.
+    
+6. Example run `%CD%/scripts/deploy.bat aokspdf.okwepofk.34p1o32kpo,pqo.sASDAwd /c/Users/account/warmbot`
+   *note: The token is fake :)* 
+
+## Linux
+
+#### Abridged version
+
+1. Clone and cd into the root `cd /WarmBot`
+2. `./scripts/deploy.sh <YOUR_BOT_TOKEN> <ABSOLUTE_PATH_TO_CONFIG_FOLDER>`
+
+#### Full version
+
+1. Download and install docker.
+2. Clone this repository: `git clone https://gitlab.com/Aberrantfox/WarmBot.git` -
+    you can also just download and extract the zip file.
+3. Open a terminal or command prompt
+4. `cd /WarmBot` - cd into the directory
+5. `./scripts/deploy.sh <YOUR_BOT_TOKEN> <CONFIG_PATH>` 
+    - replace <YOUR_BOT_TOKEN> with a valid discord bot token.
+    - replace <CONFIG_PATH> with a path to where you want the bot configuration to be.
+      It's recommended to just make a folder called `/home/me/config`.
+6. Example run `./scripts/deploy.sh aokspdf.okwepofk.34p1o32kpo,pqo.sASDAwd /home/me/config`
+   *note: The token is fake :)* 
+
 ### Configuration
 
 Below, you can find an explanation of each configuration field.
@@ -57,7 +107,7 @@ Below, you can find an explanation of each configuration field.
 	        "guildId": "ID of the guild you wish to use the bot in",
 	        "reportCategory": "ID of the category in which report channels will be created",
 	        "archiveChannel": "ID of channel where archived reports will be sent",
-	        "staffRoleName": "Name of the role required to use the bot"
+	        "staffRoleName": "Name of the role required to use the bot",
 	        "loggingConfiguration": 
 	        {
                     "loggingChannel": "ID of channel where messages will be logged",
