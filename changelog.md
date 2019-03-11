@@ -23,8 +23,8 @@
 ```
 * Logging service - Command events used in reports where users were no longer in the server would not log due to JDA.
 * Logging service - Reports closed by channel deletion would not log due to human oversight.
-* Archiving - Messages containing links were transcribed as empty embeds due to Discord's preview feature.
-* Editing - Edits were intentionally not being sanitized due to lack of ping risk. They are now sanitized.
+* Archiving       - Messages containing links were transcribed as empty embeds due to Discord's preview feature.
+* Editing         - Edits were intentionally not being sanitized due to lack of ping risk. They are now sanitized.
 ```
 
 # **Version 2.0**
