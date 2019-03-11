@@ -8,6 +8,7 @@ import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.core.managers.ChannelManager
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
@@ -64,6 +65,31 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             )
 
             it.message.delete().queue()
+        }
+    }
+
+    command("Move") {
+        requiresGuild = true
+        description = "Move a report from the current category to another category."
+        expect(ChannelCategoryArg("Category ID"))
+        execute {
+            val channel = it.channel as Channel
+            val oldCategory = channel.parent
+            val newCategory = it.args.component1() as Category
+
+            ChannelManager(channel).setParent(newCategory).queue()
+            it.message.delete().queue()
+
+            it.respond(
+                embed {
+                    field {
+                        name = "Report Moved!"
+                        value = "This report was moved from `${oldCategory.name}` to `${newCategory.name}` by ${it.author.fullName()}"
+                        inline = false
+                    }
+                    color(Color.ORANGE)
+                }
+            )
         }
     }
 }
