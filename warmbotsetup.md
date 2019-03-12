@@ -111,6 +111,7 @@ Below, you can find an explanation of each configuration field.
 	        "loggingConfiguration": 
 	        {
                     "loggingChannel": "ID of channel where messages will be logged",
+                    "logEdits": "log user edits made in a report",
                     "logStartup": "log when the bot initializes",
                     "logMemberOpen": "log when a member open a report",
                     "logStaffOpen": "log when a staff member open a report",
