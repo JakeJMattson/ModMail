@@ -11,6 +11,6 @@ FROM openjdk:12
 ENV BOT_TOKEN=UNSET
 
 RUN mkdir /config/
-COPY --from=build /target/WarmBot-2.0.0-jar-with-dependencies.jar /Warmbot.jar
+COPY --from=build /target/WarmBot-jar-with-dependencies.jar /Warmbot.jar
 
 CMD /usr/bin/java -jar /Warmbot.jar $BOT_TOKEN
