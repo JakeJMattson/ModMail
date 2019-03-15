@@ -12,7 +12,7 @@ import java.awt.Color
 fun guildSetupConversation(config: Configuration, persistenceService: PersistenceService) = conversation {
 
     name = "guild-setup"
-    description = "Conversation that takes place with a user whenever the bot joins a new guild."
+    description = "Conversation to set configuration fields."
 
     steps {
         step {
