@@ -29,6 +29,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 
             channel.sendMessage(embed {
                 setColor(Color.green)
+                setThumbnail(targetUser.avatarUrl)
                 addField("New Report Opened!",
                     "${targetUser.descriptor()} :: ${targetUser.asMention}",
                     false)
