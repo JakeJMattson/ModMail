@@ -100,26 +100,33 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
     command("Info") {
         requiresGuild = true
         description = Locale.messages.INFO_DESCRIPTION
-        expect(TextChannelArg("Report Channel"), ChoiceArg("Field", "user", "channel", "guild"))
+        expect(arg(TextChannelArg("Report Channel"), optional = true, default = { it.channel }),
+            arg(ChoiceArg("Field", "user", "channel", "guild", "all"), optional = true, default = "all"))
         execute {
-            val channel = it.args.component1() as TextChannel
+            val targetChannel = it.args.component1() as TextChannel
             val choice = it.args.component2() as String
+            val error = "Command should be invoked in a report channel or target a report channel."
 
-            if (!channel.isReportChannel())
-                return@execute it.respond("Target channel must be a report channel.")
+            if (!targetChannel.isReportChannel()) return@execute it.respond(error)
 
-            val report = channel.channelToReport()
+            val report = targetChannel.channelToReport()
 
-            it.respond(
-                with (report) {
+            with(report) {
+                val allData =
+                    "User ID: $userId\n" +
+                    "Channel ID: $channelId\n" +
+                    "Guild ID: $guildId"
+
+                it.respond(
                     when (choice) {
                         "user" -> userId
                         "channel" -> channelId
                         "guild" -> guildId
+                        "all" -> allData
                         else -> "Invalid selection!"
                     }
-                }
-            )
+                )
+            }
         }
     }
 }
