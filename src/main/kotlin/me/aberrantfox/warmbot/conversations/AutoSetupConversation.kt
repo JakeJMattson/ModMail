@@ -4,10 +4,10 @@ import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.ConversationService
 import me.aberrantfox.kjdautils.internal.command.arguments.ChoiceArg
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
-import me.aberrantfox.warmbot.messages.*
+import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
-import net.dv8tion.jda.core.managers.GuildController
+import net.dv8tion.jda.core.managers.*
 import java.awt.Color
 
 @Convo
@@ -49,44 +49,66 @@ private fun autoSetup(config: Configuration, persistenceService: PersistenceServ
     val guildController = GuildController(guild)
     val defaults = Locale.messages
 
-    val wasBindSuccessful = bindExistingServerEntities(config, persistenceService, guild, defaults)
+    val guildData = arrayOfNulls<Any>(5)
+    guildData[0] = guild.getCategoriesByName(defaults.DEFAULT_HOLDER_CATEGORY_NAME, true).firstOrNull()
+    guildData[1] = guild.getTextChannelsByName(defaults.DEFAULT_ARCHIVE_CHANNEL_NAME, true).firstOrNull()
+    guildData[2] = guild.getTextChannelsByName(defaults.DEFAULT_LOGGING_CHANNEL_NAME, true).firstOrNull()
+    guildData[3] = guild.getCategoriesByName(defaults.DEFAULT_REPORT_CATEGORY_NAME, true).firstOrNull()
+    guildData[4] = guild.getRolesByName(defaults.DEFAULT_STAFF_ROLE_NAME, true).firstOrNull()
 
-    if (wasBindSuccessful) return@apply this.respond(Locale.messages.GUILD_SETUP_SUCCESSFUL)
-
-    guildController.createCategory(defaults.DEFAULT_HOLDER_CATEGORY_NAME).queue {
-        it as Category
-
-        it.createTextChannel(defaults.DEFAULT_ARCHIVE_CHANNEL_NAME).queue { archiveChannel ->
-            it.createTextChannel(defaults.DEFAULT_LOGGING_CHANNEL_NAME).queue { loggingChannel ->
-                guildController.createCategory(defaults.DEFAULT_REPORT_CATEGORY_NAME).queue { reportCategory ->
-                    guildController.createRole().setName(defaults.DEFAULT_STAFF_ROLE_NAME).queue { role ->
-                        createConfig(config, persistenceService, guildId, reportCategory, archiveChannel, loggingChannel, role)
-                        this.respond(defaults.GUILD_SETUP_SUCCESSFUL)
-                    }
-                }
-            }
+    if (guildData[0] == null) {
+        guildController.createCategory(defaults.DEFAULT_HOLDER_CATEGORY_NAME).queue {
+            guildData[0] = it
+            attemptToFinalize(config, persistenceService, guildId, guildData)
         }
     }
+
+    if (guildData[1] == null) {
+        guildController.createTextChannel(defaults.DEFAULT_ARCHIVE_CHANNEL_NAME).queue {
+            guildData[1] = it
+            attemptToFinalize(config, persistenceService, guildId, guildData)
+        }
+    }
+
+    if (guildData[2] == null) {
+        guildController.createTextChannel(defaults.DEFAULT_LOGGING_CHANNEL_NAME).queue {
+            guildData[2] = it
+            attemptToFinalize(config, persistenceService, guildId, guildData)
+        }
+    }
+
+    if (guildData[3] == null) {
+        guildController.createCategory(defaults.DEFAULT_REPORT_CATEGORY_NAME).queue {
+            guildData[3] = it
+            attemptToFinalize(config, persistenceService, guildId, guildData)
+        }
+    }
+
+    if (guildData[4] == null) {
+        guildController.createRole().setName(defaults.DEFAULT_STAFF_ROLE_NAME).queue {
+            guildData[4] = it
+            attemptToFinalize(config, persistenceService, guildId, guildData)
+        }
+    }
+
+    attemptToFinalize(config, persistenceService, guildId, guildData)
+    this.respond(defaults.GUILD_SETUP_SUCCESSFUL)
 }
 
-private fun bindExistingServerEntities(config: Configuration, persistenceService: PersistenceService, guild: Guild, defaults: Messages): Boolean {
-    val holderCategory = guild.getCategoriesByName(defaults.DEFAULT_HOLDER_CATEGORY_NAME, true).firstOrNull()
-        ?: return false
+private fun attemptToFinalize(config: Configuration, persistenceService: PersistenceService, guildId: String, data: Array<Any?>) {
+    if (data.any { it == null })
+        return
 
-    val archiveChannel = holderCategory.channels.firstOrNull { it.name == defaults.DEFAULT_ARCHIVE_CHANNEL_NAME }
-        ?: return false
+    val holderCategory = data.component1() as Category
+    val archiveChannel = data.component2() as Channel
+    val loggingChannel = data.component3() as Channel
+    val reportCategory =  data.component4() as Category
+    val role =  data.component5() as Role
 
-    val loggingChannel = holderCategory.channels.firstOrNull { it.name == defaults.DEFAULT_LOGGING_CHANNEL_NAME }
-        ?: return false
+    ChannelManager(archiveChannel).setParent(holderCategory).queue()
+    ChannelManager(loggingChannel).setParent(holderCategory).queue()
 
-    val reportCategory = guild.getCategoriesByName(defaults.DEFAULT_REPORT_CATEGORY_NAME, true).firstOrNull()
-        ?: return false
-
-    val role = guild.getRolesByName(defaults.DEFAULT_STAFF_ROLE_NAME, true).firstOrNull()
-        ?: return false
-
-    createConfig(config, persistenceService, guild.id, reportCategory, archiveChannel, loggingChannel, role)
-    return true
+    createConfig(config, persistenceService, guildId, reportCategory, archiveChannel, loggingChannel, role)
 }
 
 private fun createConfig(config: Configuration, persistenceService: PersistenceService, guildId: String,
