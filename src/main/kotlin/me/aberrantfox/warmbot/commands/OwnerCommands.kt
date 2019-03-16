@@ -1,9 +1,8 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.extensions.stdlib.trimToID
-import me.aberrantfox.kjdautils.internal.command.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
+import me.aberrantfox.warmbot.arguments.GuildArg
 import me.aberrantfox.warmbot.extensions.idToGuild
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
@@ -60,18 +59,3 @@ fun ownerCommands(configuration: Configuration, guildService: GuildService, pers
         }
     }
 }
-
-open class GuildArg(override val name: String = "Guild") : ArgumentType {
-    companion object : GuildArg()
-
-    override val examples = arrayListOf("244230771232079873")
-    override val consumptionType = ConsumptionType.Single
-    override fun convert(arg: String, args: List<String>, event: CommandEvent): ArgumentResult {
-        val retrieved = tryRetrieveSnowflake(event.jda) { it.getGuildById(arg.trimToID()) }
-        return when (retrieved) {
-            null -> ArgumentResult.Error("Couldn't retrieve guild: $arg")
-            else -> ArgumentResult.Single(retrieved)
-        }
-    }
-}
-
