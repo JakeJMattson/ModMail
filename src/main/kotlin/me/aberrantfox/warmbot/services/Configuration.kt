@@ -4,6 +4,7 @@ import me.aberrantfox.kjdautils.api.annotation.Data
 
 data class LoggingConfiguration(var loggingChannel: String = "insert-id",
                                 val logEdits: Boolean = true,
+                                val logCommands: Boolean = true,
                                 val logStartup: Boolean = true,
                                 val logMemberOpen: Boolean = true,
                                 val logStaffOpen: Boolean = true,
