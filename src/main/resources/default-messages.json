@@ -10,7 +10,7 @@
   "CLOSE_DESCRIPTION": "Close the report channel that this command is invoked in. Alternatively, delete the channel.",
   "ARCHIVE_DESCRIPTION": "Archive the contents of the report as a text document in the archive channel.",
   "NOTE_DESCRIPTION": "Produce a note in a report channel in the form of an embed.",
-  "MOVE_DESCRIPTION": "Move a report from the current category to another category.",
+  "MOVE_DESCRIPTION": "Move a report from the current category to another category and sync permissions.",
   "TAG_DESCRIPTION": "Prepend a tag to the name of this report channel.",
   "RESET_TAGS_DESCRIPTION": "Reset a report channel to its original name.",
   "OPEN_DESCRIPTION": "Open a report with the target user and send the provided initial message.",
