@@ -46,10 +46,10 @@
   "ARCHIVE_LOG": "Staff action :: ${staff} archived ${channel}",
   "CLOSE_LOG": "Staff action :: ${staff} closed ${channel}",
 
-  "DEFAULT_REPORT_CATEGORY_NAME": "WARMBOT-REPORTS",
-  "DEFAULT_HOLDER_CATEGORY_NAME": "WARMBOT",
-  "DEFAULT_ARCHIVE_CHANNEL_NAME": "archive",
-  "DEFAULT_LOGGING_CHANNEL_NAME": "logging",
+  "DEFAULT_REPORT_CATEGORY_NAME": "WarmBot-Reports",
+  "DEFAULT_HOLDER_CATEGORY_NAME": "WarmBot",
+  "DEFAULT_ARCHIVE_CHANNEL_NAME": "Archive",
+  "DEFAULT_LOGGING_CHANNEL_NAME": "Logging",
   "DEFAULT_STAFF_ROLE_NAME": "Staff",
 
   "DEFAULT_INITIAL_MESSAGE": "<No initial message provided>"

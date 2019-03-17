@@ -9,6 +9,8 @@ import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
 import net.dv8tion.jda.core.managers.*
 import java.awt.Color
+import java.util.Timer
+import kotlin.concurrent.schedule
 
 @Convo
 fun autoSetupConversation(configuration: Configuration, persistenceService: PersistenceService, conversationService: ConversationService) = conversation {
@@ -23,9 +25,20 @@ fun autoSetupConversation(configuration: Configuration, persistenceService: Pers
                 title("Automatic Setup")
                 description("Would you like to automatically configure this guild for use?")
                 field {
-                    name = "INFO"
+                    name = "Automatic Setup"
                     value = "An automatic setup will generate all required channels and roles for you automatically. " +
-                        "Say **Yes** to setup the server automatically, or **No** to start manual setup mode."
+                            "This process will also load the channels by name if they already exist."
+                    inline = false
+                }
+                field {
+                    name = "Manual Setup"
+                    value = "A manual setup will prompt you for each of the required fields. " +
+                            "You will need to create each of these channels if they do not exist."
+                    inline = false
+                }
+                field {
+                    name = "Options"
+                    value = "Say **Yes** to initialize automatic setup mode, or **No** to start manual setup mode."
                     inline = false
                 }
             }
@@ -33,12 +46,14 @@ fun autoSetupConversation(configuration: Configuration, persistenceService: Pers
         }
     }
 
-    onComplete {
-        val choice = (it.responses.component1() as String)[0]
+    onComplete { stateContainer ->
+        val choice = (stateContainer.responses.component1() as String)[0]
 
         when (choice) {
-            'Y' -> autoSetup(configuration, persistenceService, it)
-            //'N' -> conversationService.createConversation(it.userId, it.guildId, "guild-setup")
+            'Y' -> autoSetup(configuration, persistenceService, stateContainer)
+            'N' -> Timer().schedule(1500) {
+                conversationService.createConversation(stateContainer.userId, stateContainer.guildId, "guild-setup")
+            }
         }
     }
 }
