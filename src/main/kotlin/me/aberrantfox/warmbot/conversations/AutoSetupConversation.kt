@@ -123,12 +123,6 @@ private fun attemptToFinalize(config: Configuration, persistenceService: Persist
     ChannelManager(archiveChannel).setParent(holderCategory).queue()
     ChannelManager(loggingChannel).setParent(holderCategory).queue()
 
-    createConfig(config, persistenceService, guildId, reportCategory, archiveChannel, loggingChannel, role)
-}
-
-private fun createConfig(config: Configuration, persistenceService: PersistenceService, guildId: String,
-                         reportCategory: Channel, archiveChannel: Channel, loggingChannel: Channel, role: Role) {
-
     val logConfig = LoggingConfiguration(loggingChannel.id)
     val guildConfiguration = GuildConfiguration(guildId, reportCategory.id, archiveChannel.id, role.name, logConfig)
     config.guildConfigurations.add(guildConfiguration)

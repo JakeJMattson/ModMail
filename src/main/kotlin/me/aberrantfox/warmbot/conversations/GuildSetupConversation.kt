@@ -17,57 +17,56 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
     steps {
         step {
             prompt = embed {
-                title("Let's Get Setup.")
                 color(Color.magenta)
+                title("Let's Get Setup")
                 description("I'm here to help you setup this bot for use on your server. Please follow the prompts." +
                     " If you make a mistake, you can adjust the provided values using commands later.")
 
                 field {
-                    name = "Step 1"
-                    value = "Please provide the **ID** for the category you'd like me to create report channels in."
+                    name = "Report Category"
+                    value = "Enter the **Category ID** of the category where new reports will be created."
                 }
             }
             expect = ChannelCategoryArg
         }
         step {
             prompt = embed {
-                title("Setup Archive Channel")
                 color(Color.magenta)
-                description("Now, I need the **ID** of the **channel** you'd like me to send archived reports to.")
+                title("Archive Channel")
+                description("Enter the **Channel ID** of the channel where archived reports will be sent.")
             }
             expect = TextChannelArg
         }
         step {
             prompt = embed {
-                title("Who can use me?")
                 color(Color.magenta)
-                setDescription("Now, I need the **Name** of the role you give your staff members so that they can access " +
-                    "my moderator functions.")
+                title("Logging Channel")
+                description("Enter the **Channel ID** of the channel where information will be logged.")
+            }
+            expect = TextChannelArg
+        }
+        step {
+            prompt = embed {
+                color(Color.magenta)
+                title("Required Role")
+                setDescription("Enter the **Role Name** of the role required to give commands to this bot.")
             }
             expect = RoleArg
-        }
-        step {
-            prompt = embed {
-                title("Setup Logging Channel")
-                color(Color.magenta)
-                description("Now, I need the **ID** of the **channel** you'd like me to log information to.")
-            }
-            expect = TextChannelArg
         }
     }
 
     onComplete {
         val reportCategory = it.responses.component1() as Category
         val archiveChannel = it.responses.component2() as TextChannel
-        val staffRole = it.responses.component3() as Role
-        val loggingChannel = it.responses.component4() as TextChannel
+        val loggingChannel = it.responses.component3() as TextChannel
+        val staffRole = it.responses.component4() as Role
 
         it.respond(
             when {
                 reportCategory.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "report category")
                 archiveChannel.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "archive channel")
-                staffRole.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "staff role")
                 loggingChannel.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "logging channel")
+                staffRole.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "staff role")
                 else -> {
                     val guildConfiguration = GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, staffRole.name)
                     guildConfiguration.loggingConfiguration.loggingChannel = loggingChannel.id
