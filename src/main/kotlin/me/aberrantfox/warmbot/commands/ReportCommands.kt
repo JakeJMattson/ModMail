@@ -3,7 +3,7 @@ package me.aberrantfox.warmbot.commands
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.extensions.jda.fullName
 import me.aberrantfox.kjdautils.internal.command.arguments.*
-import me.aberrantfox.warmbot.arguments.BooleanArg
+import me.aberrantfox.warmbot.arguments.*
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
@@ -70,7 +70,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     command("Move") {
         requiresGuild = true
         description = Locale.messages.MOVE_DESCRIPTION
-        expect(arg(ChannelCategoryArg("Category ID")),
+        expect(arg(CategoryArg("Category ID")),
             arg(BooleanArg("Sync Permissions"), optional = true, default = true))
         execute {
             val channel = it.channel as Channel
