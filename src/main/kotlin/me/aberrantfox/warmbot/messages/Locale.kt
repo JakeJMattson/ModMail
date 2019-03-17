@@ -1,6 +1,7 @@
 package me.aberrantfox.warmbot.messages
 
 import com.google.gson.GsonBuilder
+import me.aberrantfox.warmbot.services.EnvironmentSettings
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import java.io.*
@@ -14,7 +15,13 @@ private val localFile = File(filePath)
 object Locale {
     lateinit var messages: Messages
 
-    init { load() }
+    init {
+        if(!EnvironmentSettings.IS_TESTING_ENVIRONMENT) {
+            load()
+        } else {
+            messages = Messages()
+        }
+    }
 
     private const val templateName = "Dynamic template"
     private val engine = VelocityEngine()
