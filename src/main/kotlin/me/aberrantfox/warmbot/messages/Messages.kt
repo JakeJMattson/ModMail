@@ -50,6 +50,7 @@ class Messages (
     val STAFF_OPEN_LOG: String,
     val ARCHIVE_LOG: String,
     val CLOSE_LOG: String,
+    val COMMAND_LOG: String,
 
     //Default text
     val DEFAULT_INITIAL_MESSAGE: String

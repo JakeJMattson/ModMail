@@ -1,7 +1,6 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.extensions.jda.fullName
 import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
@@ -51,18 +50,17 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         description = Locale.messages.NOTE_DESCRIPTION
         expect(SentenceArg)
         execute {
+            val note = it.args.component1() as String
+
             it.respond(
                 embed {
-                    field {
-                        name = "New note added by ${it.author.fullName()} (${it.author.id})"
-                        value = it.args.component1() as String
-                        inline = false
-                    }
+                    addField("Additional Information", note, false)
                     color(Color.ORANGE)
                 }
             )
 
             it.message.delete().queue()
+            loggingService.command(it)
         }
     }
 
@@ -77,17 +75,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
             ChannelManager(channel).setParent(newCategory).queue()
             it.message.delete().queue()
-
-            it.respond(
-                embed {
-                    field {
-                        name = "Report Moved!"
-                        value = "This report was moved from `${oldCategory.name}` to `${newCategory.name}` by ${it.author.fullName()}"
-                        inline = false
-                    }
-                    color(Color.ORANGE)
-                }
-            )
+            loggingService.command(it, "Moved from `${oldCategory.name}` to `${newCategory.name}`")
         }
     }
 
@@ -101,17 +89,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
             ChannelManager(channel).setName("$tag-${channel.name}").queue()
             it.message.delete().queue()
-
-            it.respond(
-                embed {
-                    field {
-                        name = "Report Tagged!"
-                        value = "This report was tagged with :: $tag by ${it.author.fullName()}"
-                        inline = false
-                    }
-                    color(Color.ORANGE)
-                }
-            )
+            loggingService.command(it, "Added tag :: $tag")
         }
     }
 
@@ -124,17 +102,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
             ChannelManager(channel).setName(originalName).queue()
             it.message.delete().queue()
-
-            it.respond(
-                embed {
-                    field {
-                        name = "Tags reset!"
-                        value = "This report was reset by ${it.author.fullName()}"
-                        inline = false
-                    }
-                    color(Color.ORANGE)
-                }
-            )
+            loggingService.command(it, "Channel is now $originalName")
         }
     }
 }
