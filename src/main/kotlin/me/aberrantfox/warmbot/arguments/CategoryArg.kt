@@ -4,7 +4,7 @@ import me.aberrantfox.kjdautils.api.dsl.CommandEvent
 import me.aberrantfox.kjdautils.extensions.stdlib.*
 import me.aberrantfox.kjdautils.internal.command.*
 
-open class CategoryArg(override val name: String = "ChannelCategory", private val guildId: String = "") : ArgumentType {
+open class CategoryArg(override val name: String = "Category", private val guildId: String = "") : ArgumentType {
     companion object : CategoryArg()
 
     override val examples = arrayListOf("302134543639511050", "Staff", "Chat Channels")
@@ -25,7 +25,7 @@ open class CategoryArg(override val name: String = "ChannelCategory", private va
         val categoryBuilder = StringBuilder()
         fun String.startsWithIgnoreCase(string: String) = this.toLowerCase().startsWith(string.toLowerCase())
 
-        //Consume arguments until only one role matches the filter
+        //Consume arguments until only one category matches the filter
         args.takeWhile {
             val padding = if (categoryBuilder.isNotEmpty()) " " else ""
             categoryBuilder.append("$padding$it")
@@ -36,14 +36,14 @@ open class CategoryArg(override val name: String = "ChannelCategory", private va
 
         val error = ArgumentResult.Error("Couldn't retrieve category :: $categoryBuilder")
 
-        //Get the single role that survived filtering
+        //Get the single category that survived filtering
         val resolvedCategory = categories.firstOrNull() ?: return error
         val resolvedName = resolvedCategory.name
 
-        //Determine how many args this role would consume
+        //Determine how many args this category would consume
         val lengthOfCategory = resolvedName.split(" ").size
 
-        //Check if the role that survived filtering matches the args given
+        //Check if the category that survived filtering matches the args given
         val argList = args.take(lengthOfCategory)
         val isValid = resolvedName.toLowerCase() == argList.joinToString(" ").toLowerCase()
 

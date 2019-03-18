@@ -67,8 +67,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     command("Move") {
         requiresGuild = true
         description = Locale.messages.MOVE_DESCRIPTION
-        expect(arg(CategoryArg("Category ID")),
-            arg(BooleanArg("Sync Permissions"), optional = true, default = true))
+        expect(arg(CategoryArg), arg(BooleanArg("Sync Permissions"), optional = true, default = true))
         execute {
             val channel = it.channel as Channel
             val manager = ChannelManager(channel)
@@ -83,7 +82,9 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             }
 
             it.message.delete().queue()
-            loggingService.command(it, "Moved from `${oldCategory.name}` to `${newCategory.name}`")
+            val movement = "Moved from `${oldCategory.name}` to `${newCategory.name}`."
+            val synced = "This channel was${if(!shouldSync) " not " else " "}synced with the new category."
+            loggingService.command(it, "$movement $synced")
         }
     }
 
