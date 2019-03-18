@@ -10,6 +10,7 @@ class Messages (
     val WHITELIST_DESCRIPTION: String,
     val UNWHITELIST_DESCRIPTION: String,
     val SHOW_WHITELIST_DESCRIPTION: String,
+    val SET_PRESENCE_DESCRIPTION: String,
     val CLOSE_DESCRIPTION: String,
     val ARCHIVE_DESCRIPTION: String,
     val NOTE_DESCRIPTION: String,
@@ -53,5 +54,6 @@ class Messages (
     val COMMAND_LOG: String,
 
     //Default text
-    val DEFAULT_INITIAL_MESSAGE: String
+    val DEFAULT_INITIAL_MESSAGE: String,
+    val DEFAULT_DISCORD_PRESENCE: String
 )

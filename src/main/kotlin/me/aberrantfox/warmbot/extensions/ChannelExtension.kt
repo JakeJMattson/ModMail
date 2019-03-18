@@ -3,8 +3,7 @@ package me.aberrantfox.warmbot.extensions
 import me.aberrantfox.kjdautils.extensions.jda.fullName
 import net.dv8tion.jda.core.entities.MessageChannel
 
-fun MessageChannel.archiveString(prefix: String) = iterableHistory.reversed()
-    .filter { !it.contentRaw.toLowerCase().matches(Regex("($prefix){1,2}archive")) }
+fun MessageChannel.archiveString() = iterableHistory.reversed().dropLast(1)
     .joinToString(System.lineSeparator()) {
         StringBuilder("${it.author.fullName()}: ").apply {
             if (it.embeds.isNotEmpty() && it.author.isBot) {
