@@ -7,6 +7,7 @@
   "WHITELIST_DESCRIPTION": "Add a guild to the whitelist.",
   "UNWHITELIST_DESCRIPTION": "Remove a guild from the whitelist.",
   "SHOW_WHITELIST_DESCRIPTION": "Display all guilds in the whitelist.",
+  "SET_PRESENCE_DESCRIPTION": "Set the Discord presence of the bot.",
   "CLOSE_DESCRIPTION": "Close the report channel that this command is invoked in. Alternatively, delete the channel.",
   "ARCHIVE_DESCRIPTION": "Archive the contents of the report as a text document in the archive channel.",
   "NOTE_DESCRIPTION": "Produce a note in a report channel in the form of an embed.",
@@ -47,5 +48,6 @@
   "CLOSE_LOG": "Staff action :: ${staff} closed ${channel}",
   "COMMAND_LOG": "${author} invoked `${commandName}` in ${channelName}. ${additionalInfo}",
 
-  "DEFAULT_INITIAL_MESSAGE": "<No initial message provided>"
+  "DEFAULT_INITIAL_MESSAGE": "<No initial message provided>",
+  "DEFAULT_DISCORD_PRESENCE": "DM to contact Staff"
 }

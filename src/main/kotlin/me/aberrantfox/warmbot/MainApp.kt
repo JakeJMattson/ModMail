@@ -3,6 +3,7 @@ package me.aberrantfox.warmbot
 import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.api.dsl.KJDAConfiguration
 import me.aberrantfox.kjdautils.api.startBot
+import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.Game
 
@@ -22,7 +23,7 @@ fun main(args: Array<String>) {
             globalPath = "me.aberrantfox.warmbot"
         }
 
-        jda.presence.setPresence(Game.of(Game.GameType.DEFAULT, "DM to contact Staff"), true)
+        jda.presence.game = Game.playing(Locale.messages.DEFAULT_DISCORD_PRESENCE)
     }
 }
 

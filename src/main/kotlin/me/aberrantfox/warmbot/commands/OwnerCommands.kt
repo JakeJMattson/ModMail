@@ -1,12 +1,13 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
 import me.aberrantfox.warmbot.arguments.GuildArg
 import me.aberrantfox.warmbot.extensions.idToGuild
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.core.entities.*
 
 @CommandSet("owner")
 fun ownerCommands(configuration: Configuration, guildService: GuildService, persistenceService: PersistenceService) = commands {
@@ -56,6 +57,26 @@ fun ownerCommands(configuration: Configuration, guildService: GuildService, pers
                     }
                 }.toString()
             )
+        }
+    }
+
+    command("SetPresence") {
+        requiresGuild = true
+        description = Locale.messages.SET_PRESENCE_DESCRIPTION
+        expect(ChoiceArg("Playing | Watching | Listening", "Playing", "Watching", "Listening"),
+            SentenceArg("Presence Message"))
+        execute {
+            val choice = it.args.component1() as String
+            val text = it.args.component2() as String
+
+            it.jda.presence.game =
+                when(choice.toLowerCase()) {
+                    "watching" -> Game.watching(text)
+                    "listening" -> Game.listening(text)
+                    else -> Game.playing(text)
+                }
+
+            it.respond("Discord presence updated!")
         }
     }
 }
