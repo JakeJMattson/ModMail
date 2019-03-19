@@ -10,6 +10,7 @@ class Messages (
     val WHITELIST_DESCRIPTION: String,
     val UNWHITELIST_DESCRIPTION: String,
     val SHOW_WHITELIST_DESCRIPTION: String,
+    val SET_PRESENCE_DESCRIPTION: String,
     val CLOSE_DESCRIPTION: String,
     val ARCHIVE_DESCRIPTION: String,
     val NOTE_DESCRIPTION: String,
@@ -50,6 +51,7 @@ class Messages (
     val STAFF_OPEN_LOG: String,
     val ARCHIVE_LOG: String,
     val CLOSE_LOG: String,
+    val COMMAND_LOG: String,
 
     //Default setup info
     val DEFAULT_REPORT_CATEGORY_NAME: String,
@@ -59,5 +61,6 @@ class Messages (
     val DEFAULT_STAFF_ROLE_NAME: String,
 
     //Default text
-    val DEFAULT_INITIAL_MESSAGE: String
+    val DEFAULT_INITIAL_MESSAGE: String,
+    val DEFAULT_DISCORD_PRESENCE: String
 )

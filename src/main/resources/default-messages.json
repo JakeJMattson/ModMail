@@ -7,15 +7,16 @@
   "WHITELIST_DESCRIPTION": "Add a guild to the whitelist.",
   "UNWHITELIST_DESCRIPTION": "Remove a guild from the whitelist.",
   "SHOW_WHITELIST_DESCRIPTION": "Display all guilds in the whitelist.",
+  "SET_PRESENCE_DESCRIPTION": "Set the Discord presence of the bot.",
   "CLOSE_DESCRIPTION": "Close the report channel that this command is invoked in. Alternatively, delete the channel.",
   "ARCHIVE_DESCRIPTION": "Archive the contents of the report as a text document in the archive channel.",
   "NOTE_DESCRIPTION": "Produce a note in a report channel in the form of an embed.",
-  "MOVE_DESCRIPTION": "Move a report from the current category to another category.",
+  "MOVE_DESCRIPTION": "Move a report from the current category to another category and sync permissions.",
   "TAG_DESCRIPTION": "Prepend a tag to the name of this report channel.",
   "RESET_TAGS_DESCRIPTION": "Reset a report channel to its original name.",
   "OPEN_DESCRIPTION": "Open a report with the target user and send the provided initial message.",
   "CLOSE_ALL_DESCRIPTION": "Close all currently open reports. Can be invoked in any channel.",
-  "INFO_DESCRIPTION": "Retrieve the requested id info from the target report channel. Fields: user, channel, guild.",
+  "INFO_DESCRIPTION": "Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all.",
 
   "PING_DESCRIPTION": "Check the status of the bot.",
   "VERSION_DESCRIPTION": "Display the bot version.",
@@ -45,6 +46,7 @@
   "STAFF_OPEN_LOG": "Staff action :: ${staff} opened ${channel}",
   "ARCHIVE_LOG": "Staff action :: ${staff} archived ${channel}",
   "CLOSE_LOG": "Staff action :: ${staff} closed ${channel}",
+  "COMMAND_LOG": "${author} invoked `${commandName}` in ${channelName}. ${additionalInfo}",
 
   "DEFAULT_REPORT_CATEGORY_NAME": "WarmBot-Reports",
   "DEFAULT_HOLDER_CATEGORY_NAME": "WarmBot",
@@ -52,5 +54,6 @@
   "DEFAULT_LOGGING_CHANNEL_NAME": "Logging",
   "DEFAULT_STAFF_ROLE_NAME": "Staff",
 
-  "DEFAULT_INITIAL_MESSAGE": "<No initial message provided>"
+  "DEFAULT_INITIAL_MESSAGE": "<No initial message provided>",
+  "DEFAULT_DISCORD_PRESENCE": "DM to contact Staff"
 }

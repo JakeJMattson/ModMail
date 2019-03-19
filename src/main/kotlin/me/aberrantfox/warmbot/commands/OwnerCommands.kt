@@ -1,13 +1,13 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.extensions.stdlib.trimToID
-import me.aberrantfox.kjdautils.internal.command.*
+import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
+import me.aberrantfox.warmbot.arguments.GuildArg
 import me.aberrantfox.warmbot.extensions.idToGuild
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.core.entities.*
 
 @CommandSet("owner")
 fun ownerCommands(configuration: Configuration, guildService: GuildService, persistenceService: PersistenceService) = commands {
@@ -59,19 +59,24 @@ fun ownerCommands(configuration: Configuration, guildService: GuildService, pers
             )
         }
     }
-}
 
-open class GuildArg(override val name: String = "Guild") : ArgumentType {
-    companion object : GuildArg()
+    command("SetPresence") {
+        requiresGuild = true
+        description = Locale.messages.SET_PRESENCE_DESCRIPTION
+        expect(ChoiceArg("Playing | Watching | Listening", "Playing", "Watching", "Listening"),
+            SentenceArg("Presence Message"))
+        execute {
+            val choice = it.args.component1() as String
+            val text = it.args.component2() as String
 
-    override val examples = arrayListOf("244230771232079873")
-    override val consumptionType = ConsumptionType.Single
-    override fun convert(arg: String, args: List<String>, event: CommandEvent): ArgumentResult {
-        val retrieved = tryRetrieveSnowflake(event.jda) { it.getGuildById(arg.trimToID()) }
-        return when (retrieved) {
-            null -> ArgumentResult.Error("Couldn't retrieve guild: $arg")
-            else -> ArgumentResult.Single(retrieved)
+            it.jda.presence.game =
+                when(choice.toLowerCase()) {
+                    "watching" -> Game.watching(text)
+                    "listening" -> Game.listening(text)
+                    else -> Game.playing(text)
+                }
+
+            it.respond("Discord presence updated!")
         }
     }
 }
-
