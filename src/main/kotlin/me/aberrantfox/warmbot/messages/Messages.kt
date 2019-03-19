@@ -53,6 +53,13 @@ class Messages (
     val CLOSE_LOG: String,
     val COMMAND_LOG: String,
 
+    //Default setup info
+    val DEFAULT_REPORT_CATEGORY_NAME: String,
+    val DEFAULT_HOLDER_CATEGORY_NAME: String,
+    val DEFAULT_ARCHIVE_CHANNEL_NAME: String,
+    val DEFAULT_LOGGING_CHANNEL_NAME: String,
+    val DEFAULT_STAFF_ROLE_NAME: String,
+
     //Default text
     val DEFAULT_INITIAL_MESSAGE: String,
     val DEFAULT_DISCORD_PRESENCE: String
