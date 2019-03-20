@@ -1,17 +1,11 @@
 package me.aberrantfox.warmbot.command
 
-import io.mockk.every
-import io.mockk.mockkObject
-import io.mockk.unmockkAll
-import me.aberrantfox.kjdautils.api.dsl.CommandEvent
+import io.mockk.*
 import me.aberrantfox.kjdautils.api.dsl.CommandsContainer
 import me.aberrantfox.warmbot.commands.configurationCommands
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.mocks.*
-import me.aberrantfox.warmbot.mocks.jda.guildMock
-import me.aberrantfox.warmbot.mocks.jda.produceCategoryMock
-import me.aberrantfox.warmbot.services.Configuration
-import me.aberrantfox.warmbot.services.EnvironmentSettings
+import me.aberrantfox.warmbot.mocks.jda.*
 import org.junit.jupiter.api.*
 
 class ConfigurationCommandsTest {
@@ -40,10 +34,18 @@ class ConfigurationCommandsTest {
     }
 
     @Test
-    fun `setReportCategory changes report the reportCategory value and saves`() {
+    fun `SetReportCategory changes the reportCategory value and saves the configuration`() {
         val event = makeCommandEventMock(produceCategoryMock(guildMock))
         configurationCommandSet["SetReportCategory"]!!.execute(event)
 
         Assertions.assertEquals(config.guildConfigurations.first().reportCategory, TestConstants.Category_ID)
+    }
+
+    @Test
+    fun `SetArchiveChannel changes the archiveChannel value and saves the configuration`() {
+        val event = makeCommandEventMock(produceTextChannelMock(guildMock))
+        configurationCommandSet["SetArchiveChannel"]!!.execute(event)
+
+        Assertions.assertEquals(config.guildConfigurations.first().archiveChannel, TestConstants.Channel_ID)
     }
 }
