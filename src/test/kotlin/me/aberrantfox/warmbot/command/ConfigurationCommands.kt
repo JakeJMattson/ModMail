@@ -1,9 +1,6 @@
 package me.aberrantfox.warmbot.command
 
-import io.mockk.every
-import io.mockk.mockkObject
-import io.mockk.unmockkAll
-import me.aberrantfox.kjdautils.api.dsl.CommandEvent
+import io.mockk.*
 import me.aberrantfox.kjdautils.api.dsl.CommandsContainer
 import me.aberrantfox.warmbot.commands.configurationCommands
 import me.aberrantfox.warmbot.messages.Locale
@@ -16,7 +13,10 @@ import org.junit.jupiter.api.*
 
 class ConfigurationCommandsTest {
     companion object {
-        init { EnvironmentSettings.IS_TESTING_ENVIRONMENT = true }
+        init {
+            EnvironmentSettings.IS_TESTING_ENVIRONMENT = true
+        }
+
         @BeforeAll
         fun beforeAll() {
             mockkObject(Locale) {
@@ -35,8 +35,8 @@ class ConfigurationCommandsTest {
 
     @BeforeEach
     fun setup() {
-        config = makeConfigurationMock()
-        configurationCommandSet = configurationCommands(Configuration(), persistenceServiceMock)
+        config = Configuration()
+        configurationCommandSet = configurationCommands(config, persistenceServiceMock)
     }
 
     @Test
@@ -45,5 +45,10 @@ class ConfigurationCommandsTest {
         configurationCommandSet["SetReportCategory"]!!.execute(event)
 
         Assertions.assertEquals(config.guildConfigurations.first().reportCategory, TestConstants.Category_ID)
+
+        verify(exactly = 1) {
+            persistenceServiceMock.save(config)
+            event.respond(any() as String)
+        }
     }
 }
