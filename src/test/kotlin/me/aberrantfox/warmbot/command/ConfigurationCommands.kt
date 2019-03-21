@@ -8,6 +8,8 @@ import me.aberrantfox.warmbot.mocks.*
 import me.aberrantfox.warmbot.mocks.jda.*
 import me.aberrantfox.warmbot.services.*
 import org.junit.jupiter.api.*
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.*
 
 class ConfigurationCommandsTest {
     companion object {
@@ -26,6 +28,18 @@ class ConfigurationCommandsTest {
         fun cleanUp() {
             unmockkAll()
         }
+
+        @JvmStatic
+        fun arguments() = listOf(
+            Arguments.of("SetReportCategory", TestConstants.Category_ID,
+                { guildConfig: GuildConfiguration -> guildConfig.reportCategory }, produceCategoryMock(guildMock)),
+            Arguments.of("SetArchiveChannel", TestConstants.Channel_ID,
+                { guildConfig: GuildConfiguration -> guildConfig.archiveChannel }, produceTextChannelMock(guildMock)),
+            Arguments.of("SetLoggingChannel", TestConstants.Channel_ID,
+                { guildConfig: GuildConfiguration -> guildConfig.loggingConfiguration.loggingChannel }, produceTextChannelMock(guildMock)),
+            Arguments.of("SetStaffRole", TestConstants.Staff_Role,
+                { guildConfig: GuildConfiguration -> guildConfig.staffRoleName }, TestConstants.Staff_Role)
+        )
     }
 
     private lateinit var config: Configuration
@@ -37,39 +51,14 @@ class ConfigurationCommandsTest {
         configurationCommandSet = configurationCommands(config, persistenceServiceMock)
     }
 
-    @Test
-    fun `SetReportCategory changes the reportCategory value and saves the configuration`() {
-        val event = makeCommandEventMock(produceCategoryMock(guildMock))
-        configurationCommandSet["SetReportCategory"]!!.execute(event)
+    @ParameterizedTest
+    @MethodSource("arguments")
+    fun `test configuration commands`(commandName: String, actual: Any, expected: (config: GuildConfiguration) -> String, eventMockArgs: Any) {
+        val event = makeCommandEventMock(eventMockArgs)
+        configurationCommandSet[commandName]!!.execute(event)
 
-        Assertions.assertEquals(TestConstants.Category_ID, config.guildConfigurations.first().reportCategory)
-        verifySingleResponse(event)
-    }
-
-    @Test
-    fun `SetArchiveChannel changes the archiveChannel value and saves the configuration`() {
-        val event = makeCommandEventMock(produceTextChannelMock(guildMock))
-        configurationCommandSet["SetArchiveChannel"]!!.execute(event)
-
-        Assertions.assertEquals(TestConstants.Channel_ID, config.guildConfigurations.first().archiveChannel)
-        verifySingleResponse(event)
-    }
-
-    @Test
-    fun `SetStaffRole changes the staffRoleName value and saves the configuration`() {
-        val event = makeCommandEventMock(TestConstants.Staff_Role)
-        configurationCommandSet["SetStaffRole"]!!.execute(event)
-
-        Assertions.assertEquals(TestConstants.Staff_Role, config.guildConfigurations.first().staffRoleName)
-        verifySingleResponse(event)
-    }
-
-    @Test
-    fun `SetLoggingChannel changes the loggingChannel value and saves the configuration`() {
-        val event = makeCommandEventMock(produceTextChannelMock(guildMock))
-        configurationCommandSet["SetLoggingChannel"]!!.execute(event)
-
-        Assertions.assertEquals(TestConstants.Channel_ID, config.guildConfigurations.first().loggingConfiguration.loggingChannel)
+        val guildConfig = config.guildConfigurations.first()
+        Assertions.assertEquals(actual, expected.invoke(guildConfig))
         verifySingleResponse(event)
     }
 
