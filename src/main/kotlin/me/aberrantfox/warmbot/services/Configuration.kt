@@ -18,7 +18,7 @@ data class GuildConfiguration(var guildId: String = "insert-id",
                               var reportCategory: String = "insert-id",
                               var archiveChannel: String = "insert-id",
                               var staffRoleName: String = "Staff",
-                              var loggingConfiguration: LoggingConfiguration = LoggingConfiguration())
+                              val loggingConfiguration: LoggingConfiguration = LoggingConfiguration())
 
 @Data("config/config.json")
 data class Configuration(val ownerId: String = "insert-id",
