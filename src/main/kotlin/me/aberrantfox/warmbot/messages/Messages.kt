@@ -27,23 +27,23 @@ class Messages (
     val BOT_INFO_DESCRIPTION: String,
     val UPTIME_DESCRIPTION: String,
 
-    //Success messages
-    val SET_REPORT_CATEGORY_SUCCESSFUL: String,
-    val SET_ARCHIVE_CHANNEL_SUCCESSFUL: String,
-    val SET_STAFF_ROLE_SUCCESSFUL: String,
-    val SET_LOGGING_CHANNEL_SUCCESSFUL: String,
-    val GUILD_SETUP_SUCCESSFUL: String,
+    //Success message
+    val SET_REPORT_CATEGORY_SUCCESSFUL: String = "",
+    val SET_ARCHIVE_CHANNEL_SUCCESSFUL: String = "",
+    val SET_STAFF_ROLE_SUCCESSFUL: String = "",
+    val SET_LOGGING_CHANNEL_SUCCESSFUL: String = "",
+    val GUILD_SETUP_SUCCESSFUL: String = "",
 
-    //Fail messages
-    val FAIL_GUILD_SETUP: String,
-    val FAIL_MUST_BE_BOT_OWNER: String,
-    val FAIL_MUST_BE_GUILD_OWNER: String,
-    val FAIL_TEXT_CHANNEL_ONLY: String,
-    val FAIL_COMMAND_NOT_IN_GUILD: String,
-    val FAIL_COULD_NOT_FIND_ROLE: String,
-    val FAIL_MISSING_STAFF_ROLE: String,
-    val FAIL_GUILD_NOT_WHITELISTED: String,
-    val FAIL_GUILD_NOT_CONFIGURED: String,
+    //Fail message
+    val FAIL_GUILD_SETUP: String = "",
+    val FAIL_MUST_BE_BOT_OWNER: String = "",
+    val FAIL_MUST_BE_GUILD_OWNER: String = "",
+    val FAIL_TEXT_CHANNEL_ONLY: String = "",
+    val FAIL_COMMAND_NOT_IN_GUILD: String = "",
+    val FAIL_COULD_NOT_FIND_ROLE: String = "",
+    val FAIL_MISSING_STAFF_ROLE: String = "",
+    val FAIL_GUILD_NOT_WHITELISTED: String = "",
+    val FAIL_GUILD_NOT_CONFIGURED: String = "",
 
     //Logging messages
     val STARTUP_LOG: String,

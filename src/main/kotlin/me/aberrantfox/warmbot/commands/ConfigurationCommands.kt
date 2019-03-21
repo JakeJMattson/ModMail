@@ -58,7 +58,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         execute {
             val loggingChannel = it.args.component1() as TextChannel
 
-            configuration.getGuildConfig(it.message.guild.id)!!.loggingConfiguration.loggingChannel = loggingChannel.id
+            configuration.getGuildConfig(loggingChannel.guild.id)!!.loggingConfiguration.loggingChannel = loggingChannel.id
             persistenceService.save(configuration)
             it.respond(Locale.inject({ SET_LOGGING_CHANNEL_SUCCESSFUL }, "loggingChannel" to loggingChannel.name))
         }
