@@ -6,6 +6,7 @@ import me.aberrantfox.warmbot.commands.configurationCommands
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.mocks.*
 import me.aberrantfox.warmbot.mocks.jda.*
+import me.aberrantfox.warmbot.services.*
 import org.junit.jupiter.api.*
 
 class ConfigurationCommandsTest {
@@ -41,7 +42,7 @@ class ConfigurationCommandsTest {
         val event = makeCommandEventMock(produceCategoryMock(guildMock))
         configurationCommandSet["SetReportCategory"]!!.execute(event)
 
-        Assertions.assertEquals(config.guildConfigurations.first().reportCategory, TestConstants.Category_ID)
+        Assertions.assertEquals(TestConstants.Category_ID, config.guildConfigurations.first().reportCategory)
 
         verify(exactly = 1) {
             persistenceServiceMock.save(config)
@@ -54,6 +55,6 @@ class ConfigurationCommandsTest {
         val event = makeCommandEventMock(produceTextChannelMock(guildMock))
         configurationCommandSet["SetArchiveChannel"]!!.execute(event)
 
-        Assertions.assertEquals(config.guildConfigurations.first().archiveChannel, TestConstants.Channel_ID)
+        Assertions.assertEquals(TestConstants.Channel_ID, config.guildConfigurations.first().archiveChannel)
     }
 }
