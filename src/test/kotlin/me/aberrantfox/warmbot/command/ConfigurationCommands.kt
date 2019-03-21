@@ -56,5 +56,36 @@ class ConfigurationCommandsTest {
         configurationCommandSet["SetArchiveChannel"]!!.execute(event)
 
         Assertions.assertEquals(TestConstants.Channel_ID, config.guildConfigurations.first().archiveChannel)
+
+        verify(exactly = 1) {
+            persistenceServiceMock.save(config)
+            event.respond(any() as String)
+        }
+    }
+
+    @Test
+    fun `SetStaffRole changes the staffRoleName value and saves the configuration`() {
+        val event = makeCommandEventMock(TestConstants.Staff_Role)
+        configurationCommandSet["SetStaffRole"]!!.execute(event)
+
+        Assertions.assertEquals(TestConstants.Staff_Role, config.guildConfigurations.first().staffRoleName)
+
+        verify(exactly = 1) {
+            persistenceServiceMock.save(config)
+            event.respond(any() as String)
+        }
+    }
+
+    @Test
+    fun `SetLoggingChannel changes the loggingChannel value and saves the configuration`() {
+        val event = makeCommandEventMock(produceTextChannelMock(guildMock))
+        configurationCommandSet["SetLoggingChannel"]!!.execute(event)
+
+        Assertions.assertEquals(TestConstants.Channel_ID, config.guildConfigurations.first().loggingConfiguration.loggingChannel)
+
+        verify(exactly = 1) {
+            persistenceServiceMock.save(config)
+            event.respond(any() as String)
+        }
     }
 }
