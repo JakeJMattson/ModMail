@@ -1,7 +1,7 @@
 package me.aberrantfox.warmbot.command
 
 import io.mockk.*
-import me.aberrantfox.kjdautils.api.dsl.CommandsContainer
+import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.warmbot.commands.configurationCommands
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.mocks.*
@@ -43,11 +43,7 @@ class ConfigurationCommandsTest {
         configurationCommandSet["SetReportCategory"]!!.execute(event)
 
         Assertions.assertEquals(TestConstants.Category_ID, config.guildConfigurations.first().reportCategory)
-
-        verify(exactly = 1) {
-            persistenceServiceMock.save(config)
-            event.respond(any() as String)
-        }
+        verifySingleResponse(event)
     }
 
     @Test
@@ -56,11 +52,7 @@ class ConfigurationCommandsTest {
         configurationCommandSet["SetArchiveChannel"]!!.execute(event)
 
         Assertions.assertEquals(TestConstants.Channel_ID, config.guildConfigurations.first().archiveChannel)
-
-        verify(exactly = 1) {
-            persistenceServiceMock.save(config)
-            event.respond(any() as String)
-        }
+        verifySingleResponse(event)
     }
 
     @Test
@@ -69,11 +61,7 @@ class ConfigurationCommandsTest {
         configurationCommandSet["SetStaffRole"]!!.execute(event)
 
         Assertions.assertEquals(TestConstants.Staff_Role, config.guildConfigurations.first().staffRoleName)
-
-        verify(exactly = 1) {
-            persistenceServiceMock.save(config)
-            event.respond(any() as String)
-        }
+        verifySingleResponse(event)
     }
 
     @Test
@@ -82,7 +70,10 @@ class ConfigurationCommandsTest {
         configurationCommandSet["SetLoggingChannel"]!!.execute(event)
 
         Assertions.assertEquals(TestConstants.Channel_ID, config.guildConfigurations.first().loggingConfiguration.loggingChannel)
+        verifySingleResponse(event)
+    }
 
+    private fun verifySingleResponse(event: CommandEvent) {
         verify(exactly = 1) {
             persistenceServiceMock.save(config)
             event.respond(any() as String)
