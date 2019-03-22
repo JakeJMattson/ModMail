@@ -1,7 +1,28 @@
-# **Version 2.0.1**
+# Version 2.1.0
+
+### New Features
+```
+* Auto setup       - Automatically create required channels. If some of these channels exist, smart bind by name.
+* Permissions sync - The move command will now sync permissions with the new category. (Option to prevent sync)
+* Log commands     - Remove more in-place embeds and replace them with plain text logs.
+* Add JUnit tests  - Added the backbone for adding tests and implemented test for configuration commands.
+```
 
 ### New Commands
+```
+* SetPresence - Set the Discord presence of the bot.
+```
 
+### Fixes
+```
+* Ignore (do not log) audit log events from self.
+* Remove all instances of hard-coded prefixes - config only.
+* Fix issue where the invokation of the archive command was being archived.
+```
+
+# Version 2.0.1
+
+### New Commands
 ```
 * SetLoggingChannel - Set the target logging channel during runtime.
 * Info              - Access report data such as user ID's.
@@ -11,7 +32,6 @@
 ```
 
 ### Misc Changes
-
 ```
 * Added Docker deployment script and instructions for Windows.
 * Report open embeds and edit embeds now contain a user's avatar.
@@ -27,10 +47,9 @@
 * Editing         - Edits were intentionally not being sanitized due to lack of ping risk. They are now sanitized.
 ```
 
-# **Version 2.0**
+# Version 2.0.0
 
 ### New Features
-
 ```
 * Multi-guild       - A single instance of this bot can now be used across multiple guilds.
 * Event propagation - User and staff events can now be forwarded through the bot. 
@@ -43,7 +62,6 @@
 ```
 
 ### New Commands
-
 ```
 * Whitelist     - Add a guild to the whitelist.
 * UnWhitelist   - Remove a guild from the whitelist.
@@ -64,23 +82,20 @@
 ```
 
 ### Misc Changes
-
 ```
 * The help system was upgraded through KUtils to be interactive.
 * New reports start with embeds instead of plain text.
 * The archive command can now handle embeds.
 ```
 
-# **Version 1.5.1 and earlier**
+# Version 1.5.1 and earlier
 
 ### Features
-
 ```
 * Basic report functionality
 ```
 
 ### Commands
-
 ```
 * Author  - Display the author of the bot.
 * Source  - Display the GitLab repository link.

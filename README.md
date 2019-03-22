@@ -62,6 +62,7 @@ Below you can find a list and explanation of all available commands.
 | Whitelist     | Guild ID  | Add a guild to the whitelist.         |
 | UnWhitelist   | Guild ID  | Remove a guild from the whitelist.    |
 | ShowWhitelist | (none)    | Display all guilds in the whitelist.  |
+| SetPresence   | Presence  | Set the Discord presence of the bot.  |
 
 ### Configuration
 
