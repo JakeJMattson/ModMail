@@ -111,7 +111,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
                 setThumbnail(guild.iconUrl)
 
                 addField("You've have been detained by the staff of ${guild.name}!",
-                    "",//TODO Locale.messages.USER_DETAIN_MESSAGE
+                    Locale.messages.USER_DETAIN_MESSAGE,
                     false)
             }
 
@@ -132,7 +132,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 
     command("Release") {
         requiresGuild = true
-        description = ""//TODO Locale.messages.DETAIN_DESCRIPTION
+        description = Locale.messages.RELEASE_DESCRIPTION
         expect(MemberArg)
         execute {
             val targetMember = it.args.component1() as Member
@@ -150,7 +150,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             } else {
                 it.respond("This member was not muted.")
             }
-            
+
             targetMember.user.userToReport().release()
             it.respond("${targetMember.fullName()} has been released.")
         }

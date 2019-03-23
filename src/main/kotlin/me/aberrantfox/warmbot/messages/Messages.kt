@@ -19,6 +19,8 @@ class Messages (
     val RESET_TAGS_DESCRIPTION: String = "",
     val OPEN_DESCRIPTION: String = "",
     val DETAIN_DESCRIPTION: String = "",
+    val USER_DETAIN_MESSAGE: String = "",
+    val RELEASE_DESCRIPTION: String = "",
     val CLOSE_ALL_DESCRIPTION: String = "",
     val INFO_DESCRIPTION: String = "",
     val PING_DESCRIPTION: String = "",
