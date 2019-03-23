@@ -9,6 +9,7 @@ import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.core.managers.GuildController
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
@@ -34,7 +35,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
                 }
             },
             {
-                event.respond("Unable to contact the target user. Direct messages are disabled.")
+                event.respond("Unable to contact the target user. Direct messages are disabled or the bot is blocked.")
             })
         }
     }
@@ -89,21 +90,28 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             val targetMember = event.args.component1() as Member
             val guild = event.message.guild
 
-            if (!hasValidState(event, guild, targetMember.user))
-                return@execute
-
             val mutedRole = guild.getRolesByName("Muted", true).firstOrNull()
                 ?: return@execute event.respond("Guild missing `Muted` role!")
 
-            if (targetMember.roles.contains(mutedRole))
-                return@execute event.respond("Muted members cannot be detained. Please use `open` instead.")
+            if (!targetMember.roles.contains(mutedRole)) {
+                GuildController(guild).addSingleRoleToMember(targetMember, mutedRole).queue()
+                event.respond("User successfully muted; attempting to open a report.")
+            } else {
+                event.respond("This member is already muted; attempting to open a report.")
+            }
+
+            if (targetMember.user.isDetained())
+                return@execute event.respond("This member is already detained.")
+
+            if (!hasValidState(event, guild, targetMember.user))
+                return@execute
 
             val userEmbed = embed {
                 setColor(Color.red)
                 setThumbnail(guild.iconUrl)
 
                 addField("You've have been detained by the staff of ${guild.name}!",
-                    "",//TODO add locale message
+                    "",//TODO Locale.messages.USER_DETAIN_MESSAGE
                     false)
             }
 
@@ -119,6 +127,32 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             }
 
             openReport(event, targetMember.user, guild.id, userEmbed, reportMessage, true)
+        }
+    }
+
+    command("Release") {
+        requiresGuild = true
+        description = ""//TODO Locale.messages.DETAIN_DESCRIPTION
+        expect(MemberArg)
+        execute {
+            val targetMember = it.args.component1() as Member
+            val guild = it.guild!!
+
+            if (!targetMember.user.isDetained())
+                return@execute it.respond("This member is not detained.")
+
+            val mutedRole = guild.getRolesByName("Muted", true).firstOrNull()
+                ?: return@execute it.respond("Guild missing `Muted` role!")
+
+            if (targetMember.roles.contains(mutedRole)) {
+                GuildController(guild).removeSingleRoleFromMember(targetMember, mutedRole).queue()
+                it.respond("User successfully unmuted.")
+            } else {
+                it.respond("This member was not muted.")
+            }
+            
+            targetMember.user.userToReport().release()
+            it.respond("${targetMember.fullName()} has been released.")
         }
     }
 

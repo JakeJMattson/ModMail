@@ -20,7 +20,8 @@ data class Report(val userId: String,
     fun reportToUser() = userId.idToUser()
     fun reportToChannel() = channelId.idToTextChannel()
     fun reportToGuild() = guildId.idToGuild()
-    fun detain() = detainedReports.addElement(this).also { println("${reportToUser().fullName()} was detained.") }
+    fun detain() = detainedReports.addElement(this)
+    fun release() = detainedReports.remove(this)
 }
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
@@ -31,7 +32,7 @@ private val detainedReports = Vector<Report>()
 
 fun User.hasReportChannel() = reports.any { it.userId == this.id } || queuedReports.any { it.user == this.id }
 fun User.userToReport() = reports.first { it.userId == this.id }
-fun User.isDetained() = reports.any { this.id == it.userId }
+fun User.isDetained() = detainedReports.any { it.userId == this.id}
 fun MessageChannel.isReportChannel() = reports.any { it.channelId == this.id }
 fun MessageChannel.channelToReport() = reports.first { it.channelId == this.id }
 
