@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder
 import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
-import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.extensions.*
 import net.dv8tion.jda.core.entities.*
 import java.awt.Color
@@ -18,21 +17,18 @@ data class Report(val userId: String,
                   val messages: MutableMap<String, String>,
                   var queuedMessageId: String? = null) {
     fun reportToUser() = userId.idToUser()
+    fun reportToMember() = userId.idToUser().toMember(guildId.idToGuild())
     fun reportToChannel() = channelId.idToTextChannel()
     fun reportToGuild() = guildId.idToGuild()
-    fun detain() = detainedReports.addElement(this)
-    fun release() = detainedReports.remove(this)
 }
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
 private val reports = Vector<Report>()
 private val queuedReports = Vector<QueuedReport>()
-private val detainedReports = Vector<Report>()
 
 fun User.hasReportChannel() = reports.any { it.userId == this.id } || queuedReports.any { it.user == this.id }
 fun User.userToReport() = reports.first { it.userId == this.id }
-fun User.isDetained() = detainedReports.any { it.userId == this.id}
 fun MessageChannel.isReportChannel() = reports.any { it.channelId == this.id }
 fun MessageChannel.channelToReport() = reports.first { it.channelId == this.id }
 
@@ -105,7 +101,7 @@ class ReportService(private val config: Configuration,
     fun sendToUser(channel: MessageChannel, message: Message) {
         val report = channel.channelToReport()
 
-        report.reportToUser().sendPrivateMessage(message.fullContent(), DefaultLogger())
+        report.reportToUser().sendPrivateMessage(message.fullContent())
         report.queuedMessageId = message.id
     }
 
@@ -157,6 +153,7 @@ class ReportService(private val config: Configuration,
     }
 
     fun closeReport(report: Report) {
+        report.release()
         sendReportClosedEmbed(report)
         removeReport(report)
     }

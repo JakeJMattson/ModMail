@@ -100,7 +100,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
                 event.respond("This member is already muted; attempting to open a report.")
             }
 
-            if (targetMember.user.isDetained())
+            if (targetMember.isDetained())
                 return@execute event.respond("This member is already detained.")
 
             if (!hasValidState(event, guild, targetMember.user))
@@ -138,7 +138,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             val targetMember = it.args.component1() as Member
             val guild = it.guild!!
 
-            if (!targetMember.user.isDetained())
+            if (!targetMember.isDetained())
                 return@execute it.respond("This member is not detained.")
 
             val mutedRole = guild.getRolesByName("Muted", true).firstOrNull()
