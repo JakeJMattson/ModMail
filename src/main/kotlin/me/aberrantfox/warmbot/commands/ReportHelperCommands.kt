@@ -4,6 +4,7 @@ import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
+import me.aberrantfox.warmbot.arguments.MemberArg
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
@@ -41,16 +42,13 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
     command("Open") {
         requiresGuild = true
         description = Locale.messages.OPEN_DESCRIPTION
-        expect(arg(UserArg), arg(SentenceArg("Initial Message"), optional = true))
+        expect(arg(MemberArg), arg(SentenceArg("Initial Message"), optional = true))
         execute { event ->
-            val targetUser = event.args.component1() as User
+            val targetMember = event.args.component1() as Member
             val message = event.args.component2() as String
             val guild = event.message.guild
 
-            if (targetUser.isBot) return@execute event.respond("The target user is a bot.")
-            if (!guild.isMember(targetUser)) return@execute event.respond("The target user is not in this guild.")
-
-            if (!hasValidState(event, guild, targetUser))
+            if (!hasValidState(event, guild, targetMember.user))
                 return@execute
 
             val userEmbed = embed {
@@ -61,7 +59,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 
             val initialMessage =
                 if (message.isNotEmpty()) {
-                    targetUser.sendPrivateMessage(message, DefaultLogger())
+                    targetMember.user.sendPrivateMessage(message, DefaultLogger())
                     message
                 } else {
                     Locale.messages.DEFAULT_INITIAL_MESSAGE
@@ -69,9 +67,9 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 
             val reportMessage = embed {
                 setColor(Color.green)
-                setThumbnail(targetUser.avatarUrl)
+                setThumbnail(targetMember.user.avatarUrl)
                 addField("New Report Opened!",
-                    "${targetUser.descriptor()} :: ${targetUser.asMention}",
+                    "${targetMember.descriptor()} :: ${targetMember.asMention}",
                     false)
                 addField("This report was opened by a staff member!",
                     "${event.author.descriptor()} :: ${event.author.asMention}",
@@ -79,30 +77,25 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
                 addField("Initial Message", initialMessage, false)
             }
 
-            openReport(event, targetUser, guild.id, userEmbed, reportMessage, true)
+            openReport(event, targetMember.user, guild.id, userEmbed, reportMessage, true)
         }
     }
 
     command("Detain") {
         requiresGuild = true
         description = Locale.messages.DETAIN_DESCRIPTION
-        expect(UserArg)
+        expect(MemberArg)
         execute { event ->
-            val targetUser = event.args.component1() as User
+            val targetMember = event.args.component1() as Member
             val guild = event.message.guild
 
-            if (targetUser.isBot) return@execute event.respond("The target user is a bot.")
-            if (!guild.isMember(targetUser)) return@execute event.respond("The target user is not in this guild.")
-
-            if (!hasValidState(event, guild, targetUser))
+            if (!hasValidState(event, guild, targetMember.user))
                 return@execute
 
             val mutedRole = guild.getRolesByName("Muted", true).firstOrNull()
                 ?: return@execute event.respond("Guild missing `Muted` role!")
 
-            val member = targetUser.toMember(guild)
-
-            if (member.roles.contains(mutedRole))
+            if (targetMember.roles.contains(mutedRole))
                 return@execute event.respond("Muted members cannot be detained. Please use `open` instead.")
 
             val userEmbed = embed {
@@ -116,16 +109,16 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
 
             val reportMessage = embed {
                 setColor(Color.red)
-                setThumbnail(targetUser.avatarUrl)
+                setThumbnail(targetMember.user.avatarUrl)
                 addField("User Detained!",
-                    "${targetUser.descriptor()} :: ${targetUser.asMention}",
+                    "${targetMember.descriptor()} :: ${targetMember.asMention}",
                     false)
                 addField("This user was detained by",
                     "${event.author.descriptor()} :: ${event.author.asMention}",
                     false)
             }
 
-            openReport(event, targetUser, guild.id, userEmbed, reportMessage, true)
+            openReport(event, targetMember.user, guild.id, userEmbed, reportMessage, true)
         }
     }
 
@@ -188,7 +181,7 @@ private fun hasValidState(event: CommandEvent, currentGuild: Guild, targetUser: 
 
     val report = targetUser.userToReport()
     val reportGuild = report.guildId.idToGuild()
-    
+
     event.respond("The target user already has an open report " +
         if (reportGuild == currentGuild) {
             val channel = targetUser.userToReport().reportToChannel().asMention
