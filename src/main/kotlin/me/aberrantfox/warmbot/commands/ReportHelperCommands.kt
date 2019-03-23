@@ -13,37 +13,28 @@ import java.util.concurrent.ConcurrentHashMap
 
 @CommandSet("ReportHelpers")
 fun reportHelperCommands(reportService: ReportService, configuration: Configuration, loggingService: LoggingService) = commands {
-    fun openReport(event: CommandEvent, targetUser: User, message: String, guildId: String) {
+    fun openReport(event: CommandEvent, targetUser: User, guildId: String, userEmbed: MessageEmbed, reportEmbed: MessageEmbed, detain: Boolean = false) {
         val reportCategory = configuration.getGuildConfig(guildId)!!.reportCategory.idToCategory()
 
-        reportCategory.createTextChannel(targetUser.name).queue { channel ->
-            channel as TextChannel
+        targetUser.openPrivateChannel().queue {
+            it.sendMessage(userEmbed).queue({
+                reportCategory.createTextChannel(targetUser.name).queue { channel ->
+                    channel as TextChannel
 
-            val initialMessage =
-                if (message.isNotEmpty()) {
-                    targetUser.sendPrivateMessage(message, DefaultLogger())
-                    message
-                } else {
-                    Locale.messages.DEFAULT_INITIAL_MESSAGE
+                    channel.sendMessage(reportEmbed).queue()
+
+                    val newReport = Report(targetUser.id, channel.id, guildId, ConcurrentHashMap())
+                    reportService.addReport(newReport)
+
+                    if (detain) newReport.detain()
+
+                    event.respond("Success! Channel opened at: ${channel.asMention}")
+                    loggingService.staffOpen(guildId, channel.name, event.author)
                 }
-
-            channel.sendMessage(embed {
-                setColor(Color.green)
-                setThumbnail(targetUser.avatarUrl)
-                addField("New Report Opened!",
-                    "${targetUser.descriptor()} :: ${targetUser.asMention}",
-                    false)
-                addField("This report was opened by a staff member!",
-                    "${event.author.descriptor()} :: ${event.author.asMention}",
-                    false)
-                addField("Initial Message", initialMessage, false)
-            }).queue()
-
-            val newReport = Report(targetUser.id, channel.id, guildId, ConcurrentHashMap())
-            reportService.addReport(newReport)
-
-            event.respond("Channel opened at: ${channel.asMention}")
-            loggingService.staffOpen(guildId, channel.name, event.author)
+            },
+            {
+                event.respond("Unable to contact the target user. Direct messages are disabled.")
+            })
         }
     }
 
@@ -57,10 +48,10 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             val guild = event.message.guild
 
             if (targetUser.isBot) return@execute event.respond("The target user is a bot.")
-
             if (!guild.isMember(targetUser)) return@execute event.respond("The target user is not in this guild.")
 
-            if (targetUser.hasReportChannel()) return@execute event.respond("The target user already has an open report.")
+            if (!hasValidState(event, guild, targetUser))
+                return@execute
 
             val userEmbed = embed {
                 setColor(Color.green)
@@ -68,14 +59,73 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
                 addField("You've received a message from the staff of ${guild.name}!", Locale.messages.BOT_DESCRIPTION, false)
             }
 
-            targetUser.openPrivateChannel().queue {
-                it.sendMessage(userEmbed).queue({
-                    openReport(event, targetUser, message, guild.id)
-                },
-                    {
-                        event.respond("Unable to contact the target user. Direct messages are disabled.")
-                    })
+            val initialMessage =
+                if (message.isNotEmpty()) {
+                    targetUser.sendPrivateMessage(message, DefaultLogger())
+                    message
+                } else {
+                    Locale.messages.DEFAULT_INITIAL_MESSAGE
+                }
+
+            val reportMessage = embed {
+                setColor(Color.green)
+                setThumbnail(targetUser.avatarUrl)
+                addField("New Report Opened!",
+                    "${targetUser.descriptor()} :: ${targetUser.asMention}",
+                    false)
+                addField("This report was opened by a staff member!",
+                    "${event.author.descriptor()} :: ${event.author.asMention}",
+                    false)
+                addField("Initial Message", initialMessage, false)
             }
+
+            openReport(event, targetUser, guild.id, userEmbed, reportMessage, true)
+        }
+    }
+
+    command("Detain") {
+        requiresGuild = true
+        description = Locale.messages.DETAIN_DESCRIPTION
+        expect(UserArg)
+        execute { event ->
+            val targetUser = event.args.component1() as User
+            val guild = event.message.guild
+
+            if (targetUser.isBot) return@execute event.respond("The target user is a bot.")
+            if (!guild.isMember(targetUser)) return@execute event.respond("The target user is not in this guild.")
+
+            if (!hasValidState(event, guild, targetUser))
+                return@execute
+
+            val mutedRole = guild.getRolesByName("Muted", true).firstOrNull()
+                ?: return@execute event.respond("Guild missing `Muted` role!")
+
+            val member = targetUser.toMember(guild)
+
+            if (member.roles.contains(mutedRole))
+                return@execute event.respond("Muted members cannot be detained. Please use `open` instead.")
+
+            val userEmbed = embed {
+                setColor(Color.red)
+                setThumbnail(guild.iconUrl)
+
+                addField("You've have been detained by the staff of ${guild.name}!",
+                    "",//TODO add locale message
+                    false)
+            }
+
+            val reportMessage = embed {
+                setColor(Color.red)
+                setThumbnail(targetUser.avatarUrl)
+                addField("User Detained!",
+                    "${targetUser.descriptor()} :: ${targetUser.asMention}",
+                    false)
+                addField("This user was detained by",
+                    "${event.author.descriptor()} :: ${event.author.asMention}",
+                    false)
+            }
+
+            openReport(event, targetUser, guild.id, userEmbed, reportMessage, true)
         }
     }
 
@@ -130,4 +180,23 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             }
         }
     }
+}
+
+private fun hasValidState(event: CommandEvent, currentGuild: Guild, targetUser: User): Boolean {
+    if (!targetUser.hasReportChannel())
+        return true
+
+    val report = targetUser.userToReport()
+    val reportGuild = report.guildId.idToGuild()
+    
+    event.respond("The target user already has an open report " +
+        if (reportGuild == currentGuild) {
+            val channel = targetUser.userToReport().reportToChannel().asMention
+            "at $channel."
+        } else {
+            "in ${reportGuild.name}."
+        }
+    )
+
+    return false
 }
