@@ -9,7 +9,6 @@ import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
-import net.dv8tion.jda.core.managers.GuildController
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
@@ -90,7 +89,6 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             val targetMember = event.args.component1() as Member
             val guild = event.message.guild
 
-            //TODO Handle mute response
             targetMember.mute()
 
             if (targetMember.isDetained())
@@ -129,20 +127,9 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
         expect(MemberArg)
         execute {
             val targetMember = it.args.component1() as Member
-            val guild = it.guild!!
 
             if (!targetMember.isDetained())
                 return@execute it.respond("This member is not detained.")
-
-            val mutedRole = guild.getRolesByName("Muted", true).firstOrNull()
-                ?: return@execute it.respond("Guild missing `Muted` role!")
-
-            if (targetMember.roles.contains(mutedRole)) {
-                GuildController(guild).removeSingleRoleFromMember(targetMember, mutedRole).queue()
-                it.respond("User successfully unmuted.")
-            } else {
-                it.respond("This member was not muted.")
-            }
 
             targetMember.user.userToReport().release()
             it.respond("${targetMember.fullName()} has been released.")
