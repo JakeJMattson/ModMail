@@ -3,6 +3,7 @@ package me.aberrantfox.warmbot.mocks
 object TestConstants {
     //Configuration defaults
     const val Guild_ID = "insert-id"
+    const val Guild_Name = "test-guild"
     const val Category_ID = "category-id"
     const val Channel_ID = "channel-id"
     const val Staff_Role = "staff-name"
