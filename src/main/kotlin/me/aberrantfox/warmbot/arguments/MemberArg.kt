@@ -8,7 +8,7 @@ import me.aberrantfox.kjdautils.internal.command.*
 open class MemberArg(override val name: String = "Member") : ArgumentType {
     companion object : MemberArg()
 
-    override val examples = arrayListOf("@Bob", "", "")
+    override val examples = arrayListOf("@Bob", "133997975662886912", "215210079148834816")
     override val consumptionType = ConsumptionType.Single
     override fun convert(arg: String, args: List<String>, event: CommandEvent): ArgumentResult {
         val user = event.jda.getUserById(arg.trimToID())

@@ -90,11 +90,13 @@ Below you can find a list and explanation of all available commands.
 
 ### Report Helpers
 
-| Command   | Arguments | Effect                                    |
-| ------    | ------    | ------                                    |
-| Open      | User ID   | Open a report with the target user.       |
-| CloseAll  | (none)    | Close all reports in the current guild.   |
-| Info      | Channel   | Get info (ID's) from the target report.   |
+| Command   | Arguments | Effect                                        |
+| ------    | ------    | ------                                        |
+| Open      | User ID   | Open a report with the target user.           |
+| Detain    | Member    | Mute a user and open a report with them.      |
+| Release   | Member    | Release a user from detainment - unmute them. |
+| CloseAll  | (none)    | Close all reports in the current guild.       |
+| Info      | Channel   | Get info (ID's) from the target report.       |
 
 ### Utility
 
