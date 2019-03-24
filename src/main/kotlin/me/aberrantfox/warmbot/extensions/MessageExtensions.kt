@@ -18,3 +18,5 @@ fun MessageEmbed.toTextString() =
         fields.forEach { append("${it.name}\n${it.value}\n") }
         appendln(embedNotation)
     }.toString()
+
+fun Message.addFailReaction() = this.addReaction("❌").queue()

@@ -90,15 +90,8 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             val targetMember = event.args.component1() as Member
             val guild = event.message.guild
 
-            val mutedRole = guild.getRolesByName("Muted", true).firstOrNull()
-                ?: return@execute event.respond("Guild missing `Muted` role!")
-
-            if (!targetMember.roles.contains(mutedRole)) {
-                GuildController(guild).addSingleRoleToMember(targetMember, mutedRole).queue()
-                event.respond("User successfully muted; attempting to open a report.")
-            } else {
-                event.respond("This member is already muted; attempting to open a report.")
-            }
+            //TODO Handle mute response
+            targetMember.mute()
 
             if (targetMember.isDetained())
                 return@execute event.respond("This member is already detained.")

@@ -15,11 +15,8 @@ fun Report.detain() {
 
 fun Report.release(): Boolean {
     val member = this.reportToMember()
-    val guild = member.guild
-    val mutedRole = guild.getRolesByName("Muted", true).firstOrNull() ?: return false
 
-    if (member.roles.contains(mutedRole))
-        GuildController(guild).removeSingleRoleFromMember(member, mutedRole).queue()
+    member.unmute()
 
     if (member.isDetained())
         detainedReports.remove(this)
@@ -28,3 +25,21 @@ fun Report.release(): Boolean {
 }
 
 fun Member.isDetained() = detainedReports.any { it.userId == this.user.id}
+
+fun Member.mute(): Boolean {
+    val mutedRole = guild.getRolesByName("Muted", true).firstOrNull() ?: return false
+
+    if (!this.roles.contains(mutedRole))
+        GuildController(guild).addSingleRoleToMember(this, mutedRole).queue()
+
+    return true
+}
+
+fun Member.unmute(): Boolean{
+    val mutedRole = guild.getRolesByName("Muted", true).firstOrNull() ?: return false
+
+    if (roles.contains(mutedRole))
+        GuildController(guild).removeSingleRoleFromMember(this, mutedRole).queue()
+
+    return true
+}

@@ -81,6 +81,9 @@ class ReportService(private val config: Configuration,
 
         if (userObject.hasReportChannel()) {
             val report = userObject.userToReport()
+
+            //TODO verfiy guild and lock report once a user has left a guild
+
             report.reportToChannel().sendMessage(safeMessage).queue()
             report.queuedMessageId = message.id
 
@@ -98,12 +101,6 @@ class ReportService(private val config: Configuration,
         }
     }
 
-    fun sendToUser(channel: MessageChannel, message: Message) {
-        val report = channel.channelToReport()
-
-        report.reportToUser().sendPrivateMessage(message.fullContent())
-        report.queuedMessageId = message.id
-    }
 
     fun buildGuildChoiceEmbed(commonGuilds: List<Guild>) =
         embed {
