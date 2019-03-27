@@ -1,6 +1,7 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.warmbot.arguments.MacroArg
 import me.aberrantfox.warmbot.services.*
@@ -8,6 +9,27 @@ import java.awt.Color
 
 @CommandSet("Macros")
 fun macroCommands(macroService: MacroService) = commands {
+
+    command("SendMacro") {
+        requiresGuild = true
+        description = "Send a macro's message through a report channel."
+        expect(MacroArg)
+        execute {
+            val macro = it.args.component1() as Macro
+
+            it.respond(embed {
+                if (it.channel.isReportChannel()) {
+                    it.channel.channelToReport().reportToUser().sendPrivateMessage(macro.message)
+                    addField("Macro sent by ${it.author.fullName()}!", macro.message, false)
+                    setColor(Color.green)
+                }
+                else {
+                    addField("Macro not sent - must be report channel!", macro.message, false)
+                    setColor(Color.red)
+                }
+            })
+        }
+    }
 
     command("AddMacro") {
         requiresGuild = true
