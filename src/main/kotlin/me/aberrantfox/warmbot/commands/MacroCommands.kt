@@ -49,4 +49,32 @@ fun macroCommands(macroService: MacroService) = commands {
             )
         }
     }
+
+    command("EditMacro") {
+        requiresGuild = true
+        description = "Change a macro's response message."
+        expect(MacroArg, SentenceArg("New Message"))
+        execute {
+            val macro = it.args.component1() as Macro
+            val message = it.args.component2() as String
+
+            val response = macroService.editMessage(macro, message)
+
+            it.respond(response.second)
+        }
+    }
+
+    command("RenameMacro") {
+        requiresGuild = true
+        description = "Change a macro's name, keeping the original response."
+        expect(MacroArg, WordArg("New Name"))
+        execute {
+            val macro = it.args.component1() as Macro
+            val newName = it.args.component2() as String
+
+            val response = macroService.editName(macro, newName, it.guild!!)
+
+            it.respond(response.second)
+        }
+    }
 }
