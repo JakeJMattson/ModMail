@@ -1,0 +1,52 @@
+package me.aberrantfox.warmbot.commands
+
+import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.internal.command.arguments.*
+import me.aberrantfox.warmbot.arguments.MacroArg
+import me.aberrantfox.warmbot.services.*
+import java.awt.Color
+
+@CommandSet("Macros")
+fun macroCommands(macroService: MacroService) = commands {
+
+    command("AddMacro") {
+        requiresGuild = true
+        description = "Add a macro which will respond with the given message when invoked by the given name."
+        expect(WordArg("Macro Name"), SentenceArg("Macro Content"))
+        execute {
+            val name = it.args.component1() as String
+            val message = it.args.component2() as String
+
+            val response = macroService.addMacro(name, message, it.guild!!)
+
+            it.respond(response.second)
+        }
+    }
+
+    command("RemoveMacro") {
+        requiresGuild = true
+        description = "Removes a macro with the given name."
+        expect(MacroArg)
+        execute {
+            val macro = it.args.component1() as Macro
+
+            val response = macroService.removeMacro(macro, it.guild!!)
+
+            it.respond(response.second)
+        }
+    }
+
+    command("ListMacros") {
+        requiresGuild = true
+        description = "List all of the currently available map."
+        execute {
+
+            it.respond(
+                embed {
+                    addField("Currently Available Macros", macroService.listMacros(it.guild!!), false)
+                    setColor(Color.GREEN)
+                }
+            )
+        }
+    }
+}
