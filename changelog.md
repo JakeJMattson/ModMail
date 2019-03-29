@@ -2,22 +2,28 @@
 
 ### New Features
 ```
-* Auto setup       - Automatically create required channels. If some of these channels exist, smart bind by name.
-* Permissions sync - The move command will now sync permissions with the new category. (Option to prevent sync)
-* Log commands     - Remove more in-place embeds and replace them with plain text logs.
-* Add JUnit tests  - Added the backbone for adding tests and implemented test for configuration commands.
+* Auto setup    - Automatically create required channels. If any of these channels exist, smart bind by name.
+* Category sync - The move command will now sync permissions with the new category. (Option to prevent sync)
+* Log commands  - Remove more in-place embeds and with plain text logs sent to the logging channel.
+* JUnit tests   - Added the backbone for adding tests and implemented tests for configuration commands.
+* Detainment    - Added commands and services that allow staff to mute users and begin a dialog.
+* De-activation - When a user leaves a server, their report is now deactivated. No messages are propagated.
+* Fail reaction - When a message is not delivered (currently due to deactivation), the bot will react with a red X.
+* Rejoin resume - When a user rejoins a server with an active report, it will be reactivated and the report will be notified.
 ```
 
 ### New Commands
 ```
 * SetPresence - Set the Discord presence of the bot.
+* Detain      - Mute a user and open a report with them.
+* Release     - Remove a user from the detainment list and unmute them.
 ```
 
 ### Fixes
 ```
 * Ignore (do not log) audit log events from self.
 * Remove all instances of hard-coded prefixes - config only.
-* Fix issue where the invokation of the archive command was being archived.
+* Fix issue where the invocation of the archive command was being archived.
 ```
 
 # Version 2.0.1
