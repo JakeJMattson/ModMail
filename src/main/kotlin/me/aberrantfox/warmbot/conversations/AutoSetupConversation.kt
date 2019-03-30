@@ -33,7 +33,8 @@ fun autoSetupConversation(configuration: Configuration, persistenceService: Pers
                 field {
                     name = "Manual Setup"
                     value = "A manual setup will prompt you for each of the required fields. " +
-                            "You will need to create each of these channels if they do not exist."
+                            "You will need to create each of these channels if they do not exist. " +
+                            "This will also require you to know how to get ID's from channels."
                     inline = false
                 }
                 field {

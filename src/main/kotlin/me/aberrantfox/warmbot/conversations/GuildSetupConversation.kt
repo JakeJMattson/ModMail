@@ -48,6 +48,14 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
         step {
             prompt = embed {
                 color(Color.magenta)
+                title("Command Channel")
+                description("Enter the **Channel ID** where commands can be used. More can be added later.")
+            }
+            expect = TextChannelArg
+        }
+        step {
+            prompt = embed {
+                color(Color.magenta)
                 title("Required Role")
                 setDescription("Enter the **Role Name** of the role required to give commands to this bot.")
             }
@@ -59,24 +67,24 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
         val reportCategory = it.responses.component1() as Category
         val archiveChannel = it.responses.component2() as TextChannel
         val loggingChannel = it.responses.component3() as TextChannel
-        val staffRole = it.responses.component4() as Role
+        val commandChannel = it.responses.component4() as TextChannel
+        val staffRole = it.responses.component5() as Role
 
-        it.respond(
-            when {
-                reportCategory.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "report category")
-                archiveChannel.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "archive channel")
-                loggingChannel.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "logging channel")
-                staffRole.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "staff role")
-                else -> {
-                    val guildConfiguration = GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, staffRole.name)
-                    guildConfiguration.loggingConfiguration.loggingChannel = loggingChannel.id
-                    config.guildConfigurations.add(guildConfiguration)
-                    persistenceService.save(config)
-                    Locale.messages.GUILD_SETUP_SUCCESSFUL
-                }
+        it.respond(when {
+            reportCategory.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "report category")
+            archiveChannel.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "archive channel")
+            loggingChannel.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "logging channel")
+            commandChannel.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "command channel")
+            staffRole.guild.id != it.guildId -> Locale.inject({ FAIL_GUILD_SETUP }, "field" to "staff role")
+            else -> {
+                val staffChannels = arrayListOf(commandChannel.id)
+                val logConfig = LoggingConfiguration(loggingChannel.id)
+                config.guildConfigurations.add(
+                    GuildConfiguration(it.guildId, reportCategory.id, archiveChannel.id, staffRole.name, staffChannels, logConfig))
+
+                persistenceService.save(config)
+                Locale.messages.GUILD_SETUP_SUCCESSFUL
             }
-        )
-
-        return@onComplete
+        })
     }
 }
