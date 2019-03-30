@@ -19,6 +19,7 @@ data class GuildConfiguration(var guildId: String = "insert-id",
                               var reportCategory: String = "insert-id",
                               var archiveChannel: String = "insert-id",
                               var staffRoleName: String = "Staff",
+                              val staffChannels: MutableList<String> = ArrayList(),
                               val loggingConfiguration: LoggingConfiguration = LoggingConfiguration())
 
 @Data("config/config.json")

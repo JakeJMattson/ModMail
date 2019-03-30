@@ -61,6 +61,7 @@ class Messages (
     val DEFAULT_HOLDER_CATEGORY_NAME: String = "",
     val DEFAULT_ARCHIVE_CHANNEL_NAME: String = "",
     val DEFAULT_LOGGING_CHANNEL_NAME: String = "",
+    val DEFAULT_COMMAND_CHANNEL_NAME: String = "",
     val DEFAULT_STAFF_ROLE_NAME: String = "",
 
     //Default text

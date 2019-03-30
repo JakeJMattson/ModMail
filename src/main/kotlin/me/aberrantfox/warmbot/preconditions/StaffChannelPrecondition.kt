@@ -13,9 +13,7 @@ fun produceIsStaffChannelPrecondition(configuration: Configuration) = exit@{ eve
 
     val guildConfig = configuration.getGuildConfig(textChannel.guild.id) ?: return@exit Pass
 
-    val staffRole = textChannel.guild.getRolesByName(guildConfig.staffRoleName, true).first()
-
-    textChannel.getPermissionOverride(staffRole) ?: return@exit Fail()
+    if (textChannel.id !in guildConfig.staffChannels) return@exit Fail()
 
     return@exit Pass
 }
