@@ -67,7 +67,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
     command("AddStaffChannel") {
         requiresGuild = true
-        description = ""
+        description = Locale.messages.ADD_STAFF_CHANNEL
         expect(TextChannelArg)
         execute {
             val staffChannel = it.args.component1() as TextChannel
@@ -86,7 +86,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
     command("RemoveStaffChannel") {
         requiresGuild = true
-        description = ""
+        description = Locale.messages.REMOVE_STAFF_CHANNEL
         expect(TextChannelArg)
         execute {
             val staffChannel = it.args.component1() as TextChannel
@@ -105,7 +105,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
     command("ListStaffChannels") {
         requiresGuild = true
-        description = ""
+        description = Locale.messages.LIST_STAFF_CHANNELS
         execute {
             val staffChannels = configuration.getGuildConfig(it.message.guild.id)!!.staffChannels
 
