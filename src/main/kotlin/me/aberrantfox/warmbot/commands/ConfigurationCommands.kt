@@ -78,6 +78,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
                     return@execute it.respond("Channel already whitelisted!")
 
                 this.add(staffChannel.id)
+                persistenceService.save(configuration)
 
                 return@execute it.respond("Successfully whitelisted channel :: ${staffChannel.name}")
             }
@@ -97,6 +98,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
                     return@execute it.respond("Channel not whitelisted!")
 
                 this.remove(staffChannel.id)
+                persistenceService.save(configuration)
 
                 return@execute it.respond("Successfully unwhitelisted channel :: ${staffChannel.name}")
             }
