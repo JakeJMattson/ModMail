@@ -1,0 +1,11 @@
+image: maven:latest
+
+test:
+  stage: test
+  script:
+    - mvn clean verify
+
+build:
+  stage: build
+  script:
+    - mvn clean package -Dmaven.test.skip=true -DskipTests
