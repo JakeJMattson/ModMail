@@ -11,7 +11,7 @@ class ConfigInitializer(configuration: Configuration, jdaInitializer: JdaInitial
     }
 
     private fun addOverrides(config: GuildConfiguration) {
-        val staffRole = config.staffRoleName.nameToRole()
+        val staffRole = config.guildId.idToGuild().getRolesByName(config.staffRoleName, true).firstOrNull() ?: return
         val reportCategory = config.reportCategory.idToCategory()
         val archiveChannel = config.archiveChannel.idToTextChannel()
 

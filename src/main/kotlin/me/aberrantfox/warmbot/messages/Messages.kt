@@ -1,31 +1,49 @@
 package me.aberrantfox.warmbot.messages
 
 class Messages (
-    //Descriptions
+    //General Descriptions
     val BOT_DESCRIPTION: String = "",
+
+    //Configuration commands descriptions
     val SET_REPORT_CATEGORY_DESCRIPTION: String = "",
     val SET_ARCHIVE_CHANNEL_DESCRIPTION: String = "",
     val SET_STAFF_ROLE_DESCRIPTION: String = "",
     val SET_LOGGING_CHANNEL_DESCRIPTION: String = "",
-    val ADD_STAFF_CHANNEL: String = "",
-    val REMOVE_STAFF_CHANNEL: String = "",
-    val LIST_STAFF_CHANNELS: String = "",
+    val ADD_STAFF_CHANNEL_DESCRIPTION: String = "",
+    val REMOVE_STAFF_CHANNEL_DESCRIPTION: String = "",
+    val LIST_STAFF_CHANNELS_DESCRIPTION: String = "",
+
+    //Owner commands descriptions
     val WHITELIST_DESCRIPTION: String = "",
     val UNWHITELIST_DESCRIPTION: String = "",
     val SHOW_WHITELIST_DESCRIPTION: String = "",
     val SET_PRESENCE_DESCRIPTION: String = "",
+
+    //Report commands descriptions
     val CLOSE_DESCRIPTION: String = "",
     val ARCHIVE_DESCRIPTION: String = "",
     val NOTE_DESCRIPTION: String = "",
     val MOVE_DESCRIPTION: String = "",
     val TAG_DESCRIPTION: String = "",
     val RESET_TAGS_DESCRIPTION: String = "",
+
+    //Report helper commands descriptions
     val OPEN_DESCRIPTION: String = "",
     val DETAIN_DESCRIPTION: String = "",
     val USER_DETAIN_MESSAGE: String = "",
     val RELEASE_DESCRIPTION: String = "",
     val CLOSE_ALL_DESCRIPTION: String = "",
     val INFO_DESCRIPTION: String = "",
+
+    //Macro commands descriptions
+    val SEND_MACRO_DESCRIPTION: String = "",
+    val ADD_MACRO_DESCRIPTION: String = "",
+    val REMOVE_MACRO_DESCRIPTION: String = "",
+    val RENAME_MACRO_DESCRIPTION: String = "",
+    val EDIT_MACRO_DESCRIPTION: String = "",
+    val LIST_MACROS_DESCRIPTION: String = "",
+
+    //Utility commands descriptions
     val PING_DESCRIPTION: String = "",
     val VERSION_DESCRIPTION: String = "",
     val AUTHOR_DESCRIPTION: String = "",
