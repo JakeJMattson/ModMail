@@ -7,6 +7,9 @@ class Messages (
     val SET_ARCHIVE_CHANNEL_DESCRIPTION: String = "",
     val SET_STAFF_ROLE_DESCRIPTION: String = "",
     val SET_LOGGING_CHANNEL_DESCRIPTION: String = "",
+    val ADD_STAFF_CHANNEL: String = "",
+    val REMOVE_STAFF_CHANNEL: String = "",
+    val LIST_STAFF_CHANNELS: String = "",
     val WHITELIST_DESCRIPTION: String = "",
     val UNWHITELIST_DESCRIPTION: String = "",
     val SHOW_WHITELIST_DESCRIPTION: String = "",
@@ -18,6 +21,9 @@ class Messages (
     val TAG_DESCRIPTION: String = "",
     val RESET_TAGS_DESCRIPTION: String = "",
     val OPEN_DESCRIPTION: String = "",
+    val DETAIN_DESCRIPTION: String = "",
+    val USER_DETAIN_MESSAGE: String = "",
+    val RELEASE_DESCRIPTION: String = "",
     val CLOSE_ALL_DESCRIPTION: String = "",
     val INFO_DESCRIPTION: String = "",
     val PING_DESCRIPTION: String = "",
@@ -58,6 +64,7 @@ class Messages (
     val DEFAULT_HOLDER_CATEGORY_NAME: String = "",
     val DEFAULT_ARCHIVE_CHANNEL_NAME: String = "",
     val DEFAULT_LOGGING_CHANNEL_NAME: String = "",
+    val DEFAULT_COMMAND_CHANNEL_NAME: String = "",
     val DEFAULT_STAFF_ROLE_NAME: String = "",
 
     //Default text

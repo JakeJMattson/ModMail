@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder
 import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
-import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.extensions.*
 import net.dv8tion.jda.core.entities.*
 import java.awt.Color
@@ -18,6 +17,7 @@ data class Report(val userId: String,
                   val messages: MutableMap<String, String>,
                   var queuedMessageId: String? = null) {
     fun reportToUser() = userId.idToUser()
+    fun reportToMember() = userId.idToUser().toMember(guildId.idToGuild())
     fun reportToChannel() = channelId.idToTextChannel()
     fun reportToGuild() = guildId.idToGuild()
 }
@@ -26,6 +26,7 @@ data class QueuedReport(val messages: Vector<String> = Vector(), val user: Strin
 
 private val reports = Vector<Report>()
 private val queuedReports = Vector<QueuedReport>()
+private val reportDir = File("reports/")
 
 fun User.hasReportChannel() = reports.any { it.userId == this.id } || queuedReports.any { it.user == this.id }
 fun User.userToReport() = reports.first { it.userId == this.id }
@@ -37,9 +38,10 @@ class ReportService(private val config: Configuration,
                     private val loggingService: LoggingService,
                     jdaInitializer: JdaInitializer) {
     private val gson = GsonBuilder().setPrettyPrinting().create()
-    private val reportDir = File("reports/")
 
-    init { loadReports() }
+    init {
+        loadReports()
+    }
 
     fun getReportsFromGuild(guildId: String) = reports.filter { it.guildId == guildId }
     fun getCommonGuilds(userObject: User): List<Guild> = userObject.mutualGuilds.filter { it.id in config.guildConfigurations.associateBy { it.guildId } }
@@ -75,34 +77,31 @@ class ReportService(private val config: Configuration,
         writeReportToFile(report)
     }
 
-    fun receiveFromUser(userObject: User, message: Message) {
-        val user = userObject.id
+    fun receiveFromUser(message: Message) {
+        val user = message.author
+        val userID = user.id
         val safeMessage = message.cleanContent()
 
-        if (userObject.hasReportChannel()) {
-            val report = userObject.userToReport()
+        if (user.hasReportChannel()) {
+            val report = user.userToReport()
+
+            user.toMember(report.reportToGuild()) ?: return message.addFailReaction()
+
             report.reportToChannel().sendMessage(safeMessage).queue()
             report.queuedMessageId = message.id
 
             return
         }
 
-        val queued = queuedReports.firstOrNull { it.user == user }
+        val queued = queuedReports.firstOrNull { it.user == userID }
 
         if (queued == null) {
             val vector = Vector<String>()
             vector.add(safeMessage)
-            queuedReports.add(QueuedReport(vector, user))
+            queuedReports.add(QueuedReport(vector, userID))
         } else {
             queued.messages.addElement(safeMessage)
         }
-    }
-
-    fun sendToUser(channel: MessageChannel, message: Message) {
-        val report = channel.channelToReport()
-
-        report.reportToUser().sendPrivateMessage(message.fullContent(), DefaultLogger())
-        report.queuedMessageId = message.id
     }
 
     fun buildGuildChoiceEmbed(commonGuilds: List<Guild>) =
@@ -151,21 +150,22 @@ class ReportService(private val config: Configuration,
 
         queuedReports.removeAll { it.user == user.id }
     }
+}
 
-    fun closeReport(report: Report) {
-        sendReportClosedEmbed(report)
-        removeReport(report)
-    }
+fun Report.close() {
+    this.release()
+    sendReportClosedEmbed(this)
+    removeReport(this)
+}
 
-    private fun sendReportClosedEmbed(report: Report) =
-        report.reportToUser().sendPrivateMessage(embed {
-            setColor(Color.LIGHT_GRAY)
-            setAuthor("The staff of ${report.reportToGuild().name} have closed this report.")
-            setDescription("If you continue to reply, a new report will be created.")
-        })
+private fun sendReportClosedEmbed(report: Report) =
+    report.reportToUser().sendPrivateMessage(embed {
+        setColor(Color.LIGHT_GRAY)
+        setAuthor("The staff of ${report.reportToGuild().name} have closed this report.")
+        setDescription("If you continue to reply, a new report will be created.")
+    })
 
-    private fun removeReport(report: Report) {
-        reports.remove(report)
-        reportDir.listFiles().firstOrNull { it.name.startsWith(report.channelId) }?.delete()
-    }
+private fun removeReport(report: Report) {
+    reports.remove(report)
+    reportDir.listFiles().firstOrNull { it.name.startsWith(report.channelId) }?.delete()
 }

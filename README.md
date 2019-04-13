@@ -51,7 +51,8 @@ If things become hostile, the user will have no idea who they're talking to.
 Refer to [warmbotsetup.md](warmbotsetup.md) for full setup instructions.
 
 ## Commands
-Below you can find a list and explanation of all available commands.
+Below you can find a general list and explanation of all available commands.
+To learn about commands during runtime, use the `help` command!
 
 ### Owner
 
@@ -71,9 +72,12 @@ Below you can find a list and explanation of all available commands.
 | Command           | Arguments     | Effect                                            |
 | ------            | ------        | ------                                            |
 | SetReportCategory | Category ID   | Set the category where new reports will be opened.|
-| SetArchiveChannel | Channel ID    | Set the channel where reports will be archived.   |
+| SetArchiveChannel | Text Channel  | Set the channel where reports will be archived.   |
 | SetStaffRole      | Role name     | Set the role required to use this bot.            |
-| SetLoggingChannel | Channel ID    | Set the channel where events should be logged.    |
+| SetLoggingChannel | Text Channel  | Set the channel where events should be logged.    |
+| AddStaffChannel   | Text Channel  | Whitelist. Listen to commands in this channel.    |
+| RemoveStaffChannel| Text Channel  | Unwhitelist. Ignore commands in this channel.     |
+| ListStaffChannels | (none)        | List the whitelisted channels.                    |
 
 ### Report
 
@@ -90,11 +94,13 @@ Below you can find a list and explanation of all available commands.
 
 ### Report Helpers
 
-| Command   | Arguments | Effect                                    |
-| ------    | ------    | ------                                    |
-| Open      | User ID   | Open a report with the target user.       |
-| CloseAll  | (none)    | Close all reports in the current guild.   |
-| Info      | Channel   | Get info (ID's) from the target report.   |
+| Command   | Arguments    | Effect                                        |
+| ------    | ------       | ------                                        |
+| Open      | User         | Open a report with the target user.           |
+| Detain    | Member       | Mute a user and open a report with them.      |
+| Release   | Member       | Release a user from detainment - unmute them. |
+| CloseAll  | (none)       | Close all reports in the current guild.       |
+| Info      | Text Channel | Get info (ID's) from the target report.       |
 
 ### Utility
 

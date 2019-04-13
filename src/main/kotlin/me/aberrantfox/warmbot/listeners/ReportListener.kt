@@ -25,7 +25,7 @@ class ReportListener(private val reportService: ReportService, private val conve
 
         when {
             user.hasReportChannel() -> {
-                reportService.receiveFromUser(user, message)
+                reportService.receiveFromUser(message)
             }
             sentChoice.contains(user.id) -> {
                 if (!content.isInteger()) {
@@ -44,7 +44,7 @@ class ReportListener(private val reportService: ReportService, private val conve
 
                 val firstMessage = heldMessages.getOrDefault(user.id, message)
                 reportService.addReport(user, commonGuilds[selection], firstMessage)
-                reportService.receiveFromUser(user, firstMessage)
+                reportService.receiveFromUser(firstMessage)
                 user.sendPrivateMessage(reportService.buildReportOpenedEmbed(commonGuilds[selection]))
                 heldMessages.remove(user.id)
                 sentChoice.remove(user.id)
@@ -58,7 +58,7 @@ class ReportListener(private val reportService: ReportService, private val conve
                 val guild = commonGuilds.first()
                 reportService.apply {
                     addReport(user, guild, message)
-                    receiveFromUser(user, message)
+                    receiveFromUser(message)
                 }
                 user.sendPrivateMessage(reportService.buildReportOpenedEmbed(guild))
             }

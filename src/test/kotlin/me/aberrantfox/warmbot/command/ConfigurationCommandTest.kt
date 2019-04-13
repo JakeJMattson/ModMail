@@ -3,7 +3,6 @@ package me.aberrantfox.warmbot.command
 import io.mockk.*
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.warmbot.commands.configurationCommands
-import me.aberrantfox.warmbot.extensions.executeByName
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.mocks.*
 import me.aberrantfox.warmbot.mocks.jda.*
@@ -31,7 +30,7 @@ class ConfigurationCommandsTest {
         }
 
         @JvmStatic
-        fun arguments() = listOf(
+        fun setterArguments() = listOf(
             Arguments.of("SetReportCategory", TestConstants.Category_ID,
                 { guildConfig: GuildConfiguration -> guildConfig.reportCategory }, produceCategoryMock(guildMock)),
             Arguments.of("SetArchiveChannel", TestConstants.Channel_ID,
@@ -45,6 +44,8 @@ class ConfigurationCommandsTest {
 
     private lateinit var config: Configuration
     private lateinit var configurationCommandSet: CommandsContainer
+    private val fakeChannelList_0 = arrayListOf<String>()
+    private val fakeChannelList_1 = arrayListOf(TestConstants.Channel_ID)
 
     @BeforeEach
     fun setup() {
@@ -53,20 +54,66 @@ class ConfigurationCommandsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("arguments")
-    fun `test configuration commands`(commandName: String, actual: Any, expected: (config: GuildConfiguration) -> String, eventMockArgs: Any) {
+    @MethodSource("setterArguments")
+    fun `test setter configuration commands`(commandName: String, actual: Any, expected: (config: GuildConfiguration) -> String, eventMockArgs: Any) {
         val event = makeCommandEventMock(eventMockArgs)
-        configurationCommandSet.executeByName(commandName, event)
-
         val guildConfig = config.guildConfigurations.first()
+
+        configurationCommandSet[commandName]!!.execute(event)
+
         Assertions.assertEquals(actual, expected.invoke(guildConfig))
+        verifyPersistenceCall()
         verifySingleResponse(event)
     }
 
-    private fun verifySingleResponse(event: CommandEvent) {
-        verify(exactly = 1) {
-            persistenceServiceMock.save(config)
-            event.respond(any() as String)
-        }
+    @Test
+    fun `add staff channel to empty list`() {
+        val event = makeCommandEventMock(produceTextChannelMock(guildMock))
+        val guildConfig = config.guildConfigurations.first()
+
+        configurationCommandSet["AddStaffChannel"]!!.execute(event)
+
+        Assertions.assertEquals(guildConfig.staffChannels, fakeChannelList_1)
+        verifyPersistenceCall()
+        verifySingleResponse(event)
     }
+
+    @Test
+    fun `add staff channel to populated list`() {
+        val event = makeCommandEventMock(produceTextChannelMock(guildMock))
+        val guildConfig = config.guildConfigurations.first()
+        guildConfig.staffChannels.add(TestConstants.Channel_ID)
+
+        configurationCommandSet["AddStaffChannel"]!!.execute(event)
+
+        Assertions.assertEquals(guildConfig.staffChannels, fakeChannelList_1)
+        verifySingleResponse(event)
+    }
+
+    @Test
+    fun `remove staff channel from empty list`() {
+        val event = makeCommandEventMock(produceTextChannelMock(guildMock))
+        val guildConfig = config.guildConfigurations.first()
+
+        configurationCommandSet["RemoveStaffChannel"]!!.execute(event)
+
+        Assertions.assertEquals(guildConfig.staffChannels, fakeChannelList_0)
+        verifySingleResponse(event)
+    }
+
+    @Test
+    fun `remove staff channel from populated list`() {
+        val event = makeCommandEventMock(produceTextChannelMock(guildMock))
+        val guildConfig = config.guildConfigurations.first()
+        guildConfig.staffChannels.add(TestConstants.Channel_ID)
+
+        configurationCommandSet["RemoveStaffChannel"]!!.execute(event)
+
+        Assertions.assertEquals(guildConfig.staffChannels, fakeChannelList_0)
+        verifyPersistenceCall()
+        verifySingleResponse(event)
+    }
+
+    private fun verifyPersistenceCall() = verify(exactly = 1) { persistenceServiceMock.save(config) }
+    private fun verifySingleResponse(event: CommandEvent) = verify(exactly = 1) { event.respond(any() as String) }
 }
