@@ -10,11 +10,12 @@ import net.dv8tion.jda.core.entities.Game
 private lateinit var kjdaConfig: KJDAConfiguration
 
 fun main(args: Array<String>) {
-    val token = args.first()
+    val token = args.firstOrNull()
 
-    if(token == "UNSET") {
-        println("You must specify the token with the -e flag when running via docker.")
+    if(token == null || token == "UNSET") {
+        println("You must specify the token with the -e flag when running via docker, or as the first command line param.")
         System.exit(-1)
+        return
     }
 
     startBot(token) {
