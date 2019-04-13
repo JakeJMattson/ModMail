@@ -10,4 +10,8 @@ object TestConstants {
     //Mock defaults
     const val User_ID = "user-id"
     const val Message_ID = "message-id"
+
+    //Macro defaults
+    const val Macro_Name = "macro-name"
+    const val Macro_Message = "macro-message"
 }
