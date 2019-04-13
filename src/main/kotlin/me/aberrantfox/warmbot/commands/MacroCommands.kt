@@ -9,7 +9,6 @@ import java.awt.Color
 
 @CommandSet("Macros")
 fun macroCommands(macroService: MacroService) = commands {
-
     command("SendMacro") {
         requiresGuild = true
         description = "Send a macro's message through a report channel."
@@ -24,7 +23,7 @@ fun macroCommands(macroService: MacroService) = commands {
                     setColor(Color.green)
                 }
                 else {
-                    addField("Macro not sent - must be report channel!", macro.message, false)
+                    addField("Macro not sent - must be invoked within a report channel!", macro.message, false)
                     setColor(Color.red)
                 }
             })
@@ -58,17 +57,17 @@ fun macroCommands(macroService: MacroService) = commands {
         }
     }
 
-    command("ListMacros") {
+    command("RenameMacro") {
         requiresGuild = true
-        description = "List all of the currently available map."
+        description = "Change a macro's name, keeping the original response."
+        expect(MacroArg, WordArg("New Name"))
         execute {
+            val macro = it.args.component1() as Macro
+            val newName = it.args.component2() as String
 
-            it.respond(
-                embed {
-                    addField("Currently Available Macros", macroService.listMacros(it.guild!!), false)
-                    setColor(Color.GREEN)
-                }
-            )
+            val response = macroService.editName(macro, newName, it.guild!!)
+
+            it.respond(response.second)
         }
     }
 
@@ -86,17 +85,16 @@ fun macroCommands(macroService: MacroService) = commands {
         }
     }
 
-    command("RenameMacro") {
+    command("ListMacros") {
         requiresGuild = true
-        description = "Change a macro's name, keeping the original response."
-        expect(MacroArg, WordArg("New Name"))
+        description = "List all of the currently available map."
         execute {
-            val macro = it.args.component1() as Macro
-            val newName = it.args.component2() as String
-
-            val response = macroService.editName(macro, newName, it.guild!!)
-
-            it.respond(response.second)
+            it.respond(
+                embed {
+                    addField("Currently Available Macros", macroService.listMacros(it.guild!!), false)
+                    setColor(Color.GREEN)
+                }
+            )
         }
     }
 }

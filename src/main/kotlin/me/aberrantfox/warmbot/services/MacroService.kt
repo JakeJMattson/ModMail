@@ -18,8 +18,6 @@ val macroMap = MacroMap()
 
 @Service
 class MacroService {
-
-    private fun ArrayList<Macro>.getMacroByName(name: String) = this.firstOrNull { it.name.toLowerCase() == name.toLowerCase() }
     private fun ArrayList<Macro>.hasMacro(name: String) = this.any { it.name.toLowerCase() == name.toLowerCase() }
 
     fun addMacro(name: String, message: String, guild: Guild): Pair<Boolean, String> {
