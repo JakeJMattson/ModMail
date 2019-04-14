@@ -8,7 +8,7 @@ import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.*
 
-@CommandSet("configuration")
+@CommandSet("Configuration")
 fun configurationCommands(configuration: Configuration, persistenceService: PersistenceService) = commands {
     command("SetReportCategory") {
         requiresGuild = true
@@ -67,7 +67,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
     command("AddStaffChannel") {
         requiresGuild = true
-        description = Locale.messages.ADD_STAFF_CHANNEL
+        description = Locale.messages.ADD_STAFF_CHANNEL_DESCRIPTION
         expect(TextChannelArg)
         execute {
             val staffChannel = it.args.component1() as TextChannel
@@ -87,7 +87,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
     command("RemoveStaffChannel") {
         requiresGuild = true
-        description = Locale.messages.REMOVE_STAFF_CHANNEL
+        description = Locale.messages.REMOVE_STAFF_CHANNEL_DESCRIPTION
         expect(TextChannelArg)
         execute {
             val staffChannel = it.args.component1() as TextChannel
@@ -107,7 +107,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
     command("ListStaffChannels") {
         requiresGuild = true
-        description = Locale.messages.LIST_STAFF_CHANNELS
+        description = Locale.messages.LIST_STAFF_CHANNELS_DESCRIPTION
         execute {
             val staffChannels = configuration.getGuildConfig(it.message.guild.id)!!.staffChannels
 

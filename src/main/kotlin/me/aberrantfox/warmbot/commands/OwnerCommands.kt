@@ -9,7 +9,7 @@ import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
 
-@CommandSet("owner")
+@CommandSet("Owner")
 fun ownerCommands(configuration: Configuration, guildService: GuildService, persistenceService: PersistenceService) = commands {
     command("Whitelist") {
         requiresGuild = true

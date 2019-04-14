@@ -4,6 +4,7 @@ import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.ConversationService
 import me.aberrantfox.kjdautils.internal.command.arguments.ChoiceArg
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
+import me.aberrantfox.warmbot.extensions.idToGuild
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
@@ -48,7 +49,7 @@ fun autoSetupConversation(configuration: Configuration, persistenceService: Pers
     }
 
     onComplete { stateContainer ->
-        val choice = (stateContainer.responses.component1() as String)[0]
+        val choice = (stateContainer.responses.first() as String).first()
 
         when (choice) {
             'Y' -> autoSetup(configuration, persistenceService, stateContainer)
@@ -60,8 +61,7 @@ fun autoSetupConversation(configuration: Configuration, persistenceService: Pers
 }
 
 private fun autoSetup(config: Configuration, persistenceService: PersistenceService, stateContainer: ConversationStateContainer) = stateContainer.apply {
-    val jda = this.jda
-    val guild = jda.getGuildById(guildId)
+    val guild = guildId.idToGuild()
     val guildController = GuildController(guild)
     val defaults = Locale.messages
 

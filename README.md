@@ -102,6 +102,17 @@ To learn about commands during runtime, use the `help` command!
 | CloseAll  | (none)       | Close all reports in the current guild.       |
 | Info      | Text Channel | Get info (ID's) from the target report.       |
 
+### Macros
+
+| Command     | Arguments       | Effect                                            |
+| ------      | ------          | ------                                            |
+| SendMacro   | Macro           | Send a macro's message through a report channel.  |
+| AddMacro    | Word, Sentence  | Add a macro with a name and its response.         |
+| RemoveMacro | Macro           | Removes a macro with the given name.              |
+| RenameMacro | Macro, Word     | Change a macro's name.                            | 
+| EditMacro   | Macro, Sentence | Change a macro's response.                        |
+| ListMacros  | (none)          | List all of the currently available macros.       |
+
 ### Utility
 
 | Command   | Arguments | Effect                                    |

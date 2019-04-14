@@ -26,7 +26,6 @@ fun Report.release(): Boolean {
 
 fun Member.isDetained() = detainedReports.any { it.userId == this.user.id}
 
-//TODO Improve response
 fun Member.mute(): Boolean {
     val mutedRole = guild.getRolesByName("Muted", true).firstOrNull() ?: return false
 
@@ -36,7 +35,6 @@ fun Member.mute(): Boolean {
     return true
 }
 
-//TODO Improve response
 fun Member.unmute(): Boolean{
     val mutedRole = guild.getRolesByName("Muted", true).firstOrNull() ?: return false
 

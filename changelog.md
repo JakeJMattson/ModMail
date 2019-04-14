@@ -1,16 +1,17 @@
-# Version 2.1.0
+# Version 3.0.0
 
 ### New Features
 ```
 * Auto setup     - Automatically create required channels. If any of these channels exist, smart bind by name.
 * Category sync  - The move command will now sync permissions with the new category. (Option to prevent sync)
 * Log commands   - Remove more in-place embeds and with plain text logs sent to the logging channel.
-* JUnit tests    - Added the backbone for adding tests and implemented tests for configuration commands.
+* JUnit tests    - Added the backbone for adding tests and implemented for several command sets.
 * Detainment     - Added commands and services that allow staff to mute users and begin a dialog.
 * De-activation  - When a user leaves a server, their report is now deactivated. No messages are propagated.
 * Fail reaction  - When a message is not delivered (currently due to deactivation), the bot will react with a red X.
 * Rejoin resume  - When a user rejoins a server with an active report, it will be reactivated and the report will be notified.
 * Channel config - Staff channels are now configurable insterad of automatic. The automatic process was too fragile.
+* Macros         - Add pre-configured messages that can be sent through reports. This prevents repeated re-typing.
 ```
 
 ### New Commands
@@ -20,7 +21,13 @@
 * Release            - Remove a user from the detainment list and unmute them.
 * AddStaffChannel    - Whitelist a channel. The bot will now respond to commands in this channel.
 * RemoveStaffChannel - Unwhitelist a channel. The bot will no longer respond to commands in this channel.
-* ListStaffChannels  - List the whitelisted channels - the channels where the bot will listen to commands.
+* ListStaffChannels  - List the whitelisted channels (the channels where the bot will listen to commands).
+* SendMacro          - Send a macro's message through a report channel.
+* AddMacro           - Add a macro with a name and its response.
+* RemoveMacro        - Removes a macro with the given name.
+* RenameMacro        - Change a macro's name.
+* EditMacro          - Change a macro's response.
+* ListMacros         - List all of the currently available macros.
 ```
 
 ### Fixes

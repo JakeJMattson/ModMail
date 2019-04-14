@@ -10,7 +10,7 @@ import net.dv8tion.jda.core.entities.*
 import net.dv8tion.jda.core.managers.ChannelManager
 import java.awt.Color
 
-@CommandSet("report")
+@CommandSet("Report")
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands {
     command("Close") {
         requiresGuild = true
