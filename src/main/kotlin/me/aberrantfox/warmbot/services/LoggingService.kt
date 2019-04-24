@@ -48,7 +48,8 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
     private fun String.pairTo(user: User) = this to user.fullName()
 
     private fun getLogConfig(guildId: String) = config.getGuildConfig(guildId)!!.loggingConfiguration
-    private fun log(logChannelId: String, message: String) = logChannelId.idToTextChannel().sendMessage(message).queue()
+    private fun log(logChannelId: String, message: String) = logChannelId.takeIf { it.isNotEmpty() }?.idToTextChannel()
+        ?.sendMessage(message)?.queue()
     private fun logEmbed(logChannelId: String, embed: MessageEmbed) = logChannelId.idToTextChannel().sendMessage(embed).queue()
 
     private fun buildEditEmbed(report: Report, old: String, new: String) =

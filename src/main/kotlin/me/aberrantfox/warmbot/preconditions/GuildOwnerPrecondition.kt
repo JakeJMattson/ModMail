@@ -5,7 +5,7 @@ import me.aberrantfox.kjdautils.internal.command.*
 import me.aberrantfox.warmbot.messages.Locale
 import net.dv8tion.jda.core.entities.TextChannel
 
-private const val Category = "configuration"
+private const val Category = "Configuration"
 
 @Precondition
 fun produceIsGuildOwnerPrecondition() = exit@{ event: CommandEvent ->

@@ -4,7 +4,7 @@ import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.*
 import me.aberrantfox.warmbot.services.isReportChannel
 
-private const val Category = "report"
+private const val Category = "Report"
 
 @Precondition
 fun produceIsReportPrecondition() = exit@{ event: CommandEvent ->
