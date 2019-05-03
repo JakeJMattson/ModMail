@@ -28,6 +28,7 @@
 * RenameMacro        - Change a macro's name.
 * EditMacro          - Change a macro's response.
 * ListMacros         - List all of the currently available macros.
+* ListCommands       - List all available commands.
 ```
 
 ### Fixes

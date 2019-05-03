@@ -115,11 +115,12 @@ To learn about commands during runtime, use the `help` command!
 
 ### Utility
 
-| Command   | Arguments | Effect                                    |
-| ------    | ------    | ------                                    |
-| Author    | (none)    | Display the author of the bot.            |
-| Ping      | (none)    | Display the status of the bot.            |
-| Source    | (none)    | Display the source code via a GitLab link.|
-| Version   | (none)    | Display the current running version.      |
-| BotInfo   | (none)    | Display a summary or bot information.     |
-| Uptime    | (none)    | Display the amount of time online.        |
+| Command      | Arguments | Effect                                    |
+| ------       | ------    | ------                                    |
+| Author       | (none)    | Display the author of the bot.            |
+| Ping         | (none)    | Display the status of the bot.            |
+| Source       | (none)    | Display the source code via a GitLab link.|
+| Version      | (none)    | Display the current running version.      |
+| BotInfo      | (none)    | Display a summary or bot information.     |
+| Uptime       | (none)    | Display the amount of time online.        |
+| ListCommands | (none)    | List all available commands.              |

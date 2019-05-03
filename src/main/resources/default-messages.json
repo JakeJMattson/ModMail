@@ -41,6 +41,7 @@
   "SOURCE_DESCRIPTION": "Display the source code via a GitLab link.",
   "BOT_INFO_DESCRIPTION": "Display the bot information.",
   "UPTIME_DESCRIPTION": "Displays how long the bot has been running.",
+  "LIST_COMMANDS_DESCRIPTION": "List all available commands.",
 
   "SET_REPORT_CATEGORY_SUCCESSFUL": "Successfully set report category to :: ${categoryName}",
   "SET_ARCHIVE_CHANNEL_SUCCESSFUL": "Successfully the archive channel to :: ${archiveChannel}",

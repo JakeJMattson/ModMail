@@ -24,6 +24,7 @@ fun main(args: Array<String>) {
             globalPath = "me.aberrantfox.warmbot"
         }
 
+        container.commands.getValue("help").category = "Utility"
         jda.presence.game = Game.playing(Locale.messages.DEFAULT_DISCORD_PRESENCE)
     }
 }
