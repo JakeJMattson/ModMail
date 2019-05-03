@@ -1,13 +1,15 @@
 package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
+import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
 import me.aberrantfox.kjdautils.extensions.stdlib.isInteger
 import me.aberrantfox.kjdautils.internal.command.ConversationService
-import me.aberrantfox.warmbot.extensions.fullContent
+import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.entities.Message
+import net.dv8tion.jda.core.entities.*
 import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent
+import java.awt.Color
 
 class ReportListener(private val reportService: ReportService, private val conversationService: ConversationService) {
     private val heldMessages = mutableMapOf<String, Message>()
@@ -30,7 +32,7 @@ class ReportListener(private val reportService: ReportService, private val conve
             sentChoice.contains(user.id) -> {
                 if (!content.isInteger()) {
                     user.sendPrivateMessage("Choice must be an number.")
-                    user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds))
+                    user.sendPrivateMessage(buildGuildChoiceEmbed(commonGuilds))
                     return
                 }
 
@@ -38,30 +40,43 @@ class ReportListener(private val reportService: ReportService, private val conve
 
                 if (selection !in 0..commonGuilds.lastIndex) {
                     user.sendPrivateMessage("Choice must be a valid guild ID.")
-                    user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds))
+                    user.sendPrivateMessage(buildGuildChoiceEmbed(commonGuilds))
                     return
                 }
 
                 val firstMessage = heldMessages.getOrDefault(user.id, message)
-                reportService.addReport(user, commonGuilds[selection], firstMessage)
+                reportService.createReport(user, commonGuilds[selection], firstMessage)
                 reportService.receiveFromUser(firstMessage)
-                user.sendPrivateMessage(reportService.buildReportOpenedEmbed(commonGuilds[selection]))
                 heldMessages.remove(user.id)
                 sentChoice.remove(user.id)
             }
             commonGuilds.size > 1 -> {
                 heldMessages[user.id] = message
-                user.sendPrivateMessage(reportService.buildGuildChoiceEmbed(commonGuilds))
+                user.sendPrivateMessage(buildGuildChoiceEmbed(commonGuilds))
                 sentChoice.add(user.id)
             }
             else -> {
                 val guild = commonGuilds.first()
                 reportService.apply {
-                    addReport(user, guild, message)
+                    createReport(user, guild, message)
                     receiveFromUser(message)
                 }
-                user.sendPrivateMessage(reportService.buildReportOpenedEmbed(guild))
             }
         }
     }
+
+    private fun buildGuildChoiceEmbed(commonGuilds: List<Guild>) =
+        embed {
+            setColor(Color.CYAN)
+            setAuthor("Please choose which server's staff you'd like to contact.")
+            setThumbnail(selfUser().avatarUrl)
+            description("Respond with the number that correlates with the desired server to get started.")
+
+            commonGuilds.forEachIndexed { index, guild ->
+                field {
+                    name = "$index) ${guild.name}"
+                    inline = false
+                }
+            }
+        }
 }

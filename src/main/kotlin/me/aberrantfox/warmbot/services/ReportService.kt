@@ -63,7 +63,7 @@ class ReportService(private val config: Configuration,
         }
     }
 
-    fun addReport(user: User, guild: Guild, firstMessage: Message) {
+    fun createReport(user: User, guild: Guild, firstMessage: Message) {
         if (getReportsFromGuild(guild.id).size == config.maxOpenReports || guild.textChannels.size >= 250) return
 
         val reportCategory = config.getGuildConfig(guild.id)?.reportCategory!!.idToCategory()
@@ -87,6 +87,8 @@ class ReportService(private val config: Configuration,
 
             user.toMember(report.reportToGuild()) ?: return message.addFailReaction()
 
+            if (safeMessage.isEmpty()) return
+
             report.reportToChannel().sendMessage(safeMessage).queue()
             report.queuedMessageId = message.id
 
@@ -104,35 +106,19 @@ class ReportService(private val config: Configuration,
         }
     }
 
-    fun buildGuildChoiceEmbed(commonGuilds: List<Guild>) =
-        embed {
-            setColor(Color.CYAN)
-            setAuthor("Please choose which server's staff you'd like to contact.")
-            setThumbnail(selfUser().avatarUrl)
-            description("Respond with the number that correlates with the desired server to get started.")
-
-            commonGuilds.forEachIndexed { index, guild ->
-                field {
-                    name = "$index) ${guild.name}"
-                    inline = false
-                }
-            }
-        }
-
-    fun buildReportOpenedEmbed(guildObject: Guild) =
-        embed {
-            setColor(Color.PINK)
-            setAuthor("You've successfully opened a report with the staff of ${guildObject.name}")
-            description("Someone will respond shortly, please be patient.")
-            setThumbnail(guildObject.iconUrl)
-        }
-
     fun writeReportToFile(report: Report) {
         if (config.recoverReports)
             File("$reportDir/${report.channelId}.json").writeText(gson.toJson(report))
     }
 
     private fun createReportChannel(channel: TextChannel, user: User, firstMessage: Message, guild: Guild) {
+        val userMessage = embed {
+            setColor(Color.PINK)
+            setAuthor("You've successfully opened a report with the staff of ${guild.name}")
+            description("Someone will respond shortly, please be patient.")
+            setThumbnail(guild.iconUrl)
+        }
+
         val openingMessage = embed {
             addField("New Report Opened!", "${user.descriptor()} :: ${user.asMention}", false)
             setThumbnail(user.avatarUrl)
@@ -141,11 +127,14 @@ class ReportService(private val config: Configuration,
 
         channel.sendMessage(openingMessage).queue()
         queuedReports.first { it.user == user.id }.messages.forEach {
-            channel.sendMessage(it).queue()
+            if (it.isNotEmpty())
+                channel.sendMessage(it).queue()
         }
 
         val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap(), firstMessage.id)
         addReport(newReport)
+
+        user.sendPrivateMessage(userMessage)
         loggingService.memberOpen(newReport)
 
         queuedReports.removeAll { it.user == user.id }
