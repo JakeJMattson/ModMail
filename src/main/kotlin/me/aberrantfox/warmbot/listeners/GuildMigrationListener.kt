@@ -2,7 +2,6 @@ package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
 import me.aberrantfox.kjdautils.api.dsl.embed
-import me.aberrantfox.warmbot.extensions.idToTextChannel
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent
 import net.dv8tion.jda.core.events.guild.member.*
@@ -23,7 +22,7 @@ class GuildMigrationListener(val configuration: Configuration, private val guild
             member.mute()
 
         if (user.hasReportChannel()) {
-            val report = user.userToReport()
+            val report = user.userToReport() ?: return
 
             report.reportToChannel().sendMessage(embed {
                 addField("User has rejoined server!", "This report is now reactivated.", false)
@@ -38,10 +37,10 @@ class GuildMigrationListener(val configuration: Configuration, private val guild
 
         if (!event.user.hasReportChannel()) return
 
-        val reportId = user.userToReport().channelId
+        val report = user.userToReport() ?: return
         val message = if (event.guild.banList.complete().any { it.user.id == user.id }) "was banned from" else "has left"
 
-        reportId.idToTextChannel().sendMessage(createResponse(message)).queue()
+        report.reportToChannel().sendMessage(createResponse(message)).queue()
     }
 
     private fun createResponse(message: String) = embed {

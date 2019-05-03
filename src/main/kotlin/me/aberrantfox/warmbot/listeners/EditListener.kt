@@ -41,7 +41,7 @@ class EditListener(private val reportService: ReportService, private val logging
 
         event.privateChannel ?: return
 
-        val report = event.user.userToReport()
+        val report = event.user.userToReport() ?: return
 
         report.channelId.idToTextChannel().sendTyping().queue()
     }
@@ -50,7 +50,7 @@ class EditListener(private val reportService: ReportService, private val logging
     fun onPrivateMessageUpdate(event: PrivateMessageUpdateEvent) {
         if (!event.author.hasReportChannel()) return
 
-        val report = event.author.userToReport()
+        val report = event.author.userToReport() ?: return
         val targetMessage = report.messages[event.messageId] ?: return
         val channel = report.channelId.idToTextChannel()
         val guildMessage = channel.getMessageById(targetMessage).complete()
@@ -68,7 +68,7 @@ class EditListener(private val reportService: ReportService, private val logging
 
             if (!user.hasReportChannel()) return
 
-            val report = user.userToReport()
+            val report = user.userToReport() ?: return
 
             if (report.queuedMessageId != null) {
                 report.messages[report.queuedMessageId!!] = event.messageId

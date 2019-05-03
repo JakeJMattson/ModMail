@@ -131,7 +131,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             if (!targetMember.isDetained())
                 return@execute it.respond("This member is not detained.")
 
-            targetMember.user.userToReport().release()
+            targetMember.user.userToReport()?.release()
             it.respond("${targetMember.fullName()} has been released.")
         }
     }
@@ -193,12 +193,12 @@ private fun hasValidState(event: CommandEvent, currentGuild: Guild, targetUser: 
     if (!targetUser.hasReportChannel())
         return true
 
-    val report = targetUser.userToReport()
+    val report = targetUser.userToReport() ?: return false
     val reportGuild = report.guildId.idToGuild()
 
     event.respond("The target user already has an open report " +
         if (reportGuild == currentGuild) {
-            val channel = targetUser.userToReport().reportToChannel().asMention
+            val channel = report.reportToChannel().asMention
             "at $channel."
         } else {
             "in ${reportGuild.name}."

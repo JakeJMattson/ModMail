@@ -29,7 +29,7 @@ private val queuedReports = Vector<QueuedReport>()
 private val reportDir = File("reports/")
 
 fun User.hasReportChannel() = reports.any { it.userId == this.id } || queuedReports.any { it.user == this.id }
-fun User.userToReport() = reports.first { it.userId == this.id }
+fun User.userToReport() = reports.firstOrNull { it.userId == this.id }
 fun MessageChannel.isReportChannel() = reports.any { it.channelId == this.id }
 fun MessageChannel.channelToReport() = reports.first { it.channelId == this.id }
 
@@ -82,15 +82,15 @@ class ReportService(private val config: Configuration,
         val userID = user.id
         val safeMessage = message.cleanContent()
 
-        if (user.hasReportChannel()) {
-            val report = user.userToReport()
+        with(user.userToReport()) {
+            this ?: return@with
 
-            user.toMember(report.reportToGuild()) ?: return message.addFailReaction()
+            user.toMember(reportToGuild()) ?: return message.addFailReaction()
 
             if (safeMessage.isEmpty()) return
 
-            report.reportToChannel().sendMessage(safeMessage).queue()
-            report.queuedMessageId = message.id
+            reportToChannel().sendMessage(safeMessage).queue()
+            queuedMessageId = message.id
 
             return
         }
