@@ -12,13 +12,13 @@ private val propFile = Properties::class.java.getResource("/properties.json").re
 private val Project = Gson().fromJson(propFile, Properties::class.java)
 private val startTime = Date()
 
-@CommandSet("utility")
+@CommandSet("Utility")
 fun utilityCommands() = commands {
     command("Ping") {
         requiresGuild = true
         description = Locale.messages.PING_DESCRIPTION
         execute {
-            it.respond("pong! (${it.jda.ping}ms)")
+            it.respond("JDA ping: ${it.jda.ping}ms\n")
         }
     }
 
@@ -82,6 +82,26 @@ fun utilityCommands() = commands {
                     name = "That's been"
                     value = "$days day(s), $hours hour(s), $minutes minute(s) and $seconds second(s)"
                 }
+            })
+        }
+    }
+
+    command("ListCommands") {
+        requiresGuild = true
+        description = Locale.messages.LIST_COMMANDS_DESCRIPTION
+        execute {
+            val commands = it.container.commands.values.groupBy { it.category }.toList()
+                .sortedBy { (_, value) -> -value.size }.toMap()
+
+            it.respond(embed {
+                commands.forEach {
+                    field {
+                        name = it.key
+                        value = it.value.sortedBy { it.name.length }.joinToString("\n") { it.name }
+                        inline = true
+                    }
+                }
+                setColor(Color.green)
             })
         }
     }

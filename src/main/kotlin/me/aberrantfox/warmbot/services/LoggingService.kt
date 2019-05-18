@@ -1,7 +1,7 @@
 package me.aberrantfox.warmbot.services
 
 import me.aberrantfox.kjdautils.api.annotation.Service
-import me.aberrantfox.kjdautils.api.dsl.embed
+import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.extensions.jda.fullName
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
@@ -36,10 +36,20 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
         if (logEdits) logEmbed(loggingChannel, buildEditEmbed(report, old, new))
     }
 
+    fun command(command: CommandEvent, additionalInfo: String = "") = getLogConfig(command.guild!!.id).apply {
+        val author = command.author.fullName()
+        val commandName = command.commandStruct.commandName
+        val channelName = command.channel.name
+
+        if (logCommands) log(loggingChannel, Locale.inject({ COMMAND_LOG },
+            "author" to author, "commandName" to commandName, "channelName" to channelName, "additionalInfo" to additionalInfo))
+    }
+
     private fun String.pairTo(user: User) = this to user.fullName()
 
     private fun getLogConfig(guildId: String) = config.getGuildConfig(guildId)!!.loggingConfiguration
-    private fun log(logChannelId: String, message: String) = logChannelId.idToTextChannel().sendMessage(message).queue()
+    private fun log(logChannelId: String, message: String) = logChannelId.takeIf { it.isNotEmpty() }?.idToTextChannel()
+        ?.sendMessage(message)?.queue()
     private fun logEmbed(logChannelId: String, embed: MessageEmbed) = logChannelId.idToTextChannel().sendMessage(embed).queue()
 
     private fun buildEditEmbed(report: Report, old: String, new: String) =

@@ -6,7 +6,7 @@ import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.TextChannel
 
-private const val Category = "owner"
+private const val Category = "Owner"
 
 @Precondition
 fun produceIsBotOwnerPrecondition(configuration: Configuration) = exit@{ event: CommandEvent ->

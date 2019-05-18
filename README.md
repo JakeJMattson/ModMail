@@ -51,7 +51,8 @@ If things become hostile, the user will have no idea who they're talking to.
 Refer to [warmbotsetup.md](warmbotsetup.md) for full setup instructions.
 
 ## Commands
-Below you can find a list and explanation of all available commands.
+Below you can find a general list and explanation of all available commands.
+To learn about commands during runtime, use the `help` command!
 
 ### Owner
 
@@ -62,6 +63,7 @@ Below you can find a list and explanation of all available commands.
 | Whitelist     | Guild ID  | Add a guild to the whitelist.         |
 | UnWhitelist   | Guild ID  | Remove a guild from the whitelist.    |
 | ShowWhitelist | (none)    | Display all guilds in the whitelist.  |
+| SetPresence   | Presence  | Set the Discord presence of the bot.  |
 
 ### Configuration
 
@@ -70,9 +72,12 @@ Below you can find a list and explanation of all available commands.
 | Command           | Arguments     | Effect                                            |
 | ------            | ------        | ------                                            |
 | SetReportCategory | Category ID   | Set the category where new reports will be opened.|
-| SetArchiveChannel | Channel ID    | Set the channel where reports will be archived.   |
+| SetArchiveChannel | Text Channel  | Set the channel where reports will be archived.   |
 | SetStaffRole      | Role name     | Set the role required to use this bot.            |
-| SetLoggingChannel | Channel ID    | Set the channel where events should be logged.    |
+| SetLoggingChannel | Text Channel  | Set the channel where events should be logged.    |
+| AddStaffChannel   | Text Channel  | Whitelist. Listen to commands in this channel.    |
+| RemoveStaffChannel| Text Channel  | Unwhitelist. Ignore commands in this channel.     |
+| ListStaffChannels | (none)        | List the whitelisted channels.                    |
 
 ### Report
 
@@ -89,19 +94,33 @@ Below you can find a list and explanation of all available commands.
 
 ### Report Helpers
 
-| Command   | Arguments | Effect                                    |
-| ------    | ------    | ------                                    |
-| Open      | User ID   | Open a report with the target user.       |
-| CloseAll  | (none)    | Close all reports in the current guild.   |
-| Info      | Channel   | Get info (ID's) from the target report.   |
+| Command   | Arguments    | Effect                                        |
+| ------    | ------       | ------                                        |
+| Open      | User         | Open a report with the target user.           |
+| Detain    | Member       | Mute a user and open a report with them.      |
+| Release   | Member       | Release a user from detainment - unmute them. |
+| CloseAll  | (none)       | Close all reports in the current guild.       |
+| Info      | Text Channel | Get info (ID's) from the target report.       |
+
+### Macros
+
+| Command     | Arguments       | Effect                                            |
+| ------      | ------          | ------                                            |
+| SendMacro   | Macro           | Send a macro's message through a report channel.  |
+| AddMacro    | Word, Sentence  | Add a macro with a name and its response.         |
+| RemoveMacro | Macro           | Removes a macro with the given name.              |
+| RenameMacro | Macro, Word     | Change a macro's name.                            | 
+| EditMacro   | Macro, Sentence | Change a macro's response.                        |
+| ListMacros  | (none)          | List all of the currently available macros.       |
 
 ### Utility
 
-| Command   | Arguments | Effect                                    |
-| ------    | ------    | ------                                    |
-| Author    | (none)    | Display the author of the bot.            |
-| Ping      | (none)    | Display the status of the bot.            |
-| Source    | (none)    | Display the source code via a GitLab link.|
-| Version   | (none)    | Display the current running version.      |
-| BotInfo   | (none)    | Display a summary or bot information.     |
-| Uptime    | (none)    | Display the amount of time online.        |
+| Command      | Arguments | Effect                                    |
+| ------       | ------    | ------                                    |
+| Author       | (none)    | Display the author of the bot.            |
+| Ping         | (none)    | Display the status of the bot.            |
+| Source       | (none)    | Display the source code via a GitLab link.|
+| Version      | (none)    | Display the current running version.      |
+| BotInfo      | (none)    | Display a summary or bot information.     |
+| Uptime       | (none)    | Display the amount of time online.        |
+| ListCommands | (none)    | List all available commands.              |

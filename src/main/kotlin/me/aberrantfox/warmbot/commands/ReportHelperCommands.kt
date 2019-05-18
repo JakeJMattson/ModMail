@@ -4,6 +4,7 @@ import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
+import me.aberrantfox.warmbot.arguments.MemberArg
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
@@ -13,54 +14,42 @@ import java.util.concurrent.ConcurrentHashMap
 
 @CommandSet("ReportHelpers")
 fun reportHelperCommands(reportService: ReportService, configuration: Configuration, loggingService: LoggingService) = commands {
-    fun openReport(event: CommandEvent, targetUser: User, message: String, guildId: String) {
+    fun openReport(event: CommandEvent, targetUser: User, guildId: String, userEmbed: MessageEmbed, reportEmbed: MessageEmbed, detain: Boolean = false) {
         val reportCategory = configuration.getGuildConfig(guildId)!!.reportCategory.idToCategory()
 
-        reportCategory.createTextChannel(targetUser.name).queue { channel ->
-            channel as TextChannel
+        targetUser.openPrivateChannel().queue {
+            it.sendMessage(userEmbed).queue({
+                reportCategory.createTextChannel(targetUser.name).queue { channel ->
+                    channel as TextChannel
 
-            val initialMessage =
-                if (message.isNotEmpty()) {
-                    targetUser.sendPrivateMessage(message, DefaultLogger())
-                    message
-                } else {
-                    Locale.messages.DEFAULT_INITIAL_MESSAGE
+                    channel.sendMessage(reportEmbed).queue()
+
+                    val newReport = Report(targetUser.id, channel.id, guildId, ConcurrentHashMap())
+                    reportService.addReport(newReport)
+
+                    if (detain) newReport.detain()
+
+                    event.respond("Success! Channel opened at: ${channel.asMention}")
+                    loggingService.staffOpen(guildId, channel.name, event.author)
                 }
-
-            channel.sendMessage(embed {
-                setColor(Color.green)
-                setThumbnail(targetUser.avatarUrl)
-                addField("New Report Opened!",
-                    "${targetUser.descriptor()} :: ${targetUser.asMention}",
-                    false)
-                addField("This report was opened by a staff member!",
-                    "${event.author.descriptor()} :: ${event.author.asMention}",
-                    false)
-                addField("Initial Message", initialMessage, false)
-            }).queue()
-
-            val newReport = Report(targetUser.id, channel.id, guildId, ConcurrentHashMap())
-            reportService.addReport(newReport)
-
-            event.respond("Channel opened at: ${channel.asMention}")
-            loggingService.staffOpen(guildId, channel.name, event.author)
+            },
+            {
+                event.respond("Unable to contact the target user. Direct messages are disabled or the bot is blocked.")
+            })
         }
     }
 
     command("Open") {
         requiresGuild = true
         description = Locale.messages.OPEN_DESCRIPTION
-        expect(arg(UserArg), arg(SentenceArg("Initial Message"), optional = true))
+        expect(arg(MemberArg), arg(SentenceArg("Initial Message"), optional = true))
         execute { event ->
-            val targetUser = event.args.component1() as User
+            val targetMember = event.args.component1() as Member
             val message = event.args.component2() as String
             val guild = event.message.guild
 
-            if (targetUser.isBot) return@execute event.respond("The target user is a bot.")
-
-            if (!guild.isMember(targetUser)) return@execute event.respond("The target user is not in this guild.")
-
-            if (targetUser.hasReportChannel()) return@execute event.respond("The target user already has an open report.")
+            if (!hasValidState(event, guild, targetMember.user))
+                return@execute
 
             val userEmbed = embed {
                 setColor(Color.green)
@@ -68,14 +57,82 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
                 addField("You've received a message from the staff of ${guild.name}!", Locale.messages.BOT_DESCRIPTION, false)
             }
 
-            targetUser.openPrivateChannel().queue {
-                it.sendMessage(userEmbed).queue({
-                    openReport(event, targetUser, message, guild.id)
-                },
-                    {
-                        event.respond("Unable to contact the target user. Direct messages are disabled.")
-                    })
+            val initialMessage =
+                if (message.isNotEmpty()) {
+                    targetMember.user.sendPrivateMessage(message, DefaultLogger())
+                    message
+                } else {
+                    Locale.messages.DEFAULT_INITIAL_MESSAGE
+                }
+
+            val reportMessage = embed {
+                setColor(Color.green)
+                setThumbnail(targetMember.user.avatarUrl)
+                addField("New Report Opened!",
+                    "${targetMember.descriptor()} :: ${targetMember.asMention}",
+                    false)
+                addField("This report was opened by a staff member!",
+                    "${event.author.descriptor()} :: ${event.author.asMention}",
+                    false)
+                addField("Initial Message", initialMessage, false)
             }
+
+            openReport(event, targetMember.user, guild.id, userEmbed, reportMessage, true)
+        }
+    }
+
+    command("Detain") {
+        requiresGuild = true
+        description = Locale.messages.DETAIN_DESCRIPTION
+        expect(MemberArg)
+        execute { event ->
+            val targetMember = event.args.component1() as Member
+            val guild = event.message.guild
+
+            targetMember.mute()
+
+            if (targetMember.isDetained())
+                return@execute event.respond("This member is already detained.")
+
+            if (!hasValidState(event, guild, targetMember.user))
+                return@execute
+
+            val userEmbed = embed {
+                setColor(Color.red)
+                setThumbnail(guild.iconUrl)
+
+                addField("You've have been detained by the staff of ${guild.name}!",
+                    Locale.messages.USER_DETAIN_MESSAGE,
+                    false)
+            }
+
+            val reportMessage = embed {
+                setColor(Color.red)
+                setThumbnail(targetMember.user.avatarUrl)
+                addField("User Detained!",
+                    "${targetMember.descriptor()} :: ${targetMember.asMention}",
+                    false)
+                addField("This user was detained by",
+                    "${event.author.descriptor()} :: ${event.author.asMention}",
+                    false)
+            }
+
+            openReport(event, targetMember.user, guild.id, userEmbed, reportMessage, true)
+        }
+    }
+
+    command("Release") {
+        requiresGuild = true
+        description = Locale.messages.RELEASE_DESCRIPTION
+        expect(MemberArg)
+        execute {
+            val targetMember = it.args.component1() as Member
+
+            if (!targetMember.isDetained())
+                return@execute it.respond("This member is not detained.")
+
+            targetMember.user.userToReport()?.release()
+            it.respond("${targetMember.fullName()} has been released.")
         }
     }
 
@@ -130,4 +187,23 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             }
         }
     }
+}
+
+private fun hasValidState(event: CommandEvent, currentGuild: Guild, targetUser: User): Boolean {
+    if (!targetUser.hasReportChannel())
+        return true
+
+    val report = targetUser.userToReport() ?: return false
+    val reportGuild = report.guildId.idToGuild()
+
+    event.respond("The target user already has an open report " +
+        if (reportGuild == currentGuild) {
+            val channel = report.reportToChannel().asMention
+            "at $channel."
+        } else {
+            "in ${reportGuild.name}."
+        }
+    )
+
+    return false
 }

@@ -1,21 +1,39 @@
 {
   "BOT_DESCRIPTION": "This is a two-way communication medium between you and the entire staff team. Reply directly into this channel and your message will be forwarded to them.",
+
   "SET_REPORT_CATEGORY_DESCRIPTION": "Set the category where new reports will be opened.",
   "SET_ARCHIVE_CHANNEL_DESCRIPTION": "Set the channel where transcribed reports will be sent when archived.",
   "SET_STAFF_ROLE_DESCRIPTION": "Specify the role required to use this bot.",
   "SET_LOGGING_CHANNEL_DESCRIPTION": "Set the channel where events will be logged.",
+  "ADD_STAFF_CHANNEL_DESCRIPTION": "Whitelist a channel. The bot will now respond to commands in this channel.",
+  "REMOVE_STAFF_CHANNEL_DESCRIPTION": "Unwhitelist a channel. The bot will no longer respond to commands in this channel.",
+  "LIST_STAFF_CHANNELS_DESCRIPTION": "List the whitelisted channels - the channels where the bot will listen to commands.",
+
   "WHITELIST_DESCRIPTION": "Add a guild to the whitelist.",
   "UNWHITELIST_DESCRIPTION": "Remove a guild from the whitelist.",
   "SHOW_WHITELIST_DESCRIPTION": "Display all guilds in the whitelist.",
+  "SET_PRESENCE_DESCRIPTION": "Set the Discord presence of the bot.",
+
   "CLOSE_DESCRIPTION": "Close the report channel that this command is invoked in. Alternatively, delete the channel.",
   "ARCHIVE_DESCRIPTION": "Archive the contents of the report as a text document in the archive channel.",
   "NOTE_DESCRIPTION": "Produce a note in a report channel in the form of an embed.",
-  "MOVE_DESCRIPTION": "Move a report from the current category to another category.",
+  "MOVE_DESCRIPTION": "Move a report from the current category to another category and sync permissions.",
   "TAG_DESCRIPTION": "Prepend a tag to the name of this report channel.",
   "RESET_TAGS_DESCRIPTION": "Reset a report channel to its original name.",
+
   "OPEN_DESCRIPTION": "Open a report with the target user and send the provided initial message.",
+  "DETAIN_DESCRIPTION": "Mute a user and open a report with them.",
+  "USER_DETAIN_MESSAGE": "You have been muted during this detainment period. Please use this time to converse with use.",
+  "RELEASE_DESCRIPTION": "Release a user from detainment and unmute them.",
   "CLOSE_ALL_DESCRIPTION": "Close all currently open reports. Can be invoked in any channel.",
   "INFO_DESCRIPTION": "Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all.",
+
+  "SEND_MACRO_DESCRIPTION": "Send a macro's message through a report channel.",
+  "ADD_MACRO_DESCRIPTION": "Add a macro which will respond with the given message when invoked by the given name.",
+  "REMOVE_MACRO_DESCRIPTION": "Removes a macro with the given name.",
+  "RENAME_MACRO_DESCRIPTION": "Change a macro's name, keeping the original response.",
+  "EDIT_MACRO_DESCRIPTION": "Change a macro's response message.",
+  "LIST_MACROS_DESCRIPTION": "List all of the currently available map.",
 
   "PING_DESCRIPTION": "Check the status of the bot.",
   "VERSION_DESCRIPTION": "Display the bot version.",
@@ -23,6 +41,7 @@
   "SOURCE_DESCRIPTION": "Display the source code via a GitLab link.",
   "BOT_INFO_DESCRIPTION": "Display the bot information.",
   "UPTIME_DESCRIPTION": "Displays how long the bot has been running.",
+  "LIST_COMMANDS_DESCRIPTION": "List all available commands.",
 
   "SET_REPORT_CATEGORY_SUCCESSFUL": "Successfully set report category to :: ${categoryName}",
   "SET_ARCHIVE_CHANNEL_SUCCESSFUL": "Successfully the archive channel to :: ${archiveChannel}",
@@ -45,6 +64,15 @@
   "STAFF_OPEN_LOG": "Staff action :: ${staff} opened ${channel}",
   "ARCHIVE_LOG": "Staff action :: ${staff} archived ${channel}",
   "CLOSE_LOG": "Staff action :: ${staff} closed ${channel}",
+  "COMMAND_LOG": "${author} invoked `${commandName}` in ${channelName}. ${additionalInfo}",
 
-  "DEFAULT_INITIAL_MESSAGE": "<No initial message provided>"
+  "DEFAULT_REPORT_CATEGORY_NAME": "WarmBot-Reports",
+  "DEFAULT_HOLDER_CATEGORY_NAME": "WarmBot",
+  "DEFAULT_ARCHIVE_CHANNEL_NAME": "Archive",
+  "DEFAULT_LOGGING_CHANNEL_NAME": "Logging",
+  "DEFAULT_COMMAND_CHANNEL_NAME": "Commands",
+  "DEFAULT_STAFF_ROLE_NAME": "Staff",
+
+  "DEFAULT_INITIAL_MESSAGE": "<No initial message provided>",
+  "DEFAULT_DISCORD_PRESENCE": "DM to contact Staff"
 }

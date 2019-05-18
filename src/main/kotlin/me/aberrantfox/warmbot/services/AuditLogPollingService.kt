@@ -1,7 +1,7 @@
 package me.aberrantfox.warmbot.services
 
 import me.aberrantfox.kjdautils.api.annotation.Service
-import me.aberrantfox.warmbot.extensions.guilds
+import me.aberrantfox.warmbot.extensions.*
 import net.dv8tion.jda.core.audit.*
 import net.dv8tion.jda.core.entities.*
 import net.dv8tion.jda.core.requests.restaction.pagination.AuditLogPaginationAction
@@ -46,7 +46,11 @@ class AuditLogPollingService(private val loggingService: LoggingService) {
                         it.getChangeByKey(AuditLogKey.CHANNEL_NAME)!!.getOldValue<String>() == channel.name
                     } ?: return@forEachInner
 
-                    loggingService.close(guild.id, channel.name, entry.user!!)
+                    with(entry.user!!) {
+                        if (this != selfUser())
+                            loggingService.close(guild.id, channel.name, this)
+                    }
+
                     channels.remove(channel)
                 }
 

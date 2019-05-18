@@ -1,7 +1,46 @@
-# **Version 2.0.1**
+# Version 3.0.0
+
+### New Features
+```
+* Auto setup     - Automatically create required channels. If any of these channels exist, smart bind by name.
+* Category sync  - The move command will now sync permissions with the new category. (Option to prevent sync)
+* Log commands   - Remove more in-place embeds and with plain text logs sent to the logging channel.
+* JUnit tests    - Added the backbone for adding tests and implemented for several command sets.
+* Detainment     - Added commands and services that allow staff to mute users and begin a dialog.
+* De-activation  - When a user leaves a server, their report is now deactivated. No messages are propagated.
+* Fail reaction  - When a message is not delivered (currently due to deactivation), the bot will react with a red X.
+* Rejoin resume  - When a user rejoins a server with an active report, it will be reactivated and the report will be notified.
+* Channel config - Staff channels are now configurable insterad of automatic. The automatic process was too fragile.
+* Macros         - Add pre-configured messages that can be sent through reports. This prevents repeated re-typing.
+```
 
 ### New Commands
+```
+* SetPresence        - Set the Discord presence of the bot.
+* Detain             - Mute a user and open a report with them.
+* Release            - Remove a user from the detainment list and unmute them.
+* AddStaffChannel    - Whitelist a channel. The bot will now respond to commands in this channel.
+* RemoveStaffChannel - Unwhitelist a channel. The bot will no longer respond to commands in this channel.
+* ListStaffChannels  - List the whitelisted channels (the channels where the bot will listen to commands).
+* SendMacro          - Send a macro's message through a report channel.
+* AddMacro           - Add a macro with a name and its response.
+* RemoveMacro        - Removes a macro with the given name.
+* RenameMacro        - Change a macro's name.
+* EditMacro          - Change a macro's response.
+* ListMacros         - List all of the currently available macros.
+* ListCommands       - List all available commands.
+```
 
+### Fixes
+```
+* Ignore (do not log) audit log events from self.
+* Remove all instances of hard-coded prefixes - config only.
+* Fix issue where the invocation of the archive command was being archived.
+```
+
+# Version 2.0.1
+
+### New Commands
 ```
 * SetLoggingChannel - Set the target logging channel during runtime.
 * Info              - Access report data such as user ID's.
@@ -11,7 +50,6 @@
 ```
 
 ### Misc Changes
-
 ```
 * Added Docker deployment script and instructions for Windows.
 * Report open embeds and edit embeds now contain a user's avatar.
@@ -27,10 +65,9 @@
 * Editing         - Edits were intentionally not being sanitized due to lack of ping risk. They are now sanitized.
 ```
 
-# **Version 2.0**
+# Version 2.0.0
 
 ### New Features
-
 ```
 * Multi-guild       - A single instance of this bot can now be used across multiple guilds.
 * Event propagation - User and staff events can now be forwarded through the bot. 
@@ -43,7 +80,6 @@
 ```
 
 ### New Commands
-
 ```
 * Whitelist     - Add a guild to the whitelist.
 * UnWhitelist   - Remove a guild from the whitelist.
@@ -64,7 +100,6 @@
 ```
 
 ### Misc Changes
-
 ```
 * The help system was upgraded through KUtils to be interactive.
 * New reports start with embeds instead of plain text.
@@ -72,16 +107,14 @@
 * Docker now available for deployments
 ```
 
-# **Version 1.5.1 and earlier**
+# Version 1.5.1 and earlier
 
 ### Features
-
 ```
 * Basic report functionality
 ```
 
 ### Commands
-
 ```
 * Author  - Display the author of the bot.
 * Source  - Display the GitLab repository link.

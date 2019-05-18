@@ -108,6 +108,9 @@ Below, you can find an explanation of each configuration field.
 	        "reportCategory": "ID of the category in which report channels will be created",
 	        "archiveChannel": "ID of channel where archived reports will be sent",
 	        "staffRoleName": "Name of the role required to use the bot",
+	        "staffChannels": [
+                "The channels in which this bot can respond to commands. Includes the report category automatically."
+                ],
 	        "loggingConfiguration": 
 	        {
                     "loggingChannel": "ID of channel where messages will be logged",
