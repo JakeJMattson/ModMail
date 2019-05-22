@@ -28,8 +28,12 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
         if (logArchive) log(loggingChannel, Locale.inject({ ARCHIVE_LOG }, "channel" to channelName, "staff".pairTo(staff)))
     }
 
-    fun close(guildId: String, channelName: String, staff: User) = getLogConfig(guildId).apply {
-        if (logClose) log(loggingChannel, Locale.inject({ CLOSE_LOG }, "channel" to channelName, "staff".pairTo(staff)))
+    fun commandClose(guildId: String, channelName: String, staff: User) = getLogConfig(guildId).apply {
+        if (logClose) log(loggingChannel, Locale.inject({ COMMAND_CLOSE_LOG }, "channel" to channelName, "staff".pairTo(staff)))
+    }
+
+    fun manualClose(guildId: String, channelName: String) = getLogConfig(guildId).apply {
+        if (logClose) log(loggingChannel, Locale.inject({ MANUAL_CLOSE_LOG }, "channel" to channelName))
     }
 
     fun edit(report: Report, old: String, new: String) = with(getLogConfig(report.guildId)) {

@@ -75,7 +75,8 @@ class Messages (
     val MEMBER_OPEN_LOG: String = "",
     val STAFF_OPEN_LOG: String = "",
     val ARCHIVE_LOG: String = "",
-    val CLOSE_LOG: String = "",
+    val COMMAND_CLOSE_LOG: String = "",
+    val MANUAL_CLOSE_LOG: String = "",
     val COMMAND_LOG: String = "",
 
     //Default setup info

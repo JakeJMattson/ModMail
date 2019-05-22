@@ -148,7 +148,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
                 val channel = report.channelId.idToTextChannel()
 
                 channel.delete().queue()
-                loggingService.close(it.guild!!.id, channel.name, it.author)
+                loggingService.commandClose(it.guild!!.id, channel.name, it.author)
             }
 
             it.respond("${reportsFromGuild.size} report(s) closed successfully.")
