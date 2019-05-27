@@ -20,24 +20,28 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
         if (logMemberOpen) log(loggingChannel, Locale.inject({ MEMBER_OPEN_LOG }, "user".pairTo(report.reportToUser())))
     }
 
-    fun staffOpen(guildId: String, channelName: String, staff: User) = getLogConfig(guildId).apply {
+    fun staffOpen(guild: Guild, channelName: String, staff: User) = getLogConfig(guild.id).apply {
         if (logStaffOpen) log(loggingChannel, Locale.inject({ STAFF_OPEN_LOG }, "channel" to channelName, "staff".pairTo(staff)))
     }
 
-    fun archive(guildId: String, channelName: String, staff: User) = getLogConfig(guildId).apply {
+    fun archive(guild: Guild, channelName: String, staff: User) = getLogConfig(guild.id).apply {
         if (logArchive) log(loggingChannel, Locale.inject({ ARCHIVE_LOG }, "channel" to channelName, "staff".pairTo(staff)))
     }
 
-    fun commandClose(guildId: String, channelName: String, staff: User) = getLogConfig(guildId).apply {
+    fun commandClose(guild: Guild, channelName: String, staff: User) = getLogConfig(guild.id).apply {
         if (logClose) log(loggingChannel, Locale.inject({ COMMAND_CLOSE_LOG }, "channel" to channelName, "staff".pairTo(staff)))
     }
 
-    fun manualClose(guildId: String, channelName: String) = getLogConfig(guildId).apply {
+    fun manualClose(guild: Guild, channelName: String) = getLogConfig(guild.id).apply {
         if (logClose) log(loggingChannel, Locale.inject({ MANUAL_CLOSE_LOG }, "channel" to channelName))
     }
 
     fun edit(report: Report, old: String, new: String) = with(getLogConfig(report.guildId)) {
         if (logEdits) logEmbed(loggingChannel, buildEditEmbed(report, old, new))
+    }
+
+    fun error(guild: Guild, message: String) = with(getLogConfig(guild.id)) {
+        log(loggingChannel, Locale.inject({ ERROR_LOG }, "message" to message))
     }
 
     fun command(command: CommandEvent, additionalInfo: String = "") = getLogConfig(command.guild!!.id).apply {

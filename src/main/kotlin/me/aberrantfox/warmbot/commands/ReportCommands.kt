@@ -21,7 +21,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
             deletionQueue.add(channel.id)
             channel.delete().queue()
-            loggingService.commandClose(it.guild!!.id, channel.name, it.author)
+            loggingService.commandClose(it.guild!!, channel.name, it.author)
         }
     }
 
@@ -43,7 +43,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
                 channel.delete().queue()
             }
 
-            loggingService.archive(it.guild!!.id, channel.name, it.author)
+            loggingService.archive(it.guild!!, channel.name, it.author)
         }
     }
 

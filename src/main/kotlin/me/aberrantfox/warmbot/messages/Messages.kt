@@ -78,6 +78,7 @@ class Messages (
     val COMMAND_CLOSE_LOG: String = "",
     val MANUAL_CLOSE_LOG: String = "",
     val COMMAND_LOG: String = "",
+    val ERROR_LOG: String = "",
 
     //Default setup info
     val DEFAULT_REPORT_CATEGORY_NAME: String = "",
