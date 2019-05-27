@@ -16,10 +16,10 @@ fun Report.detain() {
 fun Report.release(): Boolean {
     val member = this.reportToMember()
 
-    member.unmute()
-
-    if (member.isDetained())
+    if (member.isDetained()) {
         detainedReports.remove(this)
+        member.unmute()
+    }
 
     return true
 }
