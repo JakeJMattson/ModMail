@@ -66,7 +66,7 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
                 MessageEmbed.Field(if (index == 0) title else "(cont)", chunk, false)
             }
 
-            val channel = report.reportToChannel().asMention
+            val channel = report.reportToChannel()?.asMention ?: "<Failed to retrieve channel>"
             addField("Edit Detected!", "The user has performed a message edit in $channel.", false)
             createFields("Old Content", old).forEach { addField(it) }
             createFields("New Content", new).forEach { addField(it) }

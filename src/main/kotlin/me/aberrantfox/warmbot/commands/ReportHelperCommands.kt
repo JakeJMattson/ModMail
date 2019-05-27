@@ -200,7 +200,7 @@ private fun hasValidState(event: CommandEvent, currentGuild: Guild, targetUser: 
 
     event.respond("The target user already has an open report " +
         if (reportGuild == currentGuild) {
-            val channel = report.reportToChannel().asMention
+            val channel = report.reportToChannel()?.asMention ?: "<Failed to retrieve channel>"
             "at $channel."
         } else {
             "in ${reportGuild.name}."
