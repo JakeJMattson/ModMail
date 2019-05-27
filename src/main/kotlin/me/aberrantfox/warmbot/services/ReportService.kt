@@ -17,7 +17,7 @@ data class Report(val userId: String,
                   val messages: MutableMap<String, String>,
                   var queuedMessageId: String? = null) {
     fun reportToUser() = userId.idToUser()
-    fun reportToMember() = userId.idToUser().toMember(guildId.idToGuild())
+    fun reportToMember() = userId.idToUser()?.toMember(guildId.idToGuild())
     fun reportToChannel() = channelId.idToTextChannel()
     fun reportToGuild() = guildId.idToGuild()
 }

@@ -12,9 +12,10 @@ class ChannelDeletionListener(private val loggingService: LoggingService) {
         val channel = event.channel
 
         if (channel.isReportChannel()) {
+            channel.channelToReport().close()
+
             if (channel.id in deletionQueue) {
                 deletionQueue.remove(channel.id)
-                channel.channelToReport().close()
                 return
             }
 
