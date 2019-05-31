@@ -7,19 +7,19 @@ import java.util.Vector
 private val detainedReports = Vector<Report>()
 
 fun Report.detain() {
-    val member = reportToMember()
+    val member = reportToMember() ?: return
 
     if (!member.isDetained())
         detainedReports.addElement(this)
 }
 
 fun Report.release(): Boolean {
-    val member = this.reportToMember()
+    val member = this.reportToMember() ?: return false
 
-    member.unmute()
-
-    if (member.isDetained())
+    if (member.isDetained()) {
         detainedReports.remove(this)
+        member.unmute()
+    }
 
     return true
 }

@@ -4,6 +4,7 @@ import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.warmbot.arguments.*
 import me.aberrantfox.warmbot.extensions.*
+import me.aberrantfox.warmbot.listeners.deletionQueue
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
@@ -18,8 +19,9 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         execute {
             val channel = it.channel as TextChannel
 
+            deletionQueue.add(channel.id)
             channel.delete().queue()
-            loggingService.close(it.guild!!.id, channel.name, it.author)
+            loggingService.commandClose(it.guild!!, channel.name, it.author)
         }
     }
 
@@ -41,7 +43,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
                 channel.delete().queue()
             }
 
-            loggingService.archive(it.guild!!.id, channel.name, it.author)
+            loggingService.archive(it.guild!!, channel.name, it.author)
         }
     }
 

@@ -17,9 +17,9 @@ data class Report(val userId: String,
                   val messages: MutableMap<String, String>,
                   var queuedMessageId: String? = null) {
     fun reportToUser() = userId.idToUser()
-    fun reportToMember() = userId.idToUser().toMember(guildId.idToGuild())
+    fun reportToMember() = userId.idToUser()?.toMember(guildId.idToGuild())
     fun reportToChannel() = channelId.idToTextChannel()
-    fun reportToGuild() = guildId.idToGuild()
+    fun reportToGuild() = guildId.idToGuild()!!
 }
 
 data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
@@ -85,11 +85,21 @@ class ReportService(private val config: Configuration,
         with(user.userToReport()) {
             this ?: return@with
 
-            user.toMember(reportToGuild()) ?: return message.addFailReaction()
+            val guild = reportToGuild()
+            val member = user.toMember(guild) ?: return message.addFailReaction()
 
             if (safeMessage.isEmpty()) return
 
-            reportToChannel().sendMessage(safeMessage).queue()
+            val channel = reportToChannel()
+
+            if (channel == null) {
+                loggingService.error(guild,
+                    "${member.user.fullName()} sent a message in a report, but the channel did not exist.")
+
+                return@with
+            }
+
+            channel.sendMessage(safeMessage).queue()
             queuedMessageId = message.id
 
             return
@@ -148,7 +158,7 @@ fun Report.close() {
 }
 
 private fun sendReportClosedEmbed(report: Report) =
-    report.reportToUser().sendPrivateMessage(embed {
+    report.reportToUser()?.sendPrivateMessage(embed {
         setColor(Color.LIGHT_GRAY)
         setAuthor("The staff of ${report.reportToGuild().name} have closed this report.")
         setDescription("If you continue to reply, a new report will be created.")

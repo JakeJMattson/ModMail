@@ -14,7 +14,8 @@ import java.util.concurrent.ConcurrentHashMap
 
 @CommandSet("ReportHelpers")
 fun reportHelperCommands(reportService: ReportService, configuration: Configuration, loggingService: LoggingService) = commands {
-    fun openReport(event: CommandEvent, targetUser: User, guildId: String, userEmbed: MessageEmbed, reportEmbed: MessageEmbed, detain: Boolean = false) {
+    fun openReport(event: CommandEvent, targetUser: User, guild: Guild, userEmbed: MessageEmbed, reportEmbed: MessageEmbed, detain: Boolean = false) {
+        val guildId = guild.id
         val reportCategory = configuration.getGuildConfig(guildId)!!.reportCategory.idToCategory()
 
         targetUser.openPrivateChannel().queue {
@@ -30,7 +31,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
                     if (detain) newReport.detain()
 
                     event.respond("Success! Channel opened at: ${channel.asMention}")
-                    loggingService.staffOpen(guildId, channel.name, event.author)
+                    loggingService.staffOpen(guild, channel.name, event.author)
                 }
             },
             {
@@ -77,7 +78,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
                 addField("Initial Message", initialMessage, false)
             }
 
-            openReport(event, targetMember.user, guild.id, userEmbed, reportMessage, true)
+            openReport(event, targetMember.user, guild, userEmbed, reportMessage, true)
         }
     }
 
@@ -117,7 +118,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
                     false)
             }
 
-            openReport(event, targetMember.user, guild.id, userEmbed, reportMessage, true)
+            openReport(event, targetMember.user, guild, userEmbed, reportMessage, true)
         }
     }
 
@@ -140,7 +141,8 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
         requiresGuild = true
         description = Locale.messages.CLOSE_ALL_DESCRIPTION
         execute {
-            val reportsFromGuild = reportService.getReportsFromGuild(it.message.guild.id)
+            val guild = it.guild!!
+            val reportsFromGuild = reportService.getReportsFromGuild(guild.id)
 
             if (reportsFromGuild.isEmpty()) return@execute it.respond("There are no reports to close.")
 
@@ -148,7 +150,7 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
                 val channel = report.channelId.idToTextChannel()
 
                 channel.delete().queue()
-                loggingService.close(it.guild!!.id, channel.name, it.author)
+                loggingService.commandClose(guild, channel.name, it.author)
             }
 
             it.respond("${reportsFromGuild.size} report(s) closed successfully.")
@@ -198,7 +200,7 @@ private fun hasValidState(event: CommandEvent, currentGuild: Guild, targetUser: 
 
     event.respond("The target user already has an open report " +
         if (reportGuild == currentGuild) {
-            val channel = report.reportToChannel().asMention
+            val channel = report.reportToChannel()?.asMention ?: "<Failed to retrieve channel>"
             "at $channel."
         } else {
             "in ${reportGuild.name}."
