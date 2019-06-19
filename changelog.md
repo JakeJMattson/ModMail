@@ -9,6 +9,7 @@
 ```
 * AuditLogPollingService - This feature was removed. Manual channel deletions now refer you to the audit log.
 * Logging service        - The logging service will now log various errors as well as previous information.
+* Better archives        - Default notes including the user's ID are now added to all archived reports.
 ```
 
 ### Bug Fixes
@@ -16,6 +17,7 @@
 * Improper unmute  - Closing the report of a user who is not detained will no longer unmute them.
 * Migration embeds - Migration embeds are no longer triggered by user migration in a shared server.
 * Fail reaction    - Fail reactions will now be added into reports, even with no shared server.
+* Archive logging  - Archived reports will no longer trigger the manual deletion logging message.
 ```
 
 # Version 3.0.0
