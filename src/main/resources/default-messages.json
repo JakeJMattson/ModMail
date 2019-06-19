@@ -23,7 +23,7 @@
 
   "OPEN_DESCRIPTION": "Open a report with the target user and send the provided initial message.",
   "DETAIN_DESCRIPTION": "Mute a user and open a report with them.",
-  "USER_DETAIN_MESSAGE": "You have been muted during this detainment period. Please use this time to converse with use.",
+  "USER_DETAIN_MESSAGE": "You have been muted during this detainment period. Please use this time to converse with us. Send messages here to reply.",
   "RELEASE_DESCRIPTION": "Release a user from detainment and unmute them.",
   "CLOSE_ALL_DESCRIPTION": "Close all currently open reports. Can be invoked in any channel.",
   "INFO_DESCRIPTION": "Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all.",
