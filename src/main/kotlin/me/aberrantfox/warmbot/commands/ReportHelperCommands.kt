@@ -13,7 +13,8 @@ import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
 @CommandSet("ReportHelpers")
-fun reportHelperCommands(reportService: ReportService, configuration: Configuration, loggingService: LoggingService) = commands {
+fun reportHelperCommands(configuration: Configuration, reportService: ReportService,
+                         moderationService: ModerationService, loggingService: LoggingService) = commands {
 
     data class EmbedData(val color: Color, val topic: String, val openMessage: String, val initialMessage: String)
 
@@ -96,6 +97,9 @@ fun reportHelperCommands(reportService: ReportService, configuration: Configurat
             val targetMember = event.args.component1() as Member
             val message = event.args.component2() as String
             val guild = event.message.guild
+
+            if (moderationService.hasStaffRole(targetMember))
+                return@execute event.respond("You cannot detain another staff member.")
 
             targetMember.mute()
 
