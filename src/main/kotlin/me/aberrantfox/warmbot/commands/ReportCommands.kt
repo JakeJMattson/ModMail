@@ -33,13 +33,16 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
             val archiveChannel = relevantGuild.archiveChannel.idToTextChannel()
             val channel = it.channel.id.idToTextChannel()
-
+            val report = channel.channelToReport()
             val note = it.args.component1() as String
 
-            if (note.isNotEmpty())
-                archiveChannel.sendMessage(note).queue()
+            val archiveMessage = "User ID: ${report.userId}\nAdditional Information: " +
+                if (note.isNotEmpty()) note else "<None>"
+
+            archiveChannel.sendMessage(archiveMessage).queue()
 
             archiveChannel.sendFile(it.channel.archiveString().toByteArray(), "$${it.channel.name}.txt").queue {
+                deletionQueue.add(channel.id)
                 channel.delete().queue()
             }
 
