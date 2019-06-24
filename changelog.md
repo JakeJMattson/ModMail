@@ -10,6 +10,7 @@
 * AuditLogPollingService - This feature was removed. Manual channel deletions now refer you to the audit log.
 * Logging service        - The logging service will now log various errors as well as previous information.
 * Better archives        - Default notes including the user's ID are now added to all archived reports.
+* Detain command         - The detain command can now take an initial message and can no longer detain staff.
 ```
 
 ### Bug Fixes
