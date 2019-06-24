@@ -1,10 +1,24 @@
 package me.aberrantfox.warmbot.services
 
+import me.aberrantfox.kjdautils.api.annotation.Service
 import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.managers.GuildController
 import java.util.Vector
 
 private val detainedReports = Vector<Report>()
+
+@Service
+class ModerationService(val configuration: Configuration) {
+    fun hasStaffRole(member: Member): Boolean {
+        val jda = member.jda
+        val guild = member.guild
+        val guildConfiguration = configuration.getGuildConfig(guild.id) ?: return false
+        val staffRoleName = guildConfiguration.staffRoleName
+        val staffRole = jda.getRolesByName(staffRoleName, true).firstOrNull() ?: return false
+        
+        return staffRole in member.roles
+    }
+}
 
 fun Report.detain() {
     val member = reportToMember() ?: return
