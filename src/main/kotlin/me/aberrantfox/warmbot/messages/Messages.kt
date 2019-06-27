@@ -34,6 +34,7 @@ class Messages (
     val RELEASE_DESCRIPTION: String = "",
     val CLOSE_ALL_DESCRIPTION: String = "",
     val INFO_DESCRIPTION: String = "",
+    val IS_REPORT_DESCRIPTION: String = "",
 
     //Macro commands descriptions
     val SEND_MACRO_DESCRIPTION: String = "",

@@ -187,6 +187,18 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             }
         }
     }
+
+    command("isReport") {
+        requiresGuild = true
+        description = Locale.messages.IS_REPORT_DESCRIPTION
+        expect(arg(TextChannelArg("Channel"), optional = true, default = { it.channel }))
+        execute {
+            val channel = it.args.component1() as TextChannel
+            val isReport = channel.isReportChannel()
+
+            it.respond("${channel.asMention} ${if (isReport) "is" else "is not"} a valid report channel.")
+        }
+    }
 }
 
 private fun hasValidState(event: CommandEvent, currentGuild: Guild, targetUser: User): Boolean {
