@@ -2,7 +2,8 @@
 
 ### New Commands
 ```
-* 
+* IsReport    - Check whether or not a channel is a valid report channel.
+* PeekHistory - Read the target user's DM history with the bot.
 ```
 
 ### Misc Changes
