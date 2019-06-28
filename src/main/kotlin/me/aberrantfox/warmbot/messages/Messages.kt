@@ -33,7 +33,11 @@ class Messages (
     val USER_DETAIN_MESSAGE: String = "",
     val RELEASE_DESCRIPTION: String = "",
     val CLOSE_ALL_DESCRIPTION: String = "",
+
+    //Info commands descriptions
     val INFO_DESCRIPTION: String = "",
+    val IS_REPORT_DESCRIPTION: String = "",
+    val PEEK_HISTORY_DESCRIPTION: String = "",
 
     //Macro commands descriptions
     val SEND_MACRO_DESCRIPTION: String = "",

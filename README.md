@@ -58,69 +58,77 @@ To learn about commands during runtime, use the `help` command!
 
 `These commands can only be run by the owner of the bot.`
 
-| Command       | Arguments | Effect                                |
-| ------        | ------    | ------                                |
-| Whitelist     | Guild ID  | Add a guild to the whitelist.         |
-| UnWhitelist   | Guild ID  | Remove a guild from the whitelist.    |
-| ShowWhitelist | (none)    | Display all guilds in the whitelist.  |
-| SetPresence   | Presence  | Set the Discord presence of the bot.  |
+| Commands      | Arguments                                          | Description                          |
+| ------------- | -------------------------------------------------- | ------------------------------------ |
+| SetPresence   | (Playing \| Watching \| Listening), Presence Message | Set the Discord presence of the bot. |
+| ShowWhitelist | <none>                                             | Display all guilds in the whitelist. |
+| UnWhitelist   | Guild                                              | Remove a guild from the whitelist.   |
+| Whitelist     | Guild                                              | Add a guild to the whitelist.        |
 
 ### Configuration
 
 `These commands can only be run by the owner of the guild.`
 
-| Command           | Arguments     | Effect                                            |
-| ------            | ------        | ------                                            |
-| SetReportCategory | Category ID   | Set the category where new reports will be opened.|
-| SetArchiveChannel | Text Channel  | Set the channel where reports will be archived.   |
-| SetStaffRole      | Role name     | Set the role required to use this bot.            |
-| SetLoggingChannel | Text Channel  | Set the channel where events should be logged.    |
-| AddStaffChannel   | Text Channel  | Whitelist. Listen to commands in this channel.    |
-| RemoveStaffChannel| Text Channel  | Unwhitelist. Ignore commands in this channel.     |
-| ListStaffChannels | (none)        | List the whitelisted channels.                    |
+| Commands           | Arguments       | Description                                                                         |
+| ------------------ | --------------- | ----------------------------------------------------------------------------------- |
+| AddStaffChannel    | TextChannel     | Whitelist a channel. The bot will now respond to commands in this channel.          |
+| ListStaffChannels  | <none>          | List the whitelisted channels - the channels where the bot will listen to commands. |
+| RemoveStaffChannel | TextChannel     | Unwhitelist a channel. The bot will no longer respond to commands in this channel.  |
+| SetArchiveChannel  | TextChannel     | Set the channel where transcribed reports will be sent when archived.               |
+| SetLoggingChannel  | TextChannel     | Set the channel where events will be logged.                                        |
+| SetReportCategory  | ChannelCategory | Set the category where new reports will be opened.                                  |
+| SetStaffRole       | Word            | Specify the role required to use this bot.                                          |
 
 ### Report
 
 `These commands can only be run in a report channel.`
 
-| Command   | Arguments   | Effect                                    |
-| ------    | ------      | ------                                    |
-| Close     | (none)      | Close report and notify user.             |
-| Archive   | (none)      | Transcribe report to text (closes report).|
-| Note      | (none)      | Produce a note in the form of an embed.   |
-| Move      | Category ID | Move this channel to another category.    |
-| Tag       | Word / Emote| Prepend a tag to this report channel.     |
-| ResetTags | (none)      | Remove all tags from a report channel.    |
+| Commands  | Arguments                    | Description                                                                                  |
+| --------- | ---------------------------- | -------------------------------------------------------------------------------------------- |
+| Archive   | (Additional Info)            | Archive the contents of the report as a text document in the archive channel.                |
+| Close     | <none>                       | Close the report channel that this command is invoked in. Alternatively, delete the channel. |
+| Move      | Category, (Sync Permissions) | Move a report from the current category to another category and sync permissions.            |
+| Note      | Text                         | Produce a note in a report channel in the form of an embed.                                  |
+| ResetTags | <none>                       | Reset a report channel to its original name.                                                 |
+| Tag       | Word or Emote                | Prepend a tag to the name of this report channel.                                            |
 
 ### Report Helpers
 
-| Command   | Arguments    | Effect                                        |
-| ------    | ------       | ------                                        |
-| Open      | User         | Open a report with the target user.           |
-| Detain    | Member       | Mute a user and open a report with them.      |
-| Release   | Member       | Release a user from detainment - unmute them. |
-| CloseAll  | (none)       | Close all reports in the current guild.       |
-| Info      | Text Channel | Get info (ID's) from the target report.       |
+| Commands | Arguments                 | Description                                                               |
+| -------- | ------------------------- | ------------------------------------------------------------------------- |
+| CloseAll | <none>                    | Close all currently open reports. Can be invoked in any channel.          |
+| Detain   | Member, (Initial Message) | Mute a user and open a report with them.                                  |
+| Open     | Member, (Initial Message) | Open a report with the target user and send the provided initial message. |
+| Release  | Member                    | Release a user from detainment and unmute them.                           |
+
+### Info
+
+| Commands    | Arguments                 | Description                                                                                       |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------- |
+| IsReport    | (Channel)                 | Check whether or not a channel is a valid report channel.                                         |
+| PeekHistory | DiscordUser               | Read the target user's DM history with the bot.                                                   |
+| ReportInfo  | (Report Channel), (Field) | Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all. |
 
 ### Macros
 
-| Command     | Arguments       | Effect                                            |
-| ------      | ------          | ------                                            |
-| SendMacro   | Macro           | Send a macro's message through a report channel.  |
-| AddMacro    | Word, Sentence  | Add a macro with a name and its response.         |
-| RemoveMacro | Macro           | Removes a macro with the given name.              |
-| RenameMacro | Macro, Word     | Change a macro's name.                            | 
-| EditMacro   | Macro, Sentence | Change a macro's response.                        |
-| ListMacros  | (none)          | List all of the currently available macros.       |
+| Commands    | Arguments                 | Description                                                                           |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------------- |
+| AddMacro    | Macro Name, Macro Content | Add a macro which will respond with the given message when invoked by the given name. |
+| EditMacro   | Macro, New Message        | Change a macro's response message.                                                    |
+| ListMacros  | <none>                    | List all of the currently available map.                                              |
+| RemoveMacro | Macro                     | Removes a macro with the given name.                                                  |
+| RenameMacro | Macro, New Name           | Change a macro's name, keeping the original response.                                 |
+| SendMacro   | Macro                     | Send a macro's message through a report channel.                                      |
 
 ### Utility
 
-| Command      | Arguments | Effect                                    |
-| ------       | ------    | ------                                    |
-| Author       | (none)    | Display the author of the bot.            |
-| Ping         | (none)    | Display the status of the bot.            |
-| Source       | (none)    | Display the source code via a GitLab link.|
-| Version      | (none)    | Display the current running version.      |
-| BotInfo      | (none)    | Display a summary or bot information.     |
-| Uptime       | (none)    | Display the amount of time online.        |
-| ListCommands | (none)    | List all available commands.              |
+| Commands     | Arguments | Description                                 |
+| ------------ | --------- | ------------------------------------------- |
+| Author       | <none>    | Display project author.                     |
+| BotInfo      | <none>    | Display the bot information.                |
+| ListCommands | <none>    | List all available commands.                |
+| Ping         | <none>    | Check the status of the bot.                |
+| Source       | <none>    | Display the source code via a GitLab link.  |
+| Uptime       | <none>    | Displays how long the bot has been running. |
+| Version      | <none>    | Display the bot version.                    |
+| help         | (Word)    | Display a help menu                         |
