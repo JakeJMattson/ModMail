@@ -131,7 +131,7 @@ class ReportService(private val config: Configuration,
 
         val openingMessage = embed {
             addField("New Report Opened!", "${user.descriptor()} :: ${user.asMention}", false)
-            setThumbnail(user.avatarUrl)
+            setThumbnail(user.effectiveAvatarUrl)
             setColor(Color.green)
         }
 
