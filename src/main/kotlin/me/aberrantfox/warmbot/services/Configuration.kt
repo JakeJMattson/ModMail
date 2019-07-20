@@ -22,7 +22,7 @@ data class GuildConfiguration(var guildId: String = "insert-id",
                               val staffChannels: MutableList<String> = ArrayList(),
                               val loggingConfiguration: LoggingConfiguration = LoggingConfiguration())
 
-@Data("config/config.json")
+@Data("data/config/config.json")
 data class Configuration(val ownerId: String = "insert-id",
                          val prefix: String = "!",
                          val maxOpenReports: Int = 50,

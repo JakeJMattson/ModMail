@@ -7,7 +7,7 @@ import org.apache.velocity.app.VelocityEngine
 import java.io.*
 
 private const val resourcePath = "/default-messages.json"
-private val filePath = "config${File.separatorChar}messages.json"
+private const val filePath = "data/config/messages.json"
 
 private val gson = GsonBuilder().setPrettyPrinting().create()
 private val localFile = File(filePath)

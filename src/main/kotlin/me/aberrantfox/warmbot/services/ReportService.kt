@@ -26,7 +26,7 @@ data class QueuedReport(val messages: Vector<String> = Vector(), val user: Strin
 
 private val reports = Vector<Report>()
 private val queuedReports = Vector<QueuedReport>()
-private val reportDir = File("reports/")
+private val reportDir = File("data/persistence/reports/")
 
 fun User.hasReportChannel() = reports.any { it.userId == this.id } || queuedReports.any { it.user == this.id }
 fun User.userToReport() = reports.firstOrNull { it.userId == this.id }
