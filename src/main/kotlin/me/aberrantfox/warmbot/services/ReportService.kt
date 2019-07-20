@@ -1,6 +1,5 @@
 package me.aberrantfox.warmbot.services
 
-import com.google.gson.GsonBuilder
 import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
@@ -26,7 +25,6 @@ data class QueuedReport(val messages: Vector<String> = Vector(), val user: Strin
 
 private val reports = Vector<Report>()
 private val queuedReports = Vector<QueuedReport>()
-private val reportDir = File("data/persistence/reports/")
 
 fun User.hasReportChannel() = reports.any { it.userId == this.id } || queuedReports.any { it.user == this.id }
 fun User.userToReport() = reports.firstOrNull { it.userId == this.id }
@@ -37,8 +35,6 @@ fun MessageChannel.channelToReport() = reports.first { it.channelId == this.id }
 class ReportService(private val config: Configuration,
                     private val loggingService: LoggingService,
                     jdaInitializer: JdaInitializer) {
-    private val gson = GsonBuilder().setPrettyPrinting().create()
-
     init {
         loadReports()
     }
@@ -47,17 +43,17 @@ class ReportService(private val config: Configuration,
     fun getCommonGuilds(userObject: User): List<Guild> = userObject.mutualGuilds.filter { it.id in config.guildConfigurations.associateBy { it.guildId } }
 
     private fun loadReports() {
-        if (!config.recoverReports && reportDir.exists()) {
-            reportDir.deleteRecursively()
+        if (!config.recoverReports && reportsFolder.exists()) {
+            reportsFolder.deleteRecursively()
             return
         }
 
-        if (!reportDir.exists()) {
-            reportDir.mkdirs()
+        if (!reportsFolder.exists()) {
+            reportsFolder.mkdirs()
             return
         }
 
-        reportDir.listFiles().forEach {
+        reportsFolder.listFiles().forEach {
             val report = gson.fromJson(it.readText(), Report::class.java)
             if (report.reportToChannel() != null) reports.add(report) else it.delete()
         }
@@ -118,7 +114,7 @@ class ReportService(private val config: Configuration,
 
     fun writeReportToFile(report: Report) {
         if (config.recoverReports)
-            File("$reportDir/${report.channelId}.json").writeText(gson.toJson(report))
+            File("$reportsFolder/${report.channelId}.json").writeText(gson.toJson(report))
     }
 
     private fun createReportChannel(channel: TextChannel, user: User, firstMessage: Message, guild: Guild) {
@@ -166,5 +162,5 @@ private fun sendReportClosedEmbed(report: Report) =
 
 private fun removeReport(report: Report) {
     reports.remove(report)
-    reportDir.listFiles().firstOrNull { it.name.startsWith(report.channelId) }?.delete()
+    reportsFolder.listFiles().firstOrNull { it.name.startsWith(report.channelId) }?.delete()
 }

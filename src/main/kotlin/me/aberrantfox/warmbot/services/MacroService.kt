@@ -14,10 +14,14 @@ fun getGuildMacros(guildId: String) : ArrayList<Macro> {
     return macroMap.map[guildId]!!
 }
 
-val macroMap = MacroMap()
+lateinit var macroMap: MacroMap
 
 @Service
 class MacroService {
+    init {
+        macroMap = loadEmbeds()
+    }
+
     private fun ArrayList<Macro>.hasMacro(name: String) = this.any { it.name.toLowerCase() == name.toLowerCase() }
 
     fun addMacro(name: String, message: String, guild: Guild): Pair<Boolean, String> {
@@ -26,13 +30,16 @@ class MacroService {
         if (macroList.hasMacro(name)) return false to "This macro already exists!"
 
         macroList.add(Macro(name, message))
+        saveMacros()
 
         return true to "Macro successfully added!\n$name - $message"
     }
 
     fun removeMacro(macro: Macro, guild: Guild): Pair<Boolean, String> {
         val macroList = getGuildMacros(guild.id)
+
         macroList.remove(macro)
+        saveMacros()
 
         return true to "Macro successfully removed! :: ${macro.name}"
     }
@@ -47,13 +54,23 @@ class MacroService {
 
         val oldName = macro.name
         macro.name = newName
+        saveMacros()
 
         return true to "Macro name updated!\n`$oldName` renamed to `$newName`"
     }
 
     fun editMessage(macro: Macro, newMessage: String): Pair<Boolean, String> {
         macro.message = newMessage
+        saveMacros()
 
         return true to "Successfully changed macro message!"
     }
 }
+
+private fun saveMacros() = save(macroFile, macroMap)
+
+private fun loadEmbeds() =
+    if (macroFile.exists())
+        gson.fromJson(macroFile.readText(), MacroMap::class.java)
+    else
+        MacroMap()

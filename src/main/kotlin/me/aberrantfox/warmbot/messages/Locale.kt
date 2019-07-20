@@ -1,16 +1,14 @@
 package me.aberrantfox.warmbot.messages
 
 import com.google.gson.GsonBuilder
-import me.aberrantfox.warmbot.services.EnvironmentSettings
+import me.aberrantfox.warmbot.services.*
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import java.io.*
 
 private const val resourcePath = "/default-messages.json"
-private const val filePath = "data/config/messages.json"
 
 private val gson = GsonBuilder().setPrettyPrinting().create()
-private val localFile = File(filePath)
 
 object Locale {
     lateinit var messages: Messages
@@ -36,8 +34,8 @@ object Locale {
     }
 
     private fun load() = updateMessages(
-        if (localFile.exists()) {
-            localFile.readText()
+        if (messagesFile.exists()) {
+            messagesFile.readText()
         } else {
             Messages::class.java.getResource(resourcePath).readText()
         }
@@ -45,6 +43,6 @@ object Locale {
 
     private fun updateMessages(json: String) {
         messages = gson.fromJson(json, Messages::class.java)
-        localFile.writeText(json)
+        messagesFile.writeText(json)
     }
 }
