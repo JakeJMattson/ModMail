@@ -1,7 +1,6 @@
 .idea/
 WarmBot.iml
 target/
-config/
-reports/
+data/
 velocity.log
 old-conf/
