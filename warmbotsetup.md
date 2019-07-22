@@ -97,7 +97,6 @@ Below, you can find an explanation of each configuration field.
 	"ownerId": "The ID of the bot owner - has access to the whitelist commands",
 	"prefix": "The command prefix for this guild, e.g. !",
 	"maxOpenReports": "The max number of reports that can be opened in any configured guild",
-	"recoverReports": "Whether or not the reports will be recovered if the bot goes offline. Saves to disk if true",
 	"whitelist": [
 	    "ID of a guild allowed to use this bot.", 
 	    "<Additional guilds>"
@@ -115,15 +114,13 @@ Below, you can find an explanation of each configuration field.
 	        {
                     "loggingChannel": "ID of channel where messages will be logged",
                     "logEdits": "log user edits made in a report",
+                    "logCommands": "log staff command execution",
                     "logStartup": "log when the bot initializes",
                     "logMemberOpen": "log when a member open a report",
                     "logStaffOpen": "log when a staff member open a report",
                     "logArchive": "log when a report is archived",
                     "logClose": "log when a report is closed"
 	        }
-	    },
-	    {
-	        "<Additional guilds>"
 	    }
 	]
 }
