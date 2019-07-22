@@ -9,15 +9,16 @@ private const val persistenceFolder = "$rootFolder/persistence"
 private const val macrosFolder = "$persistenceFolder/macros"
 const val configFile = "$configFolder/config.json"
 
-val reportsFolder = File("$persistenceFolder/reports")
+val reportsFolder = createDirectories("$persistenceFolder/reports")
+val macroFile = File(macrosFolder, "macros.json").createParentsAndFile()
+val messagesFile = File(configFolder, "messages.json").createParentsAndFile()
 
-val macroFile = createParentsAndFile(macrosFolder, "macros.json")
-val messagesFile = createParentsAndFile(configFolder, "messages.json")
-
-private fun createParentsAndFile(parent: String, child: String): File {
-    File(parent).apply { mkdirs() }
-    return File("$parent/$child")
+private fun File.createParentsAndFile(): File {
+    createDirectories(parent)
+    return this
 }
+
+private fun createDirectories(parentPath: String) = File(parentPath).apply { mkdirs() }
 
 val gson = GsonBuilder().setPrettyPrinting().create()!!
 fun save(file: File, data: Any) = file.writeText(gson.toJson(data))

@@ -42,22 +42,11 @@ class ReportService(private val config: Configuration,
     fun getReportsFromGuild(guildId: String) = reports.filter { it.guildId == guildId }
     fun getCommonGuilds(userObject: User): List<Guild> = userObject.mutualGuilds.filter { it.id in config.guildConfigurations.associateBy { it.guildId } }
 
-    private fun loadReports() {
-        if (!config.recoverReports && reportsFolder.exists()) {
-            reportsFolder.deleteRecursively()
-            return
-        }
-
-        if (!reportsFolder.exists()) {
-            reportsFolder.mkdirs()
-            return
-        }
-
-        reportsFolder.listFiles().forEach {
+    private fun loadReports() =
+        reportsFolder.listFiles()?.forEach {
             val report = gson.fromJson(it.readText(), Report::class.java)
             if (report.reportToChannel() != null) reports.add(report) else it.delete()
         }
-    }
 
     fun createReport(user: User, guild: Guild, firstMessage: Message) {
         if (getReportsFromGuild(guild.id).size == config.maxOpenReports || guild.textChannels.size >= 250) return
@@ -112,10 +101,8 @@ class ReportService(private val config: Configuration,
         }
     }
 
-    fun writeReportToFile(report: Report) {
-        if (config.recoverReports)
-            File("$reportsFolder/${report.channelId}.json").writeText(gson.toJson(report))
-    }
+    fun writeReportToFile(report: Report) =
+        File("$reportsFolder/${report.channelId}.json").writeText(gson.toJson(report))
 
     private fun createReportChannel(channel: TextChannel, user: User, firstMessage: Message, guild: Guild) {
         val userMessage = embed {
@@ -162,5 +149,5 @@ private fun sendReportClosedEmbed(report: Report) =
 
 private fun removeReport(report: Report) {
     reports.remove(report)
-    reportsFolder.listFiles().firstOrNull { it.name.startsWith(report.channelId) }?.delete()
+    reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId) }?.delete()
 }

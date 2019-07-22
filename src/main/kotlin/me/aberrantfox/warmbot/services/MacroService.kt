@@ -19,7 +19,7 @@ lateinit var macroMap: MacroMap
 @Service
 class MacroService {
     init {
-        macroMap = loadEmbeds()
+        macroMap = loadMacros()
     }
 
     private fun ArrayList<Macro>.hasMacro(name: String) = this.any { it.name.toLowerCase() == name.toLowerCase() }
@@ -69,7 +69,7 @@ class MacroService {
 
 private fun saveMacros() = save(macroFile, macroMap)
 
-private fun loadEmbeds() =
+private fun loadMacros() =
     if (macroFile.exists())
         gson.fromJson(macroFile.readText(), MacroMap::class.java)
     else
