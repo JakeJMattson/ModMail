@@ -26,6 +26,7 @@ data class GuildConfiguration(var guildId: String = "insert-id",
 data class Configuration(val ownerId: String = "insert-id",
                          val prefix: String = "!",
                          val maxOpenReports: Int = 50,
+                         val generateDocsAtRuntime: Boolean = false,
                          val whitelist: MutableList<String> = ArrayList(),
                          val guildConfigurations: MutableList<GuildConfiguration> = mutableListOf(GuildConfiguration())) {
     fun hasGuildConfig(guildId: String) = getGuildConfig(guildId) != null
