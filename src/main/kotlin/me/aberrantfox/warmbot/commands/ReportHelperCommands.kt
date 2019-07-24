@@ -39,7 +39,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
                     val reportEmbed = embed {
                         setColor(embedData.color)
-                        setThumbnail(targetUser.avatarUrl)
+                        setThumbnail(targetUser.effectiveAvatarUrl)
                         addField(embedData.topic,
                             "${targetUser.descriptor()} :: ${targetUser.asMention}",
                             false)

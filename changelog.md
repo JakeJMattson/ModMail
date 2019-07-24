@@ -12,6 +12,8 @@
 * Logging service        - The logging service will now log various errors as well as previous information.
 * Better archives        - Default notes including the user's ID are now added to all archived reports.
 * Detain command         - The detain command can now take an initial message and can no longer detain staff.
+* Macro persistence      - Macros are now saved during runtime and loaded in on startup. 
+* Docker persistence     - Persistent data is now mapped to disk and recoverable outside a docker container.
 ```
 
 ### Bug Fixes
@@ -20,6 +22,7 @@
 * Migration embeds - Migration embeds are no longer triggered by user migration in a shared server.
 * Fail reaction    - Fail reactions will now be added into reports, even with no shared server.
 * Archive logging  - Archived reports will no longer trigger the manual deletion logging message.
+* Embed thumbnails - Fixed thumbnails in embeds where the user has a default avatar (no pfp set).
 ```
 
 # Version 3.0.0

@@ -70,7 +70,7 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
             addField("Edit Detected!", "The user has performed a message edit in $channel.", false)
             createFields("Old Content", old).forEach { addField(it) }
             createFields("New Content", new).forEach { addField(it) }
-            setThumbnail(report.reportToUser().avatarUrl)
+            setThumbnail(report.reportToUser().effectiveAvatarUrl)
             setColor(Color.YELLOW)
         }
 }
