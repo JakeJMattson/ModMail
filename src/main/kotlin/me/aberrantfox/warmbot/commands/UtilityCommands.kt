@@ -51,14 +51,13 @@ fun utilityCommands() = commands {
         description = Locale.messages.BOT_INFO_DESCRIPTION
         execute {
             it.respond(embed {
-                title(it.jda.selfUser.fullName())
-                description("A Discord report management bot.")
                 setColor(Color.green)
                 setThumbnail(it.jda.selfUser.effectiveAvatarUrl)
-                addField("Creator", Project.author, false)
-                addField("Contributors", "Elliott#0001, JakeyWakey#1569", false)
-                addField("Source", Project.repository, false)
-                addField("Version", Project.version, false)
+
+                addField(it.jda.selfUser.fullName(), "A Discord report management bot.", true)
+                addField("Version", Project.version, true)
+                addField("Contributors", "${Project.author}, Elliott#0001, JakeyWakey#1569", true)
+                addField("", "[Source code](${Project.repository})", true)
             })
         }
     }
