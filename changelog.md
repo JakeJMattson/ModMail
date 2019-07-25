@@ -14,6 +14,7 @@
 * Detain command         - The detain command can now take an initial message and can no longer detain staff.
 * Macro persistence      - Macros are now saved during runtime and loaded in on startup. 
 * Docker persistence     - Persistent data is now mapped to disk and recoverable outside a docker container.
+* Documentation service  - Add in the DocumentationService for generating documentation at runtime.
 ```
 
 ### Bug Fixes
