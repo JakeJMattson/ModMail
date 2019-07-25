@@ -63,7 +63,7 @@ fun ownerCommands(configuration: Configuration, guildService: GuildService, pers
     command("SetPresence") {
         requiresGuild = true
         description = Locale.messages.SET_PRESENCE_DESCRIPTION
-        expect(arg(ChoiceArg("Playing | Watching | Listening", "Playing", "Watching", "Listening"), optional = true, default = "Playing"),
+        expect(arg(ChoiceArg("Playing/Watching/Listening", "Playing", "Watching", "Listening"), optional = true, default = "Playing"),
             arg(SentenceArg("Presence Message")))
         execute {
             val choice = it.args.component1() as String
