@@ -50,12 +50,12 @@ fun ownerCommands(configuration: Configuration, guildService: GuildService, pers
         description = Locale.messages.SHOW_WHITELIST_DESCRIPTION
         execute {
             it.respond(
-                StringBuilder().apply {
+                buildString {
                     configuration.whitelist.forEach {
                         val guild = it.idToGuild()
                         this.appendln("${guild.id} (${guild.name})")
                     }
-                }.toString()
+                }
             )
         }
     }

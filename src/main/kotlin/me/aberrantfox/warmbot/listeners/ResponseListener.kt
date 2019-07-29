@@ -13,14 +13,14 @@ class ResponseListener(private val configuration: Configuration) {
 
         if (!event.channel.isReportChannel()) return
 
-        val message = event.message
+        with(event.message) {
+            if (contentRaw.startsWith(configuration.prefix)) return
 
-        if (message.contentRaw.startsWith(configuration.prefix)) return
+            val report = event.channel.channelToReport()
+            val member = report.reportToMember() ?: return addFailReaction()
 
-        val report = event.channel.channelToReport()
-        val member = report.reportToMember() ?: return message.addFailReaction()
-
-        member.user.sendPrivateMessage(message.fullContent())
-        report.queuedMessageId = message.id
+            member.user.sendPrivateMessage(fullContent())
+            report.queuedMessageId = id
+        }
     }
 }

@@ -13,10 +13,10 @@ fun Message.attachmentsString(): String =
 fun Message.cleanContent() = this.fullContent().trimEnd().sanitiseMentions()
 
 fun MessageEmbed.toTextString() =
-    StringBuilder().apply {
+    buildString {
         appendln(embedNotation)
         fields.forEach { append("${it.name}\n${it.value}\n") }
         appendln(embedNotation)
-    }.toString()
+    }
 
 fun Message.addFailReaction() = this.addReaction("❌").queue()

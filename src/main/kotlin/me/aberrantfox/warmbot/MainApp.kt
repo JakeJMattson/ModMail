@@ -6,6 +6,7 @@ import me.aberrantfox.kjdautils.api.startBot
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.core.entities.Game
+import kotlin.system.exitProcess
 
 private lateinit var kjdaConfig: KJDAConfiguration
 
@@ -14,8 +15,7 @@ fun main(args: Array<String>) {
 
     if(token == null || token == "UNSET") {
         println("You must specify the token with the -e flag when running via docker, or as the first command line param.")
-        System.exit(-1)
-        return
+        exitProcess(-1)
     }
 
     startBot(token) {
@@ -31,4 +31,4 @@ fun main(args: Array<String>) {
 }
 
 @Service
-class prefixLoader(configuration: Configuration) { init { kjdaConfig.prefix = configuration.prefix } }
+class PrefixLoader(configuration: Configuration) { init { kjdaConfig.prefix = configuration.prefix } }
