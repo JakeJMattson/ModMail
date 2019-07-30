@@ -3,6 +3,7 @@ package me.aberrantfox.warmbot.commands
 import com.google.gson.Gson
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.extensions.jda.fullName
+import me.aberrantfox.warmbot.extensions.toMinimalTimeString
 import me.aberrantfox.warmbot.messages.Locale
 import java.awt.Color
 import java.util.Date
@@ -63,14 +64,9 @@ fun utilityCommands() = commands {
     }
 
     command("Uptime") {
-        requiresGuild = true
-        description = Locale.messages.UPTIME_DESCRIPTION
+        description = "Displays how long the bot has been running."
         execute {
-            val milliseconds = Date().time - startTime.time
-            val seconds = (milliseconds / 1000) % 60
-            val minutes = (milliseconds / (1000 * 60)) % 60
-            val hours = (milliseconds / (1000 * 60 * 60)) % 24
-            val days = (milliseconds / (1000 * 60 * 60 * 24))
+            val seconds = (Date().time - startTime.time) / 1000
 
             it.respond(embed {
                 setColor(Color.WHITE)
@@ -79,7 +75,7 @@ fun utilityCommands() = commands {
 
                 field {
                     name = "That's been"
-                    value = "$days day(s), $hours hour(s), $minutes minute(s) and $seconds second(s)"
+                    value = seconds.toMinimalTimeString()
                 }
             })
         }
