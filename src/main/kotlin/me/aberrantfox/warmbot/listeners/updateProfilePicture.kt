@@ -12,12 +12,15 @@ class updateProfilePicture (private val reportService: ReportService, private va
 
     fun getUserUpdateAvatarEvent(event: UserUpdateAvatarEvent) {
         val userProfilePicture = event.newAvatarUrl
-        if (event.user.hasReportChannel()) {
-            val reportMessages = event.user.userToReport() ?: return
-            val channelMessageHistory = reportMessages.reportToChannel().iterableHistory.complete()
-            val newEmbedForOpenReport = channelMessageHistory.last().embeds[0].toEmbedBuilder().setThumbnail(userProfilePicture).build()
-            channelMessageHistory.last().editMessage(newEmbedForOpenReport).queue()
-        }
-    }
 
+        if (!event.user.hasReportChannel()) { return }
+
+        val reportMessages = event.user.userToReport() ?: return
+        val channelMessages = reportMessages.reportToChannel().iterableHistory.complete().last()
+
+        if (channelMessages.embeds.isEmpty()) { return }
+
+        val newReportEmbed = channelMessages.embeds[0].toEmbedBuilder().setThumbnail(userProfilePicture).build()
+        channelMessages.editMessage(newReportEmbed).queue()
+    }
 }
