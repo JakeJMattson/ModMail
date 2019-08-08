@@ -5,7 +5,7 @@ import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.api.entities.*
 import java.awt.Color
 
 @Convo
@@ -27,7 +27,7 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
                     value = "Enter the **Category ID** of the category where new reports will be created."
                 }
             }
-            expect = ChannelCategoryArg
+            expect = CategoryArg
         }
         step {
             prompt = embed {

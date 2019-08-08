@@ -5,7 +5,8 @@ import me.aberrantfox.kjdautils.internal.command.arguments.*
 import me.aberrantfox.warmbot.extensions.archiveString
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.api.entities.*
+import java.io.File
 
 @CommandSet("Info")
 fun infoCommands() = commands {
@@ -73,7 +74,8 @@ fun infoCommands() = commands {
             if (history.isEmpty())
                 return@execute it.respond("No history available.")
 
-            channel.sendFile(history, "$${user.id}.txt").queue()
+            val file = File("$${user.id}.txt").apply { writeBytes(history) }
+            channel.sendFile(file).queue()
         }
     }
 }

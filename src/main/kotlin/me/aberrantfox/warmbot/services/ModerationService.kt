@@ -1,8 +1,7 @@
 package me.aberrantfox.warmbot.services
 
 import me.aberrantfox.kjdautils.api.annotation.Service
-import net.dv8tion.jda.core.entities.Member
-import net.dv8tion.jda.core.managers.GuildController
+import net.dv8tion.jda.api.entities.Member
 import java.util.Vector
 
 private val detainedReports = Vector<Report>()
@@ -44,7 +43,7 @@ fun Member.mute(): Boolean {
     val mutedRole = guild.getRolesByName("Muted", true).firstOrNull() ?: return false
 
     if (!this.roles.contains(mutedRole))
-        GuildController(guild).addSingleRoleToMember(this, mutedRole).queue()
+        guild.modifyMemberRoles(this, roles + mutedRole).queue()
 
     return true
 }
@@ -53,7 +52,7 @@ fun Member.unmute(): Boolean{
     val mutedRole = guild.getRolesByName("Muted", true).firstOrNull() ?: return false
 
     if (roles.contains(mutedRole))
-        GuildController(guild).removeSingleRoleFromMember(this, mutedRole).queue()
+        guild.modifyMemberRoles(this, roles - mutedRole).queue()
 
     return true
 }

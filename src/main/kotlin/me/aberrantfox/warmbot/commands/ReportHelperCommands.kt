@@ -8,7 +8,7 @@ import me.aberrantfox.warmbot.arguments.MemberArg
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.api.entities.*
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
@@ -24,7 +24,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
         targetUser.openPrivateChannel().queue {
             it.sendMessage(userEmbed).queue({
-                reportCategory.createTextChannel(targetUser.name).queue { channel ->
+                reportCategory?.createTextChannel(targetUser.name)?.queue { channel ->
                     channel as TextChannel
 
                     val message = embedData.initialMessage
@@ -145,7 +145,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             if (reportsFromGuild.isEmpty()) return@execute it.respond("There are no reports to close.")
 
             reportsFromGuild.forEach { report ->
-                val channel = report.channelId.idToTextChannel()
+                val channel = report.channelId.idToTextChannel() ?: return@execute
 
                 channel.delete().queue()
                 loggingService.commandClose(guild, channel.name, it.author)
@@ -161,7 +161,7 @@ private fun hasValidState(event: CommandEvent, currentGuild: Guild, targetUser: 
         return true
 
     val report = targetUser.userToReport() ?: return false
-    val reportGuild = report.guildId.idToGuild()
+    val reportGuild = report.guildId.idToGuild() ?: return false
 
     event.respond("The target user already has an open report " +
         if (reportGuild == currentGuild) {

@@ -11,11 +11,11 @@ open class CategoryArg(override val name: String = "Category", private val guild
     override val consumptionType = ConsumptionType.Multiple
     override fun convert(arg: String, args: List<String>, event: CommandEvent): ArgumentResult {
 
-        val guild = if (guildId.isNotEmpty()) event.jda.getGuildById(guildId) else event.guild
+        val guild = if (guildId.isNotEmpty()) event.discord.jda.getGuildById(guildId) else event.guild
         guild ?: return ArgumentResult.Error("Failed to resolve guild! Pass a valid guild id to CategoryArg.")
 
         if (arg.trimToID().isLong()) {
-            val category = event.jda.getCategoryById(arg)
+            val category = event.discord.jda.getCategoryById(arg)
                 ?: return ArgumentResult.Error("Could not resolve category by ID.")
 
             return ArgumentResult.Single(category)

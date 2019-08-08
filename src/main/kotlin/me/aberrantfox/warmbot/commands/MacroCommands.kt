@@ -19,7 +19,7 @@ fun macroCommands(macroService: MacroService) = commands {
 
             it.respond(embed {
                 if (it.channel.isReportChannel()) {
-                    it.channel.channelToReport().reportToUser().sendPrivateMessage(macro.message)
+                    it.channel.channelToReport().reportToUser()?.sendPrivateMessage(macro.message)
                     addField("Macro sent by ${it.author.fullName()}!", macro.message, false)
                     setColor(Color.green)
                 }

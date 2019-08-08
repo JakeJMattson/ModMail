@@ -15,15 +15,15 @@
 | Whitelist     | Guild                                          | Add a guild to the whitelist.        |
 
 ## Configuration
-| Commands           | Arguments       | Description                                                                         |
-| ------------------ | --------------- | ----------------------------------------------------------------------------------- |
-| AddStaffChannel    | TextChannel     | Whitelist a channel. The bot will now respond to commands in this channel.          |
-| ListStaffChannels  | <none>          | List the whitelisted channels - the channels where the bot will listen to commands. |
-| RemoveStaffChannel | TextChannel     | Unwhitelist a channel. The bot will no longer respond to commands in this channel.  |
-| SetArchiveChannel  | TextChannel     | Set the channel where transcribed reports will be sent when archived.               |
-| SetLoggingChannel  | TextChannel     | Set the channel where events will be logged.                                        |
-| SetReportCategory  | ChannelCategory | Set the category where new reports will be opened.                                  |
-| SetStaffRole       | Word            | Specify the role required to use this bot.                                          |
+| Commands           | Arguments   | Description                                                                         |
+| ------------------ | ----------- | ----------------------------------------------------------------------------------- |
+| AddStaffChannel    | TextChannel | Whitelist a channel. The bot will now respond to commands in this channel.          |
+| ListStaffChannels  | <none>      | List the whitelisted channels - the channels where the bot will listen to commands. |
+| RemoveStaffChannel | TextChannel | Unwhitelist a channel. The bot will no longer respond to commands in this channel.  |
+| SetArchiveChannel  | TextChannel | Set the channel where transcribed reports will be sent when archived.               |
+| SetLoggingChannel  | TextChannel | Set the channel where events will be logged.                                        |
+| SetReportCategory  | Category    | Set the category where new reports will be opened.                                  |
+| SetStaffRole       | Word        | Specify the role required to use this bot.                                          |
 
 ## Report
 | Commands  | Arguments                    | Description                                                                                  |
@@ -47,7 +47,7 @@
 | Commands    | Arguments                 | Description                                                                                       |
 | ----------- | ------------------------- | ------------------------------------------------------------------------------------------------- |
 | IsReport    | (Channel)                 | Check whether or not a channel is a valid report channel.                                         |
-| PeekHistory | DiscordUser               | Read the target user's DM history with the bot.                                                   |
+| PeekHistory | User                      | Read the target user's DM history with the bot.                                                   |
 | ReportInfo  | (Report Channel), (Field) | Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all. |
 
 ## Macros

@@ -1,10 +1,8 @@
 package me.aberrantfox.warmbot.mocks.jda
 
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
 import me.aberrantfox.warmbot.mocks.TestConstants
-import net.dv8tion.jda.core.entities.Category
-import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.api.entities.*
 
 fun produceCategoryMock(_guild: Guild) = mockk<Category>(relaxed = true) {
     every { guild } returns _guild

@@ -19,7 +19,7 @@ fun utilityCommands() = commands {
         requiresGuild = true
         description = Locale.messages.PING_DESCRIPTION
         execute {
-            it.respond("JDA ping: ${it.jda.ping}ms\n")
+            it.respond("JDA ping: ${it.discord.jda.gatewayPing}ms\n")
         }
     }
 
@@ -53,9 +53,9 @@ fun utilityCommands() = commands {
         execute {
             it.respond(embed {
                 setColor(Color.green)
-                setThumbnail(it.jda.selfUser.effectiveAvatarUrl)
+                setThumbnail(it.discord.jda.selfUser.effectiveAvatarUrl)
 
-                addField(it.jda.selfUser.fullName(), "A Discord report management bot.", true)
+                addField(it.discord.jda.selfUser.fullName(), "A Discord report management bot.", true)
                 addField("Version", Project.version, true)
                 addField("Contributors", "${Project.author}, Elliott#0001, JakeyWakey#1569", true)
                 addField("", "[Source code](${Project.repository})", true)

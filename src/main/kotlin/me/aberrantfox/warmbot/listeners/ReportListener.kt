@@ -7,8 +7,8 @@ import me.aberrantfox.kjdautils.extensions.stdlib.isInteger
 import me.aberrantfox.kjdautils.internal.command.ConversationService
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.entities.*
-import net.dv8tion.jda.core.events.message.priv.PrivateMessageReceivedEvent
+import net.dv8tion.jda.api.entities.*
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent
 import java.awt.Color
 
 class ReportListener(private val reportService: ReportService, private val conversationService: ConversationService) {

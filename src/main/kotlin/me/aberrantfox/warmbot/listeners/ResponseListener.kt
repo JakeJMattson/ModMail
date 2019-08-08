@@ -4,7 +4,7 @@ import com.google.common.eventbus.Subscribe
 import me.aberrantfox.kjdautils.extensions.jda.sendPrivateMessage
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
 class ResponseListener(private val configuration: Configuration) {
     @Subscribe

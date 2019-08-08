@@ -4,7 +4,7 @@ import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.warmbot.extensions.*
-import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.api.entities.*
 import java.awt.Color
 import java.io.File
 import java.util.Vector
@@ -16,7 +16,7 @@ data class Report(val userId: String,
                   val messages: MutableMap<String, String>,
                   var queuedMessageId: String? = null) {
     fun reportToUser() = userId.idToUser()
-    fun reportToMember() = userId.idToUser()?.toMember(guildId.idToGuild())
+    fun reportToMember() = userId.idToUser()?.toMember(reportToGuild())
     fun reportToChannel() = channelId.idToTextChannel()
     fun reportToGuild() = guildId.idToGuild()!!
 }
@@ -51,7 +51,7 @@ class ReportService(private val config: Configuration,
     fun createReport(user: User, guild: Guild, firstMessage: Message) {
         if (getReportsFromGuild(guild.id).size == config.maxOpenReports || guild.textChannels.size >= 250) return
 
-        val reportCategory = config.getGuildConfig(guild.id)?.reportCategory!!.idToCategory()
+        val reportCategory = config.getGuildConfig(guild.id)?.reportCategory!!.idToCategory() ?: return
         reportCategory.createTextChannel(user.name).queue { channel ->
             createReportChannel(channel as TextChannel, user, firstMessage, guild)
         }

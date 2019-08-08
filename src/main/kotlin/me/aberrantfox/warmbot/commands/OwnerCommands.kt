@@ -7,7 +7,7 @@ import me.aberrantfox.warmbot.arguments.GuildArg
 import me.aberrantfox.warmbot.extensions.idToGuild
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.api.entities.*
 
 @CommandSet("Owner")
 fun ownerCommands(configuration: Configuration, prefixService: PrefixService, guildService: GuildService, persistenceService: PersistenceService) = commands {
@@ -52,7 +52,7 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
             it.respond(
                 buildString {
                     configuration.whitelist.forEach {
-                        val guild = it.idToGuild()
+                        val guild = it.idToGuild()!!
                         this.appendln("${guild.id} (${guild.name})")
                     }
                 }
@@ -82,11 +82,11 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
             val choice = it.args.component1() as String
             val text = it.args.component2() as String
 
-            it.jda.presence.game =
+            it.discord.jda.presence.activity =
                 when(choice.toLowerCase()) {
-                    "watching" -> Game.watching(text)
-                    "listening" -> Game.listening(text)
-                    else -> Game.playing(text)
+                    "watching" -> Activity.watching(text)
+                    "listening" -> Activity.listening(text)
+                    else -> Activity.playing(text)
                 }
 
             it.respond("Discord presence updated!")
