@@ -8,6 +8,7 @@
 ## Owner
 | Commands      | Arguments                                      | Description                          |
 | ------------- | ---------------------------------------------- | ------------------------------------ |
+| SetPrefix     | Prefix                                         | Set the bot's prefix.                |
 | SetPresence   | (Playing/Watching/Listening), Presence Message | Set the Discord presence of the bot. |
 | ShowWhitelist | <none>                                         | Display all guilds in the whitelist. |
 | UnWhitelist   | Guild                                          | Remove a guild from the whitelist.   |
