@@ -33,7 +33,11 @@ class Messages (
     val USER_DETAIN_MESSAGE: String = "",
     val RELEASE_DESCRIPTION: String = "",
     val CLOSE_ALL_DESCRIPTION: String = "",
+
+    //Info commands descriptions
     val INFO_DESCRIPTION: String = "",
+    val IS_REPORT_DESCRIPTION: String = "",
+    val PEEK_HISTORY_DESCRIPTION: String = "",
 
     //Macro commands descriptions
     val SEND_MACRO_DESCRIPTION: String = "",
@@ -75,8 +79,10 @@ class Messages (
     val MEMBER_OPEN_LOG: String = "",
     val STAFF_OPEN_LOG: String = "",
     val ARCHIVE_LOG: String = "",
-    val CLOSE_LOG: String = "",
+    val COMMAND_CLOSE_LOG: String = "",
+    val MANUAL_CLOSE_LOG: String = "",
     val COMMAND_LOG: String = "",
+    val ERROR_LOG: String = "",
 
     //Default setup info
     val DEFAULT_REPORT_CATEGORY_NAME: String = "",

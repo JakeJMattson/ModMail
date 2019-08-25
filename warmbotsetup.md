@@ -94,37 +94,35 @@ Below, you can find an explanation of each configuration field.
 
 ```json
 {
-	"ownerId": "The ID of the bot owner - has access to the whitelist commands",
-	"prefix": "The command prefix for this guild, e.g. !",
-	"maxOpenReports": "The max number of reports that can be opened in any configured guild",
-	"recoverReports": "Whether or not the reports will be recovered if the bot goes offline. Saves to disk if true",
-	"whitelist": [
-	    "ID of a guild allowed to use this bot.", 
-	    "<Additional guilds>"
+    "ownerId": "The ID of the bot owner - has access to the whitelist commands",
+    "prefix": "The command prefix for this guild, e.g. !",
+    "maxOpenReports": "The max number of reports that can be opened in any configured guild",
+    "generateDocsAtRuntime": "Whether or not documentation should be generated when the bot is run",
+    "whitelist": [
+        "ID of a guild allowed to use this bot.", 
+        "<Additional guilds>"
         ],
-	"guildConfigurations": [
-	    {
-	        "guildId": "ID of the guild you wish to use the bot in",
-	        "reportCategory": "ID of the category in which report channels will be created",
-	        "archiveChannel": "ID of channel where archived reports will be sent",
-	        "staffRoleName": "Name of the role required to use the bot",
-	        "staffChannels": [
+    "guildConfigurations": [
+        {
+            "guildId": "ID of the guild you wish to use the bot in",
+            "reportCategory": "ID of the category in which report channels will be created",
+            "archiveChannel": "ID of channel where archived reports will be sent",
+            "staffRoleName": "Name of the role required to use the bot",
+            "staffChannels": [
                 "The channels in which this bot can respond to commands. Includes the report category automatically."
                 ],
-	        "loggingConfiguration": 
-	        {
+            "loggingConfiguration": 
+            {
                     "loggingChannel": "ID of channel where messages will be logged",
                     "logEdits": "log user edits made in a report",
+                    "logCommands": "log staff command execution",
                     "logStartup": "log when the bot initializes",
                     "logMemberOpen": "log when a member open a report",
                     "logStaffOpen": "log when a staff member open a report",
                     "logArchive": "log when a report is archived",
                     "logClose": "log when a report is closed"
-	        }
-	    },
-	    {
-	        "<Additional guilds>"
-	    }
-	]
+            }
+        }
+    ]
 }
 ```

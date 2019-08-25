@@ -10,7 +10,7 @@ import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.core.entities.*
 
 @CommandSet("Owner")
-fun ownerCommands(configuration: Configuration, guildService: GuildService, persistenceService: PersistenceService) = commands {
+fun ownerCommands(configuration: Configuration, prefixService: PrefixService, guildService: GuildService, persistenceService: PersistenceService) = commands {
     command("Whitelist") {
         requiresGuild = true
         description = Locale.messages.WHITELIST_DESCRIPTION
@@ -50,20 +50,33 @@ fun ownerCommands(configuration: Configuration, guildService: GuildService, pers
         description = Locale.messages.SHOW_WHITELIST_DESCRIPTION
         execute {
             it.respond(
-                StringBuilder().apply {
+                buildString {
                     configuration.whitelist.forEach {
                         val guild = it.idToGuild()
                         this.appendln("${guild.id} (${guild.name})")
                     }
-                }.toString()
+                }
             )
+        }
+    }
+
+    command("SetPrefix") {
+        description = "Set the bot's prefix."
+        expect(WordArg("Prefix"))
+        execute {
+            val prefix = it.args.component1() as String
+
+            prefixService.setPrefix(prefix)
+            persistenceService.save(configuration)
+
+            it.respond("Prefix set to: $prefix")
         }
     }
 
     command("SetPresence") {
         requiresGuild = true
         description = Locale.messages.SET_PRESENCE_DESCRIPTION
-        expect(arg(ChoiceArg("Playing | Watching | Listening", "Playing", "Watching", "Listening"), optional = true, default = "Playing"),
+        expect(arg(ChoiceArg("Playing/Watching/Listening", "Playing", "Watching", "Listening"), optional = true, default = "Playing"),
             arg(SentenceArg("Presence Message")))
         execute {
             val choice = it.args.component1() as String

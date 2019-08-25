@@ -3,6 +3,7 @@ package me.aberrantfox.warmbot.commands
 import com.google.gson.Gson
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.extensions.jda.fullName
+import me.aberrantfox.warmbot.extensions.toMinimalTimeString
 import me.aberrantfox.warmbot.messages.Locale
 import java.awt.Color
 import java.util.Date
@@ -51,27 +52,21 @@ fun utilityCommands() = commands {
         description = Locale.messages.BOT_INFO_DESCRIPTION
         execute {
             it.respond(embed {
-                title(it.jda.selfUser.fullName())
-                description("A Discord report management bot.")
                 setColor(Color.green)
                 setThumbnail(it.jda.selfUser.effectiveAvatarUrl)
-                addField("Creator", Project.author, false)
-                addField("Contributors", "Elliott#0001, JakeyWakey#1569", false)
-                addField("Source", Project.repository, false)
-                addField("Version", Project.version, false)
+
+                addField(it.jda.selfUser.fullName(), "A Discord report management bot.", true)
+                addField("Version", Project.version, true)
+                addField("Contributors", "${Project.author}, Elliott#0001, JakeyWakey#1569", true)
+                addField("", "[Source code](${Project.repository})", true)
             })
         }
     }
 
     command("Uptime") {
-        requiresGuild = true
-        description = Locale.messages.UPTIME_DESCRIPTION
+        description = "Displays how long the bot has been running."
         execute {
-            val milliseconds = Date().time - startTime.time
-            val seconds = (milliseconds / 1000) % 60
-            val minutes = (milliseconds / (1000 * 60)) % 60
-            val hours = (milliseconds / (1000 * 60 * 60)) % 24
-            val days = (milliseconds / (1000 * 60 * 60 * 24))
+            val seconds = (Date().time - startTime.time) / 1000
 
             it.respond(embed {
                 setColor(Color.WHITE)
@@ -80,7 +75,7 @@ fun utilityCommands() = commands {
 
                 field {
                     name = "That's been"
-                    value = "$days day(s), $hours hour(s), $minutes minute(s) and $seconds second(s)"
+                    value = seconds.toMinimalTimeString()
                 }
             })
         }

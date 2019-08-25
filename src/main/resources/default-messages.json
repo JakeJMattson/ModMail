@@ -23,10 +23,13 @@
 
   "OPEN_DESCRIPTION": "Open a report with the target user and send the provided initial message.",
   "DETAIN_DESCRIPTION": "Mute a user and open a report with them.",
-  "USER_DETAIN_MESSAGE": "You have been muted during this detainment period. Please use this time to converse with use.",
+  "USER_DETAIN_MESSAGE": "You have been muted during this detainment period. Please use this time to converse with us. Send messages here to reply.",
   "RELEASE_DESCRIPTION": "Release a user from detainment and unmute them.",
   "CLOSE_ALL_DESCRIPTION": "Close all currently open reports. Can be invoked in any channel.",
+
   "INFO_DESCRIPTION": "Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all.",
+  "IS_REPORT_DESCRIPTION": "Check whether or not a channel is a valid report channel.",
+  "PEEK_HISTORY_DESCRIPTION": "Read the target user's DM history with the bot.",
 
   "SEND_MACRO_DESCRIPTION": "Send a macro's message through a report channel.",
   "ADD_MACRO_DESCRIPTION": "Add a macro which will respond with the given message when invoked by the given name.",
@@ -63,8 +66,10 @@
   "MEMBER_OPEN_LOG": "New report opened by ${user}",
   "STAFF_OPEN_LOG": "Staff action :: ${staff} opened ${channel}",
   "ARCHIVE_LOG": "Staff action :: ${staff} archived ${channel}",
-  "CLOSE_LOG": "Staff action :: ${staff} closed ${channel}",
+  "COMMAND_CLOSE_LOG": "Staff action :: ${staff} closed ${channel}",
+  "MANUAL_CLOSE_LOG": "Staff action :: ${channel} was deleted. See the server audit log for more information.",
   "COMMAND_LOG": "${author} invoked `${commandName}` in ${channelName}. ${additionalInfo}",
+  "ERROR_LOG": "Error :: ${message}",
 
   "DEFAULT_REPORT_CATEGORY_NAME": "WarmBot-Reports",
   "DEFAULT_HOLDER_CATEGORY_NAME": "WarmBot",

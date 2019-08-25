@@ -1,21 +1,14 @@
 package me.aberrantfox.warmbot.command
 
-import io.mockk.every
-import io.mockk.mockkObject
-import io.mockk.verify
-import me.aberrantfox.kjdautils.api.dsl.CommandEvent
-import me.aberrantfox.kjdautils.api.dsl.CommandsContainer
+import io.mockk.*
+import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.warmbot.commands.ownerCommands
 import me.aberrantfox.warmbot.extensions.executeByName
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.mocks.*
 import me.aberrantfox.warmbot.mocks.jda.guildMock
-import me.aberrantfox.warmbot.services.Configuration
-import me.aberrantfox.warmbot.services.EnvironmentSettings
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import me.aberrantfox.warmbot.services.*
+import org.junit.jupiter.api.*
 
 class OwnerCommandTest {
     companion object {
@@ -38,7 +31,7 @@ class OwnerCommandTest {
     @BeforeEach
     fun beforeEach() {
         configuration = Configuration()
-        commands = ownerCommands(configuration, guildServiceMock, persistenceServiceMock)
+        commands = ownerCommands(configuration, prefixServiceMock, guildServiceMock, persistenceServiceMock)
     }
 
     @Test
