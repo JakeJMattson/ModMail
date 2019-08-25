@@ -1,7 +1,7 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.internal.command.arguments.*
+import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.listeners.deletionQueue
 import me.aberrantfox.warmbot.messages.Locale
@@ -60,7 +60,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             it.respond(
                 embed {
                     addField("Additional Information", note, false)
-                    color(Color.ORANGE)
+                    color = Color.ORANGE
                 }
             )
 

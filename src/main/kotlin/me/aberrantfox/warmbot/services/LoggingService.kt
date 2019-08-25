@@ -63,14 +63,18 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
     private fun buildEditEmbed(report: Report, old: String, new: String) =
         embed {
             fun createFields(title: String, message: String) = message.chunked(1024).mapIndexed { index, chunk ->
-                MessageEmbed.Field(if (index == 0) title else "(cont)", chunk, false)
+                field {
+                    name = if (index == 0) title else "(cont)"
+                    value = chunk
+                    inline = false
+                }
             }
 
             val channel = report.reportToChannel()?.asMention ?: "<Failed to retrieve channel>"
             addField("Edit Detected!", "The user has performed a message edit in $channel.", false)
-            createFields("Old Content", old).forEach { addField(it) }
-            createFields("New Content", new).forEach { addField(it) }
-            setThumbnail(report.reportToUser()?.effectiveAvatarUrl)
-            setColor(Color.YELLOW)
+            createFields("Old Content", old)
+            createFields("New Content", new)
+            thumbnail = report.reportToUser()?.effectiveAvatarUrl
+            color = Color.YELLOW
         }
 }

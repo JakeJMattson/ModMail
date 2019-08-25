@@ -106,10 +106,10 @@ class ReportService(private val config: Configuration,
 
     private fun createReportChannel(channel: TextChannel, user: User, firstMessage: Message, guild: Guild) {
         val userMessage = embed {
-            setColor(Color.PINK)
-            setAuthor("You've successfully opened a report with the staff of ${guild.name}")
-            description("Someone will respond shortly, please be patient.")
-            setThumbnail(guild.iconUrl)
+            color = Color.PINK
+            title = "You've successfully opened a report with the staff of ${guild.name}"
+            description = "Someone will respond shortly, please be patient."
+            thumbnail = guild.iconUrl
         }
 
         val openingMessage = embed {
@@ -142,9 +142,9 @@ fun Report.close() {
 
 private fun sendReportClosedEmbed(report: Report) =
     report.reportToUser()?.sendPrivateMessage(embed {
-        setColor(Color.LIGHT_GRAY)
-        setAuthor("The staff of ${report.reportToGuild().name} have closed this report.")
-        setDescription("If you continue to reply, a new report will be created.")
+        color = Color.LIGHT_GRAY
+        title = "The staff of ${report.reportToGuild().name} have closed this report."
+        description = "If you continue to reply, a new report will be created."
     })
 
 private fun removeReport(report: Report) {

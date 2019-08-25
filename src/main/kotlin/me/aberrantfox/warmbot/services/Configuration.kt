@@ -24,7 +24,7 @@ data class GuildConfiguration(var guildId: String = "insert-id",
 
 @Data(configFile)
 data class Configuration(val ownerId: String = "insert-id",
-                         val prefix: String = "!",
+                         var prefix: String = "!",
                          val maxOpenReports: Int = 50,
                          val generateDocsAtRuntime: Boolean = false,
                          val whitelist: MutableList<String> = ArrayList(),

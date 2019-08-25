@@ -1,7 +1,7 @@
 package me.aberrantfox.warmbot.conversations
 
 import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.internal.command.arguments.*
+import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
@@ -17,10 +17,10 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
     steps {
         step {
             prompt = embed {
-                color(Color.magenta)
-                title("Let's Get Setup")
-                description("I'm here to help you setup this bot for use on your server. Please follow the prompts." +
-                    " If you make a mistake, you can adjust the provided values using commands later.")
+                color = Color.magenta
+                title = "Let's Get Setup"
+                description = "I'm here to help you setup this bot for use on your server. Please follow the prompts." +
+                    " If you make a mistake, you can adjust the provided values using commands later."
 
                 field {
                     name = "Report Category"
@@ -31,33 +31,33 @@ fun guildSetupConversation(config: Configuration, persistenceService: Persistenc
         }
         step {
             prompt = embed {
-                color(Color.magenta)
-                title("Archive Channel")
-                description("Enter the **Channel ID** of the channel where archived reports will be sent.")
+                color = Color.magenta
+                title = "Archive Channel"
+                description = "Enter the **Channel ID** of the channel where archived reports will be sent."
             }
             expect = TextChannelArg
         }
         step {
             prompt = embed {
-                color(Color.magenta)
-                title("Logging Channel")
-                description("Enter the **Channel ID** of the channel where information will be logged.")
+                color = Color.magenta
+                title = "Logging Channel"
+                description = "Enter the **Channel ID** of the channel where information will be logged."
             }
             expect = TextChannelArg
         }
         step {
             prompt = embed {
-                color(Color.magenta)
-                title("Command Channel")
-                description("Enter the **Channel ID** where commands can be used. More can be added later.")
+                color = Color.magenta
+                title = "Command Channel"
+                description = "Enter the **Channel ID** where commands can be used. More can be added later."
             }
             expect = TextChannelArg
         }
         step {
             prompt = embed {
-                color(Color.magenta)
-                title("Required Role")
-                setDescription("Enter the **Role Name** of the role required to give commands to this bot.")
+                color = Color.magenta
+                title = "Required Role"
+                description = "Enter the **Role Name** of the role required to give commands to this bot."
             }
             expect = RoleArg
         }

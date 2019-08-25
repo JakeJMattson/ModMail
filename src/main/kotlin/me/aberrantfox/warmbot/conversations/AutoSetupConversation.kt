@@ -1,9 +1,9 @@
 package me.aberrantfox.warmbot.conversations
 
 import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.internal.command.ConversationService
-import me.aberrantfox.kjdautils.internal.command.arguments.ChoiceArg
+import me.aberrantfox.kjdautils.internal.arguments.ChoiceArg
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
+import me.aberrantfox.kjdautils.internal.services.ConversationService
 import me.aberrantfox.warmbot.extensions.idToGuild
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
@@ -21,9 +21,9 @@ fun autoSetupConversation(configuration: Configuration, persistenceService: Pers
     steps {
         step {
             prompt = embed {
-                color(Color.magenta)
-                title("Automatic Setup")
-                description("Would you like to automatically configure this guild for use?")
+                color = Color.magenta
+                title = "Automatic Setup"
+                description = "Would you like to automatically configure this guild for use?"
                 field {
                     name = "Automatic Setup"
                     value = "An automatic setup will generate all required channels and roles for you automatically. " +

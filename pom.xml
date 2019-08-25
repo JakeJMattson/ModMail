@@ -12,9 +12,9 @@
         <project.author>Fox#0001</project.author>
         <project.repository>https://gitlab.com/AberrantFox/WarmBot</project.repository>
         <java.version>1.9</java.version>
-        <kotlin.version>1.3.21</kotlin.version>
+        <kotlin.version>1.3.50</kotlin.version>
         <slf4j.nop.version>1.7.25</slf4j.nop.version>
-        <kutils.version>0.10.0</kutils.version>
+        <kutils.version>0.10.1</kutils.version>
         <velocity.version>1.7</velocity.version>
         <surefire.version>2.22.0</surefire.version>
         <junit.version>5.4.0</junit.version>

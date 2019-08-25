@@ -2,7 +2,7 @@ package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.extensions.jda.*
-import me.aberrantfox.kjdautils.internal.command.arguments.*
+import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.warmbot.arguments.MacroArg
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*

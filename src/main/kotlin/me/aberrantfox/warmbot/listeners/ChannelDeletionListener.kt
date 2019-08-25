@@ -19,7 +19,7 @@ class ChannelDeletionListener(private val loggingService: LoggingService) {
                 return
             }
 
-            loggingService.manualClose(event.guild!!, channel.name)
+            loggingService.manualClose(event.guild, channel.name)
         }
     }
 }

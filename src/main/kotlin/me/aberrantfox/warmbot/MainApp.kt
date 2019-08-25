@@ -17,8 +17,8 @@ fun main(args: Array<String>) {
         configure {
             globalPath = "me.aberrantfox.warmbot"
 
-            registerInjectionObject(this)
-            registerInjectionObject(this@startBot.container)
+            //Move the help command from the internal "utility" category, to the local "Utility" category
+            container.commands.getValue("help").category = "Utility"
         }
 
         discord.jda.presence.activity = Activity.playing(Locale.messages.DEFAULT_DISCORD_PRESENCE)

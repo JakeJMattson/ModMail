@@ -1,12 +1,11 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.internal.command.arguments.*
+import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.warmbot.extensions.archiveString
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.entities.*
-import java.io.File
 
 @CommandSet("Info")
 fun infoCommands() = commands {
@@ -63,9 +62,6 @@ fun infoCommands() = commands {
             val user = it.args.component1() as User
             val channel = it.channel
 
-            if (user.isBot)
-                return@execute it.respond("Cannot peek the history of a bot.")
-
             val privateChannel = user.openPrivateChannel().complete()
                 ?: return@execute it.respond("Unable to establish private channel. Direct messages are disabled or the bot is blocked.")
 
@@ -74,8 +70,7 @@ fun infoCommands() = commands {
             if (history.isEmpty())
                 return@execute it.respond("No history available.")
 
-            val file = File("$${user.id}.txt").apply { writeBytes(history) }
-            channel.sendFile(file).queue()
+            channel.sendFile(history, "$${user.id}.txt").queue()
         }
     }
 }
