@@ -2,7 +2,7 @@ package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent
+import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent
 
 val deletionQueue = ArrayList<String>()
 
@@ -19,7 +19,7 @@ class ChannelDeletionListener(private val loggingService: LoggingService) {
                 return
             }
 
-            loggingService.manualClose(event.guild!!, channel.name)
+            loggingService.manualClose(event.guild, channel.name)
         }
     }
 }

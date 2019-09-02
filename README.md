@@ -51,5 +51,5 @@ If things become hostile, the user will have no idea who they're talking to.
 Refer to [warmbotsetup.md](warmbotsetup.md) for full setup instructions.
 
 ## Commands
-Refer to [Commands.md](Commands.md) for a general list and explanation of all available commands.
+Refer to [commands.md](commands.md) for a general list and explanation of all available commands.
 To learn about commands during runtime, use the `help` command!

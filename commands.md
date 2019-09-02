@@ -5,6 +5,34 @@
 | ---------- | -------------------------- |
 | (Argument) | This argument is optional. |
 
+## Configuration
+| Commands           | Arguments   | Description                                                                         |
+| ------------------ | ----------- | ----------------------------------------------------------------------------------- |
+| AddStaffChannel    | TextChannel | Whitelist a channel. The bot will now respond to commands in this channel.          |
+| ListStaffChannels  | <none>      | List the whitelisted channels - the channels where the bot will listen to commands. |
+| RemoveStaffChannel | TextChannel | Unwhitelist a channel. The bot will no longer respond to commands in this channel.  |
+| SetArchiveChannel  | TextChannel | Set the channel where transcribed reports will be sent when archived.               |
+| SetLoggingChannel  | TextChannel | Set the channel where events will be logged.                                        |
+| SetReportCategory  | Category    | Set the category where new reports will be opened.                                  |
+| SetStaffRole       | Word        | Specify the role required to use this bot.                                          |
+
+## Info
+| Commands    | Arguments                 | Description                                                                                       |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------- |
+| IsReport    | (Channel)                 | Check whether or not a channel is a valid report channel.                                         |
+| PeekHistory | User                      | Read the target user's DM history with the bot.                                                   |
+| ReportInfo  | (Report Channel), (Field) | Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all. |
+
+## Macros
+| Commands    | Arguments                 | Description                                                                           |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------------- |
+| AddMacro    | Macro Name, Macro Content | Add a macro which will respond with the given message when invoked by the given name. |
+| EditMacro   | Macro, New Message        | Change a macro's response message.                                                    |
+| ListMacros  | <none>                    | List all of the currently available map.                                              |
+| RemoveMacro | Macro                     | Removes a macro with the given name.                                                  |
+| RenameMacro | Macro, New Name           | Change a macro's name, keeping the original response.                                 |
+| SendMacro   | Macro                     | Send a macro's message through a report channel.                                      |
+
 ## Owner
 | Commands      | Arguments                                      | Description                          |
 | ------------- | ---------------------------------------------- | ------------------------------------ |
@@ -13,17 +41,6 @@
 | ShowWhitelist | <none>                                         | Display all guilds in the whitelist. |
 | UnWhitelist   | Guild                                          | Remove a guild from the whitelist.   |
 | Whitelist     | Guild                                          | Add a guild to the whitelist.        |
-
-## Configuration
-| Commands           | Arguments       | Description                                                                         |
-| ------------------ | --------------- | ----------------------------------------------------------------------------------- |
-| AddStaffChannel    | TextChannel     | Whitelist a channel. The bot will now respond to commands in this channel.          |
-| ListStaffChannels  | <none>          | List the whitelisted channels - the channels where the bot will listen to commands. |
-| RemoveStaffChannel | TextChannel     | Unwhitelist a channel. The bot will no longer respond to commands in this channel.  |
-| SetArchiveChannel  | TextChannel     | Set the channel where transcribed reports will be sent when archived.               |
-| SetLoggingChannel  | TextChannel     | Set the channel where events will be logged.                                        |
-| SetReportCategory  | ChannelCategory | Set the category where new reports will be opened.                                  |
-| SetStaffRole       | Word            | Specify the role required to use this bot.                                          |
 
 ## Report
 | Commands  | Arguments                    | Description                                                                                  |
@@ -42,23 +59,6 @@
 | Detain   | Member, (Initial Message) | Mute a user and open a report with them.                                  |
 | Open     | Member, (Initial Message) | Open a report with the target user and send the provided initial message. |
 | Release  | Member                    | Release a user from detainment and unmute them.                           |
-
-## Info
-| Commands    | Arguments                 | Description                                                                                       |
-| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------- |
-| IsReport    | (Channel)                 | Check whether or not a channel is a valid report channel.                                         |
-| PeekHistory | DiscordUser               | Read the target user's DM history with the bot.                                                   |
-| ReportInfo  | (Report Channel), (Field) | Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all. |
-
-## Macros
-| Commands    | Arguments                 | Description                                                                           |
-| ----------- | ------------------------- | ------------------------------------------------------------------------------------- |
-| AddMacro    | Macro Name, Macro Content | Add a macro which will respond with the given message when invoked by the given name. |
-| EditMacro   | Macro, New Message        | Change a macro's response message.                                                    |
-| ListMacros  | <none>                    | List all of the currently available map.                                              |
-| RemoveMacro | Macro                     | Removes a macro with the given name.                                                  |
-| RenameMacro | Macro, New Name           | Change a macro's name, keeping the original response.                                 |
-| SendMacro   | Macro                     | Send a macro's message through a report channel.                                      |
 
 ## Utility
 | Commands     | Arguments | Description                                 |

@@ -4,7 +4,7 @@ import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.warmbot.extensions.*
-import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.api.entities.*
 import java.awt.Color
 import java.io.File
 import java.util.Vector
@@ -16,7 +16,7 @@ data class Report(val userId: String,
                   val messages: MutableMap<String, String>,
                   var queuedMessageId: String? = null) {
     fun reportToUser() = userId.idToUser()
-    fun reportToMember() = userId.idToUser()?.toMember(guildId.idToGuild())
+    fun reportToMember() = userId.idToUser()?.toMember(reportToGuild())
     fun reportToChannel() = channelId.idToTextChannel()
     fun reportToGuild() = guildId.idToGuild()!!
 }
@@ -51,7 +51,7 @@ class ReportService(private val config: Configuration,
     fun createReport(user: User, guild: Guild, firstMessage: Message) {
         if (getReportsFromGuild(guild.id).size == config.maxOpenReports || guild.textChannels.size >= 250) return
 
-        val reportCategory = config.getGuildConfig(guild.id)?.reportCategory!!.idToCategory()
+        val reportCategory = config.getGuildConfig(guild.id)?.reportCategory!!.idToCategory() ?: return
         reportCategory.createTextChannel(user.name).queue { channel ->
             createReportChannel(channel as TextChannel, user, firstMessage, guild)
         }
@@ -106,10 +106,10 @@ class ReportService(private val config: Configuration,
 
     private fun createReportChannel(channel: TextChannel, user: User, firstMessage: Message, guild: Guild) {
         val userMessage = embed {
-            setColor(Color.PINK)
-            setAuthor("You've successfully opened a report with the staff of ${guild.name}")
-            description("Someone will respond shortly, please be patient.")
-            setThumbnail(guild.iconUrl)
+            color = Color.PINK
+            title = "You've successfully opened a report with the staff of ${guild.name}"
+            description = "Someone will respond shortly, please be patient."
+            thumbnail = guild.iconUrl
         }
 
         val openingMessage = embed {
@@ -142,9 +142,9 @@ fun Report.close() {
 
 private fun sendReportClosedEmbed(report: Report) =
     report.reportToUser()?.sendPrivateMessage(embed {
-        setColor(Color.LIGHT_GRAY)
-        setAuthor("The staff of ${report.reportToGuild().name} have closed this report.")
-        setDescription("If you continue to reply, a new report will be created.")
+        color = Color.LIGHT_GRAY
+        title = "The staff of ${report.reportToGuild().name} have closed this report."
+        description = "If you continue to reply, a new report will be created."
     })
 
 private fun removeReport(report: Report) {

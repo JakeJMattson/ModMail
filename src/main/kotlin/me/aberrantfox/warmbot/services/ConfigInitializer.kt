@@ -2,7 +2,7 @@ package me.aberrantfox.warmbot.services
 
 import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.warmbot.extensions.*
-import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.api.Permission
 
 @Service
 class ConfigInitializer(configuration: Configuration, jdaInitializer: JdaInitializer) {
@@ -12,8 +12,8 @@ class ConfigInitializer(configuration: Configuration, jdaInitializer: JdaInitial
 
     private fun addOverrides(config: GuildConfiguration) {
         val staffRole = config.guildId.idToGuild()?.getRolesByName(config.staffRoleName, true)?.firstOrNull() ?: return
-        val reportCategory = config.reportCategory.idToCategory()
-        val archiveChannel = config.archiveChannel.idToTextChannel()
+        val reportCategory = config.reportCategory.idToCategory() ?: return
+        val archiveChannel = config.archiveChannel.idToTextChannel() ?: return
 
         reportCategory.putPermissionOverride(staffRole).setAllow(Permission.MESSAGE_READ).queue()
         reportCategory.putPermissionOverride(reportCategory.guild.publicRole).setDeny(Permission.MESSAGE_READ).queue()

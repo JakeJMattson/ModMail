@@ -2,7 +2,7 @@ package me.aberrantfox.warmbot
 
 import me.aberrantfox.kjdautils.api.startBot
 import me.aberrantfox.warmbot.messages.Locale
-import net.dv8tion.jda.core.entities.Game
+import net.dv8tion.jda.api.entities.Activity
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -17,10 +17,10 @@ fun main(args: Array<String>) {
         configure {
             globalPath = "me.aberrantfox.warmbot"
 
-            registerInjectionObject(this)
-            registerInjectionObject(this@startBot.container)
+            //Move the help command from the internal "utility" category, to the local "Utility" category
+            container.commands.getValue("help").category = "Utility"
         }
 
-        jda.presence.game = Game.playing(Locale.messages.DEFAULT_DISCORD_PRESENCE)
+        discord.jda.presence.activity = Activity.playing(Locale.messages.DEFAULT_DISCORD_PRESENCE)
     }
 }

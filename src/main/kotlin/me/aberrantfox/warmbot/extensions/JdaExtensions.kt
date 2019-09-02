@@ -1,12 +1,13 @@
 package me.aberrantfox.warmbot.extensions
 
 import me.aberrantfox.kjdautils.api.annotation.Service
-import net.dv8tion.jda.core.JDA
+import me.aberrantfox.kjdautils.discord.Discord
+import net.dv8tion.jda.api.JDA
 
 private lateinit var jda: JDA
 
 @Service
-class JdaInitializer(jdaInstance: JDA) { init { jda = jdaInstance } }
+class JdaInitializer(discord: Discord) { init { jda = discord.jda } }
 
 fun String.idToUser() = jda.getUserById(this)
 fun String.idToTextChannel() = jda.getTextChannelById(this)

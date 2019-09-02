@@ -1,19 +1,19 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.internal.command.arguments.*
+import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
 import me.aberrantfox.warmbot.extensions.idToTextChannel
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.Configuration
-import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.api.entities.*
 
 @CommandSet("Configuration")
 fun configurationCommands(configuration: Configuration, persistenceService: PersistenceService) = commands {
     command("SetReportCategory") {
         requiresGuild = true
         description = Locale.messages.SET_REPORT_CATEGORY_DESCRIPTION
-        expect(ChannelCategoryArg)
+        expect(CategoryArg)
         execute {
             val reportCategory = it.args.component1() as Category
 
@@ -42,7 +42,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         expect(WordArg)
         execute {
             val staffRoleName = it.args.component1() as String
-            val staffRole = it.jda.getRolesByName(staffRoleName, true).firstOrNull()
+            val staffRole = it.discord.jda.getRolesByName(staffRoleName, true).firstOrNull()
 
             staffRole ?: return@execute it.respond(Locale.inject({ FAIL_COULD_NOT_FIND_ROLE }, "staffRoleName" to staffRoleName))
 
@@ -111,7 +111,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         execute {
             val staffChannels = configuration.getGuildConfig(it.message.guild.id)!!.staffChannels
 
-            it.respond(staffChannels.joinToString("\n") { "${it.idToTextChannel().asMention} - $it" })
+            it.respond(staffChannels.joinToString("\n") { "${it.idToTextChannel()?.asMention} - $it" })
         }
     }
 }

@@ -1,8 +1,8 @@
 package me.aberrantfox.warmbot.extensions
 
 import me.aberrantfox.kjdautils.extensions.stdlib.sanitiseMentions
-import net.dv8tion.jda.core.EmbedBuilder
-import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.entities.*
 
 const val embedNotation = "<---------- Embed ---------->"
 

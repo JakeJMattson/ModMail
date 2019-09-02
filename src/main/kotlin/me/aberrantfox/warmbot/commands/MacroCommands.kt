@@ -2,7 +2,7 @@ package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.extensions.jda.*
-import me.aberrantfox.kjdautils.internal.command.arguments.*
+import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.warmbot.arguments.MacroArg
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
@@ -19,7 +19,7 @@ fun macroCommands(macroService: MacroService) = commands {
 
             it.respond(embed {
                 if (it.channel.isReportChannel()) {
-                    it.channel.channelToReport().reportToUser().sendPrivateMessage(macro.message)
+                    it.channel.channelToReport().reportToUser()?.sendPrivateMessage(macro.message)
                     addField("Macro sent by ${it.author.fullName()}!", macro.message, false)
                     setColor(Color.green)
                 }

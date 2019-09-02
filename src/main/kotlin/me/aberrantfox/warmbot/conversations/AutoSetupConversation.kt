@@ -1,14 +1,13 @@
 package me.aberrantfox.warmbot.conversations
 
 import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.internal.command.ConversationService
-import me.aberrantfox.kjdautils.internal.command.arguments.ChoiceArg
+import me.aberrantfox.kjdautils.internal.arguments.ChoiceArg
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
+import me.aberrantfox.kjdautils.internal.services.ConversationService
 import me.aberrantfox.warmbot.extensions.idToGuild
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.entities.*
-import net.dv8tion.jda.core.managers.*
+import net.dv8tion.jda.api.entities.*
 import java.awt.Color
 import java.util.Timer
 import kotlin.concurrent.schedule
@@ -22,9 +21,9 @@ fun autoSetupConversation(configuration: Configuration, persistenceService: Pers
     steps {
         step {
             prompt = embed {
-                color(Color.magenta)
-                title("Automatic Setup")
-                description("Would you like to automatically configure this guild for use?")
+                color = Color.magenta
+                title = "Automatic Setup"
+                description = "Would you like to automatically configure this guild for use?"
                 field {
                     name = "Automatic Setup"
                     value = "An automatic setup will generate all required channels and roles for you automatically. " +
@@ -61,8 +60,7 @@ fun autoSetupConversation(configuration: Configuration, persistenceService: Pers
 }
 
 private fun autoSetup(config: Configuration, persistenceService: PersistenceService, stateContainer: ConversationStateContainer) = stateContainer.apply {
-    val guild = guildId.idToGuild()
-    val guildController = GuildController(guild)
+    val guild = guildId.idToGuild() ?: return@apply
     val defaults = Locale.messages
 
     val guildData = arrayListOf(
@@ -75,42 +73,42 @@ private fun autoSetup(config: Configuration, persistenceService: PersistenceServ
     )
 
     if (guildData[0] == null) {
-        guildController.createCategory(defaults.DEFAULT_HOLDER_CATEGORY_NAME).queue {
+        guild.createCategory(defaults.DEFAULT_HOLDER_CATEGORY_NAME).queue {
             guildData[0] = it
             attemptToFinalize(config, persistenceService, guildId, guildData)
         }
     }
 
     if (guildData[1] == null) {
-        guildController.createTextChannel(defaults.DEFAULT_ARCHIVE_CHANNEL_NAME).queue {
+        guild.createTextChannel(defaults.DEFAULT_ARCHIVE_CHANNEL_NAME).queue {
             guildData[1] = it
             attemptToFinalize(config, persistenceService, guildId, guildData)
         }
     }
 
     if (guildData[2] == null) {
-        guildController.createTextChannel(defaults.DEFAULT_LOGGING_CHANNEL_NAME).queue {
+        guild.createTextChannel(defaults.DEFAULT_LOGGING_CHANNEL_NAME).queue {
             guildData[2] = it
             attemptToFinalize(config, persistenceService, guildId, guildData)
         }
     }
 
     if (guildData[3] == null) {
-        guildController.createTextChannel(defaults.DEFAULT_COMMAND_CHANNEL_NAME).queue {
+        guild.createTextChannel(defaults.DEFAULT_COMMAND_CHANNEL_NAME).queue {
             guildData[3] = it
             attemptToFinalize(config, persistenceService, guildId, guildData)
         }
     }
 
     if (guildData[4] == null) {
-        guildController.createCategory(defaults.DEFAULT_REPORT_CATEGORY_NAME).queue {
+        guild.createCategory(defaults.DEFAULT_REPORT_CATEGORY_NAME).queue {
             guildData[4] = it
             attemptToFinalize(config, persistenceService, guildId, guildData)
         }
     }
 
     if (guildData[5] == null) {
-        guildController.createRole().setName(defaults.DEFAULT_STAFF_ROLE_NAME).queue {
+        guild.createRole().setName(defaults.DEFAULT_STAFF_ROLE_NAME).queue {
             guildData[5] = it
             attemptToFinalize(config, persistenceService, guildId, guildData)
         }
@@ -125,15 +123,15 @@ private fun attemptToFinalize(config: Configuration, persistenceService: Persist
         return
 
     val holderCategory = data[0] as Category
-    val archiveChannel = data[1] as Channel
-    val loggingChannel = data[2] as Channel
-    val commandChannel = data[3] as Channel
+    val archiveChannel = data[1] as GuildChannel
+    val loggingChannel = data[2] as GuildChannel
+    val commandChannel = data[3] as GuildChannel
     val reportCategory =  data[4] as Category
     val role =  data[5] as Role
 
-    ChannelManager(archiveChannel).setParent(holderCategory).queue()
-    ChannelManager(loggingChannel).setParent(holderCategory).queue()
-    ChannelManager(commandChannel).setParent(holderCategory).queue()
+    archiveChannel.manager.setParent(holderCategory).queue()
+    loggingChannel.manager.setParent(holderCategory).queue()
+    commandChannel.manager.setParent(holderCategory).queue()
 
     val staffChannels = arrayListOf(commandChannel.id)
     val logConfig = LoggingConfiguration(loggingChannel.id)

@@ -1,14 +1,12 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.internal.command.arguments.*
-import me.aberrantfox.warmbot.arguments.*
+import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.listeners.deletionQueue
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.entities.*
-import net.dv8tion.jda.core.managers.ChannelManager
+import net.dv8tion.jda.api.entities.*
 import java.awt.Color
 
 @CommandSet("Report")
@@ -31,10 +29,12 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         expect(arg(SentenceArg("Additional Info"), optional = true, default = ""))
         execute {
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
-            val archiveChannel = relevantGuild.archiveChannel.idToTextChannel()
-            val channel = it.channel.id.idToTextChannel()
+            val channel = it.channel.id.idToTextChannel()!!
             val report = channel.channelToReport()
             val note = it.args.component1() as String
+
+            val archiveChannel = relevantGuild.archiveChannel.idToTextChannel()
+                ?: return@execute it.respond("No archive channel set!")
 
             val archiveMessage = "User ID: ${report.userId}\nAdditional Information: " +
                 if (note.isNotEmpty()) note else "<None>"
@@ -60,7 +60,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             it.respond(
                 embed {
                     addField("Additional Information", note, false)
-                    color(Color.ORANGE)
+                    color = Color.ORANGE
                 }
             )
 
@@ -74,20 +74,20 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         description = Locale.messages.MOVE_DESCRIPTION
         expect(arg(CategoryArg), arg(BooleanArg("Sync Permissions"), optional = true, default = true))
         execute {
-            val channel = it.channel as Channel
-            val manager = ChannelManager(channel)
+            val channel = it.channel as GuildChannel
+            val manager = channel.manager
             val oldCategory = channel.parent
             val newCategory = it.args.component1() as Category
             val shouldSync = it.args.component2() as Boolean
 
             if (shouldSync) {
-                manager.sync(newCategory).queue { manager.setParent(newCategory).queue() }
+                manager.sync().queue { manager.setParent(newCategory).queue() }
             } else {
                 manager.setParent(newCategory).queue()
             }
 
             it.message.delete().queue()
-            val movement = "Moved from `${oldCategory.name}` to `${newCategory.name}`."
+            val movement = "Moved from `${oldCategory?.name}` to `${newCategory.name}`."
             val synced = "This channel was${if(!shouldSync) " not " else " "}synced with the new category."
             loggingService.command(it, "$movement $synced")
         }
@@ -101,7 +101,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             val tag = it.args.component1() as String
             val channel = it.channel as TextChannel
 
-            ChannelManager(channel).setName("$tag-${channel.name}").queue()
+            channel.manager.setName("$tag-${channel.name}").queue()
             it.message.delete().queue()
             loggingService.command(it, "Added tag :: $tag")
         }
@@ -112,11 +112,12 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         description = Locale.messages.RESET_TAGS_DESCRIPTION
         execute {
             val channel = it.channel as TextChannel
-            val originalName = channel.channelToReport().reportToUser().name
+            val report = channel.channelToReport()
+            val name = report.reportToUser()?.name ?: report.userId
 
-            ChannelManager(channel).setName(originalName).queue()
+            channel.manager.setName(name).queue()
             it.message.delete().queue()
-            loggingService.command(it, "Channel is now $originalName")
+            loggingService.command(it, "Channel is now $name")
         }
     }
 }
