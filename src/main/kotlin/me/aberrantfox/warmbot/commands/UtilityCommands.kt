@@ -1,20 +1,17 @@
 package me.aberrantfox.warmbot.commands
 
-import com.google.gson.Gson
 import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.extensions.jda.fullName
 import me.aberrantfox.warmbot.extensions.toMinimalTimeString
 import me.aberrantfox.warmbot.messages.Locale
+import me.aberrantfox.warmbot.services.InfoService
+import net.dv8tion.jda.api.entities.TextChannel
 import java.awt.Color
 import java.util.Date
 
-private data class Properties(val version: String, val author: String, val repository: String)
-private val propFile = Properties::class.java.getResource("/properties.json").readText()
-private val Project = Gson().fromJson(propFile, Properties::class.java)
 private val startTime = Date()
 
 @CommandSet("Utility")
-fun utilityCommands() = commands {
+fun utilityCommands(infoService: InfoService) = commands {
     command("Ping") {
         requiresGuild = true
         description = Locale.messages.PING_DESCRIPTION
@@ -23,43 +20,13 @@ fun utilityCommands() = commands {
         }
     }
 
-    command("Version") {
-        requiresGuild = true
-        description = Locale.messages.VERSION_DESCRIPTION
-        execute {
-            it.respond("**Running version**: ${Project.version}")
-        }
-    }
-
-    command("Author") {
-        requiresGuild = true
-        description = Locale.messages.AUTHOR_DESCRIPTION
-        execute {
-            it.respond("**Project author**: ${Project.author}")
-        }
-    }
-
-    command("Source") {
-        requiresGuild = true
-        description = Locale.messages.SOURCE_DESCRIPTION
-        execute {
-            it.respond(Project.repository)
-        }
-    }
-
     command("BotInfo") {
-        requiresGuild = true
         description = Locale.messages.BOT_INFO_DESCRIPTION
         execute {
-            it.respond(embed {
-                color = Color.green
-                thumbnail = it.discord.jda.selfUser.effectiveAvatarUrl
+            val channel = it.channel
 
-                addField(it.discord.jda.selfUser.fullName(), "A Discord report management bot.", true)
-                addField("Version", Project.version, true)
-                addField("Contributors", "${Project.author}, Elliott#0001, JakeyWakey#1569", true)
-                addField("", "[Source code](${Project.repository})", true)
-            })
+            if (channel is TextChannel)
+                it.respond(infoService.botInfo(channel))
         }
     }
 
