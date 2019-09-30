@@ -52,8 +52,8 @@ fun utilityCommands() = commands {
         description = Locale.messages.BOT_INFO_DESCRIPTION
         execute {
             it.respond(embed {
-                setColor(Color.green)
-                setThumbnail(it.discord.jda.selfUser.effectiveAvatarUrl)
+                color = Color.green
+                thumbnail = it.discord.jda.selfUser.effectiveAvatarUrl
 
                 addField(it.discord.jda.selfUser.fullName(), "A Discord report management bot.", true)
                 addField("Version", Project.version, true)
@@ -69,34 +69,14 @@ fun utilityCommands() = commands {
             val seconds = (Date().time - startTime.time) / 1000
 
             it.respond(embed {
-                setColor(Color.WHITE)
-                setTitle("I have been running since")
-                setDescription(startTime.toString())
+                title = "I have been running since"
+                description = startTime.toString()
+                color = Color.WHITE
 
                 field {
                     name = "That's been"
                     value = seconds.toMinimalTimeString()
                 }
-            })
-        }
-    }
-
-    command("ListCommands") {
-        requiresGuild = true
-        description = Locale.messages.LIST_COMMANDS_DESCRIPTION
-        execute {
-            val commands = it.container.commands.values.groupBy { it.category }.toList()
-                .sortedBy { (_, value) -> -value.size }.toMap()
-
-            it.respond(embed {
-                commands.forEach {
-                    field {
-                        name = it.key
-                        value = it.value.sortedBy { it.name.length }.joinToString("\n") { it.name }
-                        inline = true
-                    }
-                }
-                setColor(Color.green)
             })
         }
     }
