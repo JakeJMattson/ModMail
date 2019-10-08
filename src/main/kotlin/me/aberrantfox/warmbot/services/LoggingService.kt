@@ -1,7 +1,8 @@
 package me.aberrantfox.warmbot.services
 
 import me.aberrantfox.kjdautils.api.annotation.Service
-import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.api.dsl.command.CommandEvent
+import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.fullName
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
@@ -44,7 +45,7 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
         log(loggingChannel, Locale.inject({ ERROR_LOG }, "message" to message))
     }
 
-    fun command(command: CommandEvent, additionalInfo: String = "") = getLogConfig(command.guild!!.id).apply {
+    fun command(command: CommandEvent<*>, additionalInfo: String = "") = getLogConfig(command.guild!!.id).apply {
         val author = command.author.fullName()
         val commandName = command.commandStruct.commandName
         val channelName = command.channel.name

@@ -1,6 +1,6 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.api.dsl.command.*
 import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
 import me.aberrantfox.warmbot.extensions.idToGuild
@@ -13,9 +13,8 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
     command("Whitelist") {
         requiresGuild = true
         description = Locale.messages.WHITELIST_DESCRIPTION
-        expect(GuildArg)
-        execute {
-            val targetGuild = it.args.component1() as Guild
+        execute(GuildArg) {
+            val targetGuild = it.args.component1()
 
             if (configuration.whitelist.contains(targetGuild.id))
                 return@execute it.respond("${targetGuild.name} (${targetGuild.id}) is already whitelisted.")
@@ -29,8 +28,7 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
     command("UnWhitelist") {
         requiresGuild = true
         description = Locale.messages.UNWHITELIST_DESCRIPTION
-        expect(GuildArg)
-        execute {
+        execute(GuildArg) {
             val targetGuild = it.args.component1() as Guild
 
             if (!configuration.whitelist.contains(targetGuild.id))
@@ -61,9 +59,8 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
 
     command("SetPrefix") {
         description = "Set the bot's prefix."
-        expect(WordArg("Prefix"))
-        execute {
-            val prefix = it.args.component1() as String
+        execute(WordArg("Prefix")) {
+            val prefix = it.args.component1()
 
             prefixService.setPrefix(prefix)
             persistenceService.save(configuration)
@@ -75,9 +72,8 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
     command("SetPresence") {
         requiresGuild = true
         description = Locale.messages.SET_PRESENCE_DESCRIPTION
-        expect(arg(ChoiceArg("Playing/Watching/Listening", "Playing", "Watching", "Listening"), optional = true, default = "Playing"),
-            arg(SentenceArg("Presence Message")))
-        execute {
+        execute(ChoiceArg("Playing/Watching/Listening", "Playing", "Watching", "Listening").makeOptional("Playing"),
+            SentenceArg("Presence Message"))  {
             val choice = it.args.component1() as String
             val text = it.args.component2() as String
 

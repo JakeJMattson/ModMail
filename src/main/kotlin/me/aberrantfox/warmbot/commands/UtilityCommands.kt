@@ -1,6 +1,7 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.api.dsl.command.*
+import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.warmbot.extensions.toMinimalTimeString
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.InfoService

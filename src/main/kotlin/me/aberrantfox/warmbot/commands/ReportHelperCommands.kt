@@ -1,6 +1,7 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.api.dsl.command.*
+import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
@@ -17,7 +18,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
     data class EmbedData(val color: Color, val topic: String, val openMessage: String, val initialMessage: String)
 
-    fun openReport(event: CommandEvent, targetUser: User, guild: Guild, userEmbed: MessageEmbed, embedData: EmbedData, detain: Boolean = false) {
+    fun openReport(event: CommandEvent<*>, targetUser: User, guild: Guild, userEmbed: MessageEmbed, embedData: EmbedData, detain: Boolean = false) {
         val guildId = guild.id
         val reportCategory = configuration.getGuildConfig(guildId)!!.reportCategory.idToCategory()
 
@@ -68,10 +69,9 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     command("Open") {
         requiresGuild = true
         description = Locale.messages.OPEN_DESCRIPTION
-        expect(arg(MemberArg), arg(SentenceArg("Initial Message"), optional = true))
-        execute { event ->
-            val targetMember = event.args.component1() as Member
-            val message = event.args.component2() as String
+        execute(MemberArg, SentenceArg("Initial Message").makeOptional("")) { event ->
+            val targetMember = event.args.component1()
+            val message = event.args.component2()
             val guild = event.message.guild
 
             if (!hasValidState(event, guild, targetMember.user))
@@ -91,10 +91,9 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     command("Detain") {
         requiresGuild = true
         description = Locale.messages.DETAIN_DESCRIPTION
-        expect(arg(MemberArg), arg(SentenceArg("Initial Message"), optional = true))
-        execute { event ->
-            val targetMember = event.args.component1() as Member
-            val message = event.args.component2() as String
+        execute(MemberArg, SentenceArg("Initial Message").makeOptional("")) { event ->
+            val targetMember = event.args.component1()
+            val message = event.args.component2()
             val guild = event.message.guild
 
             if (moderationService.hasStaffRole(targetMember))
@@ -122,8 +121,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     command("Release") {
         requiresGuild = true
         description = Locale.messages.RELEASE_DESCRIPTION
-        expect(MemberArg)
-        execute {
+        execute(MemberArg) {
             val targetMember = it.args.component1() as Member
 
             if (!targetMember.isDetained())
@@ -155,7 +153,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     }
 }
 
-private fun hasValidState(event: CommandEvent, currentGuild: Guild, targetUser: User): Boolean {
+private fun hasValidState(event: CommandEvent<*>, currentGuild: Guild, targetUser: User): Boolean {
     if (!targetUser.hasReportChannel())
         return true
 

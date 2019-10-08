@@ -1,6 +1,7 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.api.dsl.command.*
+import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.warmbot.arguments.MacroArg
@@ -13,9 +14,8 @@ fun macroCommands(macroService: MacroService) = commands {
     command("SendMacro") {
         requiresGuild = true
         description = Locale.messages.SEND_MACRO_DESCRIPTION
-        expect(MacroArg)
-        execute {
-            val macro = it.args.component1() as Macro
+        execute(MacroArg) {
+            val macro = it.args.component1()
 
             it.respond(embed {
                 if (it.channel.isReportChannel()) {
@@ -34,13 +34,9 @@ fun macroCommands(macroService: MacroService) = commands {
     command("AddMacro") {
         requiresGuild = true
         description = Locale.messages.ADD_MACRO_DESCRIPTION
-        expect(WordArg("Macro Name"), SentenceArg("Macro Content"))
-        execute {
-            val name = it.args.component1() as String
-            val message = it.args.component2() as String
-
+        execute(WordArg("Macro Name"), SentenceArg("Macro Content")) {
+            val (name, message) = it.args
             val response = macroService.addMacro(name, message, it.guild!!)
-
             it.respond(response.second)
         }
     }
@@ -48,12 +44,9 @@ fun macroCommands(macroService: MacroService) = commands {
     command("RemoveMacro") {
         requiresGuild = true
         description = Locale.messages.REMOVE_MACRO_DESCRIPTION
-        expect(MacroArg)
-        execute {
-            val macro = it.args.component1() as Macro
-
+        execute(MacroArg) {
+            val macro = it.args.component1()
             val response = macroService.removeMacro(macro, it.guild!!)
-
             it.respond(response.second)
         }
     }
@@ -61,13 +54,9 @@ fun macroCommands(macroService: MacroService) = commands {
     command("RenameMacro") {
         requiresGuild = true
         description = Locale.messages.RENAME_MACRO_DESCRIPTION
-        expect(MacroArg, WordArg("New Name"))
-        execute {
-            val macro = it.args.component1() as Macro
-            val newName = it.args.component2() as String
-
+        execute(MacroArg, WordArg("New Name")) {
+            val (macro, newName) = it.args
             val response = macroService.editName(macro, newName, it.guild!!)
-
             it.respond(response.second)
         }
     }
@@ -75,13 +64,9 @@ fun macroCommands(macroService: MacroService) = commands {
     command("EditMacro") {
         requiresGuild = true
         description = Locale.messages.EDIT_MACRO_DESCRIPTION
-        expect(MacroArg, SentenceArg("New Message"))
-        execute {
-            val macro = it.args.component1() as Macro
-            val message = it.args.component2() as String
-
+        execute(MacroArg, SentenceArg("New Message")) {
+            val (macro, message) = it.args
             val response = macroService.editMessage(macro, message)
-
             it.respond(response.second)
         }
     }

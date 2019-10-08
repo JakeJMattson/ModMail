@@ -1,6 +1,7 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.api.dsl.command.*
+import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.listeners.deletionQueue
@@ -26,8 +27,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     command("Archive") {
         requiresGuild = true
         description = Locale.messages.ARCHIVE_DESCRIPTION
-        expect(arg(SentenceArg("Additional Info"), optional = true, default = ""))
-        execute {
+        execute(SentenceArg("Additional Info").makeOptional("")) {
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
             val channel = it.channel.id.idToTextChannel()!!
             val report = channel.channelToReport()
@@ -53,9 +53,8 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     command("Note") {
         requiresGuild = true
         description = Locale.messages.NOTE_DESCRIPTION
-        expect(SentenceArg)
-        execute {
-            val note = it.args.component1() as String
+        execute(SentenceArg) {
+            val note = it.args.component1()
 
             it.respond(
                 embed {
@@ -72,13 +71,11 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     command("Move") {
         requiresGuild = true
         description = Locale.messages.MOVE_DESCRIPTION
-        expect(arg(CategoryArg), arg(BooleanArg("Sync Permissions"), optional = true, default = true))
-        execute {
+        execute(CategoryArg, BooleanArg("Sync Permissions").makeOptional(true)) {
             val channel = it.channel as GuildChannel
             val manager = channel.manager
             val oldCategory = channel.parent
-            val newCategory = it.args.component1() as Category
-            val shouldSync = it.args.component2() as Boolean
+            val (newCategory, shouldSync) = it.args
 
             if (shouldSync) {
                 manager.sync().queue { manager.setParent(newCategory).queue() }
@@ -96,8 +93,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     command("Tag") {
         requiresGuild = true
         description = Locale.messages.TAG_DESCRIPTION
-        expect(WordArg("Word or Emote"))
-        execute {
+        execute(WordArg("Word or Emote")) {
             val tag = it.args.component1() as String
             val channel = it.channel as TextChannel
 

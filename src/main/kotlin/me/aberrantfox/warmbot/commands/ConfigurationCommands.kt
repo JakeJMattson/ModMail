@@ -1,21 +1,19 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.dsl.*
+import me.aberrantfox.kjdautils.api.dsl.command.*
 import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
 import me.aberrantfox.warmbot.extensions.idToTextChannel
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.Configuration
-import net.dv8tion.jda.api.entities.*
 
 @CommandSet("Configuration")
 fun configurationCommands(configuration: Configuration, persistenceService: PersistenceService) = commands {
     command("SetReportCategory") {
         requiresGuild = true
         description = Locale.messages.SET_REPORT_CATEGORY_DESCRIPTION
-        expect(CategoryArg)
-        execute {
-            val reportCategory = it.args.component1() as Category
+        execute(CategoryArg) {
+            val reportCategory = it.args.component1()
 
             configuration.getGuildConfig(reportCategory.guild.id)!!.reportCategory = reportCategory.id
             persistenceService.save(configuration)
@@ -26,9 +24,8 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     command("SetArchiveChannel") {
         requiresGuild = true
         description = Locale.messages.SET_ARCHIVE_CHANNEL_DESCRIPTION
-        expect(TextChannelArg)
-        execute {
-            val archiveChannel = it.args.component1() as TextChannel
+        execute(TextChannelArg) {
+            val archiveChannel = it.args.component1()
 
             configuration.getGuildConfig(archiveChannel.guild.id)!!.archiveChannel = archiveChannel.id
             persistenceService.save(configuration)
@@ -39,9 +36,8 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     command("SetStaffRole") {
         requiresGuild = true
         description = Locale.messages.SET_STAFF_ROLE_DESCRIPTION
-        expect(WordArg)
-        execute {
-            val staffRoleName = it.args.component1() as String
+        execute(WordArg) {
+            val staffRoleName = it.args.component1()
             val staffRole = it.discord.jda.getRolesByName(staffRoleName, true).firstOrNull()
 
             staffRole ?: return@execute it.respond(Locale.inject({ FAIL_COULD_NOT_FIND_ROLE }, "staffRoleName" to staffRoleName))
@@ -55,9 +51,8 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     command("SetLoggingChannel") {
         requiresGuild = true
         description = Locale.messages.SET_LOGGING_CHANNEL_DESCRIPTION
-        expect(TextChannelArg)
-        execute {
-            val loggingChannel = it.args.component1() as TextChannel
+        execute(TextChannelArg) {
+            val loggingChannel = it.args.component1()
 
             configuration.getGuildConfig(loggingChannel.guild.id)!!.loggingConfiguration.loggingChannel = loggingChannel.id
             persistenceService.save(configuration)
@@ -68,9 +63,8 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     command("AddStaffChannel") {
         requiresGuild = true
         description = Locale.messages.ADD_STAFF_CHANNEL_DESCRIPTION
-        expect(TextChannelArg)
-        execute {
-            val staffChannel = it.args.component1() as TextChannel
+        execute(TextChannelArg) {
+            val staffChannel = it.args.component1()
             val channelId = staffChannel.id
 
             configuration.getGuildConfig(it.message.guild.id)!!.staffChannels.apply {
@@ -88,9 +82,8 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     command("RemoveStaffChannel") {
         requiresGuild = true
         description = Locale.messages.REMOVE_STAFF_CHANNEL_DESCRIPTION
-        expect(TextChannelArg)
-        execute {
-            val staffChannel = it.args.component1() as TextChannel
+        execute(TextChannelArg) {
+            val staffChannel = it.args.component1()
             val channelId = staffChannel.id
 
             configuration.getGuildConfig(it.message.guild.id)!!.staffChannels.apply {
