@@ -1,20 +1,19 @@
 package me.aberrantfox.warmbot.preconditions
 
-import me.aberrantfox.kjdautils.api.dsl.Precondition
-import me.aberrantfox.kjdautils.api.dsl.command.CommandEvent
+import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.command.*
 import me.aberrantfox.warmbot.services.isReportChannel
 
 private const val Category = "Report"
 
 @Precondition
-fun produceIsReportPrecondition() = exit@{ event: CommandEvent<*> ->
-    val command = event.container.commands[event.commandStruct.commandName] ?: return@exit Pass
+fun produceIsReportPrecondition() = precondition {
+    val command = it.container.commands[it.commandStruct.commandName] ?: return@precondition Pass
 
-    if (command.category != Category) return@exit Pass
+    if (command.category != Category) return@precondition Pass
 
-    if (!event.channel.isReportChannel()) return@exit Fail("This command must be invoked inside a report.")
+    if (!it.channel.isReportChannel()) return@precondition Fail("This command must be invoked inside a report.")
 
-    return@exit Pass
+    return@precondition Pass
 }
 
