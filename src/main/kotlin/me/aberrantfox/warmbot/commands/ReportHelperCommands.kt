@@ -37,8 +37,8 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                         }
 
                     val reportEmbed = embed {
-                        setColor(embedData.color)
-                        setThumbnail(targetUser.effectiveAvatarUrl)
+                        color = embedData.color
+                        thumbnail = targetUser.effectiveAvatarUrl
                         addField(embedData.topic,
                             "${targetUser.descriptor()} :: ${targetUser.asMention}",
                             false)
@@ -78,8 +78,8 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                 return@execute
 
             val userEmbed = embed {
-                setColor(Color.green)
-                setThumbnail(guild.iconUrl)
+                color = Color.green
+                thumbnail = guild.iconUrl
                 addField("You've received a message from the staff of ${guild.name}!", Locale.messages.BOT_DESCRIPTION, false)
             }
 
@@ -109,8 +109,8 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                 return@execute
 
             val userEmbed = embed {
-                setColor(Color.red)
-                setThumbnail(guild.iconUrl)
+                color = Color.red
+                thumbnail = guild.iconUrl
                 addField("You've have been detained by the staff of ${guild.name}!", Locale.messages.USER_DETAIN_MESSAGE, false)
             }
 

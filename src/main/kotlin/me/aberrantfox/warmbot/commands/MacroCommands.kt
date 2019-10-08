@@ -21,11 +21,11 @@ fun macroCommands(macroService: MacroService) = commands {
                 if (it.channel.isReportChannel()) {
                     it.channel.channelToReport().reportToUser()?.sendPrivateMessage(macro.message)
                     addField("Macro sent by ${it.author.fullName()}!", macro.message, false)
-                    setColor(Color.green)
+                    color = Color.green
                 }
                 else {
                     addField("Macro not sent - must be invoked within a report channel!", macro.message, false)
-                    setColor(Color.red)
+                    color = Color.red
                 }
             })
         }
@@ -93,7 +93,7 @@ fun macroCommands(macroService: MacroService) = commands {
             it.respond(
                 embed {
                     addField("Currently Available Macros", macroService.listMacros(it.guild!!), false)
-                    setColor(Color.GREEN)
+                    color = Color.GREEN
                 }
             )
         }

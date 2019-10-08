@@ -61,14 +61,10 @@
 | Release  | Member                    | Release a user from detainment and unmute them.                           |
 
 ## Utility
-| Commands     | Arguments | Description                                 |
-| ------------ | --------- | ------------------------------------------- |
-| Author       | <none>    | Display project author.                     |
-| BotInfo      | <none>    | Display the bot information.                |
-| ListCommands | <none>    | List all available commands.                |
-| Ping         | <none>    | Check the status of the bot.                |
-| Source       | <none>    | Display the source code via a GitLab link.  |
-| Uptime       | <none>    | Displays how long the bot has been running. |
-| Version      | <none>    | Display the bot version.                    |
-| help         | (Word)    | Display a help menu                         |
+| Commands | Arguments | Description                                 |
+| -------- | --------- | ------------------------------------------- |
+| BotInfo  | <none>    | Display the bot information.                |
+| Help     | (Command) | Display a help menu.                        |
+| Ping     | <none>    | Check the status of the bot.                |
+| Uptime   | <none>    | Displays how long the bot has been running. |
 
