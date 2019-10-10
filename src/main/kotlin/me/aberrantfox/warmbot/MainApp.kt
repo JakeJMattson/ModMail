@@ -14,10 +14,6 @@ fun main(args: Array<String>) {
     }
 
     startBot(token) {
-        configure {
-            globalPath = "me.aberrantfox.warmbot"
-        }
-
         discord.jda.presence.activity = Activity.playing(Locale.messages.DEFAULT_DISCORD_PRESENCE)
     }
 }
