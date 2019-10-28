@@ -10,7 +10,7 @@ private const val Category = "Owner"
 
 @Precondition
 fun produceIsBotOwnerPrecondition(configuration: Configuration) = precondition {
-    val command = it.container.commands[it.commandStruct.commandName] ?: return@precondition Pass
+    val command = it.container[it.commandStruct.commandName] ?: return@precondition Pass
 
     if (command.category != Category) return@precondition Pass
 

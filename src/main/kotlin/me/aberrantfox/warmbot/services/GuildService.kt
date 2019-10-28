@@ -33,7 +33,7 @@ class GuildService(private val configuration: Configuration, private val convers
     }
 
     private fun startSetupConversation(guild: Guild) =
-        conversationService.createConversation(guild.ownerId, guild.id, "auto-setup")
+        conversationService.createConversation(guild.owner!!.user, guild, "auto-setup")
 
     private fun consolidateWhitelist() = configuration.apply {
         guildConfigurations.forEach { if (it.guildId !in whitelist) whitelist.add(it.guildId) }

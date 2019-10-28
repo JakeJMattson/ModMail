@@ -19,7 +19,7 @@ class ReportListener(private val reportService: ReportService, private val conve
     fun onPrivateMessageReceived(event: PrivateMessageReceivedEvent) {
         val user = event.author
 
-        if (user.isBot || conversationService.hasConversation(user.id)) return
+        if (user.isBot || conversationService.hasConversation(user)) return
 
         val message = event.message
         val content = message.fullContent().trim()
