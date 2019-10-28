@@ -2,16 +2,19 @@ package me.aberrantfox.warmbot.services
 
 import com.google.gson.Gson
 import me.aberrantfox.kjdautils.api.annotation.Service
+import me.aberrantfox.kjdautils.api.dsl.command.Command
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.discord.Discord
-import me.aberrantfox.kjdautils.extensions.jda.fullName
+import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.warmbot.extensions.*
 import net.dv8tion.jda.api.Permission
+import net.dv8tion.jda.api.entities.*
 import java.awt.Color
 
 @Service
 class StartupService(configuration: Configuration,
                      discord: Discord,
+                     permissionsService: PermissionsService,
                      jdaInitializer: JdaInitializer) {
     private data class Properties(val version: String, val author: String, val repository: String)
     private val propFile = Properties::class.java.getResource("/properties.json").readText()
@@ -40,6 +43,15 @@ class StartupService(configuration: Configuration,
                     addInlineField("Contributors", "Fox#0001, Elliott#0001, JakeyWakey#1569")
                     addInlineField("Source", project.repository)
                 }
+            }
+
+            visibilityPredicate = predicate@{ command: Command, user: User, _: MessageChannel, guild: Guild? ->
+                guild ?: return@predicate false
+
+                val member = user.toMember(guild)!!
+                val permission = command.requiredPermissionLevel
+
+                permissionsService.hasClearance(member, permission)
             }
         }
 

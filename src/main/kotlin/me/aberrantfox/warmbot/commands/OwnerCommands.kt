@@ -3,13 +3,16 @@ package me.aberrantfox.warmbot.commands
 import me.aberrantfox.kjdautils.api.dsl.command.*
 import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
-import me.aberrantfox.warmbot.extensions.idToGuild
+import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.entities.*
 
 @CommandSet("Owner")
 fun ownerCommands(configuration: Configuration, prefixService: PrefixService, guildService: GuildService, persistenceService: PersistenceService) = commands {
+
+    requiredPermissionLevel = Permission.BOT_OWNER
+
     command("Whitelist") {
         requiresGuild = true
         description = Locale.WHITELIST_DESCRIPTION

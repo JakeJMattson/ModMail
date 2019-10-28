@@ -3,12 +3,15 @@ package me.aberrantfox.warmbot.commands
 import me.aberrantfox.kjdautils.api.dsl.command.*
 import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
-import me.aberrantfox.warmbot.extensions.idToTextChannel
+import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.*
-import me.aberrantfox.warmbot.services.Configuration
+import me.aberrantfox.warmbot.services.*
 
 @CommandSet("Configuration")
 fun configurationCommands(configuration: Configuration, persistenceService: PersistenceService) = commands {
+
+    requiredPermissionLevel = Permission.GUILD_OWNER
+
     command("SetReportCategory") {
         requiresGuild = true
         description = Locale.SET_REPORT_CATEGORY_DESCRIPTION
