@@ -6,7 +6,7 @@ import me.aberrantfox.kjdautils.internal.di.PersistenceService
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.api.entities.*
+import net.dv8tion.jda.api.entities.Activity
 
 @CommandSet("Owner")
 fun ownerCommands(configuration: Configuration, prefixService: PrefixService, guildService: GuildService, persistenceService: PersistenceService) = commands {
@@ -17,7 +17,7 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
         requiresGuild = true
         description = Locale.WHITELIST_DESCRIPTION
         execute(GuildArg) {
-            val targetGuild = it.args.component1()
+            val targetGuild = it.args.first
 
             if (configuration.whitelist.contains(targetGuild.id))
                 return@execute it.respond("${targetGuild.name} (${targetGuild.id}) is already whitelisted.")
@@ -32,7 +32,7 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
         requiresGuild = true
         description = Locale.UNWHITELIST_DESCRIPTION
         execute(GuildArg) {
-            val targetGuild = it.args.component1() as Guild
+            val targetGuild = it.args.first
 
             if (!configuration.whitelist.contains(targetGuild.id))
                 return@execute it.respond("${targetGuild.name} (${targetGuild.id}) is not whitelisted.")
@@ -63,7 +63,7 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
     command("SetPrefix") {
         description = "Set the bot's prefix."
         execute(WordArg("Prefix")) {
-            val prefix = it.args.component1()
+            val prefix = it.args.first
 
             prefixService.setPrefix(prefix)
             persistenceService.save(configuration)
@@ -77,8 +77,7 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
         description = Locale.SET_PRESENCE_DESCRIPTION
         execute(ChoiceArg("Playing/Watching/Listening", "Playing", "Watching", "Listening").makeOptional("Playing"),
             SentenceArg("Presence Message"))  {
-            val choice = it.args.component1() as String
-            val text = it.args.component2() as String
+            val (choice, text) = it.args
 
             it.discord.jda.presence.activity =
                 when(choice.toLowerCase()) {

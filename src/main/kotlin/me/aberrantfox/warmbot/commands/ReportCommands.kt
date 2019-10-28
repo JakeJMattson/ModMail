@@ -31,7 +31,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
             val channel = it.channel.id.idToTextChannel()!!
             val report = channel.channelToReport()
-            val note = it.args.component1() as String
+            val note = it.args.first
 
             val archiveChannel = relevantGuild.archiveChannel.idToTextChannel()
                 ?: return@execute it.respond("No archive channel set!")
@@ -54,7 +54,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         requiresGuild = true
         description = Locale.NOTE_DESCRIPTION
         execute(SentenceArg) {
-            val note = it.args.component1()
+            val note = it.args.first
 
             it.respond(
                 embed {
@@ -94,7 +94,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         requiresGuild = true
         description = Locale.TAG_DESCRIPTION
         execute(WordArg("Word or Emote")) {
-            val tag = it.args.component1() as String
+            val tag = it.args.first
             val channel = it.channel as TextChannel
 
             channel.manager.setName("$tag-${channel.name}").queue()

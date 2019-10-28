@@ -54,7 +54,6 @@
 
   "FAIL_GUILD_SETUP": "**Error** :: The ${field} provided did not belong to the guild you started this conversation in.",
   "FAIL_MISSING_CLEARANCE": "Missing clearance to use this command.",
-  "FAIL_COMMAND_NOT_IN_GUILD": "Commands must be executed inside a guild.",
   "FAIL_COULD_NOT_FIND_ROLE": "Could not find a role named :: ${staffRoleName}",
   "FAIL_GUILD_NOT_WHITELISTED": "This guild is not whitelisted.",
   "FAIL_GUILD_NOT_CONFIGURED": "This guild is not configured for use.",

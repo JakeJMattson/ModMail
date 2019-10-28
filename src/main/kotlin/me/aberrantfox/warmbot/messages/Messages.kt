@@ -61,7 +61,6 @@ class Messages (
     //Fail message
     val FAIL_GUILD_SETUP: String = "",
     val FAIL_MISSING_CLEARANCE: String = "",
-    val FAIL_COMMAND_NOT_IN_GUILD: String = "",
     val FAIL_COULD_NOT_FIND_ROLE: String = "",
     val FAIL_GUILD_NOT_WHITELISTED: String = "",
     val FAIL_GUILD_NOT_CONFIGURED: String = "",

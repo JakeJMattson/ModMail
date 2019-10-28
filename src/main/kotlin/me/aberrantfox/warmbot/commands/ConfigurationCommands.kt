@@ -16,7 +16,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         requiresGuild = true
         description = Locale.SET_REPORT_CATEGORY_DESCRIPTION
         execute(CategoryArg) {
-            val reportCategory = it.args.component1()
+            val reportCategory = it.args.first
 
             configuration.getGuildConfig(reportCategory.guild.id)!!.reportCategory = reportCategory.id
             persistenceService.save(configuration)
@@ -28,7 +28,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         requiresGuild = true
         description = Locale.SET_ARCHIVE_CHANNEL_DESCRIPTION
         execute(TextChannelArg) {
-            val archiveChannel = it.args.component1()
+            val archiveChannel = it.args.first
 
             configuration.getGuildConfig(archiveChannel.guild.id)!!.archiveChannel = archiveChannel.id
             persistenceService.save(configuration)
@@ -40,7 +40,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         requiresGuild = true
         description = Locale.SET_STAFF_ROLE_DESCRIPTION
         execute(WordArg) {
-            val staffRoleName = it.args.component1()
+            val staffRoleName = it.args.first
             val staffRole = it.discord.jda.getRolesByName(staffRoleName, true).firstOrNull()
 
             staffRole ?: return@execute it.respond(inject({ FAIL_COULD_NOT_FIND_ROLE }, "staffRoleName" to staffRoleName))
@@ -55,7 +55,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         requiresGuild = true
         description = Locale.SET_LOGGING_CHANNEL_DESCRIPTION
         execute(TextChannelArg) {
-            val loggingChannel = it.args.component1()
+            val loggingChannel = it.args.first
 
             configuration.getGuildConfig(loggingChannel.guild.id)!!.loggingConfiguration.loggingChannel = loggingChannel.id
             persistenceService.save(configuration)
@@ -67,7 +67,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         requiresGuild = true
         description = Locale.ADD_STAFF_CHANNEL_DESCRIPTION
         execute(TextChannelArg) {
-            val staffChannel = it.args.component1()
+            val staffChannel = it.args.first
             val channelId = staffChannel.id
 
             configuration.getGuildConfig(it.message.guild.id)!!.staffChannels.apply {
@@ -86,7 +86,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         requiresGuild = true
         description = Locale.REMOVE_STAFF_CHANNEL_DESCRIPTION
         execute(TextChannelArg) {
-            val staffChannel = it.args.component1()
+            val staffChannel = it.args.first
             val channelId = staffChannel.id
 
             configuration.getGuildConfig(it.message.guild.id)!!.staffChannels.apply {

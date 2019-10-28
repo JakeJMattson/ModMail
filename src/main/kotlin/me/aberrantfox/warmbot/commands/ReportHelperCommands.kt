@@ -70,8 +70,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
         requiresGuild = true
         description = Locale.OPEN_DESCRIPTION
         execute(MemberArg, SentenceArg("Initial Message").makeOptional("")) { event ->
-            val targetMember = event.args.component1()
-            val message = event.args.component2()
+            val (targetMember, message) = event.args
             val guild = event.message.guild
 
             if (!hasValidState(event, guild, targetMember.user))
@@ -92,8 +91,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
         requiresGuild = true
         description = Locale.DETAIN_DESCRIPTION
         execute(MemberArg, SentenceArg("Initial Message").makeOptional("")) { event ->
-            val targetMember = event.args.component1()
-            val message = event.args.component2()
+            val (targetMember, message) = event.args
             val guild = event.message.guild
 
             if (moderationService.hasStaffRole(targetMember))
@@ -122,7 +120,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
         requiresGuild = true
         description = Locale.RELEASE_DESCRIPTION
         execute(MemberArg) {
-            val targetMember = it.args.component1() as Member
+            val targetMember = it.args.first
 
             if (!targetMember.isDetained())
                 return@execute it.respond("This member is not detained.")

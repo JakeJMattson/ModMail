@@ -15,7 +15,7 @@ fun macroCommands(macroService: MacroService) = commands {
         requiresGuild = true
         description = Locale.SEND_MACRO_DESCRIPTION
         execute(MacroArg) {
-            val macro = it.args.component1()
+            val macro = it.args.first
 
             it.respond(embed {
                 if (it.channel.isReportChannel()) {
@@ -45,7 +45,7 @@ fun macroCommands(macroService: MacroService) = commands {
         requiresGuild = true
         description = Locale.REMOVE_MACRO_DESCRIPTION
         execute(MacroArg) {
-            val macro = it.args.component1()
+            val macro = it.args.first
             val response = macroService.removeMacro(macro, it.guild!!)
             it.respond(response.second)
         }

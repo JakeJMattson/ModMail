@@ -44,7 +44,7 @@ fun infoCommands() = commands {
         requiresGuild = true
         description = Locale.IS_REPORT_DESCRIPTION
         execute(TextChannelArg("Channel").makeOptional { it.channel as TextChannel }) {
-            val channel = it.args.component1()
+            val channel = it.args.first
             val isReport = channel.isReportChannel()
 
             it.respond("${channel.asMention} ${if (isReport) "is" else "is not"} a valid report channel.")
@@ -55,7 +55,7 @@ fun infoCommands() = commands {
         requiresGuild = true
         description = Locale.PEEK_HISTORY_DESCRIPTION
         execute(UserArg) {
-            val user = it.args.component1()
+            val user = it.args.first
             val channel = it.channel
 
             val privateChannel = user.openPrivateChannel().complete()
