@@ -50,61 +50,60 @@ fun autoSetupConversation(configuration: Configuration, persistenceService: Pers
 
 private fun autoSetup(config: Configuration, persistenceService: PersistenceService, stateContainer: ConversationStateContainer) {
     val guild = stateContainer.guild
-    val defaults = Locale.messages
 
     val guildData = arrayListOf(
-        guild.getCategoriesByName(defaults.DEFAULT_HOLDER_CATEGORY_NAME, true).firstOrNull(),
-        guild.getTextChannelsByName(defaults.DEFAULT_ARCHIVE_CHANNEL_NAME, true).firstOrNull(),
-        guild.getTextChannelsByName(defaults.DEFAULT_LOGGING_CHANNEL_NAME, true).firstOrNull(),
-        guild.getTextChannelsByName(defaults.DEFAULT_COMMAND_CHANNEL_NAME, true).firstOrNull(),
-        guild.getCategoriesByName(defaults.DEFAULT_REPORT_CATEGORY_NAME, true).firstOrNull(),
-        guild.getRolesByName(defaults.DEFAULT_STAFF_ROLE_NAME, true).firstOrNull()
+        guild.getCategoriesByName(Locale.DEFAULT_HOLDER_CATEGORY_NAME, true).firstOrNull(),
+        guild.getTextChannelsByName(Locale.DEFAULT_ARCHIVE_CHANNEL_NAME, true).firstOrNull(),
+        guild.getTextChannelsByName(Locale.DEFAULT_LOGGING_CHANNEL_NAME, true).firstOrNull(),
+        guild.getTextChannelsByName(Locale.DEFAULT_COMMAND_CHANNEL_NAME, true).firstOrNull(),
+        guild.getCategoriesByName(Locale.DEFAULT_REPORT_CATEGORY_NAME, true).firstOrNull(),
+        guild.getRolesByName(Locale.DEFAULT_STAFF_ROLE_NAME, true).firstOrNull()
     )
 
     if (guildData[0] == null) {
-        guild.createCategory(defaults.DEFAULT_HOLDER_CATEGORY_NAME).queue {
+        guild.createCategory(Locale.DEFAULT_HOLDER_CATEGORY_NAME).queue {
             guildData[0] = it
             attemptToFinalize(config, persistenceService, guild, guildData)
         }
     }
 
     if (guildData[1] == null) {
-        guild.createTextChannel(defaults.DEFAULT_ARCHIVE_CHANNEL_NAME).queue {
+        guild.createTextChannel(Locale.DEFAULT_ARCHIVE_CHANNEL_NAME).queue {
             guildData[1] = it
             attemptToFinalize(config, persistenceService, guild, guildData)
         }
     }
 
     if (guildData[2] == null) {
-        guild.createTextChannel(defaults.DEFAULT_LOGGING_CHANNEL_NAME).queue {
+        guild.createTextChannel(Locale.DEFAULT_LOGGING_CHANNEL_NAME).queue {
             guildData[2] = it
             attemptToFinalize(config, persistenceService, guild, guildData)
         }
     }
 
     if (guildData[3] == null) {
-        guild.createTextChannel(defaults.DEFAULT_COMMAND_CHANNEL_NAME).queue {
+        guild.createTextChannel(Locale.DEFAULT_COMMAND_CHANNEL_NAME).queue {
             guildData[3] = it
             attemptToFinalize(config, persistenceService, guild, guildData)
         }
     }
 
     if (guildData[4] == null) {
-        guild.createCategory(defaults.DEFAULT_REPORT_CATEGORY_NAME).queue {
+        guild.createCategory(Locale.DEFAULT_REPORT_CATEGORY_NAME).queue {
             guildData[4] = it
             attemptToFinalize(config, persistenceService, guild, guildData)
         }
     }
 
     if (guildData[5] == null) {
-        guild.createRole().setName(defaults.DEFAULT_STAFF_ROLE_NAME).queue {
+        guild.createRole().setName(Locale.DEFAULT_STAFF_ROLE_NAME).queue {
             guildData[5] = it
             attemptToFinalize(config, persistenceService, guild, guildData)
         }
     }
 
     attemptToFinalize(config, persistenceService, guild, guildData)
-    stateContainer.respond(defaults.GUILD_SETUP_SUCCESSFUL)
+    stateContainer.respond(Locale.GUILD_SETUP_SUCCESSFUL)
 }
 
 private fun attemptToFinalize(config: Configuration, persistenceService: PersistenceService, guild: Guild, data: ArrayList<Any?>) {

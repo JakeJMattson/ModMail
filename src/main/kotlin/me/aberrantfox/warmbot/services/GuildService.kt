@@ -4,6 +4,7 @@ import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.internal.di.PersistenceService
 import me.aberrantfox.kjdautils.internal.services.ConversationService
 import me.aberrantfox.warmbot.extensions.*
+import me.aberrantfox.warmbot.services.EnvironmentSettings.IS_TESTING_ENVIRONMENT
 import net.dv8tion.jda.api.entities.Guild
 import java.util.Timer
 import kotlin.concurrent.schedule
@@ -13,7 +14,10 @@ class GuildService(private val configuration: Configuration, private val convers
                    private val persistenceService: PersistenceService, jdaInitializer: JdaInitializer) {
     init { consolidateWhitelist() }
 
-    fun cleanseGuilds() =
+    fun cleanseGuilds() {
+        if (IS_TESTING_ENVIRONMENT)
+            return
+
         guilds().forEach {
             if (it.id !in configuration.whitelist) {
                 it.leave().queue()
@@ -21,8 +25,12 @@ class GuildService(private val configuration: Configuration, private val convers
                 persistenceService.save(configuration)
             }
         }
+    }
 
     fun initOrLeave(guild: Guild) {
+        if (IS_TESTING_ENVIRONMENT)
+            return
+
         if (!configuration.hasGuildConfig(guild.id)) {
             Timer().schedule(15000) {
                 if (guild.id in configuration.whitelist) startSetupConversation(guild) else guild.leave().queue()
@@ -35,8 +43,13 @@ class GuildService(private val configuration: Configuration, private val convers
     private fun startSetupConversation(guild: Guild) =
         conversationService.createConversation(guild.owner!!.user, guild, "auto-setup")
 
-    private fun consolidateWhitelist() = configuration.apply {
-        guildConfigurations.forEach { if (it.guildId !in whitelist) whitelist.add(it.guildId) }
-        guilds().filter { !hasGuildConfig(it.id) }.forEach { initOrLeave(it) }
+    private fun consolidateWhitelist() {
+        if (IS_TESTING_ENVIRONMENT)
+            return
+
+        configuration.apply {
+            guildConfigurations.forEach { if (it.guildId !in whitelist) whitelist.add(it.guildId) }
+            guilds().filter { !hasGuildConfig(it.id) }.forEach { initOrLeave(it) }
+        }
     }
 }

@@ -34,7 +34,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                             targetUser.sendPrivateMessage(message, DefaultLogger())
                             message
                         } else {
-                            Locale.messages.DEFAULT_INITIAL_MESSAGE
+                            Locale.DEFAULT_INITIAL_MESSAGE
                         }
 
                     val reportEmbed = embed {
@@ -68,7 +68,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
     command("Open") {
         requiresGuild = true
-        description = Locale.messages.OPEN_DESCRIPTION
+        description = Locale.OPEN_DESCRIPTION
         execute(MemberArg, SentenceArg("Initial Message").makeOptional("")) { event ->
             val targetMember = event.args.component1()
             val message = event.args.component2()
@@ -80,7 +80,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             val userEmbed = embed {
                 color = Color.green
                 thumbnail = guild.iconUrl
-                addField("You've received a message from the staff of ${guild.name}!", Locale.messages.BOT_DESCRIPTION, false)
+                addField("You've received a message from the staff of ${guild.name}!", Locale.BOT_DESCRIPTION, false)
             }
 
             val embedData = EmbedData(Color.green, "New Report Opened!", "This report was opened by", message)
@@ -90,7 +90,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
     command("Detain") {
         requiresGuild = true
-        description = Locale.messages.DETAIN_DESCRIPTION
+        description = Locale.DETAIN_DESCRIPTION
         execute(MemberArg, SentenceArg("Initial Message").makeOptional("")) { event ->
             val targetMember = event.args.component1()
             val message = event.args.component2()
@@ -110,7 +110,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             val userEmbed = embed {
                 color = Color.red
                 thumbnail = guild.iconUrl
-                addField("You've have been detained by the staff of ${guild.name}!", Locale.messages.USER_DETAIN_MESSAGE, false)
+                addField("You've have been detained by the staff of ${guild.name}!", Locale.USER_DETAIN_MESSAGE, false)
             }
 
             val embedData = EmbedData(Color.red, "User Detained!", "This user was detained by", message)
@@ -120,7 +120,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
     command("Release") {
         requiresGuild = true
-        description = Locale.messages.RELEASE_DESCRIPTION
+        description = Locale.RELEASE_DESCRIPTION
         execute(MemberArg) {
             val targetMember = it.args.component1() as Member
 
@@ -134,7 +134,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
     command("CloseAll") {
         requiresGuild = true
-        description = Locale.messages.CLOSE_ALL_DESCRIPTION
+        description = Locale.CLOSE_ALL_DESCRIPTION
         execute {
             val guild = it.guild!!
             val reportsFromGuild = reportService.getReportsFromGuild(guild.id)

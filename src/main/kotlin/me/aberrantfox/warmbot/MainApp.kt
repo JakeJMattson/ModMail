@@ -14,6 +14,6 @@ fun main(args: Array<String>) {
     }
 
     startBot(token) {
-        discord.jda.presence.activity = Activity.playing(Locale.messages.DEFAULT_DISCORD_PRESENCE)
+        discord.jda.presence.activity = Activity.playing(Locale.DEFAULT_DISCORD_PRESENCE)
     }
 }

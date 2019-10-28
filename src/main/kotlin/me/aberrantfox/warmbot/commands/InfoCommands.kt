@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.TextChannel
 fun infoCommands() = commands {
     command("ReportInfo") {
         requiresGuild = true
-        description = Locale.messages.INFO_DESCRIPTION
+        description = Locale.INFO_DESCRIPTION
         execute(TextChannelArg("Channel").makeOptional { it.channel as TextChannel },
             ChoiceArg("Field", "user", "channel", "guild", "all").makeOptional("all")) {
             val (targetChannel, choice) = it.args
@@ -42,7 +42,7 @@ fun infoCommands() = commands {
 
     command("IsReport") {
         requiresGuild = true
-        description = Locale.messages.IS_REPORT_DESCRIPTION
+        description = Locale.IS_REPORT_DESCRIPTION
         execute(TextChannelArg("Channel").makeOptional { it.channel as TextChannel }) {
             val channel = it.args.component1()
             val isReport = channel.isReportChannel()
@@ -53,7 +53,7 @@ fun infoCommands() = commands {
 
     command("PeekHistory") {
         requiresGuild = true
-        description = Locale.messages.PEEK_HISTORY_DESCRIPTION
+        description = Locale.PEEK_HISTORY_DESCRIPTION
         execute(UserArg) {
             val user = it.args.component1()
             val channel = it.channel

@@ -49,12 +49,7 @@ class Messages (
 
     //Utility commands descriptions
     val PING_DESCRIPTION: String = "",
-    val VERSION_DESCRIPTION: String = "",
-    val AUTHOR_DESCRIPTION: String = "",
-    val SOURCE_DESCRIPTION: String = "",
-    val BOT_INFO_DESCRIPTION: String = "",
     val UPTIME_DESCRIPTION: String = "",
-    val LIST_COMMANDS_DESCRIPTION: String = "",
 
     //Success message
     val SET_REPORT_CATEGORY_SUCCESSFUL: String = "",

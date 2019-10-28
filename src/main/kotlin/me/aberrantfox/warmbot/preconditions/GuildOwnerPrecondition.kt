@@ -13,11 +13,11 @@ fun produceIsGuildOwnerPrecondition() = precondition {
 
     if (command.category != Category) return@precondition Pass
 
-    if (it.channel !is TextChannel) return@precondition Fail(Locale.messages.FAIL_TEXT_CHANNEL_ONLY)
+    if (it.channel !is TextChannel) return@precondition Fail(Locale.FAIL_TEXT_CHANNEL_ONLY)
 
     val textChannel = it.channel as TextChannel
 
-    if (textChannel.guild.ownerId != it.author.id) return@precondition Fail(Locale.messages.FAIL_MUST_BE_GUILD_OWNER)
+    if (textChannel.guild.ownerId != it.author.id) return@precondition Fail(Locale.FAIL_MUST_BE_GUILD_OWNER)
 
     return@precondition Pass
 }

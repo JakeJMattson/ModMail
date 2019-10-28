@@ -13,7 +13,7 @@ import java.awt.Color
 fun macroCommands(macroService: MacroService) = commands {
     command("SendMacro") {
         requiresGuild = true
-        description = Locale.messages.SEND_MACRO_DESCRIPTION
+        description = Locale.SEND_MACRO_DESCRIPTION
         execute(MacroArg) {
             val macro = it.args.component1()
 
@@ -33,7 +33,7 @@ fun macroCommands(macroService: MacroService) = commands {
 
     command("AddMacro") {
         requiresGuild = true
-        description = Locale.messages.ADD_MACRO_DESCRIPTION
+        description = Locale.ADD_MACRO_DESCRIPTION
         execute(WordArg("Macro Name"), SentenceArg("Macro Content")) {
             val (name, message) = it.args
             val response = macroService.addMacro(name, message, it.guild!!)
@@ -43,7 +43,7 @@ fun macroCommands(macroService: MacroService) = commands {
 
     command("RemoveMacro") {
         requiresGuild = true
-        description = Locale.messages.REMOVE_MACRO_DESCRIPTION
+        description = Locale.REMOVE_MACRO_DESCRIPTION
         execute(MacroArg) {
             val macro = it.args.component1()
             val response = macroService.removeMacro(macro, it.guild!!)
@@ -53,7 +53,7 @@ fun macroCommands(macroService: MacroService) = commands {
 
     command("RenameMacro") {
         requiresGuild = true
-        description = Locale.messages.RENAME_MACRO_DESCRIPTION
+        description = Locale.RENAME_MACRO_DESCRIPTION
         execute(MacroArg, WordArg("New Name")) {
             val (macro, newName) = it.args
             val response = macroService.editName(macro, newName, it.guild!!)
@@ -63,7 +63,7 @@ fun macroCommands(macroService: MacroService) = commands {
 
     command("EditMacro") {
         requiresGuild = true
-        description = Locale.messages.EDIT_MACRO_DESCRIPTION
+        description = Locale.EDIT_MACRO_DESCRIPTION
         execute(MacroArg, SentenceArg("New Message")) {
             val (macro, message) = it.args
             val response = macroService.editMessage(macro, message)
@@ -73,7 +73,7 @@ fun macroCommands(macroService: MacroService) = commands {
 
     command("ListMacros") {
         requiresGuild = true
-        description = Locale.messages.LIST_MACROS_DESCRIPTION
+        description = Locale.LIST_MACROS_DESCRIPTION
         execute {
             it.respond(
                 embed {

@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.entities.*
 fun ownerCommands(configuration: Configuration, prefixService: PrefixService, guildService: GuildService, persistenceService: PersistenceService) = commands {
     command("Whitelist") {
         requiresGuild = true
-        description = Locale.messages.WHITELIST_DESCRIPTION
+        description = Locale.WHITELIST_DESCRIPTION
         execute(GuildArg) {
             val targetGuild = it.args.component1()
 
@@ -27,7 +27,7 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
 
     command("UnWhitelist") {
         requiresGuild = true
-        description = Locale.messages.UNWHITELIST_DESCRIPTION
+        description = Locale.UNWHITELIST_DESCRIPTION
         execute(GuildArg) {
             val targetGuild = it.args.component1() as Guild
 
@@ -44,7 +44,7 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
 
     command("ShowWhitelist") {
         requiresGuild = true
-        description = Locale.messages.SHOW_WHITELIST_DESCRIPTION
+        description = Locale.SHOW_WHITELIST_DESCRIPTION
         execute {
             it.respond(
                 buildString {
@@ -71,7 +71,7 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
 
     command("SetPresence") {
         requiresGuild = true
-        description = Locale.messages.SET_PRESENCE_DESCRIPTION
+        description = Locale.SET_PRESENCE_DESCRIPTION
         execute(ChoiceArg("Playing/Watching/Listening", "Playing", "Watching", "Listening").makeOptional("Playing"),
             SentenceArg("Presence Message"))  {
             val choice = it.args.component1() as String

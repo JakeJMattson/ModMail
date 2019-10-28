@@ -14,7 +14,7 @@ import java.awt.Color
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands {
     command("Close") {
         requiresGuild = true
-        description = Locale.messages.CLOSE_DESCRIPTION
+        description = Locale.CLOSE_DESCRIPTION
         execute {
             val channel = it.channel as TextChannel
 
@@ -26,7 +26,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("Archive") {
         requiresGuild = true
-        description = Locale.messages.ARCHIVE_DESCRIPTION
+        description = Locale.ARCHIVE_DESCRIPTION
         execute(SentenceArg("Additional Info").makeOptional("")) {
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
             val channel = it.channel.id.idToTextChannel()!!
@@ -52,7 +52,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("Note") {
         requiresGuild = true
-        description = Locale.messages.NOTE_DESCRIPTION
+        description = Locale.NOTE_DESCRIPTION
         execute(SentenceArg) {
             val note = it.args.component1()
 
@@ -70,7 +70,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("Move") {
         requiresGuild = true
-        description = Locale.messages.MOVE_DESCRIPTION
+        description = Locale.MOVE_DESCRIPTION
         execute(CategoryArg, BooleanArg("Sync Permissions").makeOptional(true)) {
             val channel = it.channel as GuildChannel
             val manager = channel.manager
@@ -92,7 +92,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("Tag") {
         requiresGuild = true
-        description = Locale.messages.TAG_DESCRIPTION
+        description = Locale.TAG_DESCRIPTION
         execute(WordArg("Word or Emote")) {
             val tag = it.args.component1() as String
             val channel = it.channel as TextChannel
@@ -105,7 +105,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("ResetTags") {
         requiresGuild = true
-        description = Locale.messages.RESET_TAGS_DESCRIPTION
+        description = Locale.RESET_TAGS_DESCRIPTION
         execute {
             val channel = it.channel as TextChannel
             val report = channel.channelToReport()

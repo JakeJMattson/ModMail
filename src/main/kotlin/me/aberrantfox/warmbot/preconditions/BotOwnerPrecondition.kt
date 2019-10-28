@@ -14,9 +14,9 @@ fun produceIsBotOwnerPrecondition(configuration: Configuration) = precondition {
 
     if (command.category != Category) return@precondition Pass
 
-    if (it.channel !is TextChannel) return@precondition Fail(Locale.messages.FAIL_TEXT_CHANNEL_ONLY)
+    if (it.channel !is TextChannel) return@precondition Fail(Locale.FAIL_TEXT_CHANNEL_ONLY)
 
-    if (configuration.ownerId != it.author.id) return@precondition Fail(Locale.messages.FAIL_MUST_BE_BOT_OWNER)
+    if (configuration.ownerId != it.author.id) return@precondition Fail(Locale.FAIL_MUST_BE_BOT_OWNER)
 
     return@precondition Pass
 }

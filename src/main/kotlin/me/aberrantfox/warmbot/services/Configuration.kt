@@ -3,7 +3,7 @@ package me.aberrantfox.warmbot.services
 import me.aberrantfox.kjdautils.api.annotation.Data
 
 object EnvironmentSettings {
-    var IS_TESTING_ENVIRONMENT = false
+    var IS_TESTING_ENVIRONMENT = true
 }
 
 data class LoggingConfiguration(var loggingChannel: String = "insert-id",

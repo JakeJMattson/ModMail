@@ -13,14 +13,14 @@ private val startTime = Date()
 fun utilityCommands() = commands {
     command("Ping") {
         requiresGuild = true
-        description = Locale.messages.PING_DESCRIPTION
+        description = Locale.PING_DESCRIPTION
         execute {
             it.respond("JDA ping: ${it.discord.jda.gatewayPing}ms\n")
         }
     }
 
     command("Uptime") {
-        description = "Displays how long the bot has been running."
+        description = Locale.UPTIME_DESCRIPTION
         execute {
             val seconds = (Date().time - startTime.time) / 1000
 

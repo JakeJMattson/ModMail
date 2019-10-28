@@ -17,11 +17,11 @@
 | SetStaffRole       | Word        | Specify the role required to use this bot.                                          |
 
 ## Info
-| Commands    | Arguments                 | Description                                                                                       |
-| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------- |
-| IsReport    | (Channel)                 | Check whether or not a channel is a valid report channel.                                         |
-| PeekHistory | User                      | Read the target user's DM history with the bot.                                                   |
-| ReportInfo  | (Report Channel), (Field) | Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all. |
+| Commands    | Arguments          | Description                                                                                       |
+| ----------- | ------------------ | ------------------------------------------------------------------------------------------------- |
+| IsReport    | (Channel)          | Check whether or not a channel is a valid report channel.                                         |
+| PeekHistory | User               | Read the target user's DM history with the bot.                                                   |
+| ReportInfo  | (Channel), (Field) | Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all. |
 
 ## Macros
 | Commands    | Arguments                 | Description                                                                           |
@@ -63,7 +63,6 @@
 ## Utility
 | Commands | Arguments | Description                                 |
 | -------- | --------- | ------------------------------------------- |
-| BotInfo  | <none>    | Display the bot information.                |
 | Help     | (Command) | Display a help menu.                        |
 | Ping     | <none>    | Check the status of the bot.                |
 | Uptime   | <none>    | Displays how long the bot has been running. |
