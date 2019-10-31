@@ -15,7 +15,7 @@ data class LoggingConfiguration(var loggingChannel: String = "insert-id",
                                 val logArchive: Boolean = true,
                                 val logClose: Boolean = true)
 
-data class GuildConfiguration(var guildId: String = "insert-id",
+data class GuildConfiguration(val guildId: String = "insert-id",
                               var reportCategory: String = "insert-id",
                               var archiveChannel: String = "insert-id",
                               var staffRoleName: String = "Staff",
@@ -26,7 +26,6 @@ data class GuildConfiguration(var guildId: String = "insert-id",
 data class Configuration(val ownerId: String = "insert-id",
                          var prefix: String = "!",
                          val maxOpenReports: Int = 50,
-                         val generateDocsAtRuntime: Boolean = false,
                          val whitelist: MutableList<String> = ArrayList(),
                          val guildConfigurations: MutableList<GuildConfiguration> = mutableListOf(GuildConfiguration())) {
     fun hasGuildConfig(guildId: String) = getGuildConfig(guildId) != null

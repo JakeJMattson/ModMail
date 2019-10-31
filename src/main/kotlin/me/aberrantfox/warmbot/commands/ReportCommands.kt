@@ -1,7 +1,6 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.command.*
-import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.listeners.deletionQueue
@@ -56,12 +55,10 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         execute(SentenceArg) {
             val note = it.args.first
 
-            it.respond(
-                embed {
-                    addField("Additional Information", note, false)
-                    color = Color.ORANGE
-                }
-            )
+            it.respond {
+                addField("Additional Information", note, false)
+                color = Color.ORANGE
+            }
 
             it.message.delete().queue()
             loggingService.command(it)
@@ -106,14 +103,17 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     command("ResetTags") {
         requiresGuild = true
         description = Locale.RESET_TAGS_DESCRIPTION
-        execute {
-            val channel = it.channel as TextChannel
+        execute { event ->
+            val channel = event.channel as TextChannel
             val report = channel.channelToReport()
-            val name = report.reportToUser()?.name ?: report.userId
 
-            channel.manager.setName(name).queue()
-            it.message.delete().queue()
-            loggingService.command(it, "Channel is now $name")
+            event.discord.jda.retrieveUserById(report.userId).queue {
+                val name = it.name.replace("\\s+".toRegex(), "")
+                channel.manager.setName(name).queue()
+                loggingService.command(event, "Channel is now $name")
+            }
+
+            event.message.delete().queue()
         }
     }
 }

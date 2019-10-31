@@ -1,7 +1,6 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.command.*
-import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.stdlib.toMinimalTimeString
 import me.aberrantfox.warmbot.messages.Locale
 import java.awt.Color
@@ -24,7 +23,7 @@ fun utilityCommands() = commands {
         execute {
             val seconds = (Date().time - startTime.time) / 1000
 
-            it.respond(embed {
+            it.respond {
                 title = "I have been running since"
                 description = startTime.toString()
                 color = Color.WHITE
@@ -33,7 +32,7 @@ fun utilityCommands() = commands {
                     name = "That's been"
                     value = seconds.toMinimalTimeString()
                 }
-            })
+            }
         }
     }
 }

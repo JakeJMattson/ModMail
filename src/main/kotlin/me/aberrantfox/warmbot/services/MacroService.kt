@@ -7,12 +7,7 @@ data class Macro(var name: String, var message: String)
 
 data class MacroMap(val map: HashMap<String, ArrayList<Macro>> = hashMapOf())
 
-fun getGuildMacros(guildId: String) : ArrayList<Macro> {
-    if (!macroMap.map.containsKey(guildId))
-        macroMap.map[guildId] = arrayListOf()
-
-    return macroMap.map[guildId]!!
-}
+fun getGuildMacros(guild: Guild) = macroMap.map.getOrPut(guild.id) { arrayListOf() }
 
 lateinit var macroMap: MacroMap
 
@@ -25,7 +20,7 @@ class MacroService {
     private fun ArrayList<Macro>.hasMacro(name: String) = this.any { it.name.toLowerCase() == name.toLowerCase() }
 
     fun addMacro(name: String, message: String, guild: Guild): Pair<Boolean, String> {
-        val macroList = getGuildMacros(guild.id)
+        val macroList = getGuildMacros(guild)
 
         if (macroList.hasMacro(name)) return false to "This macro already exists!"
 
@@ -36,7 +31,7 @@ class MacroService {
     }
 
     fun removeMacro(macro: Macro, guild: Guild): Pair<Boolean, String> {
-        val macroList = getGuildMacros(guild.id)
+        val macroList = getGuildMacros(guild)
 
         macroList.remove(macro)
         saveMacros()
@@ -44,11 +39,11 @@ class MacroService {
         return true to "Macro successfully removed! :: ${macro.name}"
     }
 
-    fun listMacros(guild: Guild) = getGuildMacros(guild.id).map { it.name }.sorted().joinToString(", ")
+    fun listMacros(guild: Guild) = getGuildMacros(guild).map { it.name }.sorted().joinToString(", ")
         .takeIf { it.isNotEmpty() } ?: "<No Macros added>"
 
     fun editName(macro: Macro, newName: String, guild: Guild): Pair<Boolean, String> {
-        val macroList = getGuildMacros(guild.id)
+        val macroList = getGuildMacros(guild)
 
         if (macroList.hasMacro(newName)) return false to "A macro with that name already exists!"
 

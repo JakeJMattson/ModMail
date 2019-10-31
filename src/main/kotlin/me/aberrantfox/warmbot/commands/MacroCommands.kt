@@ -1,7 +1,6 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.dsl.command.*
-import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.warmbot.arguments.MacroArg
@@ -17,17 +16,17 @@ fun macroCommands(macroService: MacroService) = commands {
         execute(MacroArg) {
             val macro = it.args.first
 
-            it.respond(embed {
-                if (it.channel.isReportChannel()) {
-                    it.channel.channelToReport().reportToUser()?.sendPrivateMessage(macro.message)
-                    addField("Macro sent by ${it.author.fullName()}!", macro.message, false)
-                    color = Color.green
-                }
-                else {
-                    addField("Macro not sent - must be invoked within a report channel!", macro.message, false)
-                    color = Color.red
-                }
-            })
+            it.respond {
+                color =
+                    if (it.channel.isReportChannel()) {
+                        it.channel.channelToReport().reportToUser()?.sendPrivateMessage(macro.message)
+                        addField("Macro sent by ${it.author.fullName()}!", macro.message, false)
+                        Color.green
+                    } else {
+                        addField("Macro not sent - must be invoked within a report channel!", macro.message, false)
+                        Color.red
+                    }
+            }
         }
     }
 
@@ -75,12 +74,10 @@ fun macroCommands(macroService: MacroService) = commands {
         requiresGuild = true
         description = Locale.LIST_MACROS_DESCRIPTION
         execute {
-            it.respond(
-                embed {
-                    addField("Currently Available Macros", macroService.listMacros(it.guild!!), false)
-                    color = Color.GREEN
-                }
-            )
+            it.respond {
+                addField("Currently Available Macros", macroService.listMacros(it.guild!!), false)
+                color = Color.GREEN
+            }
         }
     }
 }
