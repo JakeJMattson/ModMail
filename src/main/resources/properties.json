@@ -1,4 +1,5 @@
 {
   "version": "${version}",
+  "kutils": "${kutils.version}",
   "repository": "${project.repository}"
 }
