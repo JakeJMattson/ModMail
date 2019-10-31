@@ -108,7 +108,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             val report = channel.channelToReport()
 
             event.discord.jda.retrieveUserById(report.userId).queue {
-                val name = it.name.replace("\\s+".toRegex(), "")
+                val name = it.name.replace("\\s+".toRegex(), "-")
                 channel.manager.setName(name).queue()
                 loggingService.command(event, "Channel is now $name")
             }
