@@ -1,5 +1,6 @@
 package me.aberrantfox.warmbot.conversations
 
+import me.aberrantfox.kjdautils.api.annotation.Convo
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.arguments.BooleanArg
 import me.aberrantfox.kjdautils.internal.di.PersistenceService

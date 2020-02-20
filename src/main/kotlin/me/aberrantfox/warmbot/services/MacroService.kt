@@ -7,8 +7,6 @@ data class Macro(var name: String, var message: String)
 
 data class MacroMap(val map: HashMap<String, ArrayList<Macro>> = hashMapOf())
 
-fun getGuildMacros(guild: Guild) = macroMap.map.getOrPut(guild.id) { arrayListOf() }
-
 lateinit var macroMap: MacroMap
 
 @Service
@@ -16,6 +14,8 @@ class MacroService {
     init {
         macroMap = loadMacros()
     }
+
+    fun getGuildMacros(guild: Guild) = macroMap.map.getOrPut(guild.id) { arrayListOf() }
 
     private fun ArrayList<Macro>.hasMacro(name: String) = this.any { it.name.toLowerCase() == name.toLowerCase() }
 
