@@ -2,6 +2,7 @@ package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.annotation.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.command.commands
+import me.aberrantfox.kjdautils.extensions.jda.fullName
 import me.aberrantfox.kjdautils.internal.arguments.*
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.listeners.deletionQueue
@@ -57,7 +58,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             val note = it.args.first
 
             it.respond {
-                addField("Additional Information", note, false)
+                addField("Note from ${it.author.name}", note, false)
                 color = Color.ORANGE
             }
 
