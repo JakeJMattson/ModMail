@@ -3,7 +3,7 @@ package me.aberrantfox.warmbot.conversations
 import me.aberrantfox.kjdautils.api.annotation.Convo
 import me.aberrantfox.kjdautils.api.dsl.conversation
 import me.aberrantfox.kjdautils.internal.arguments.*
-import me.aberrantfox.kjdautils.internal.di.PersistenceService
+import me.aberrantfox.kjdautils.internal.services.PersistenceService
 import me.aberrantfox.warmbot.messages.*
 import me.aberrantfox.warmbot.services.*
 

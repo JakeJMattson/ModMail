@@ -3,8 +3,7 @@ package me.aberrantfox.warmbot.conversations
 import me.aberrantfox.kjdautils.api.annotation.Convo
 import me.aberrantfox.kjdautils.api.dsl.*
 import me.aberrantfox.kjdautils.internal.arguments.BooleanArg
-import me.aberrantfox.kjdautils.internal.di.PersistenceService
-import me.aberrantfox.kjdautils.internal.services.ConversationService
+import me.aberrantfox.kjdautils.internal.services.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.entities.*

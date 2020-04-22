@@ -5,7 +5,6 @@ import me.aberrantfox.kjdautils.api.dsl.command.*
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.kjdautils.internal.arguments.*
-import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
@@ -32,7 +31,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
                     val initialMessage =
                         if (message.isNotEmpty()) {
-                            targetUser.sendPrivateMessage(message, DefaultLogger())
+                            targetUser.sendPrivateMessage(message)
                             message
                         } else {
                             Locale.DEFAULT_INITIAL_MESSAGE

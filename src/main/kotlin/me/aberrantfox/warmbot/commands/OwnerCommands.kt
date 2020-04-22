@@ -3,7 +3,7 @@ package me.aberrantfox.warmbot.commands
 import me.aberrantfox.kjdautils.api.annotation.CommandSet
 import me.aberrantfox.kjdautils.api.dsl.command.commands
 import me.aberrantfox.kjdautils.internal.arguments.*
-import me.aberrantfox.kjdautils.internal.di.PersistenceService
+import me.aberrantfox.kjdautils.internal.services.PersistenceService
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*

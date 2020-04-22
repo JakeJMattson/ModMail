@@ -8,7 +8,6 @@ import me.aberrantfox.warmbot.services.*
 open class MacroArg(override val name : String = "Macro"): ArgumentType<Macro>() {
     companion object : MacroArg()
 
-    override val examples = arrayListOf("ask", "wrapcode", "cc", "date")
     override val consumptionType = ConsumptionType.Single
     override fun convert(arg: String, args: List<String>, event: CommandEvent<*>): ArgumentResult<Macro> {
         val macroService = event.discord.getInjectionObject<MacroService>()
@@ -18,5 +17,12 @@ open class MacroArg(override val name : String = "Macro"): ArgumentType<Macro>()
             ?: return ArgumentResult.Error("No such macro in this guild!")
 
         return ArgumentResult.Success(macro)
+    }
+
+    override fun generateExamples(event: CommandEvent<*>): MutableList<String> {
+        val macroService = event.discord.getInjectionObject<MacroService>()!!
+        val macros = macroService.getGuildMacros(event.guild!!).map { it.name }.toMutableList()
+
+        return macros.takeIf { it.isNotEmpty() } ?: mutableListOf("<No Macros>")
     }
 }
