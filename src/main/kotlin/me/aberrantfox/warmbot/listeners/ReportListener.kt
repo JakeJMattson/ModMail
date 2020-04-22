@@ -70,7 +70,7 @@ class ReportListener(private val reportService: ReportService, private val conve
             title = "Please choose which server's staff you'd like to contact."
             description = "Respond with the number that correlates with the desired server to get started."
             thumbnail = selfUser().effectiveAvatarUrl
-            color = Color.CYAN
+            color = infoColor
 
             commonGuilds.forEachIndexed { index, guild ->
                 field {

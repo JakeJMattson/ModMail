@@ -16,7 +16,7 @@ fun autoSetupConversation(configuration: Configuration, persistenceService: Pers
 
     val isAutomatic = blockingPrompt(BooleanArg("", "yes", "no")) {
         embed {
-            color = Color.magenta
+            color = infoColor
             title = "Automatic Setup"
             description = "Would you like to automatically configure this guild for use?"
             field {

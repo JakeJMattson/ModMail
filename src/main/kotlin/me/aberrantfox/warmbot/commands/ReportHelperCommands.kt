@@ -1,6 +1,8 @@
 package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.kjdautils.api.annotation.CommandSet
+import me.aberrantfox.kjdautils.api.dsl.EmbedDSLHandle.Companion.failureColor
+import me.aberrantfox.kjdautils.api.dsl.EmbedDSLHandle.Companion.successColor
 import me.aberrantfox.kjdautils.api.dsl.command.*
 import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.kjdautils.extensions.jda.*
@@ -77,12 +79,12 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                 return@execute
 
             val userEmbed = embed {
-                color = Color.green
+                color = successColor
                 thumbnail = guild.iconUrl
                 addField("You've received a message from the staff of ${guild.name}!", Locale.BOT_DESCRIPTION, false)
             }
 
-            val embedData = EmbedData(Color.green, "New Report Opened!", "This report was opened by", message)
+            val embedData = EmbedData(successColor, "New Report Opened!", "This report was opened by", message)
             openReport(event, targetMember.user, guild, userEmbed, embedData)
         }
     }
@@ -106,12 +108,12 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                 return@execute
 
             val userEmbed = embed {
-                color = Color.red
+                color = failureColor
                 thumbnail = guild.iconUrl
                 addField("You've have been detained by the staff of ${guild.name}!", Locale.USER_DETAIN_MESSAGE, false)
             }
 
-            val embedData = EmbedData(Color.red, "User Detained!", "This user was detained by", message)
+            val embedData = EmbedData(failureColor, "User Detained!", "This user was detained by", message)
             openReport(event, targetMember.user, guild, userEmbed, embedData, true)
         }
     }

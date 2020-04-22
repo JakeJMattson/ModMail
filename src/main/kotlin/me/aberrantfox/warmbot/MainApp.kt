@@ -2,7 +2,7 @@ package me.aberrantfox.warmbot
 
 import com.google.gson.Gson
 import me.aberrantfox.kjdautils.api.*
-import me.aberrantfox.kjdautils.extensions.jda.fullName
+import me.aberrantfox.kjdautils.extensions.jda.*
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
@@ -26,16 +26,20 @@ fun main(args: Array<String>) {
     startBot(token) {
         configure {
             val configuration = discord.getInjectionObject<Configuration>()!!
+            val permissionsService = discord.getInjectionObject<PermissionsService>()!!
 
             prefix = configuration.prefix
+
+            colors {
+                infoColor = Color(0x00bfff)
+            }
 
             mentionEmbed {
                 val channel = it.channel
                 val self = channel.jda.selfUser
-                val requiredRole = configuration.getGuildConfig(channel.guild.id)?.staffRoleName
-                    ?: "<Not Configured>"
+                val requiredRole = configuration.getGuildConfig(channel.guild.id)?.staffRoleName ?: "<Not Configured>"
 
-                color = Color(0x00bfff)
+                color = infoColor
                 thumbnail = self.effectiveAvatarUrl
                 addField(self.fullName(), "A Discord report management bot.")
                 addInlineField("Required role", requiredRole)

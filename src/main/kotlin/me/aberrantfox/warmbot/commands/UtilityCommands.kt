@@ -27,7 +27,7 @@ fun utilityCommands() = commands {
             it.respond {
                 title = "I have been running since"
                 description = startTime.toString()
-                color = Color.WHITE
+                color = infoColor
 
                 field {
                     name = "That's been"
