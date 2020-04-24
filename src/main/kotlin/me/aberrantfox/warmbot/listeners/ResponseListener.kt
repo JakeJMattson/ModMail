@@ -19,7 +19,12 @@ class ResponseListener(private val configuration: Configuration) {
             val report = event.channel.channelToReport()
             val member = report.reportToMember() ?: return addFailReaction()
 
-            member.user.sendPrivateMessage(fullContent())
+            val content = fullContent()
+
+            if (content.trim().isEmpty())
+                return
+
+            member.user.sendPrivateMessage(content)
             report.queuedMessageId = id
         }
     }
