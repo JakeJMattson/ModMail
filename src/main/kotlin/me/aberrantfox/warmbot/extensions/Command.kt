@@ -4,12 +4,26 @@ import me.aberrantfox.kjdautils.api.dsl.command.*
 import me.aberrantfox.warmbot.services.*
 import java.util.WeakHashMap
 
-private object CommandPropertyStore {
-    val permissions = WeakHashMap<Command, Permission>()
-}
+val categoryPermissions: MutableMap<CommandsContainer, Permission> = mutableMapOf()
+val commandPermissions: MutableMap<Command, Permission> = mutableMapOf()
+
+var CommandsContainer.requiredPermissionLevel
+    get() = categoryPermissions[this] ?: DEFAULT_REQUIRED_PERMISSION
+    set(value) {
+        categoryPermissions[this] = value
+    }
 
 var Command.requiredPermissionLevel: Permission
-    get() = CommandPropertyStore.permissions[this] ?: DEFAULT_REQUIRED_PERMISSION
+    get() {
+        val setLevel = categoryPermissions.toList()
+            .firstOrNull { this in it.first.commands }?.second
+
+        val cmdLevel = commandPermissions[this]
+
+        if(cmdLevel != null) return cmdLevel
+        if(setLevel != null) return setLevel
+        return DEFAULT_REQUIRED_PERMISSION
+    }
     set(value) {
-        CommandPropertyStore.permissions[this] = value
+        commandPermissions[this] = value
     }

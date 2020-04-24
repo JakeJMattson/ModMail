@@ -11,9 +11,11 @@ import net.dv8tion.jda.api.entities.Activity
 
 @CommandSet("Owner")
 fun ownerCommands(configuration: Configuration, prefixService: PrefixService, guildService: GuildService, persistenceService: PersistenceService) = commands {
+
+    requiredPermissionLevel = Permission.BOT_OWNER
+
     command("Whitelist") {
         requiresGuild = true
-        requiredPermissionLevel = Permission.BOT_OWNER
         description = Locale.WHITELIST_DESCRIPTION
         execute(GuildArg) {
             val targetGuild = it.args.first
@@ -29,7 +31,6 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
 
     command("UnWhitelist") {
         requiresGuild = true
-        requiredPermissionLevel = Permission.BOT_OWNER
         description = Locale.UNWHITELIST_DESCRIPTION
         execute(GuildArg) {
             val targetGuild = it.args.first
@@ -47,7 +48,6 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
 
     command("ShowWhitelist") {
         requiresGuild = true
-        requiredPermissionLevel = Permission.BOT_OWNER
         description = Locale.SHOW_WHITELIST_DESCRIPTION
         execute {
             it.respond(
@@ -62,7 +62,6 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
     }
 
     command("SetPrefix") {
-        requiredPermissionLevel = Permission.BOT_OWNER
         description = "Set the bot's prefix."
         execute(WordArg("Prefix")) {
             val prefix = it.args.first
@@ -76,7 +75,6 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
 
     command("SetPresence") {
         requiresGuild = true
-        requiredPermissionLevel = Permission.BOT_OWNER
         description = Locale.SET_PRESENCE_DESCRIPTION
         execute(ChoiceArg("Playing/Watching/Listening", "Playing", "Watching", "Listening").makeOptional("Playing"),
             SentenceArg("Presence Message"))  {
