@@ -35,28 +35,19 @@ fun main(args: Array<String>) {
             }
 
             mentionEmbed {
-                val channel = it.channel
-                val self = channel.jda.selfUser
-                val requiredRole = configuration.getGuildConfig(channel.guild.id)?.staffRoleName ?: "<Not Configured>"
+                val self = it.jda.selfUser
+                val requiredRole = configuration.getGuildConfig(it.guild.id)?.staffRoleName ?: "<Not Configured>"
 
-                color = infoColor
+                title = "${self.fullName()} (WarmBot ${project.version})"
+                description = "A Discord report management bot."
                 thumbnail = self.effectiveAvatarUrl
-                addField(self.fullName(), "A Discord report management bot.")
+                color = infoColor
+
+                addField("Contributors", "Fox#0001, Elliott#0001, JakeyWakey#1569")
                 addInlineField("Required role", requiredRole)
                 addInlineField("Prefix", configuration.prefix)
-                addInlineField("Contributors", "Fox#0001, Elliott#0001, JakeyWakey#1569")
-
-                with(project) {
-                    val kotlinVersion = KotlinVersion.CURRENT
-
-                    addField("Build Info", "```" +
-                        "Version: $version\n" +
-                        "KUtils: $kutils\n" +
-                        "Kotlin: $kotlinVersion" +
-                        "```")
-
-                    addField("Source", repository)
-                }
+                addInlineField("Build Info", "`${discord.properties.version} - ${discord.properties.jdaVersion}`")
+                addInlineField("Source", project.repository)
             }
 
             visibilityPredicate {
