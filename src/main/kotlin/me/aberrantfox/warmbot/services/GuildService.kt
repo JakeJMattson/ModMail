@@ -2,6 +2,7 @@ package me.aberrantfox.warmbot.services
 
 import me.aberrantfox.kjdautils.api.annotation.Service
 import me.aberrantfox.kjdautils.internal.services.*
+import me.aberrantfox.warmbot.conversations.AutoSetupConversation
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.services.EnvironmentSettings.IS_TESTING_ENVIRONMENT
 import net.dv8tion.jda.api.entities.Guild
@@ -40,7 +41,7 @@ class GuildService(private val configuration: Configuration, private val convers
     }
 
     private fun startSetupConversation(guild: Guild) =
-        conversationService.createConversation(guild.owner!!.user, guild, "auto-setup")
+        conversationService.startConversation<AutoSetupConversation>(guild.owner!!.user, configuration, guild)
 
     private fun consolidateWhitelist() {
         if (IS_TESTING_ENVIRONMENT)
