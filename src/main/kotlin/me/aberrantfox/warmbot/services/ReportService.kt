@@ -106,7 +106,7 @@ class ReportService(private val config: Configuration,
 
     private fun createReportChannel(channel: TextChannel, user: User, firstMessage: Message, guild: Guild) {
         val userMessage = embed {
-            color = Color.PINK
+            color = successColor
             title = "You've successfully opened a report with the staff of ${guild.name}"
             description = "Someone will respond shortly, please be patient."
             thumbnail = guild.iconUrl
@@ -115,7 +115,7 @@ class ReportService(private val config: Configuration,
         val openingMessage = embed {
             addField("New Report Opened!", "${user.descriptor()} :: ${user.asMention}", false)
             thumbnail = user.effectiveAvatarUrl
-            color = Color.green
+            color = successColor
         }
 
         channel.sendMessage(openingMessage).queue()
@@ -142,7 +142,7 @@ fun Report.close() {
 
 private fun sendReportClosedEmbed(report: Report) =
     report.reportToUser()?.sendPrivateMessage(embed {
-        color = Color.LIGHT_GRAY
+        color = failureColor
         title = "The staff of ${report.reportToGuild().name} have closed this report."
         description = "If you continue to reply, a new report will be created."
     })

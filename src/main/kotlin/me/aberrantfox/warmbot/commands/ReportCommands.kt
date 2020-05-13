@@ -59,7 +59,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
             it.respond {
                 addField("Note from ${it.author.name}", note, false)
-                color = Color.ORANGE
+                color = infoColor
             }
 
             it.message.delete().queue()

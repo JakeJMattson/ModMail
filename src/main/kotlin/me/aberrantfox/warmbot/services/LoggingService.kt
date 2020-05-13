@@ -82,6 +82,6 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
             createFields("Old Content", old)
             createFields("New Content", new)
             thumbnail = report.reportToUser()?.effectiveAvatarUrl
-            color = Color.YELLOW
+            color = infoColor
         }
 }

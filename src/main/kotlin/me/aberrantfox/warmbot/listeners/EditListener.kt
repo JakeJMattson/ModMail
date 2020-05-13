@@ -15,7 +15,7 @@ class EditListener(private val reportService: ReportService, private val logging
         if (event.author.id == selfUser().id) return
 
         val report = event.channel.channelToReport()
-        val privateChannel = getPrivateChannels().first { it.user.id == report.userId }
+        val privateChannel = getPrivateChannels().firstOrNull { it.user.id == report.userId } ?: return
         val targetMessage = report.messages[event.messageId]!!
 
         privateChannel.editMessageById(targetMessage, event.message).queue()

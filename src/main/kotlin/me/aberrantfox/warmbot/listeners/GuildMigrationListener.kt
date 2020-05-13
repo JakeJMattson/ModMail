@@ -25,7 +25,7 @@ class GuildMigrationListener(val configuration: Configuration, private val guild
 
             report.reportToChannel()?.sendMessage(embed {
                 addField("User has rejoined server!", "This report is now reactivated.", false)
-                color = Color.green
+                color = successColor
             })?.queue()
 
             if (member.isDetained())
@@ -49,6 +49,6 @@ class GuildMigrationListener(val configuration: Configuration, private val guild
 
     private fun createResponse(message: String) = embed {
         addField("User no longer in server!", "This user $message the server.", false)
-        color = Color.red
+        color = failureColor
     }
 }
