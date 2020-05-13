@@ -8,7 +8,7 @@ import me.aberrantfox.warmbot.messages.*
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.entities.Guild
 
-class GuildSetupConversation : Conversation() {
+class GuildSetupConversation(private val persistenceService: PersistenceService) : Conversation() {
     @Start
     fun conversation(config: Configuration, guild: Guild) = conversation {
         respond("Starting manual setup. If you make a mistake, you can adjust the provided values using commands later.")
@@ -51,7 +51,6 @@ class GuildSetupConversation : Conversation() {
         val staffChannels = arrayListOf(commandChannel.id)
         val logConfig = LoggingConfiguration(loggingChannel.id)
         val guildConfig = GuildConfiguration(guild.id, reportCategory.id, archiveChannel.id, staffRole.name, staffChannels, logConfig)
-        val persistenceService = discord.getInjectionObject<PersistenceService>()!!
 
         config.guildConfigurations.add(guildConfig)
         persistenceService.save(config)

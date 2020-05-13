@@ -10,7 +10,8 @@ import net.dv8tion.jda.api.entities.*
 import java.util.Timer
 import kotlin.concurrent.schedule
 
-class AutoSetupConversation : Conversation() {
+class AutoSetupConversation(private val persistenceService: PersistenceService,
+                            private val conversationService: ConversationService) : Conversation() {
     @Start
     fun conversation(configuration: Configuration, guild: Guild) = conversation {
         val isAutomatic = blockingPrompt(BooleanArg("", "yes", "no")) {
@@ -38,9 +39,6 @@ class AutoSetupConversation : Conversation() {
                 }
             }
         }
-
-        val persistenceService = discord.getInjectionObject<PersistenceService>()!!
-        val conversationService = discord.getInjectionObject<ConversationService>()!!
 
         if (isAutomatic)
             autoSetup(configuration, guild, persistenceService, this)

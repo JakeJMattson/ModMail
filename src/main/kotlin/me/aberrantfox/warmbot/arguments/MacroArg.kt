@@ -19,10 +19,10 @@ open class MacroArg(override val name : String = "Macro"): ArgumentType<Macro>()
         return ArgumentResult.Success(macro)
     }
 
-    override fun generateExamples(event: CommandEvent<*>): MutableList<String> {
+    override fun generateExamples(event: CommandEvent<*>): List<String> {
         val macroService = event.discord.getInjectionObject<MacroService>()!!
-        val macros = macroService.getGuildMacros(event.guild!!).map { it.name }.toMutableList()
+        val macros = macroService.getGuildMacros(event.guild!!).map { it.name }
 
-        return macros.takeIf { it.isNotEmpty() } ?: mutableListOf("<No Macros>")
+        return macros.takeIf { it.isNotEmpty() } ?: listOf("<No Macros>")
     }
 }
