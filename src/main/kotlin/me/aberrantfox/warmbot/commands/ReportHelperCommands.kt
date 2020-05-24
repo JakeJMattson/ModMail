@@ -71,7 +71,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     command("Open") {
         requiresGuild = true
         description = Locale.OPEN_DESCRIPTION
-        execute(MemberArg, SentenceArg("Initial Message").makeOptional("")) { event ->
+        execute(MemberArg, EveryArg("Initial Message").makeOptional("")) { event ->
             val (targetMember, message) = event.args
             val guild = event.message.guild
 
@@ -92,7 +92,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     command("Detain") {
         requiresGuild = true
         description = Locale.DETAIN_DESCRIPTION
-        execute(MemberArg, SentenceArg("Initial Message").makeOptional("")) { event ->
+        execute(MemberArg, EveryArg("Initial Message").makeOptional("")) { event ->
             val (targetMember, message) = event.args
             val guild = event.message.guild
 

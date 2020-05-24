@@ -44,7 +44,7 @@ class AutoSetupConversation(private val persistenceService: PersistenceService,
             autoSetup(configuration, guild, persistenceService, this)
         else
             Timer().schedule(1500) {
-                conversationService.startConversation<GuildSetupConversation>(user, configuration, guild)
+                conversationService.startPrivateConversation<GuildSetupConversation>(user, configuration, guild)
             }
     }
 

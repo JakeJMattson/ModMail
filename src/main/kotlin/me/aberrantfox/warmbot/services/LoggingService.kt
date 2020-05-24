@@ -47,7 +47,7 @@ class LoggingService(private val config: Configuration, jdaInitializer: JdaIniti
 
     fun command(command: CommandEvent<*>, additionalInfo: String = "") = getLogConfig(command.guild!!.id).apply {
         val author = command.author.fullName()
-        val commandName = command.commandStruct.commandName
+        val commandName = command.command!!.names.first()
         val channelName = command.channel.name
 
         if (logCommands) log(loggingChannel, inject({ COMMAND_LOG },

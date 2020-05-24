@@ -28,15 +28,20 @@ fun main(args: Array<String>) {
             val configuration = discord.getInjectionObject<Configuration>()!!
             val permissionsService = discord.getInjectionObject<PermissionsService>()!!
 
-            prefix = configuration.prefix
+            prefix { configuration.prefix }
 
             colors {
                 infoColor = Color(0x00bfff)
             }
 
             mentionEmbed {
-                val self = it.jda.selfUser
-                val requiredRole = configuration.getGuildConfig(it.guild.id)?.staffRoleName ?: "<Not Configured>"
+                val self = discord.jda.selfUser
+                val guild = it.guild
+
+                val requiredRole = if (guild != null)
+                    configuration.getGuildConfig(guild.id)?.staffRoleName ?: "<Not Configured>"
+                else
+                    "<Not Applicable>"
 
                 title = "${self.fullName()} (WarmBot ${project.version})"
                 description = "A Discord report management bot."
@@ -46,7 +51,7 @@ fun main(args: Array<String>) {
                 addField("Contributors", "Fox#0001, Elliott#0001, JakeyWakey#1569")
                 addInlineField("Required role", requiredRole)
                 addInlineField("Prefix", configuration.prefix)
-                addInlineField("Build Info", "`${discord.properties.version} - ${discord.properties.jdaVersion}`")
+                addInlineField("Build Info", "`${discord.properties.kutilsVersion} - ${discord.properties.jdaVersion}`")
                 addInlineField("Source", project.repository)
             }
 

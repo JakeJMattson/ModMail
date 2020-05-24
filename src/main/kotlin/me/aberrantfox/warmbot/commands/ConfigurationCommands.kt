@@ -40,7 +40,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     command("SetStaffRole") {
         requiresGuild = true
         description = Locale.SET_STAFF_ROLE_DESCRIPTION
-        execute(WordArg) {
+        execute(AnyArg) {
             val staffRoleName = it.args.first
             val staffRole = it.discord.jda.getRolesByName(staffRoleName, true).firstOrNull()
 

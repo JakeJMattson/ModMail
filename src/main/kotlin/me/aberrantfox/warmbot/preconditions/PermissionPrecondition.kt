@@ -9,8 +9,7 @@ import me.aberrantfox.warmbot.services.*
 
 @Precondition
 fun produceHasPermissionPrecondition(permissionsService: PermissionsService) = precondition {
-    val command = it.container[it.commandStruct.commandName]
-    val requiredPermissionLevel = command?.requiredPermissionLevel ?: DEFAULT_REQUIRED_PERMISSION
+    val requiredPermissionLevel = it.command?.requiredPermissionLevel ?: DEFAULT_REQUIRED_PERMISSION
     val guild = it.guild!!
     val member = it.author.toMember(guild)!!
 

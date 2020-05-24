@@ -63,7 +63,7 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
 
     command("SetPrefix") {
         description = "Set the bot's prefix."
-        execute(WordArg("Prefix")) {
+        execute(AnyArg("Prefix")) {
             val prefix = it.args.first
 
             prefixService.setPrefix(prefix)
@@ -77,7 +77,7 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, gu
         requiresGuild = true
         description = Locale.SET_PRESENCE_DESCRIPTION
         execute(ChoiceArg("Playing/Watching/Listening", "Playing", "Watching", "Listening").makeOptional("Playing"),
-            SentenceArg("Presence Message"))  {
+            EveryArg("Presence Message"))  {
             val (choice, text) = it.args
 
             it.discord.jda.presence.activity =

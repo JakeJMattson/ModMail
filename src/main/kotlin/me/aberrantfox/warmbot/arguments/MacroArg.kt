@@ -8,7 +8,6 @@ import me.aberrantfox.warmbot.services.*
 open class MacroArg(override val name : String = "Macro"): ArgumentType<Macro>() {
     companion object : MacroArg()
 
-    override val consumptionType = ConsumptionType.Single
     override fun convert(arg: String, args: List<String>, event: CommandEvent<*>): ArgumentResult<Macro> {
         val macroService = event.discord.getInjectionObject<MacroService>()
             ?: return ArgumentResult.Error("Something went wrong while searching for macros.")

@@ -28,7 +28,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     command("Archive") {
         requiresGuild = true
         description = Locale.ARCHIVE_DESCRIPTION
-        execute(SentenceArg("Additional Info").makeOptional("")) {
+        execute(EveryArg("Additional Info").makeOptional("")) {
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
             val channel = it.channel.id.idToTextChannel()!!
             val report = channel.channelToReport()
@@ -54,7 +54,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     command("Note") {
         requiresGuild = true
         description = Locale.NOTE_DESCRIPTION
-        execute(SentenceArg) {
+        execute(EveryArg) {
             val note = it.args.first
 
             it.respond {
@@ -92,7 +92,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     command("Tag") {
         requiresGuild = true
         description = Locale.TAG_DESCRIPTION
-        execute(WordArg("Word or Emote")) {
+        execute(AnyArg("Word or Emote")) {
             val tag = it.args.first
             val channel = it.channel as TextChannel
 

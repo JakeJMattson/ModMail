@@ -34,7 +34,7 @@ fun macroCommands(macroService: MacroService) = commands {
     command("AddMacro") {
         requiresGuild = true
         description = Locale.ADD_MACRO_DESCRIPTION
-        execute(WordArg("Macro Name"), SentenceArg("Macro Content")) {
+        execute(AnyArg("Macro Name"), EveryArg("Macro Content")) {
             val (name, message) = it.args
             val response = macroService.addMacro(name, message, it.guild!!)
             it.respond(response.second)
@@ -54,7 +54,7 @@ fun macroCommands(macroService: MacroService) = commands {
     command("RenameMacro") {
         requiresGuild = true
         description = Locale.RENAME_MACRO_DESCRIPTION
-        execute(MacroArg, WordArg("New Name")) {
+        execute(MacroArg, AnyArg("New Name")) {
             val (macro, newName) = it.args
             val response = macroService.editName(macro, newName, it.guild!!)
             it.respond(response.second)
@@ -64,7 +64,7 @@ fun macroCommands(macroService: MacroService) = commands {
     command("EditMacro") {
         requiresGuild = true
         description = Locale.EDIT_MACRO_DESCRIPTION
-        execute(MacroArg, SentenceArg("New Message")) {
+        execute(MacroArg, EveryArg("New Message")) {
             val (macro, message) = it.args
             val response = macroService.editMessage(macro, message)
             it.respond(response.second)

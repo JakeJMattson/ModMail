@@ -41,7 +41,7 @@ class GuildService(private val configuration: Configuration, private val convers
     }
 
     private fun startSetupConversation(guild: Guild) =
-        conversationService.startConversation<AutoSetupConversation>(guild.owner!!.user, configuration, guild)
+        conversationService.startPrivateConversation<AutoSetupConversation>(guild.owner!!.user, configuration, guild)
 
     private fun consolidateWhitelist() {
         if (IS_TESTING_ENVIRONMENT)
