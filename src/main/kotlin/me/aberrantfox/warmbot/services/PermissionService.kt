@@ -1,6 +1,6 @@
 package me.aberrantfox.warmbot.services
 
-import me.aberrantfox.kjdautils.api.annotation.Service
+import me.jakejmattson.kutils.api.annotations.Service
 import net.dv8tion.jda.api.entities.Member
 
 enum class Permission {

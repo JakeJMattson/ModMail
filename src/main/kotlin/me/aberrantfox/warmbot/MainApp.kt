@@ -1,8 +1,8 @@
 package me.aberrantfox.warmbot
 
 import com.google.gson.Gson
-import me.aberrantfox.kjdautils.api.*
-import me.aberrantfox.kjdautils.extensions.jda.*
+import me.jakejmattson.kutils.api.dsl.configuration.startBot
+import me.jakejmattson.kutils.api.extensions.jda.*
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
@@ -12,21 +12,21 @@ import java.awt.Color
 import kotlin.system.exitProcess
 
 private data class Properties(val version: String, val kutils: String, val repository: String)
+
 private val propFile = Properties::class.java.getResource("/properties.json").readText()
 private val project = Gson().fromJson(propFile, Properties::class.java)
 
 fun main(args: Array<String>) {
     val token = args.firstOrNull()
 
-    if(token == null || token == "UNSET") {
+    if (token == null || token == "UNSET") {
         println("You must specify the token with the -e flag when running via docker, or as the first command line param.")
         exitProcess(-1)
     }
 
     startBot(token) {
         configure {
-            val configuration = discord.getInjectionObject<Configuration>()!!
-            val permissionsService = discord.getInjectionObject<PermissionsService>()!!
+            val (configuration, permissionsService) = discord.getInjectionObjects(Configuration::class, PermissionsService::class)
 
             prefix { configuration.prefix }
 

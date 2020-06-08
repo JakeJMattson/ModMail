@@ -1,6 +1,6 @@
 package me.aberrantfox.warmbot.services
 
-import me.aberrantfox.kjdautils.api.annotation.Service
+import me.jakejmattson.kutils.api.annotations.Service
 import net.dv8tion.jda.api.entities.Member
 import java.util.Vector
 
@@ -14,7 +14,7 @@ class ModerationService(val configuration: Configuration) {
         val guildConfiguration = configuration.getGuildConfig(guild.id) ?: return false
         val staffRoleName = guildConfiguration.staffRoleName
         val staffRole = jda.getRolesByName(staffRoleName, true).firstOrNull() ?: return false
-        
+
         return staffRole in member.roles
     }
 }
@@ -37,7 +37,7 @@ fun Report.release(): Boolean {
     return true
 }
 
-fun Member.isDetained() = detainedReports.any { it.userId == this.user.id}
+fun Member.isDetained() = detainedReports.any { it.userId == this.user.id }
 
 fun Member.mute(): Boolean {
     val mutedRole = guild.getRolesByName("Muted", true).firstOrNull() ?: return false
@@ -48,7 +48,7 @@ fun Member.mute(): Boolean {
     return true
 }
 
-fun Member.unmute(): Boolean{
+fun Member.unmute(): Boolean {
     val mutedRole = guild.getRolesByName("Muted", true).firstOrNull() ?: return false
 
     if (roles.contains(mutedRole))

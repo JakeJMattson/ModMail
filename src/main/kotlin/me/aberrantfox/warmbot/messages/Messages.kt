@@ -1,6 +1,6 @@
 package me.aberrantfox.warmbot.messages
 
-class Messages (
+class Messages(
     //General Descriptions
     val BOT_DESCRIPTION: String = "",
 
@@ -48,8 +48,7 @@ class Messages (
     val LIST_MACROS_DESCRIPTION: String = "",
 
     //Utility commands descriptions
-    val PING_DESCRIPTION: String = "",
-    val UPTIME_DESCRIPTION: String = "",
+    val STATUS_DESCRIPTION: String = "Display network status and total uptime.",
 
     //Success message
     val SET_REPORT_CATEGORY_SUCCESSFUL: String = "",

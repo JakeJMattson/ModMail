@@ -1,12 +1,12 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.annotation.CommandSet
-import me.aberrantfox.kjdautils.api.dsl.EmbedDSLHandle.Companion.failureColor
-import me.aberrantfox.kjdautils.api.dsl.EmbedDSLHandle.Companion.successColor
-import me.aberrantfox.kjdautils.api.dsl.command.*
-import me.aberrantfox.kjdautils.api.dsl.embed
-import me.aberrantfox.kjdautils.extensions.jda.*
-import me.aberrantfox.kjdautils.internal.arguments.*
+import me.jakejmattson.kutils.api.annotations.CommandSet
+import me.jakejmattson.kutils.api.arguments.*
+import me.jakejmattson.kutils.api.dsl.command.*
+import me.jakejmattson.kutils.api.dsl.embed.EmbedDSLHandle.Companion.failureColor
+import me.jakejmattson.kutils.api.dsl.embed.EmbedDSLHandle.Companion.successColor
+import me.jakejmattson.kutils.api.dsl.embed.embed
+import me.jakejmattson.kutils.api.extensions.jda.*
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
@@ -62,9 +62,9 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                     loggingService.staffOpen(guild, channel.name, event.author)
                 }
             },
-            {
-                event.respond("Unable to contact the target user. Direct messages are disabled or the bot is blocked.")
-            })
+                {
+                    event.respond("Unable to contact the target user. Direct messages are disabled or the bot is blocked.")
+                })
         }
     }
 

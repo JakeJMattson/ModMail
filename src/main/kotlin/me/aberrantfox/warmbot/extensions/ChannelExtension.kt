@@ -1,6 +1,6 @@
 package me.aberrantfox.warmbot.extensions
 
-import me.aberrantfox.kjdautils.extensions.jda.*
+import me.jakejmattson.kutils.api.extensions.jda.*
 import net.dv8tion.jda.api.entities.MessageChannel
 
 fun MessageChannel.archiveString() = iterableHistory.reversed().dropLast(1)

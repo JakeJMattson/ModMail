@@ -1,7 +1,7 @@
 package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
-import me.aberrantfox.kjdautils.api.dsl.toEmbedBuilder
+import me.jakejmattson.kutils.api.dsl.embed.toEmbedBuilder
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.events.user.update.UserUpdateAvatarEvent
 

@@ -1,12 +1,12 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.annotation.CommandSet
-import me.aberrantfox.kjdautils.api.dsl.command.commands
-import me.aberrantfox.kjdautils.internal.arguments.*
-import me.aberrantfox.kjdautils.internal.services.PersistenceService
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.*
 import me.aberrantfox.warmbot.services.*
+import me.jakejmattson.kutils.api.annotations.CommandSet
+import me.jakejmattson.kutils.api.arguments.*
+import me.jakejmattson.kutils.api.dsl.command.commands
+import me.jakejmattson.kutils.api.services.PersistenceService
 
 @CommandSet("Configuration")
 fun configurationCommands(configuration: Configuration, persistenceService: PersistenceService) = commands {
@@ -44,7 +44,8 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
             val staffRoleName = it.args.first
             val staffRole = it.discord.jda.getRolesByName(staffRoleName, true).firstOrNull()
 
-            staffRole ?: return@execute it.respond(inject({ FAIL_COULD_NOT_FIND_ROLE }, "staffRoleName" to staffRoleName))
+            staffRole
+                ?: return@execute it.respond(inject({ FAIL_COULD_NOT_FIND_ROLE }, "staffRoleName" to staffRoleName))
 
             configuration.getGuildConfig(it.message.guild.id)!!.staffRoleName = staffRole.name
             persistenceService.save(configuration)

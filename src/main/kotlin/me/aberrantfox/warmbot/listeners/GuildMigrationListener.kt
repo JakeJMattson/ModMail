@@ -1,11 +1,10 @@
 package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
-import me.aberrantfox.kjdautils.api.dsl.embed
+import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent
 import net.dv8tion.jda.api.events.guild.member.*
-import java.awt.Color
 
 class GuildMigrationListener(val configuration: Configuration, private val guildService: GuildService) {
 

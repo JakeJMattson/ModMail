@@ -1,6 +1,6 @@
 package me.aberrantfox.warmbot.services
 
-import me.aberrantfox.kjdautils.api.annotation.Data
+import me.jakejmattson.kutils.api.annotations.Data
 
 object EnvironmentSettings {
     var IS_TESTING_ENVIRONMENT = true

@@ -1,9 +1,9 @@
 package me.aberrantfox.warmbot.conversations
 
-import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.api.getInjectionObject
-import me.aberrantfox.kjdautils.internal.arguments.BooleanArg
-import me.aberrantfox.kjdautils.internal.services.*
+import me.jakejmattson.kutils.api.arguments.BooleanArg
+import me.jakejmattson.kutils.api.dsl.conversation.*
+import me.jakejmattson.kutils.api.dsl.embed.embed
+import me.jakejmattson.kutils.api.services.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.entities.*
@@ -13,7 +13,7 @@ import kotlin.concurrent.schedule
 class AutoSetupConversation(private val persistenceService: PersistenceService,
                             private val conversationService: ConversationService) : Conversation() {
     @Start
-    fun conversation(configuration: Configuration, guild: Guild) = conversation {
+    fun autoSetupConversation(configuration: Configuration, guild: Guild) = conversation {
         val isAutomatic = blockingPrompt(BooleanArg("", "yes", "no")) {
             embed {
                 color = infoColor

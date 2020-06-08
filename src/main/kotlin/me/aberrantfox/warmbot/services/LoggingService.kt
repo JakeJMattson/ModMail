@@ -1,13 +1,12 @@
 package me.aberrantfox.warmbot.services
 
-import me.aberrantfox.kjdautils.api.annotation.Service
-import me.aberrantfox.kjdautils.api.dsl.command.CommandEvent
-import me.aberrantfox.kjdautils.api.dsl.embed
-import me.aberrantfox.kjdautils.extensions.jda.fullName
+import me.jakejmattson.kutils.api.annotations.Service
+import me.jakejmattson.kutils.api.dsl.command.CommandEvent
+import me.jakejmattson.kutils.api.dsl.embed.embed
+import me.jakejmattson.kutils.api.extensions.jda.fullName
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.*
 import net.dv8tion.jda.api.entities.*
-import java.awt.Color
 
 @Service
 class LoggingService(private val config: Configuration, jdaInitializer: JdaInitializer) {

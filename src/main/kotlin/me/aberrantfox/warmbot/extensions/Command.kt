@@ -1,8 +1,7 @@
 package me.aberrantfox.warmbot.extensions
 
-import me.aberrantfox.kjdautils.api.dsl.command.*
+import me.jakejmattson.kutils.api.dsl.command.*
 import me.aberrantfox.warmbot.services.*
-import java.util.WeakHashMap
 
 val categoryPermissions: MutableMap<CommandsContainer, Permission> = mutableMapOf()
 val commandPermissions: MutableMap<Command, Permission> = mutableMapOf()
@@ -20,8 +19,8 @@ var Command.requiredPermissionLevel: Permission
 
         val cmdLevel = commandPermissions[this]
 
-        if(cmdLevel != null) return cmdLevel
-        if(setLevel != null) return setLevel
+        if (cmdLevel != null) return cmdLevel
+        if (setLevel != null) return setLevel
         return DEFAULT_REQUIRED_PERMISSION
     }
     set(value) {

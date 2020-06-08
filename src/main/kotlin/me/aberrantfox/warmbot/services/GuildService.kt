@@ -1,7 +1,7 @@
 package me.aberrantfox.warmbot.services
 
-import me.aberrantfox.kjdautils.api.annotation.Service
-import me.aberrantfox.kjdautils.internal.services.*
+import me.jakejmattson.kutils.api.annotations.Service
+import me.jakejmattson.kutils.api.services.*
 import me.aberrantfox.warmbot.conversations.AutoSetupConversation
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.services.EnvironmentSettings.IS_TESTING_ENVIRONMENT
@@ -12,7 +12,9 @@ import kotlin.concurrent.schedule
 @Service
 class GuildService(private val configuration: Configuration, private val conversationService: ConversationService,
                    private val persistenceService: PersistenceService, jdaInitializer: JdaInitializer) {
-    init { consolidateWhitelist() }
+    init {
+        consolidateWhitelist()
+    }
 
     fun cleanseGuilds() {
         if (IS_TESTING_ENVIRONMENT)

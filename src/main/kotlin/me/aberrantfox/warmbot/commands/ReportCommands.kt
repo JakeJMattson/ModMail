@@ -1,15 +1,13 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.annotation.CommandSet
-import me.aberrantfox.kjdautils.api.dsl.command.commands
-import me.aberrantfox.kjdautils.extensions.jda.fullName
-import me.aberrantfox.kjdautils.internal.arguments.*
+import me.jakejmattson.kutils.api.annotations.CommandSet
+import me.jakejmattson.kutils.api.arguments.*
+import me.jakejmattson.kutils.api.dsl.command.*
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.listeners.deletionQueue
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.entities.*
-import java.awt.Color
 
 @CommandSet("Report")
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands {
@@ -84,7 +82,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
             it.message.delete().queue()
             val movement = "Moved from `${oldCategory?.name}` to `${newCategory.name}`."
-            val synced = "This channel was${if(!shouldSync) " not " else " "}synced with the new category."
+            val synced = "This channel was${if (!shouldSync) " not " else " "}synced with the new category."
             loggingService.command(it, "$movement $synced")
         }
     }

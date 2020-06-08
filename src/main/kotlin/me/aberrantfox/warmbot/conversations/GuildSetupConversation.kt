@@ -1,16 +1,15 @@
 package me.aberrantfox.warmbot.conversations
 
-import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.api.getInjectionObject
-import me.aberrantfox.kjdautils.internal.arguments.*
-import me.aberrantfox.kjdautils.internal.services.PersistenceService
+import me.jakejmattson.kutils.api.arguments.*
+import me.jakejmattson.kutils.api.dsl.conversation.*
+import me.jakejmattson.kutils.api.services.PersistenceService
 import me.aberrantfox.warmbot.messages.*
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.entities.Guild
 
 class GuildSetupConversation(private val persistenceService: PersistenceService) : Conversation() {
     @Start
-    fun conversation(config: Configuration, guild: Guild) = conversation {
+    fun guildSetupConversation(config: Configuration, guild: Guild) = conversation {
         respond("Starting manual setup. If you make a mistake, you can adjust the provided values using commands later.")
 
         val reportCategory = blockingPromptUntil(

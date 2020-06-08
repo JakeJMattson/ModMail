@@ -1,8 +1,8 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.annotation.CommandSet
-import me.aberrantfox.kjdautils.api.dsl.command.commands
-import me.aberrantfox.kjdautils.internal.arguments.*
+import me.jakejmattson.kutils.api.annotations.CommandSet
+import me.jakejmattson.kutils.api.arguments.*
+import me.jakejmattson.kutils.api.dsl.command.*
 import me.aberrantfox.warmbot.extensions.archiveString
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
