@@ -1,7 +1,7 @@
 package me.aberrantfox.warmbot.extensions
 
-import me.jakejmattson.kutils.api.dsl.command.*
 import me.aberrantfox.warmbot.services.*
+import me.jakejmattson.kutils.api.dsl.command.*
 
 val categoryPermissions: MutableMap<CommandsContainer, Permission> = mutableMapOf()
 val commandPermissions: MutableMap<Command, Permission> = mutableMapOf()

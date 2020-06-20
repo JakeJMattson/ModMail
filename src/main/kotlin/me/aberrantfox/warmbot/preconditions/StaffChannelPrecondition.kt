@@ -1,8 +1,8 @@
 package me.aberrantfox.warmbot.preconditions
 
+import me.aberrantfox.warmbot.services.Configuration
 import me.jakejmattson.kutils.api.annotations.Precondition
 import me.jakejmattson.kutils.api.dsl.preconditions.*
-import me.aberrantfox.warmbot.services.Configuration
 import net.dv8tion.jda.api.entities.TextChannel
 
 @Precondition

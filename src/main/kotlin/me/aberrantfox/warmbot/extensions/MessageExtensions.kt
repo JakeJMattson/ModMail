@@ -3,14 +3,15 @@ package me.aberrantfox.warmbot.extensions
 import me.jakejmattson.kutils.api.extensions.stdlib.sanitiseMentions
 import net.dv8tion.jda.api.entities.*
 
-const val embedNotation = "<---------- Embed ---------->"
+private const val embedNotation = "<---------- Embed ---------->"
 
-fun Message.fullContent() = contentRaw + "\n" + attachmentsString()
+fun Message.fullContent() = contentRaw + "\n" +
+    (attachments.takeIf { it.isNotEmpty() }
+        ?.map { it.url }
+        ?.reduce { a, b -> "$a\n $b" }
+        ?: "")
 
-fun Message.attachmentsString(): String =
-    if (attachments.isNotEmpty()) attachments.map { it.url }.reduce { a, b -> "$a\n $b" } else ""
-
-fun Message.cleanContent() = this.fullContent().trimEnd().sanitiseMentions()
+fun Message.cleanContent() = fullContent().trimEnd().sanitiseMentions()
 
 fun MessageEmbed.toTextString() =
     buildString {
@@ -19,4 +20,4 @@ fun MessageEmbed.toTextString() =
         appendln(embedNotation)
     }
 
-fun Message.addFailReaction() = this.addReaction("❌").queue()
+fun Message.addFailReaction() = addReaction("❌").queue()

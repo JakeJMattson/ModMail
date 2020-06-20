@@ -14,7 +14,6 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     requiredPermissionLevel = Permission.GUILD_OWNER
 
     command("SetReportCategory") {
-        requiresGuild = true
         description = Locale.SET_REPORT_CATEGORY_DESCRIPTION
         execute(CategoryArg) {
             val reportCategory = it.args.first
@@ -26,7 +25,6 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     }
 
     command("SetArchiveChannel") {
-        requiresGuild = true
         description = Locale.SET_ARCHIVE_CHANNEL_DESCRIPTION
         execute(TextChannelArg) {
             val archiveChannel = it.args.first
@@ -38,7 +36,6 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     }
 
     command("SetStaffRole") {
-        requiresGuild = true
         description = Locale.SET_STAFF_ROLE_DESCRIPTION
         execute(AnyArg) {
             val staffRoleName = it.args.first
@@ -54,7 +51,6 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     }
 
     command("SetLoggingChannel") {
-        requiresGuild = true
         description = Locale.SET_LOGGING_CHANNEL_DESCRIPTION
         execute(TextChannelArg) {
             val loggingChannel = it.args.first
@@ -66,7 +62,6 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     }
 
     command("AddStaffChannel") {
-        requiresGuild = true
         description = Locale.ADD_STAFF_CHANNEL_DESCRIPTION
         execute(TextChannelArg) {
             val staffChannel = it.args.first
@@ -85,7 +80,6 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     }
 
     command("RemoveStaffChannel") {
-        requiresGuild = true
         description = Locale.REMOVE_STAFF_CHANNEL_DESCRIPTION
         execute(TextChannelArg) {
             val staffChannel = it.args.first
@@ -104,7 +98,6 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
     }
 
     command("ListStaffChannels") {
-        requiresGuild = true
         description = Locale.LIST_STAFF_CHANNELS_DESCRIPTION
         execute {
             val staffChannels = configuration.getGuildConfig(it.message.guild.id)!!.staffChannels

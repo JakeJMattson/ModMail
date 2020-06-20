@@ -1,10 +1,10 @@
 package me.aberrantfox.warmbot.conversations
 
+import me.aberrantfox.warmbot.messages.*
+import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.conversation.*
 import me.jakejmattson.kutils.api.services.PersistenceService
-import me.aberrantfox.warmbot.messages.*
-import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.entities.Guild
 
 class GuildSetupConversation(private val persistenceService: PersistenceService) : Conversation() {

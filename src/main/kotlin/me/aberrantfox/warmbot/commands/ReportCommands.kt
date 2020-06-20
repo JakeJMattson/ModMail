@@ -1,18 +1,17 @@
 package me.aberrantfox.warmbot.commands
 
-import me.jakejmattson.kutils.api.annotations.CommandSet
-import me.jakejmattson.kutils.api.arguments.*
-import me.jakejmattson.kutils.api.dsl.command.*
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.listeners.deletionQueue
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
+import me.jakejmattson.kutils.api.annotations.CommandSet
+import me.jakejmattson.kutils.api.arguments.*
+import me.jakejmattson.kutils.api.dsl.command.commands
 import net.dv8tion.jda.api.entities.*
 
 @CommandSet("Report")
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands {
     command("Close") {
-        requiresGuild = true
         description = Locale.CLOSE_DESCRIPTION
         execute {
             val channel = it.channel as TextChannel
@@ -24,12 +23,11 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     }
 
     command("Archive") {
-        requiresGuild = true
         description = Locale.ARCHIVE_DESCRIPTION
         execute(EveryArg("Additional Info").makeOptional("")) {
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
             val channel = it.channel.id.idToTextChannel()!!
-            val report = channel.channelToReport()
+            val report = channel.channelToReport()!!
             val note = it.args.first
 
             val archiveChannel = relevantGuild.archiveChannel.idToTextChannel()
@@ -50,7 +48,6 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     }
 
     command("Note") {
-        requiresGuild = true
         description = Locale.NOTE_DESCRIPTION
         execute(EveryArg) {
             val note = it.args.first
@@ -66,7 +63,6 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     }
 
     command("Move") {
-        requiresGuild = true
         description = Locale.MOVE_DESCRIPTION
         execute(CategoryArg, BooleanArg("Sync Permissions").makeOptional(true)) {
             val channel = it.channel as GuildChannel
@@ -88,7 +84,6 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     }
 
     command("Tag") {
-        requiresGuild = true
         description = Locale.TAG_DESCRIPTION
         execute(AnyArg("Word or Emote")) {
             val tag = it.args.first
@@ -101,11 +96,10 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     }
 
     command("ResetTags") {
-        requiresGuild = true
         description = Locale.RESET_TAGS_DESCRIPTION
         execute { event ->
             val channel = event.channel as TextChannel
-            val report = channel.channelToReport()
+            val report = channel.channelToReport()!!
 
             event.discord.jda.retrieveUserById(report.userId).queue {
                 val name = it.name.replace("\\s+".toRegex(), "-")

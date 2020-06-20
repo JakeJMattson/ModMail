@@ -1,16 +1,14 @@
 package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
+import me.aberrantfox.warmbot.services.userToReport
 import me.jakejmattson.kutils.api.dsl.embed.toEmbedBuilder
-import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.events.user.update.UserUpdateAvatarEvent
 
 class UpdateProfilePicture {
     @Subscribe
     fun onUserUpdateAvatarEvent(event: UserUpdateAvatarEvent) {
         val userProfilePicture = event.newAvatarUrl
-
-        if (!event.user.hasReportChannel()) return
 
         val report = event.user.userToReport() ?: return
         val reportChannel = report.reportToChannel() ?: return

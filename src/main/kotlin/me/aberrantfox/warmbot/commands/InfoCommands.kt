@@ -1,26 +1,23 @@
 package me.aberrantfox.warmbot.commands
 
-import me.jakejmattson.kutils.api.annotations.CommandSet
-import me.jakejmattson.kutils.api.arguments.*
-import me.jakejmattson.kutils.api.dsl.command.*
 import me.aberrantfox.warmbot.extensions.archiveString
 import me.aberrantfox.warmbot.messages.Locale
-import me.aberrantfox.warmbot.services.*
+import me.aberrantfox.warmbot.services.channelToReport
+import me.jakejmattson.kutils.api.annotations.CommandSet
+import me.jakejmattson.kutils.api.arguments.*
+import me.jakejmattson.kutils.api.dsl.command.commands
 import net.dv8tion.jda.api.entities.TextChannel
 
 @CommandSet("Info")
 fun infoCommands() = commands {
     command("ReportInfo") {
-        requiresGuild = true
         description = Locale.INFO_DESCRIPTION
         execute(TextChannelArg("Channel").makeOptional { it.channel as TextChannel },
             ChoiceArg("Field", "user", "channel", "guild", "all").makeOptional("all")) {
             val (targetChannel, choice) = it.args
             val error = "Command should be invoked in a report channel or target a report channel."
 
-            if (!targetChannel.isReportChannel()) return@execute it.respond(error)
-
-            val report = targetChannel.channelToReport()
+            val report = targetChannel.channelToReport() ?: return@execute it.respond(error)
 
             with(report) {
                 val allData =
@@ -42,18 +39,16 @@ fun infoCommands() = commands {
     }
 
     command("IsReport") {
-        requiresGuild = true
         description = Locale.IS_REPORT_DESCRIPTION
         execute(TextChannelArg("Channel").makeOptional { it.channel as TextChannel }) {
             val channel = it.args.first
-            val isReport = channel.isReportChannel()
+            val isReport = channel.channelToReport() != null
 
             it.respond("${channel.asMention} ${if (isReport) "is" else "is not"} a valid report channel.")
         }
     }
 
     command("PeekHistory") {
-        requiresGuild = true
         description = Locale.PEEK_HISTORY_DESCRIPTION
         execute(UserArg) {
             val user = it.args.first

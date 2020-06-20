@@ -1,12 +1,12 @@
 package me.aberrantfox.warmbot.commands
 
-import me.jakejmattson.kutils.api.annotations.CommandSet
-import me.jakejmattson.kutils.api.arguments.*
-import me.jakejmattson.kutils.api.dsl.command.*
-import me.jakejmattson.kutils.api.services.PersistenceService
-import me.aberrantfox.warmbot.extensions.*
+import me.aberrantfox.warmbot.extensions.requiredPermissionLevel
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
+import me.jakejmattson.kutils.api.annotations.CommandSet
+import me.jakejmattson.kutils.api.arguments.*
+import me.jakejmattson.kutils.api.dsl.command.commands
+import me.jakejmattson.kutils.api.services.PersistenceService
 import net.dv8tion.jda.api.entities.Activity
 
 @CommandSet("Owner")
@@ -27,7 +27,6 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, pe
     }
 
     command("SetPresence") {
-        requiresGuild = true
         description = Locale.SET_PRESENCE_DESCRIPTION
         execute(ChoiceArg("Playing/Watching/Listening", "Playing", "Watching", "Listening").makeOptional("Playing"),
             EveryArg("Presence Message")) {

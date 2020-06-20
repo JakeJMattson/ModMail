@@ -7,17 +7,13 @@ data class Macro(var name: String, var message: String)
 
 data class MacroMap(val map: HashMap<String, ArrayList<Macro>> = hashMapOf())
 
-lateinit var macroMap: MacroMap
-
 @Service
 class MacroService {
-    init {
-        macroMap = loadMacros()
-    }
-
-    fun getGuildMacros(guild: Guild) = macroMap.map.getOrPut(guild.id) { arrayListOf() }
+    private val macroMap = loadMacros()
 
     private fun ArrayList<Macro>.hasMacro(name: String) = this.any { it.name.toLowerCase() == name.toLowerCase() }
+
+    fun getGuildMacros(guild: Guild) = macroMap.map.getOrPut(guild.id) { arrayListOf() }
 
     fun addMacro(name: String, message: String, guild: Guild): Pair<Boolean, String> {
         val macroList = getGuildMacros(guild)
@@ -25,7 +21,7 @@ class MacroService {
         if (macroList.hasMacro(name)) return false to "This macro already exists!"
 
         macroList.add(Macro(name, message))
-        saveMacros()
+        saveMacros(macroMap)
 
         return true to "Macro successfully added!\n$name - $message"
     }
@@ -34,7 +30,7 @@ class MacroService {
         val macroList = getGuildMacros(guild)
 
         macroList.remove(macro)
-        saveMacros()
+        saveMacros(macroMap)
 
         return true to "Macro successfully removed! :: ${macro.name}"
     }
@@ -49,20 +45,20 @@ class MacroService {
 
         val oldName = macro.name
         macro.name = newName
-        saveMacros()
+        saveMacros(macroMap)
 
         return true to "Macro name updated!\n`$oldName` renamed to `$newName`"
     }
 
     fun editMessage(macro: Macro, newMessage: String): Pair<Boolean, String> {
         macro.message = newMessage
-        saveMacros()
+        saveMacros(macroMap)
 
         return true to "Successfully changed macro message!"
     }
 }
 
-private fun saveMacros() = save(macroFile, macroMap)
+private fun saveMacros(macros: MacroMap) = save(macroFile, macros)
 
 private fun loadMacros() =
     if (macroFile.exists())

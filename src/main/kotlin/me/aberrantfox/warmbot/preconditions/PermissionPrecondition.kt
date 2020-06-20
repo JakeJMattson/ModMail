@@ -1,11 +1,11 @@
 package me.aberrantfox.warmbot.preconditions
 
-import me.jakejmattson.kutils.api.annotations.Precondition
-import me.jakejmattson.kutils.api.dsl.preconditions.*
-import me.jakejmattson.kutils.api.extensions.jda.toMember
 import me.aberrantfox.warmbot.extensions.requiredPermissionLevel
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
+import me.jakejmattson.kutils.api.annotations.Precondition
+import me.jakejmattson.kutils.api.dsl.preconditions.*
+import me.jakejmattson.kutils.api.extensions.jda.toMember
 
 @Precondition
 fun produceHasPermissionPrecondition(permissionsService: PermissionsService) = precondition {

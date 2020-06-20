@@ -1,12 +1,11 @@
 package me.aberrantfox.warmbot
 
 import com.google.gson.Gson
-import me.jakejmattson.kutils.api.dsl.configuration.startBot
-import me.jakejmattson.kutils.api.extensions.jda.*
-import me.aberrantfox.warmbot.extensions.*
+import me.aberrantfox.warmbot.extensions.requiredPermissionLevel
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.api.Permission
+import me.jakejmattson.kutils.api.dsl.configuration.startBot
+import me.jakejmattson.kutils.api.extensions.jda.*
 import net.dv8tion.jda.api.entities.Activity
 import java.awt.Color
 import kotlin.system.exitProcess
@@ -39,8 +38,7 @@ fun main(args: Array<String>) {
                         configuration.prefix
                     else
                         "<none>"
-                }
-                else
+                } else
                     "<none>"
             }
 
@@ -78,22 +76,8 @@ fun main(args: Array<String>) {
 
                 permissionsService.hasClearance(member, permission)
             }
-
-            configuration.guildConfigurations.forEach { addOverrides(it) }
         }
 
         discord.jda.presence.activity = Activity.playing(Locale.DEFAULT_DISCORD_PRESENCE)
     }
-}
-
-private fun addOverrides(config: GuildConfiguration) {
-    val staffRole = config.guildId.idToGuild()?.getRolesByName(config.staffRoleName, true)?.firstOrNull() ?: return
-    val reportCategory = config.reportCategory.idToCategory() ?: return
-    val archiveChannel = config.archiveChannel.idToTextChannel() ?: return
-
-    reportCategory.putPermissionOverride(staffRole).setAllow(Permission.MESSAGE_READ).queue()
-    reportCategory.putPermissionOverride(reportCategory.guild.publicRole).setDeny(Permission.MESSAGE_READ).queue()
-
-    archiveChannel.putPermissionOverride(staffRole).setAllow(Permission.MESSAGE_READ).queue()
-    archiveChannel.putPermissionOverride(reportCategory.guild.publicRole).setDeny(Permission.MESSAGE_READ).queue()
 }

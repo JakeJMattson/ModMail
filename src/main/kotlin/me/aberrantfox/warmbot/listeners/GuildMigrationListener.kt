@@ -1,8 +1,8 @@
 package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
-import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.aberrantfox.warmbot.services.*
+import me.jakejmattson.kutils.api.dsl.embed.embed
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent
 import net.dv8tion.jda.api.events.guild.member.*
 
@@ -15,21 +15,18 @@ class GuildMigrationListener(val configuration: Configuration, private val guild
     fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
         val member = event.member
         val user = member.user
+        val report = user.userToReport() ?: return
 
-        if (user.hasReportChannel()) {
-            val report = user.userToReport() ?: return
+        if (report.guildId != event.guild.id)
+            return
 
-            if (report.guildId != event.guild.id)
-                return
+        report.reportToChannel()?.sendMessage(embed {
+            addField("User has rejoined server!", "This report is now reactivated.", false)
+            color = successColor
+        })?.queue()
 
-            report.reportToChannel()?.sendMessage(embed {
-                addField("User has rejoined server!", "This report is now reactivated.", false)
-                color = successColor
-            })?.queue()
-
-            if (member.isDetained())
-                member.mute()
-        }
+        if (member.isDetained())
+            member.mute()
     }
 
     @Subscribe
@@ -37,7 +34,6 @@ class GuildMigrationListener(val configuration: Configuration, private val guild
         val user = event.user
         val guild = event.guild
 
-        if (!user.hasReportChannel()) return
         val report = user.userToReport() ?: return
         if (report.guildId != guild.id) return
 

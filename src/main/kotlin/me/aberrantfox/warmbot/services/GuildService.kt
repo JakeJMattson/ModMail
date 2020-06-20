@@ -1,9 +1,9 @@
 package me.aberrantfox.warmbot.services
 
-import me.jakejmattson.kutils.api.annotations.Service
-import me.jakejmattson.kutils.api.services.*
 import me.aberrantfox.warmbot.conversations.AutoSetupConversation
 import me.jakejmattson.kutils.api.Discord
+import me.jakejmattson.kutils.api.annotations.Service
+import me.jakejmattson.kutils.api.services.ConversationService
 import net.dv8tion.jda.api.entities.Guild
 
 @Service
@@ -16,7 +16,7 @@ class GuildService(private val discord: Discord,
 
     fun initInGuild(guild: Guild) {
         if (!configuration.hasGuildConfig(guild.id)) {
-           startSetupConversation(guild)
+            startSetupConversation(guild)
         }
     }
 

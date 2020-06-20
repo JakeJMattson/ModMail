@@ -1,11 +1,11 @@
 package me.aberrantfox.warmbot.services
 
+import me.aberrantfox.warmbot.extensions.*
+import me.aberrantfox.warmbot.messages.*
 import me.jakejmattson.kutils.api.annotations.Service
 import me.jakejmattson.kutils.api.dsl.command.CommandEvent
 import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.jakejmattson.kutils.api.extensions.jda.fullName
-import me.aberrantfox.warmbot.extensions.*
-import me.aberrantfox.warmbot.messages.*
 import net.dv8tion.jda.api.entities.*
 
 @Service

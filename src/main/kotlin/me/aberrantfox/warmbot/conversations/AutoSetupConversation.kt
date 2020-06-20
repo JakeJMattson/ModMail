@@ -1,11 +1,11 @@
 package me.aberrantfox.warmbot.conversations
 
+import me.aberrantfox.warmbot.messages.Locale
+import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.arguments.BooleanArg
 import me.jakejmattson.kutils.api.dsl.conversation.*
 import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.jakejmattson.kutils.api.services.*
-import me.aberrantfox.warmbot.messages.Locale
-import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.entities.*
 import java.util.Timer
 import kotlin.concurrent.schedule

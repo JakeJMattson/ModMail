@@ -1,25 +1,26 @@
 package me.aberrantfox.warmbot.commands
 
-import me.jakejmattson.kutils.api.annotations.CommandSet
-import me.jakejmattson.kutils.api.arguments.*
-import me.jakejmattson.kutils.api.dsl.command.*
-import me.jakejmattson.kutils.api.extensions.jda.*
 import me.aberrantfox.warmbot.arguments.MacroArg
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
+import me.jakejmattson.kutils.api.annotations.CommandSet
+import me.jakejmattson.kutils.api.arguments.*
+import me.jakejmattson.kutils.api.dsl.command.commands
+import me.jakejmattson.kutils.api.extensions.jda.*
 
 @CommandSet("Macros")
 fun macroCommands(macroService: MacroService) = commands {
     command("SendMacro") {
-        requiresGuild = true
         description = Locale.SEND_MACRO_DESCRIPTION
         execute(MacroArg) {
             val macro = it.args.first
 
             it.respond {
+                val report = it.channel.channelToReport()
+
                 color =
-                    if (it.channel.isReportChannel()) {
-                        it.channel.channelToReport().reportToUser()?.sendPrivateMessage(macro.message)
+                    if (report != null) {
+                        report.reportToUser()?.sendPrivateMessage(macro.message)
                         addField("Macro sent by ${it.author.fullName()}!", macro.message, false)
                         successColor
                     } else {
@@ -31,7 +32,6 @@ fun macroCommands(macroService: MacroService) = commands {
     }
 
     command("AddMacro") {
-        requiresGuild = true
         description = Locale.ADD_MACRO_DESCRIPTION
         execute(AnyArg("Macro Name"), EveryArg("Macro Content")) {
             val (name, message) = it.args
@@ -41,7 +41,6 @@ fun macroCommands(macroService: MacroService) = commands {
     }
 
     command("RemoveMacro") {
-        requiresGuild = true
         description = Locale.REMOVE_MACRO_DESCRIPTION
         execute(MacroArg) {
             val macro = it.args.first
@@ -51,7 +50,6 @@ fun macroCommands(macroService: MacroService) = commands {
     }
 
     command("RenameMacro") {
-        requiresGuild = true
         description = Locale.RENAME_MACRO_DESCRIPTION
         execute(MacroArg, AnyArg("New Name")) {
             val (macro, newName) = it.args
@@ -61,7 +59,6 @@ fun macroCommands(macroService: MacroService) = commands {
     }
 
     command("EditMacro") {
-        requiresGuild = true
         description = Locale.EDIT_MACRO_DESCRIPTION
         execute(MacroArg, EveryArg("New Message")) {
             val (macro, message) = it.args
@@ -71,7 +68,6 @@ fun macroCommands(macroService: MacroService) = commands {
     }
 
     command("ListMacros") {
-        requiresGuild = true
         description = Locale.LIST_MACROS_DESCRIPTION
         execute {
             it.respond {

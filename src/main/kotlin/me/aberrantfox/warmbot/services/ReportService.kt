@@ -25,10 +25,8 @@ data class QueuedReport(val messages: Vector<String> = Vector(), val user: Strin
 private val reports = Vector<Report>()
 private val queuedReports = Vector<QueuedReport>()
 
-fun User.hasReportChannel() = reports.any { it.userId == this.id } || queuedReports.any { it.user == this.id }
 fun User.userToReport() = reports.firstOrNull { it.userId == this.id }
-fun MessageChannel.isReportChannel() = reports.any { it.channelId == this.id }
-fun MessageChannel.channelToReport() = reports.first { it.channelId == this.id }
+fun MessageChannel.channelToReport() = reports.firstOrNull { it.channelId == this.id }
 
 @Service
 class ReportService(private val config: Configuration,

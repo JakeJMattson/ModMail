@@ -1,5 +1,8 @@
 package me.aberrantfox.warmbot.commands
 
+import me.aberrantfox.warmbot.extensions.*
+import me.aberrantfox.warmbot.messages.Locale
+import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.annotations.CommandSet
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.command.*
@@ -7,9 +10,6 @@ import me.jakejmattson.kutils.api.dsl.embed.EmbedDSLHandle.Companion.failureColo
 import me.jakejmattson.kutils.api.dsl.embed.EmbedDSLHandle.Companion.successColor
 import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.jakejmattson.kutils.api.extensions.jda.*
-import me.aberrantfox.warmbot.extensions.*
-import me.aberrantfox.warmbot.messages.Locale
-import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.entities.*
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
@@ -69,7 +69,6 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     }
 
     command("Open") {
-        requiresGuild = true
         description = Locale.OPEN_DESCRIPTION
         execute(MemberArg, EveryArg("Initial Message").makeOptional("")) { event ->
             val (targetMember, message) = event.args
@@ -90,7 +89,6 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     }
 
     command("Detain") {
-        requiresGuild = true
         description = Locale.DETAIN_DESCRIPTION
         execute(MemberArg, EveryArg("Initial Message").makeOptional("")) { event ->
             val (targetMember, message) = event.args
@@ -119,7 +117,6 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     }
 
     command("Release") {
-        requiresGuild = true
         description = Locale.RELEASE_DESCRIPTION
         execute(MemberArg) {
             val targetMember = it.args.first
@@ -133,7 +130,6 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     }
 
     command("CloseAll") {
-        requiresGuild = true
         description = Locale.CLOSE_ALL_DESCRIPTION
         execute {
             val guild = it.guild!!
@@ -154,15 +150,12 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 }
 
 private fun hasValidState(event: CommandEvent<*>, currentGuild: Guild, targetUser: User): Boolean {
-    if (!targetUser.hasReportChannel())
-        return true
-
-    val report = targetUser.userToReport() ?: return false
+    val report = targetUser.userToReport() ?: return true
     val reportGuild = report.guildId.idToGuild() ?: return false
 
     event.respond("The target user already has an open report " +
         if (reportGuild == currentGuild) {
-            val channel = report.reportToChannel()?.asMention ?: "<Failed to retrieve channel>"
+            val channel = report.reportToChannel()!!.asMention
             "at $channel."
         } else {
             "in ${reportGuild.name}."

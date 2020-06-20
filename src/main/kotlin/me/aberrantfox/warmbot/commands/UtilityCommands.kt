@@ -2,7 +2,7 @@ package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.warmbot.messages.Locale
 import me.jakejmattson.kutils.api.annotations.CommandSet
-import me.jakejmattson.kutils.api.dsl.command.*
+import me.jakejmattson.kutils.api.dsl.command.commands
 import me.jakejmattson.kutils.api.extensions.stdlib.toTimeString
 import java.util.Date
 

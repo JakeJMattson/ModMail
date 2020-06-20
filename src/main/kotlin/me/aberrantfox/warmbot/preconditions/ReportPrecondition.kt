@@ -1,8 +1,8 @@
 package me.aberrantfox.warmbot.preconditions
 
+import me.aberrantfox.warmbot.services.channelToReport
 import me.jakejmattson.kutils.api.annotations.Precondition
 import me.jakejmattson.kutils.api.dsl.preconditions.*
-import me.aberrantfox.warmbot.services.isReportChannel
 
 private const val Category = "Report"
 
@@ -12,7 +12,7 @@ fun produceIsReportPrecondition() = precondition {
 
     if (command.category != Category) return@precondition Pass
 
-    if (!it.channel.isReportChannel()) return@precondition Fail("This command must be invoked inside a report.")
+    it.channel.channelToReport() ?: return@precondition Fail("This command must be invoked inside a report.")
 
     return@precondition Pass
 }
