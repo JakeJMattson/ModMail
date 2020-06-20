@@ -10,56 +10,9 @@ import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.entities.Activity
 
 @CommandSet("Owner")
-fun ownerCommands(configuration: Configuration, prefixService: PrefixService, guildService: GuildService, persistenceService: PersistenceService) = commands {
+fun ownerCommands(configuration: Configuration, prefixService: PrefixService, persistenceService: PersistenceService) = commands {
 
     requiredPermissionLevel = Permission.BOT_OWNER
-
-    command("Whitelist") {
-        requiresGuild = true
-        description = Locale.WHITELIST_DESCRIPTION
-        execute(GuildArg) {
-            val targetGuild = it.args.first
-
-            if (configuration.whitelist.contains(targetGuild.id))
-                return@execute it.respond("${targetGuild.name} (${targetGuild.id}) is already whitelisted.")
-
-            configuration.whitelist.add(targetGuild.id)
-            persistenceService.save(configuration)
-            it.respond("Successfully added `${targetGuild.name}` to the whitelist.")
-        }
-    }
-
-    command("UnWhitelist") {
-        requiresGuild = true
-        description = Locale.UNWHITELIST_DESCRIPTION
-        execute(GuildArg) {
-            val targetGuild = it.args.first
-
-            if (!configuration.whitelist.contains(targetGuild.id))
-                return@execute it.respond("${targetGuild.name} (${targetGuild.id}) is not whitelisted.")
-
-            configuration.whitelist.remove(targetGuild.id)
-            persistenceService.save(configuration)
-            it.respond("Successfully removed `${targetGuild.name}` from the whitelist.")
-
-            guildService.cleanseGuilds()
-        }
-    }
-
-    command("ShowWhitelist") {
-        requiresGuild = true
-        description = Locale.SHOW_WHITELIST_DESCRIPTION
-        execute {
-            it.respond(
-                buildString {
-                    configuration.whitelist.forEach {
-                        val guild = it.idToGuild()!!
-                        this.appendln("${guild.id} (${guild.name})")
-                    }
-                }
-            )
-        }
-    }
 
     command("SetPrefix") {
         description = "Set the bot's prefix."

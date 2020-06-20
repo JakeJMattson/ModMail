@@ -28,7 +28,21 @@ fun main(args: Array<String>) {
         configure {
             val (configuration, permissionsService) = discord.getInjectionObjects(Configuration::class, PermissionsService::class)
 
-            prefix { configuration.prefix }
+            requiresGuild = true
+
+            prefix {
+                if (it.guild != null) {
+                    val guildConfig = configuration.getGuildConfig(it.guild?.id)
+                    val validChannels = guildConfig?.staffChannels ?: mutableListOf()
+
+                    if (it.channel.id in validChannels)
+                        configuration.prefix
+                    else
+                        "<none>"
+                }
+                else
+                    "<none>"
+            }
 
             colors {
                 infoColor = Color(0x00bfff)
@@ -37,9 +51,10 @@ fun main(args: Array<String>) {
             mentionEmbed {
                 val self = discord.jda.selfUser
                 val guild = it.guild
+                val guildConfig = configuration.getGuildConfig(guild?.id)
 
                 val requiredRole = if (guild != null)
-                    configuration.getGuildConfig(guild.id)?.staffRoleName ?: "<Not Configured>"
+                    guildConfig?.staffRoleName ?: "<Not Configured>"
                 else
                     "<Not Applicable>"
 
@@ -50,7 +65,7 @@ fun main(args: Array<String>) {
 
                 addField("Contributors", "Fox#0001, Elliott#0001, JakeyWakey#1569")
                 addInlineField("Required role", requiredRole)
-                addInlineField("Prefix", configuration.prefix)
+                addInlineField("Prefix", it.relevantPrefix)
                 addInlineField("Build Info", "`${discord.properties.kutilsVersion} - ${discord.properties.jdaVersion}`")
                 addInlineField("Source", project.repository)
             }

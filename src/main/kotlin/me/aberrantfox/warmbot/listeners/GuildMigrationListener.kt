@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.events.guild.member.*
 class GuildMigrationListener(val configuration: Configuration, private val guildService: GuildService) {
 
     @Subscribe
-    fun onGuildBotJoin(event: GuildJoinEvent) = guildService.initOrLeave(event.guild)
+    fun onGuildBotJoin(event: GuildJoinEvent) = guildService.initInGuild(event.guild)
 
     @Subscribe
     fun onGuildMemberJoin(event: GuildMemberJoinEvent) {

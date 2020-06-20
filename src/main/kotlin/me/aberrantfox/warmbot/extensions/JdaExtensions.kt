@@ -23,4 +23,3 @@ fun String.isValidChannel() = try {
 
 fun selfUser() = jda.selfUser
 fun getPrivateChannels() = jda.privateChannels
-fun guilds() = jda.guilds

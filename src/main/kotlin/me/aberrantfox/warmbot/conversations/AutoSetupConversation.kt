@@ -51,7 +51,7 @@ class AutoSetupConversation(private val persistenceService: PersistenceService,
     private fun autoSetup(config: Configuration, guild: Guild,
                           persistenceService: PersistenceService,
                           stateContainer: ConversationStateContainer) {
-        val guildData = arrayListOf<Any?>(
+        val guildData = mutableListOf(
             guild.getCategoriesByName(Locale.DEFAULT_HOLDER_CATEGORY_NAME, true).firstOrNull(),
             guild.getTextChannelsByName(Locale.DEFAULT_ARCHIVE_CHANNEL_NAME, true).firstOrNull(),
             guild.getTextChannelsByName(Locale.DEFAULT_LOGGING_CHANNEL_NAME, true).firstOrNull(),
@@ -106,7 +106,7 @@ class AutoSetupConversation(private val persistenceService: PersistenceService,
         stateContainer.respond(Locale.GUILD_SETUP_SUCCESSFUL)
     }
 
-    private fun attemptToFinalize(config: Configuration, persistenceService: PersistenceService, guild: Guild, data: ArrayList<Any?>) {
+    private fun attemptToFinalize(config: Configuration, persistenceService: PersistenceService, guild: Guild, data: MutableList<Any?>) {
         if (data.any { it == null })
             return
 
