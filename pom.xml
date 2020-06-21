@@ -6,7 +6,7 @@
 
     <groupId>me.jakejmattson</groupId>
     <artifactId>WarmBot</artifactId>
-    <version>3.0.2</version>
+    <version>3.1.0</version>
 
     <properties>
         <project.repository>https://gitlab.com/AberrantFox/WarmBot</project.repository>
@@ -17,14 +17,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>me.jakejmattson</groupId>
-            <artifactId>KUtils</artifactId>
-            <version>${kutils.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
             <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.jakejmattson</groupId>
+            <artifactId>KUtils</artifactId>
+            <version>${kutils.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
@@ -44,7 +44,6 @@
             </resource>
         </resources>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -58,11 +57,6 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
                         <configuration>
                             <jvmTarget>1.8</jvmTarget>
                             <sourceDirs>
@@ -89,7 +83,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>me.jakejmattson.warmbot.MainAppKt</mainClass>
+                                    <mainClass>me.aberrantfox.warmbot.MainAppKt</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
