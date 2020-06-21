@@ -16,4 +16,3 @@ fun produceIsReportPrecondition() = precondition {
 
     return@precondition Pass
 }
-

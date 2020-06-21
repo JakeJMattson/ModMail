@@ -7,12 +7,8 @@ import net.dv8tion.jda.api.entities.TextChannel
 
 @Precondition
 fun produceIsStaffChannelPrecondition(configuration: Configuration) = precondition {
-    if (it.channel !is TextChannel) return@precondition Fail()
-
-    val textChannel = it.channel as TextChannel
-
+    val textChannel = it.channel as? TextChannel ?: return@precondition Fail()
     val guildConfig = configuration.getGuildConfig(textChannel.guild.id) ?: return@precondition Pass
-
     val isWhitelisted = textChannel.id in guildConfig.staffChannels
     val isReportCategory = textChannel.parent?.id == guildConfig.reportCategory
 

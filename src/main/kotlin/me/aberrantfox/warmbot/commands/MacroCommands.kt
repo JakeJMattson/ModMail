@@ -2,35 +2,13 @@ package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.warmbot.arguments.MacroArg
 import me.aberrantfox.warmbot.messages.Locale
-import me.aberrantfox.warmbot.services.*
+import me.aberrantfox.warmbot.services.MacroService
 import me.jakejmattson.kutils.api.annotations.CommandSet
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.command.commands
-import me.jakejmattson.kutils.api.extensions.jda.*
 
 @CommandSet("Macros")
 fun macroCommands(macroService: MacroService) = commands {
-    command("SendMacro") {
-        description = Locale.SEND_MACRO_DESCRIPTION
-        execute(MacroArg) {
-            val macro = it.args.first
-
-            it.respond {
-                val report = it.channel.channelToReport()
-
-                color =
-                    if (report != null) {
-                        report.reportToUser()?.sendPrivateMessage(macro.message)
-                        addField("Macro sent by ${it.author.fullName()}!", macro.message, false)
-                        successColor
-                    } else {
-                        addField("Macro not sent - must be invoked within a report channel!", macro.message, false)
-                        failureColor
-                    }
-            }
-        }
-    }
-
     command("AddMacro") {
         description = Locale.ADD_MACRO_DESCRIPTION
         execute(AnyArg("Macro Name"), EveryArg("Macro Content")) {

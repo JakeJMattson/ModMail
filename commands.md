@@ -31,7 +31,6 @@
 | ListMacros  | <none>                    | List all of the currently available map.                                              |
 | RemoveMacro | Macro                     | Removes a macro with the given name.                                                  |
 | RenameMacro | Macro, New Name           | Change a macro's name, keeping the original response.                                 |
-| SendMacro   | Macro                     | Send a macro's message through a report channel.                                      |
 
 ## Owner
 | Commands    | Arguments                                      | Description                          |
