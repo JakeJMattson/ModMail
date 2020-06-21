@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.Guild
 class GuildSetupConversation(private val persistenceService: PersistenceService) : Conversation() {
     @Start
     fun guildSetupConversation(config: Configuration, guild: Guild) = conversation {
-        respond("Starting manual setup. If you make a mistake, you can adjust the provided values using commands later.")
+        respond("Starting manual setup.")
 
         val reportCategory = blockingPromptUntil(
             argumentType = CategoryArg,
@@ -33,13 +33,6 @@ class GuildSetupConversation(private val persistenceService: PersistenceService)
             errorMessage = { inject({ FAIL_GUILD_SETUP }, "field" to "logging channel") }
         )
 
-        val commandChannel = blockingPromptUntil(
-            argumentType = TextChannelArg,
-            initialPrompt = { "Enter the **Channel ID** where commands can be used. More can be added later." },
-            until = { it.guild == guild },
-            errorMessage = { inject({ FAIL_GUILD_SETUP }, "field" to "command channel") }
-        )
-
         val staffRole = blockingPromptUntil(
             argumentType = RoleArg(guild.id),
             initialPrompt = { "Enter the **Role Name** of the role required to give commands to this bot." },
@@ -47,9 +40,8 @@ class GuildSetupConversation(private val persistenceService: PersistenceService)
             errorMessage = { inject({ FAIL_GUILD_SETUP }, "field" to "staff role") }
         )
 
-        val staffChannels = arrayListOf(commandChannel.id)
         val logConfig = LoggingConfiguration(loggingChannel.id)
-        val guildConfig = GuildConfiguration(guild.id, reportCategory.id, archiveChannel.id, staffRole.name, staffChannels, logConfig)
+        val guildConfig = GuildConfiguration(guild.id, reportCategory.id, archiveChannel.id, staffRole.name, logConfig)
 
         config.guildConfigurations.add(guildConfig)
         persistenceService.save(config)

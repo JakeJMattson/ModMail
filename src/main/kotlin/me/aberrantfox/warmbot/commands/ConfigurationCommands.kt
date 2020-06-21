@@ -1,6 +1,6 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.warmbot.extensions.*
+import me.aberrantfox.warmbot.extensions.requiredPermissionLevel
 import me.aberrantfox.warmbot.messages.*
 import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.annotations.CommandSet
@@ -58,51 +58,6 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
             configuration.getGuildConfig(loggingChannel.guild.id)!!.loggingConfiguration.loggingChannel = loggingChannel.id
             persistenceService.save(configuration)
             it.respond(inject({ SET_LOGGING_CHANNEL_SUCCESSFUL }, "loggingChannel" to loggingChannel.name))
-        }
-    }
-
-    command("AddStaffChannel") {
-        description = Locale.ADD_STAFF_CHANNEL_DESCRIPTION
-        execute(TextChannelArg) {
-            val staffChannel = it.args.first
-            val channelId = staffChannel.id
-
-            configuration.getGuildConfig(it.message.guild.id)!!.staffChannels.apply {
-                if (channelId in this)
-                    return@execute it.respond("Channel already whitelisted!")
-
-                this.add(staffChannel.id)
-                persistenceService.save(configuration)
-
-                return@execute it.respond("Successfully whitelisted channel :: ${staffChannel.name}")
-            }
-        }
-    }
-
-    command("RemoveStaffChannel") {
-        description = Locale.REMOVE_STAFF_CHANNEL_DESCRIPTION
-        execute(TextChannelArg) {
-            val staffChannel = it.args.first
-            val channelId = staffChannel.id
-
-            configuration.getGuildConfig(it.message.guild.id)!!.staffChannels.apply {
-                if (channelId !in this)
-                    return@execute it.respond("Channel not whitelisted!")
-
-                this.remove(staffChannel.id)
-                persistenceService.save(configuration)
-
-                return@execute it.respond("Successfully unwhitelisted channel :: ${staffChannel.name}")
-            }
-        }
-    }
-
-    command("ListStaffChannels") {
-        description = Locale.LIST_STAFF_CHANNELS_DESCRIPTION
-        execute {
-            val staffChannels = configuration.getGuildConfig(it.message.guild.id)!!.staffChannels
-
-            it.respond(staffChannels.joinToString("\n") { "${it.idToTextChannel()?.asMention} - $it" })
         }
     }
 }

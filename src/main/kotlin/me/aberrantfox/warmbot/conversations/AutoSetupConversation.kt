@@ -48,56 +48,64 @@ class AutoSetupConversation(private val persistenceService: PersistenceService,
             }
     }
 
+    data class GuildData(var holderCategory: Category?,
+                         var archiveChannel: GuildChannel?,
+                         var loggingChannel: GuildChannel?,
+                         var reportCategory: Category?,
+                         var role: Role?) {
+        fun isFull() = when {
+            holderCategory == null -> false
+            archiveChannel == null -> false
+            loggingChannel == null -> false
+            reportCategory == null -> false
+            role == null -> false
+            else -> true
+        }
+    }
+
     private fun autoSetup(config: Configuration, guild: Guild,
                           persistenceService: PersistenceService,
                           stateContainer: ConversationStateContainer) {
-        val guildData = mutableListOf(
+
+        val guildData = GuildData(
             guild.getCategoriesByName(Locale.DEFAULT_HOLDER_CATEGORY_NAME, true).firstOrNull(),
             guild.getTextChannelsByName(Locale.DEFAULT_ARCHIVE_CHANNEL_NAME, true).firstOrNull(),
             guild.getTextChannelsByName(Locale.DEFAULT_LOGGING_CHANNEL_NAME, true).firstOrNull(),
-            guild.getTextChannelsByName(Locale.DEFAULT_COMMAND_CHANNEL_NAME, true).firstOrNull(),
             guild.getCategoriesByName(Locale.DEFAULT_REPORT_CATEGORY_NAME, true).firstOrNull(),
             guild.getRolesByName(Locale.DEFAULT_STAFF_ROLE_NAME, true).firstOrNull()
         )
 
-        if (guildData[0] == null) {
+        if (guildData.holderCategory == null) {
             guild.createCategory(Locale.DEFAULT_HOLDER_CATEGORY_NAME).queue {
-                guildData[0] = it
+                guildData.holderCategory = it
                 attemptToFinalize(config, persistenceService, guild, guildData)
             }
         }
 
-        if (guildData[1] == null) {
+        if (guildData.archiveChannel == null) {
             guild.createTextChannel(Locale.DEFAULT_ARCHIVE_CHANNEL_NAME).queue {
-                guildData[1] = it
+                guildData.archiveChannel = it
                 attemptToFinalize(config, persistenceService, guild, guildData)
             }
         }
 
-        if (guildData[2] == null) {
+        if (guildData.loggingChannel == null) {
             guild.createTextChannel(Locale.DEFAULT_LOGGING_CHANNEL_NAME).queue {
-                guildData[2] = it
+                guildData.loggingChannel = it
                 attemptToFinalize(config, persistenceService, guild, guildData)
             }
         }
 
-        if (guildData[3] == null) {
-            guild.createTextChannel(Locale.DEFAULT_COMMAND_CHANNEL_NAME).queue {
-                guildData[3] = it
-                attemptToFinalize(config, persistenceService, guild, guildData)
-            }
-        }
-
-        if (guildData[4] == null) {
+        if (guildData.reportCategory == null) {
             guild.createCategory(Locale.DEFAULT_REPORT_CATEGORY_NAME).queue {
-                guildData[4] = it
+                guildData.reportCategory = it
                 attemptToFinalize(config, persistenceService, guild, guildData)
             }
         }
 
-        if (guildData[5] == null) {
+        if (guildData.role == null) {
             guild.createRole().setName(Locale.DEFAULT_STAFF_ROLE_NAME).queue {
-                guildData[5] = it
+                guildData.role = it
                 attemptToFinalize(config, persistenceService, guild, guildData)
             }
         }
@@ -106,24 +114,21 @@ class AutoSetupConversation(private val persistenceService: PersistenceService,
         stateContainer.respond(Locale.GUILD_SETUP_SUCCESSFUL)
     }
 
-    private fun attemptToFinalize(config: Configuration, persistenceService: PersistenceService, guild: Guild, data: MutableList<Any?>) {
-        if (data.any { it == null })
+    private fun attemptToFinalize(config: Configuration, persistenceService: PersistenceService, guild: Guild, data: GuildData) {
+        if (!data.isFull())
             return
 
-        val holderCategory = data[0] as Category
-        val archiveChannel = data[1] as GuildChannel
-        val loggingChannel = data[2] as GuildChannel
-        val commandChannel = data[3] as GuildChannel
-        val reportCategory = data[4] as Category
-        val role = data[5] as Role
+        val holderCategory = data.holderCategory!!
+        val archiveChannel = data.archiveChannel!!
+        val loggingChannel = data.loggingChannel!!
+        val reportCategory = data.reportCategory!!
+        val role = data.role!!
 
         archiveChannel.manager.setParent(holderCategory).queue()
         loggingChannel.manager.setParent(holderCategory).queue()
-        commandChannel.manager.setParent(holderCategory).queue()
 
-        val staffChannels = arrayListOf(commandChannel.id)
         val logConfig = LoggingConfiguration(loggingChannel.id)
-        val guildConfiguration = GuildConfiguration(guild.id, reportCategory.id, archiveChannel.id, role.name, staffChannels, logConfig)
+        val guildConfiguration = GuildConfiguration(guild.id, reportCategory.id, archiveChannel.id, role.name, logConfig)
         config.guildConfigurations.add(guildConfiguration)
         persistenceService.save(config)
     }

@@ -30,16 +30,7 @@ fun main(args: Array<String>) {
             requiresGuild = true
 
             prefix {
-                if (it.guild != null) {
-                    val guildConfig = configuration.getGuildConfig(it.guild?.id)
-                    val validChannels = guildConfig?.staffChannels ?: mutableListOf()
-
-                    if (it.channel.id in validChannels)
-                        configuration.prefix
-                    else
-                        "<none>"
-                } else
-                    "<none>"
+                if (it.guild != null) configuration.prefix else "<none>"
             }
 
             colors {
