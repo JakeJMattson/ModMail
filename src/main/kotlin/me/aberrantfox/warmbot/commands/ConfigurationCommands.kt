@@ -20,7 +20,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
             configuration.getGuildConfig(reportCategory.guild.id)!!.reportCategory = reportCategory.id
             persistenceService.save(configuration)
-            it.respond(inject({ SET_REPORT_CATEGORY_SUCCESSFUL }, "categoryName" to reportCategory.name))
+            it.respond(Locale.SET_REPORT_CATEGORY_SUCCESSFUL inject ("categoryName" to reportCategory.name))
         }
     }
 
@@ -31,7 +31,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
             configuration.getGuildConfig(archiveChannel.guild.id)!!.archiveChannel = archiveChannel.id
             persistenceService.save(configuration)
-            it.respond(inject({ SET_ARCHIVE_CHANNEL_SUCCESSFUL }, "archiveChannel" to archiveChannel.name))
+            it.respond(Locale.SET_ARCHIVE_CHANNEL_SUCCESSFUL inject ("archiveChannel" to archiveChannel.name))
         }
     }
 
@@ -40,13 +40,11 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
         execute(AnyArg) {
             val staffRoleName = it.args.first
             val staffRole = it.discord.jda.getRolesByName(staffRoleName, true).firstOrNull()
-
-            staffRole
-                ?: return@execute it.respond(inject({ FAIL_COULD_NOT_FIND_ROLE }, "staffRoleName" to staffRoleName))
+                ?: return@execute it.respond(Locale.FAIL_COULD_NOT_FIND_ROLE inject ("staffRoleName" to staffRoleName))
 
             configuration.getGuildConfig(it.message.guild.id)!!.staffRoleName = staffRole.name
             persistenceService.save(configuration)
-            it.respond(inject({ SET_STAFF_ROLE_SUCCESSFUL }, "staffRoleName" to staffRole.name))
+            it.respond(Locale.SET_STAFF_ROLE_SUCCESSFUL inject ("staffRoleName" to staffRole.name))
         }
     }
 
@@ -57,7 +55,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
 
             configuration.getGuildConfig(loggingChannel.guild.id)!!.loggingConfiguration.loggingChannel = loggingChannel.id
             persistenceService.save(configuration)
-            it.respond(inject({ SET_LOGGING_CHANNEL_SUCCESSFUL }, "loggingChannel" to loggingChannel.name))
+            it.respond(Locale.SET_LOGGING_CHANNEL_SUCCESSFUL inject ("loggingChannel" to loggingChannel.name))
         }
     }
 }

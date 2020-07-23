@@ -48,7 +48,7 @@ class ReportService(private val config: Configuration,
         loadReports()
     }
 
-    fun getCommonGuilds(userObject: User): List<Guild> = userObject.mutualGuilds.filter { it.id in config.guildConfigurations.associateBy { it.guildId } }
+    fun getCommonGuilds(userObject: User) = userObject.mutualGuilds.filter { it.id in config.guildConfigurations.associateBy { it.guildId } }
 
     private fun loadReports() =
         reportsFolder.listFiles()?.forEach {

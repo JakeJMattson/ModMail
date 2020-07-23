@@ -16,28 +16,28 @@ class GuildSetupConversation(private val persistenceService: PersistenceService)
             argumentType = CategoryArg,
             initialPrompt = { "Enter the **Category ID** of the category where new reports will be created." },
             until = { it.guild == guild },
-            errorMessage = { inject({ FAIL_GUILD_SETUP }, "field" to "report category") }
+            errorMessage = { Locale.FAIL_GUILD_SETUP inject ("field" to "report category") }
         )
 
         val archiveChannel = blockingPromptUntil(
             argumentType = TextChannelArg,
             initialPrompt = { "Enter the **Channel ID** of the channel where archived reports will be sent." },
             until = { it.guild == guild },
-            errorMessage = { inject({ FAIL_GUILD_SETUP }, "field" to "archive channel") }
+            errorMessage = { Locale.FAIL_GUILD_SETUP inject ("field" to "archive channel") }
         )
 
         val loggingChannel = blockingPromptUntil(
             argumentType = TextChannelArg,
             initialPrompt = { "Enter the **Channel ID** of the channel where information will be logged." },
             until = { it.guild == guild },
-            errorMessage = { inject({ FAIL_GUILD_SETUP }, "field" to "logging channel") }
+            errorMessage = { Locale.FAIL_GUILD_SETUP inject ("field" to "logging channel") }
         )
 
         val staffRole = blockingPromptUntil(
             argumentType = RoleArg(guild.id),
             initialPrompt = { "Enter the **Role Name** of the role required to give commands to this bot." },
             until = { it.guild == guild },
-            errorMessage = { inject({ FAIL_GUILD_SETUP }, "field" to "staff role") }
+            errorMessage = { Locale.FAIL_GUILD_SETUP inject ("field" to "staff role") }
         )
 
         val logConfig = LoggingConfiguration(loggingChannel.id)

@@ -24,7 +24,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
     fun memberOpen(report: Report) {
         val liveReport = report.toLiveReport(jda) ?: return
         val config = liveReport.guild.logConfig
-        val message = inject({ MEMBER_OPEN_LOG }, "user".pairTo(liveReport.user))
+        val message = Locale.MEMBER_OPEN_LOG inject "user".pairTo(liveReport.user)
 
         if (config.logMemberOpen)
             log(config, message)
@@ -32,7 +32,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
 
     fun staffOpen(guild: Guild, channelName: String, staff: User) {
         val config = guild.logConfig
-        val message = inject({ STAFF_OPEN_LOG }, "channel" to channelName, "staff".pairTo(staff))
+        val message = Locale.STAFF_OPEN_LOG inject mapOf("channel" to channelName, "staff".pairTo(staff))
 
         if (config.logStaffOpen)
             log(config, message)
@@ -40,7 +40,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
 
     fun archive(guild: Guild, channelName: String, staff: User) {
         val config = guild.logConfig
-        val message = inject({ ARCHIVE_LOG }, "channel" to channelName, "staff".pairTo(staff))
+        val message = Locale.ARCHIVE_LOG inject mapOf("channel" to channelName, "staff".pairTo(staff))
 
         if (config.logArchive)
             log(config, message)
@@ -48,7 +48,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
 
     fun commandClose(guild: Guild, channelName: String, staff: User) {
         val config = guild.logConfig
-        val message = inject({ COMMAND_CLOSE_LOG }, "channel" to channelName, "staff".pairTo(staff))
+        val message = Locale.COMMAND_CLOSE_LOG inject mapOf("channel" to channelName, "staff".pairTo(staff))
 
         if (config.logClose)
             log(config, message)
@@ -56,7 +56,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
 
     fun manualClose(guild: Guild, channelName: String) {
         val config = guild.logConfig
-        val message = inject({ MANUAL_CLOSE_LOG }, "channel" to channelName)
+        val message = Locale.MANUAL_CLOSE_LOG inject ("channel" to channelName)
 
         if (config.logClose)
             log(config, message)
@@ -69,9 +69,9 @@ class LoggingService(private val discord: Discord, private val config: Configura
             logEmbed(config, buildEditEmbed(report, old, new))
     }
 
-    fun error(guild: Guild, message: String) {
+    fun error(guild: Guild, content: String) {
         val config = guild.logConfig
-        val message = inject({ ERROR_LOG }, "message" to message)
+        val message = Locale.ERROR_LOG inject ("message" to content)
 
         log(config, message)
     }
@@ -81,8 +81,14 @@ class LoggingService(private val discord: Discord, private val config: Configura
         val commandName = command.command!!.names.first()
         val channelName = command.channel.name
 
-        if (logCommands) log(this, inject({ COMMAND_LOG },
-            "author" to author, "commandName" to commandName, "channelName" to channelName, "additionalInfo" to additionalInfo))
+        if (logCommands) log(this, Locale.COMMAND_LOG inject
+            mapOf(
+                "author" to author,
+                "commandName" to commandName,
+                "channelName" to channelName,
+                "additionalInfo" to additionalInfo
+            )
+        )
     }
 
     private fun String.pairTo(user: User?) = this to (user?.fullName() ?: "<user>")

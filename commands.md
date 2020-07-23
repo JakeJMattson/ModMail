@@ -48,7 +48,6 @@
 ## ReportHelpers
 | Commands | Arguments                 | Description                                                               |
 | -------- | ------------------------- | ------------------------------------------------------------------------- |
-| CloseAll | <none>                    | Close all currently open reports. Can be invoked in any channel.          |
 | Detain   | Member, (Initial Message) | Mute a user and open a report with them.                                  |
 | Open     | Member, (Initial Message) | Open a report with the target user and send the provided initial message. |
 | Release  | Member                    | Release a user from detainment and unmute them.                           |
