@@ -10,9 +10,9 @@ class ChannelDeletionListener(private val loggingService: LoggingService) {
     @Subscribe
     fun onTextChannelDelete(event: TextChannelDeleteEvent) {
         val channel = event.channel
-        val report = channel.channelToReport() ?: return
+        val report = channel.findReport() ?: return
 
-        report.close()
+        report.close(channel.jda)
 
         if (channel.id in deletionQueue) {
             deletionQueue.remove(channel.id)

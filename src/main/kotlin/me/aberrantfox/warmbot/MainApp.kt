@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.Activity
 import java.awt.Color
 import kotlin.system.exitProcess
 
-private data class Properties(val version: String, val kutils: String, val repository: String)
+private data class Properties(val version: String, val repository: String)
 
 private val propFile = Properties::class.java.getResource("/properties.json").readText()
 private val project = Gson().fromJson(propFile, Properties::class.java)

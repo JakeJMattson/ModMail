@@ -1,6 +1,5 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.annotations.CommandSet
@@ -22,7 +21,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
     fun openReport(event: CommandEvent<*>, targetUser: User, guild: Guild, userEmbed: MessageEmbed, embedData: EmbedData, detain: Boolean = false) {
         val guildId = guild.id
-        val reportCategory = configuration.getGuildConfig(guildId)!!.reportCategory.idToCategory()
+        val reportCategory = configuration.getGuildConfig(guildId)!!.getLiveReportCategory(guild.jda)
 
         targetUser.openPrivateChannel().queue {
             it.sendMessage(userEmbed).queue({
@@ -124,38 +123,19 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             if (!targetMember.isDetained())
                 return@execute it.respond("This member is not detained.")
 
-            targetMember.user.userToReport()?.release()
+            targetMember.user.findReport()?.release()
             it.respond("${targetMember.fullName()} has been released.")
-        }
-    }
-
-    command("CloseAll") {
-        description = Locale.CLOSE_ALL_DESCRIPTION
-        execute {
-            val guild = it.guild!!
-            val reportsFromGuild = reportService.getReportsFromGuild(guild.id)
-
-            if (reportsFromGuild.isEmpty()) return@execute it.respond("There are no reports to close.")
-
-            reportsFromGuild.forEach { report ->
-                val channel = report.channelId.idToTextChannel() ?: return@execute
-
-                channel.delete().queue()
-                loggingService.commandClose(guild, channel.name, it.author)
-            }
-
-            it.respond("${reportsFromGuild.size} report(s) closed successfully.")
         }
     }
 }
 
 private fun hasValidState(event: CommandEvent<*>, currentGuild: Guild, targetUser: User): Boolean {
-    val report = targetUser.userToReport() ?: return true
-    val reportGuild = report.guildId.idToGuild() ?: return false
+    val report = targetUser.toLiveReport() ?: return true
+    val reportGuild = report.guild
 
     event.respond("The target user already has an open report " +
         if (reportGuild == currentGuild) {
-            val channel = report.reportToChannel()!!.asMention
+            val channel = report.channel.asMention
             "at $channel."
         } else {
             "in ${reportGuild.name}."

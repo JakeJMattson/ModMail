@@ -20,13 +20,16 @@ class ModerationService(val configuration: Configuration) {
 }
 
 fun Report.detain() {
+    /**
     val member = reportToMember() ?: return
 
     if (!member.isDetained())
         detainedReports.addElement(this)
+    **/
 }
 
 fun Report.release(): Boolean {
+    /**
     val member = this.reportToMember() ?: return false
 
     if (member.isDetained()) {
@@ -34,6 +37,8 @@ fun Report.release(): Boolean {
         member.unmute()
     }
 
+    return true
+    */
     return true
 }
 

@@ -13,11 +13,11 @@ class ResponseListener(private val configuration: Configuration) {
         with(event.message) {
             if (contentRaw.startsWith(configuration.prefix)) return
 
-            val report = event.channel.channelToReport() ?: return
-            val member = report.reportToMember() ?: return addFailReaction()
+            val report = event.channel.findReport() ?: return
+            val liveReport = report.toLiveReport(jda) ?: return addFailReaction()
             val content = fullContent().takeUnless { it.trim().isBlank() } ?: return
 
-            member.user.openPrivateChannel().queue {
+            liveReport.user.openPrivateChannel().queue {
                 it.sendMessage(content).queue { receivedMessage ->
                     report.messages[id] = receivedMessage.id
                 }

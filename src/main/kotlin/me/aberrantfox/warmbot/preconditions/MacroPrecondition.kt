@@ -17,11 +17,11 @@ fun macroPrecondition() = precondition {
         ?: return@precondition Fail()
 
     it.respond {
-        val report = it.channel.channelToReport()
+        val report = it.channel.toLiveReport()
 
         color =
             if (report != null) {
-                report.reportToUser()?.sendPrivateMessage(macro.message)
+                report.user.sendPrivateMessage(macro.message)
                 addField("Macro Sent (${it.author.fullName()})", macro.message, false)
                 successColor
             } else {

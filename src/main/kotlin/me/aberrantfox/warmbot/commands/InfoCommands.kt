@@ -2,7 +2,7 @@ package me.aberrantfox.warmbot.commands
 
 import me.aberrantfox.warmbot.extensions.archiveString
 import me.aberrantfox.warmbot.messages.Locale
-import me.aberrantfox.warmbot.services.channelToReport
+import me.aberrantfox.warmbot.services.findReport
 import me.jakejmattson.kutils.api.annotations.CommandSet
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.command.commands
@@ -17,7 +17,7 @@ fun infoCommands() = commands {
             val (targetChannel, choice) = it.args
             val error = "Command should be invoked in a report channel or target a report channel."
 
-            val report = targetChannel.channelToReport() ?: return@execute it.respond(error)
+            val report = targetChannel.findReport() ?: return@execute it.respond(error)
 
             with(report) {
                 val allData =
@@ -42,7 +42,7 @@ fun infoCommands() = commands {
         description = Locale.IS_REPORT_DESCRIPTION
         execute(TextChannelArg("Channel").makeOptional { it.channel as TextChannel }) {
             val channel = it.args.first
-            val isReport = channel.channelToReport() != null
+            val isReport = channel.findReport() != null
 
             it.respond("${channel.asMention} ${if (isReport) "is" else "is not"} a valid report channel.")
         }

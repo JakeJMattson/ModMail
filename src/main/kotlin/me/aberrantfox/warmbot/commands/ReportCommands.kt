@@ -1,6 +1,6 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.warmbot.extensions.*
+import me.aberrantfox.warmbot.extensions.archiveString
 import me.aberrantfox.warmbot.listeners.deletionQueue
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
@@ -26,12 +26,12 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         description = Locale.ARCHIVE_DESCRIPTION
         execute(EveryArg("Additional Info").makeOptional("")) {
             val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
-            val channel = it.channel.id.idToTextChannel()!!
-            val report = channel.channelToReport()!!
+            val channel = it.channel as TextChannel
+            val report = channel.findReport()!!
             val note = it.args.first
 
-            val archiveChannel = relevantGuild.archiveChannel.idToTextChannel()
-                ?: return@execute it.respond("No archive channel set!")
+            val archiveChannel = relevantGuild.getLiveArchiveChannel(channel.jda)
+                ?: return@execute it.respond("No archive channel available!")
 
             val archiveMessage = "User ID: ${report.userId}\nAdditional Information: " +
                 if (note.isNotEmpty()) note else "<None>"
@@ -99,7 +99,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         description = Locale.RESET_TAGS_DESCRIPTION
         execute { event ->
             val channel = event.channel as TextChannel
-            val report = channel.channelToReport()!!
+            val report = channel.findReport()!!
 
             event.discord.jda.retrieveUserById(report.userId).queue {
                 val name = it.name.replace("\\s+".toRegex(), "-")

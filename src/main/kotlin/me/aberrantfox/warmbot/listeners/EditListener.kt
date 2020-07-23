@@ -1,7 +1,7 @@
 package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
-import me.aberrantfox.warmbot.extensions.*
+import me.aberrantfox.warmbot.extensions.cleanContent
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.events.message.guild.*
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageUpdateEvent
@@ -14,7 +14,7 @@ class EditListener(private val reportService: ReportService, private val logging
 
         if (event.author.id == jda.selfUser.id) return
 
-        val report = event.channel.channelToReport() ?: return
+        val report = event.channel.findReport() ?: return
         val privateChannel = jda.privateChannels.firstOrNull { it.user.id == report.userId } ?: return
         val targetMessage = report.messages[event.messageId]!!
 
@@ -23,7 +23,7 @@ class EditListener(private val reportService: ReportService, private val logging
 
     @Subscribe
     fun onGuildMessageDelete(event: GuildMessageDeleteEvent) {
-        val report = event.channel.channelToReport() ?: return
+        val report = event.channel.findReport() ?: return
         val targetMessage = report.messages[event.messageId] ?: return
         val privateChannel = event.jda.privateChannels.first { it.user.id == report.userId }
 
@@ -37,19 +37,20 @@ class EditListener(private val reportService: ReportService, private val logging
     fun onUserTypingEvent(event: UserTypingEvent) {
         event.privateChannel ?: return
 
-        val report = event.user.userToReport() ?: return
+        val report = event.user.toLiveReport() ?: return
 
-        report.channelId.idToTextChannel()?.sendTyping()?.queue()
+        report.channel.sendTyping().queue()
     }
 
     @Subscribe
     fun onPrivateMessageUpdate(event: PrivateMessageUpdateEvent) {
-        val report = event.author.userToReport() ?: return
+        val report = event.author.findReport() ?: return
+        val liveReport = report.toLiveReport(event.jda) ?: return
         val targetMessage = report.messages[event.messageId] ?: return
-        val channel = report.channelId.idToTextChannel() ?: return
+        val channel = liveReport.channel
         val guildMessage = channel.retrieveMessageById(targetMessage).complete()
 
-        loggingService.edit(report, guildMessage.cleanContent(), event.message.cleanContent())
+        loggingService.edit(liveReport, guildMessage.cleanContent(), event.message.cleanContent())
         channel.editMessageById(targetMessage, event.message.cleanContent()).queue()
     }
 }

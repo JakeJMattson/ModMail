@@ -15,31 +15,31 @@ class GuildMigrationListener(val configuration: Configuration, private val guild
     fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
         val member = event.member
         val user = member.user
-        val report = user.userToReport() ?: return
+        val report = user.toLiveReport() ?: return
 
-        if (report.guildId != event.guild.id)
+        if (report.guild.id != event.guild.id)
             return
 
-        report.reportToChannel()?.sendMessage(embed {
+        report.channel.sendMessage(embed {
             addField("User has rejoined server!", "This report is now reactivated.", false)
             color = successColor
-        })?.queue()
+        }).queue()
 
         if (member.isDetained())
             member.mute()
     }
 
     @Subscribe
-    fun onGuildMemberLeave(event: GuildMemberLeaveEvent) {
+    fun onGuildMemberLeave(event: GuildMemberRemoveEvent) {
         val user = event.user
         val guild = event.guild
 
-        val report = user.userToReport() ?: return
-        if (report.guildId != guild.id) return
+        val report = user.toLiveReport() ?: return
+        if (report.guild.id != guild.id) return
 
         val message = if (guild.retrieveBanList().complete().any { it.user.id == user.id }) "was banned from" else "has left"
 
-        report.reportToChannel()?.sendMessage(createResponse(message))?.queue()
+        report.channel.sendMessage(createResponse(message)).queue()
     }
 
     private fun createResponse(message: String) = embed {

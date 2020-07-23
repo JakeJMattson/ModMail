@@ -1,7 +1,7 @@
 package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
-import me.aberrantfox.warmbot.extensions.*
+import me.aberrantfox.warmbot.extensions.fullContent
 import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.jakejmattson.kutils.api.extensions.jda.sendPrivateMessage
@@ -25,23 +25,17 @@ class ReportListener(private val reportService: ReportService, private val conve
         val commonGuilds = reportService.getCommonGuilds(user)
 
         when {
-            user.userToReport() != null -> {
+            user.findReport() != null -> {
                 reportService.receiveFromUser(message)
             }
             sentChoice.contains(user.id) -> {
-                if (!content.isInteger()) {
-                    user.sendPrivateMessage("Choice must be an number.")
-                    user.sendPrivateMessage(buildGuildChoiceEmbed(commonGuilds))
-                    return
-                }
+                if (!content.isInteger())
+                    return user.sendPrivateMessage("Choice must be an number.")
 
                 val selection = content.toInt()
 
-                if (selection !in 0..commonGuilds.lastIndex) {
-                    user.sendPrivateMessage("Choice must be a valid guild ID.")
-                    user.sendPrivateMessage(buildGuildChoiceEmbed(commonGuilds))
-                    return
-                }
+                if (selection !in 0..commonGuilds.lastIndex)
+                    return user.sendPrivateMessage("Choice must be a valid guild ID.")
 
                 val firstMessage = heldMessages.getOrDefault(user.id, message)
                 reportService.createReport(user, commonGuilds[selection], firstMessage)
@@ -68,7 +62,7 @@ class ReportListener(private val reportService: ReportService, private val conve
         embed {
             title = "Please choose which server's staff you'd like to contact."
             description = "Respond with the number that correlates with the desired server to get started."
-            thumbnail = selfUser().effectiveAvatarUrl
+            thumbnail = commonGuilds.first().jda.selfUser.effectiveAvatarUrl
             color = infoColor
 
             commonGuilds.forEachIndexed { index, guild ->
