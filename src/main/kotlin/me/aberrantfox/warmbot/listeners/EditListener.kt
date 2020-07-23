@@ -4,7 +4,7 @@ import com.google.common.eventbus.Subscribe
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.services.*
 import net.dv8tion.jda.api.events.message.guild.*
-import net.dv8tion.jda.api.events.message.priv.*
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageUpdateEvent
 import net.dv8tion.jda.api.events.user.UserTypingEvent
 
 class EditListener(private val reportService: ReportService, private val loggingService: LoggingService) {
@@ -51,41 +51,5 @@ class EditListener(private val reportService: ReportService, private val logging
 
         loggingService.edit(report, guildMessage.cleanContent(), event.message.cleanContent())
         channel.editMessageById(targetMessage, event.message.cleanContent()).queue()
-    }
-
-    @Subscribe
-    fun onPrivateMessageReceived(event: PrivateMessageReceivedEvent) {
-        val jda = event.jda
-
-        if (event.author.id == jda.selfUser.id) {
-            if (event.message.embeds.isNotEmpty()) return
-
-            val user = jda.getPrivateChannelById(event.channel.id)?.user ?: return
-
-            val report = user.userToReport() ?: return
-
-            if (report.queuedMessageId != null) {
-                report.messages[report.queuedMessageId!!] = event.messageId
-                report.queuedMessageId = null
-
-                reportService.writeReportToFile(report)
-            }
-        }
-    }
-
-    @Subscribe
-    fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
-        if (event.author.id == event.jda.selfUser.id) {
-            if (event.message.embeds.isNotEmpty()) return
-
-            val report = event.channel.channelToReport() ?: return
-
-            if (report.queuedMessageId != null) {
-                report.messages[report.queuedMessageId!!] = event.messageId
-                report.queuedMessageId = null
-
-                reportService.writeReportToFile(report)
-            }
-        }
     }
 }

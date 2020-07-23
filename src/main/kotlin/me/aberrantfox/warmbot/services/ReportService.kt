@@ -12,8 +12,7 @@ import java.util.concurrent.ConcurrentHashMap
 data class Report(val userId: String,
                   val channelId: String,
                   val guildId: String,
-                  val messages: MutableMap<String, String>,
-                  var queuedMessageId: String? = null) {
+                  val messages: MutableMap<String, String>) {
     fun reportToUser() = userId.idToUser()
     fun reportToMember() = userId.idToUser()?.toMember(reportToGuild())
     fun reportToChannel() = channelId.idToTextChannel()
@@ -81,8 +80,9 @@ class ReportService(private val config: Configuration,
                 return@with
             }
 
-            channel.sendMessage(safeMessage).queue()
-            queuedMessageId = message.id
+            channel.sendMessage(safeMessage).queue {
+                messages[message.id] = it.id
+            }
 
             return
         }
@@ -121,7 +121,7 @@ class ReportService(private val config: Configuration,
                 channel.sendMessage(it).queue()
         }
 
-        val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap(), firstMessage.id)
+        val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap())
         addReport(newReport)
 
         user.sendPrivateMessage(userMessage)
