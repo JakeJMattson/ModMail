@@ -6,11 +6,10 @@ import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.annotations.CommandSet
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.command.commands
-import me.jakejmattson.kutils.api.services.PersistenceService
 import net.dv8tion.jda.api.entities.Activity
 
 @CommandSet("Owner")
-fun ownerCommands(configuration: Configuration, prefixService: PrefixService, persistenceService: PersistenceService) = commands {
+fun ownerCommands(configuration: Configuration, prefixService: PrefixService) = commands {
 
     requiredPermissionLevel = Permission.BOT_OWNER
 
@@ -20,7 +19,7 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService, pe
             val prefix = it.args.first
 
             prefixService.setPrefix(prefix)
-            persistenceService.save(configuration)
+            configuration.save()
 
             it.respond("Prefix set to: $prefix")
         }

@@ -1,6 +1,6 @@
 package me.aberrantfox.warmbot.services
 
-import me.aberrantfox.warmbot.extensions.cleanContent
+import me.aberrantfox.warmbot.extensions.*
 import me.jakejmattson.kutils.api.annotations.Service
 import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.jakejmattson.kutils.api.extensions.jda.*
@@ -57,14 +57,14 @@ class ReportService(private val config: Configuration,
             //if (report.reportToChannel() != null) reports.add(report) else it.delete()
         }
 
-    fun createReport(user: User, guild: Guild, firstMessage: Message) {
+    fun createReport(user: User, guild: Guild) {
         if (guild.textChannels.size >= 250) return
 
         val reportCategoryId = config.getGuildConfig(guild.id)?.reportCategory!!
         val reportCategory = user.jda.getCategoryById(reportCategoryId) ?: return
 
         reportCategory.createTextChannel(user.name).queue { channel ->
-            createReportChannel(channel as TextChannel, user, firstMessage, guild)
+            createReportChannel(channel as TextChannel, user, guild)
         }
     }
 
@@ -104,16 +104,16 @@ class ReportService(private val config: Configuration,
     fun writeReportToFile(report: Report) =
         File("$reportsFolder/${report.channelId}.json").writeText(gson.toJson(report))
 
-    private fun createReportChannel(channel: TextChannel, user: User, firstMessage: Message, guild: Guild) {
+    private fun createReportChannel(channel: TextChannel, user: User, guild: Guild) {
         val userMessage = embed {
             color = successColor
-            title = "You've successfully opened a report with the staff of ${guild.name}"
+            simpleTitle = "You've successfully opened a report with the staff of ${guild.name}"
             description = "Someone will respond shortly, please be patient."
             thumbnail = guild.iconUrl
         }
 
         val openingMessage = embed {
-            addField("New Report Opened!", "${user.descriptor()} :: ${user.asMention}", false)
+            addField("New Report Opened!", user.descriptor(), false)
             thumbnail = user.effectiveAvatarUrl
             color = successColor
         }
@@ -148,7 +148,7 @@ private fun removeReport(report: Report) {
 private fun sendReportClosedEmbed(report: LiveReport) =
     report.user.sendPrivateMessage(embed {
         color = failureColor
-        title = "The staff of ${report.guild.name} have closed this report."
+        simpleTitle = "The staff of ${report.guild.name} have closed this report."
         description = "If you continue to reply, a new report will be created."
     })
 

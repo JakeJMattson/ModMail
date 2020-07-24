@@ -1,23 +1,21 @@
 package me.aberrantfox.warmbot.commands
 
+import me.aberrantfox.warmbot.extensions.descriptor
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.annotations.CommandSet
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.command.*
-import me.jakejmattson.kutils.api.dsl.embed.EmbedDSLHandle.Companion.failureColor
-import me.jakejmattson.kutils.api.dsl.embed.EmbedDSLHandle.Companion.successColor
 import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.jakejmattson.kutils.api.extensions.jda.*
 import net.dv8tion.jda.api.entities.*
-import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
 @CommandSet("ReportHelpers")
 fun reportHelperCommands(configuration: Configuration, reportService: ReportService,
                          moderationService: ModerationService, loggingService: LoggingService) = commands {
 
-    data class EmbedData(val color: Color, val topic: String, val openMessage: String, val initialMessage: String)
+    data class EmbedData(val topic: String, val openMessage: String, val initialMessage: String)
 
     fun openReport(event: CommandEvent<*>, targetUser: User, guild: Guild, userEmbed: MessageEmbed, embedData: EmbedData, detain: Boolean = false) {
         val guildId = guild.id
@@ -39,14 +37,10 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                         }
 
                     val reportEmbed = embed {
-                        color = embedData.color
+                        color = if (!detain) successColor else failureColor
                         thumbnail = targetUser.effectiveAvatarUrl
-                        addField(embedData.topic,
-                            "${targetUser.descriptor()} :: ${targetUser.asMention}",
-                            false)
-                        addField(embedData.openMessage,
-                            "${event.author.descriptor()} :: ${event.author.asMention}",
-                            false)
+                        addField(embedData.topic, targetUser.descriptor(), false)
+                        addField(embedData.openMessage, event.author.descriptor(), false)
                         addField("Initial Message", initialMessage, false)
                     }
 
@@ -82,7 +76,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                 addField("You've received a message from the staff of ${guild.name}!", Locale.BOT_DESCRIPTION, false)
             }
 
-            val embedData = EmbedData(successColor, "New Report Opened!", "This report was opened by", message)
+            val embedData = EmbedData("New Report Opened!", "This report was opened by", message)
             openReport(event, targetMember.user, guild, userEmbed, embedData)
         }
     }
@@ -110,7 +104,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                 addField("You've have been detained by the staff of ${guild.name}!", Locale.USER_DETAIN_MESSAGE, false)
             }
 
-            val embedData = EmbedData(failureColor, "User Detained!", "This user was detained by", message)
+            val embedData = EmbedData("User Detained!", "This user was detained by", message)
             openReport(event, targetMember.user, guild, userEmbed, embedData, true)
         }
     }

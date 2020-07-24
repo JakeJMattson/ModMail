@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import me.aberrantfox.warmbot.extensions.requiredPermissionLevel
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
-import me.jakejmattson.kutils.api.dsl.configuration.startBot
+import me.jakejmattson.kutils.api.dsl.bot
 import me.jakejmattson.kutils.api.extensions.jda.*
 import net.dv8tion.jda.api.entities.Activity
 import java.awt.Color
@@ -23,9 +23,9 @@ fun main(args: Array<String>) {
         exitProcess(-1)
     }
 
-    startBot(token) {
+    bot(token) {
         configure {
-            val (configuration, permissionsService) = discord.getInjectionObjects(Configuration::class, PermissionsService::class)
+            val (configuration, permissionsService) = it.getInjectionObjects(Configuration::class, PermissionsService::class)
 
             requiresGuild = true
 
@@ -38,6 +38,7 @@ fun main(args: Array<String>) {
             }
 
             mentionEmbed {
+                val discord = it.discord
                 val self = discord.jda.selfUser
                 val guild = it.guild
                 val guildConfig = configuration.getGuildConfig(guild?.id)
@@ -47,7 +48,7 @@ fun main(args: Array<String>) {
                 else
                     "<Not Applicable>"
 
-                title = "${self.fullName()} (WarmBot ${project.version})"
+                simpleTitle = "${self.fullName()} (WarmBot ${project.version})"
                 description = "A Discord report management bot."
                 thumbnail = self.effectiveAvatarUrl
                 color = infoColor
@@ -67,8 +68,8 @@ fun main(args: Array<String>) {
 
                 permissionsService.hasClearance(member, permission)
             }
-        }
 
-        discord.jda.presence.activity = Activity.playing(Locale.DEFAULT_DISCORD_PRESENCE)
+            it.jda.presence.activity = Activity.playing(Locale.DEFAULT_DISCORD_PRESENCE)
+        }
     }
 }

@@ -1,6 +1,6 @@
 package me.aberrantfox.warmbot.services
 
-import me.jakejmattson.kutils.api.annotations.Data
+import me.jakejmattson.kutils.api.dsl.data.Data
 import net.dv8tion.jda.api.JDA
 
 data class LoggingConfiguration(var loggingChannel: String = "insert-id",
@@ -24,11 +24,10 @@ data class GuildConfiguration(val guildId: String = "insert-id",
 
 }
 
-@Data(configFile)
 data class Configuration(val ownerId: String = "insert-id",
                          var prefix: String = "!",
                          val maxOpenReports: Int = 50,
-                         val guildConfigurations: MutableList<GuildConfiguration> = mutableListOf(GuildConfiguration())) {
+                         val guildConfigurations: MutableList<GuildConfiguration> = mutableListOf(GuildConfiguration())) : Data(configFile) {
     fun hasGuildConfig(guildId: String) = getGuildConfig(guildId) != null
     fun getGuildConfig(guildId: String?) = guildConfigurations.firstOrNull { it.guildId == guildId }
 }

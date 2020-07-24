@@ -1,4 +1,6 @@
-![KUtils Server](https://discordapp.com/api/guilds/453208597082406912/widget.png?style=banner2)
+<a href="https://discord.gg/REZVVjA">
+  <img src="https://discordapp.com/api/guilds/453208597082406912/widget.png?style=banner2"/>
+</a>
 
 # WarmBot
 WarmBot is a Discord bot designed to provide a communication system between server staff and other members.

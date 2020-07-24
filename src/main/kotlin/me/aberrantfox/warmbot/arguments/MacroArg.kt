@@ -11,9 +11,9 @@ open class MacroArg(override val name: String = "Macro") : ArgumentType<Macro>()
         val macroService = event.discord.getInjectionObjects(MacroService::class)
 
         val macro = macroService.getGuildMacros(event.guild!!).firstOrNull { it.name.toLowerCase() == arg.toLowerCase() }
-            ?: return ArgumentResult.Error("No such macro in this guild!")
+            ?: return Error("No such macro in this guild!")
 
-        return ArgumentResult.Success(macro)
+        return Success(macro)
     }
 
     override fun generateExamples(event: CommandEvent<*>): List<String> {

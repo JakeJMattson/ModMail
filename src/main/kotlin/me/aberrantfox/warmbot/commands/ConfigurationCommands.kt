@@ -6,10 +6,9 @@ import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.annotations.CommandSet
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.command.commands
-import me.jakejmattson.kutils.api.services.PersistenceService
 
 @CommandSet("Configuration")
-fun configurationCommands(configuration: Configuration, persistenceService: PersistenceService) = commands {
+fun configurationCommands(configuration: Configuration) = commands {
 
     requiredPermissionLevel = Permission.GUILD_OWNER
 
@@ -19,7 +18,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
             val reportCategory = it.args.first
 
             configuration.getGuildConfig(reportCategory.guild.id)!!.reportCategory = reportCategory.id
-            persistenceService.save(configuration)
+            configuration.save()
             it.respond(Locale.SET_REPORT_CATEGORY_SUCCESSFUL inject ("categoryName" to reportCategory.name))
         }
     }
@@ -30,7 +29,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
             val archiveChannel = it.args.first
 
             configuration.getGuildConfig(archiveChannel.guild.id)!!.archiveChannel = archiveChannel.id
-            persistenceService.save(configuration)
+            configuration.save()
             it.respond(Locale.SET_ARCHIVE_CHANNEL_SUCCESSFUL inject ("archiveChannel" to archiveChannel.name))
         }
     }
@@ -43,7 +42,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
                 ?: return@execute it.respond(Locale.FAIL_COULD_NOT_FIND_ROLE inject ("staffRoleName" to staffRoleName))
 
             configuration.getGuildConfig(it.message.guild.id)!!.staffRoleName = staffRole.name
-            persistenceService.save(configuration)
+            configuration.save()
             it.respond(Locale.SET_STAFF_ROLE_SUCCESSFUL inject ("staffRoleName" to staffRole.name))
         }
     }
@@ -54,7 +53,7 @@ fun configurationCommands(configuration: Configuration, persistenceService: Pers
             val loggingChannel = it.args.first
 
             configuration.getGuildConfig(loggingChannel.guild.id)!!.loggingConfiguration.loggingChannel = loggingChannel.id
-            persistenceService.save(configuration)
+            configuration.save()
             it.respond(Locale.SET_LOGGING_CHANNEL_SUCCESSFUL inject ("loggingChannel" to loggingChannel.name))
         }
     }

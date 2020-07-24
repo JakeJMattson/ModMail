@@ -4,47 +4,46 @@ import me.aberrantfox.warmbot.messages.*
 import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.conversation.*
-import me.jakejmattson.kutils.api.services.PersistenceService
 import net.dv8tion.jda.api.entities.Guild
 
-class GuildSetupConversation(private val persistenceService: PersistenceService) : Conversation() {
+class GuildSetupConversation : Conversation() {
     @Start
     fun guildSetupConversation(config: Configuration, guild: Guild) = conversation {
         respond("Starting manual setup.")
 
-        val reportCategory = blockingPromptUntil(
+        val reportCategory = promptUntil(
             argumentType = CategoryArg,
-            initialPrompt = { "Enter the **Category ID** of the category where new reports will be created." },
-            until = { it.guild == guild },
-            errorMessage = { Locale.FAIL_GUILD_SETUP inject ("field" to "report category") }
+            prompt = "Enter the **Category ID** of the category where new reports will be created.",
+            error = Locale.FAIL_GUILD_SETUP inject ("field" to "report category"),
+            isValid = { it.guild == guild }
         )
 
-        val archiveChannel = blockingPromptUntil(
+        val archiveChannel = promptUntil(
             argumentType = TextChannelArg,
-            initialPrompt = { "Enter the **Channel ID** of the channel where archived reports will be sent." },
-            until = { it.guild == guild },
-            errorMessage = { Locale.FAIL_GUILD_SETUP inject ("field" to "archive channel") }
+            prompt = "Enter the **Channel ID** of the channel where archived reports will be sent.",
+            error = Locale.FAIL_GUILD_SETUP inject ("field" to "archive channel"),
+            isValid = { it.guild == guild }
         )
 
-        val loggingChannel = blockingPromptUntil(
+        val loggingChannel = promptUntil(
             argumentType = TextChannelArg,
-            initialPrompt = { "Enter the **Channel ID** of the channel where information will be logged." },
-            until = { it.guild == guild },
-            errorMessage = { Locale.FAIL_GUILD_SETUP inject ("field" to "logging channel") }
+            prompt = "Enter the **Channel ID** of the channel where information will be logged.",
+            error = Locale.FAIL_GUILD_SETUP inject ("field" to "logging channel"),
+            isValid = { it.guild == guild }
         )
 
-        val staffRole = blockingPromptUntil(
+        val staffRole = promptUntil(
             argumentType = RoleArg(guild.id),
-            initialPrompt = { "Enter the **Role Name** of the role required to give commands to this bot." },
-            until = { it.guild == guild },
-            errorMessage = { Locale.FAIL_GUILD_SETUP inject ("field" to "staff role") }
+            prompt = "Enter the **Role Name** of the role required to give commands to this bot.",
+            error = Locale.FAIL_GUILD_SETUP inject ("field" to "staff role"),
+            isValid = { it.guild == guild }
         )
 
         val logConfig = LoggingConfiguration(loggingChannel.id)
         val guildConfig = GuildConfiguration(guild.id, reportCategory.id, archiveChannel.id, staffRole.name, logConfig)
 
         config.guildConfigurations.add(guildConfig)
-        persistenceService.save(config)
+        config.save()
 
         respond(Locale.GUILD_SETUP_SUCCESSFUL)
     }

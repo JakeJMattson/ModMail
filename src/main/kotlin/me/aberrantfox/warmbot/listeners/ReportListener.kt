@@ -5,7 +5,6 @@ import me.aberrantfox.warmbot.extensions.fullContent
 import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.jakejmattson.kutils.api.extensions.jda.sendPrivateMessage
-import me.jakejmattson.kutils.api.extensions.stdlib.isInteger
 import me.jakejmattson.kutils.api.services.ConversationService
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent
@@ -29,7 +28,7 @@ class ReportListener(private val reportService: ReportService, private val conve
                 reportService.receiveFromUser(message)
             }
             sentChoice.contains(user.id) -> {
-                if (!content.isInteger())
+                if (content.toIntOrNull() != null)
                     return user.sendPrivateMessage("Choice must be an number.")
 
                 val selection = content.toInt()
@@ -38,7 +37,7 @@ class ReportListener(private val reportService: ReportService, private val conve
                     return user.sendPrivateMessage("Choice must be a valid guild ID.")
 
                 val firstMessage = heldMessages.getOrDefault(user.id, message)
-                reportService.createReport(user, commonGuilds[selection], firstMessage)
+                reportService.createReport(user, commonGuilds[selection])
                 reportService.receiveFromUser(firstMessage)
                 heldMessages.remove(user.id)
                 sentChoice.remove(user.id)
@@ -51,7 +50,7 @@ class ReportListener(private val reportService: ReportService, private val conve
             else -> {
                 val guild = commonGuilds.first()
                 reportService.apply {
-                    createReport(user, guild, message)
+                    createReport(user, guild)
                     receiveFromUser(message)
                 }
             }
@@ -60,7 +59,7 @@ class ReportListener(private val reportService: ReportService, private val conve
 
     private fun buildGuildChoiceEmbed(commonGuilds: List<Guild>) =
         embed {
-            title = "Please choose which server's staff you'd like to contact."
+            simpleTitle = "Please choose which server's staff you'd like to contact."
             description = "Respond with the number that correlates with the desired server to get started."
             thumbnail = commonGuilds.first().jda.selfUser.effectiveAvatarUrl
             color = infoColor

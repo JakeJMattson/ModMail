@@ -24,8 +24,8 @@ fun Report.detain() {
     val member = reportToMember() ?: return
 
     if (!member.isDetained())
-        detainedReports.addElement(this)
-    **/
+    detainedReports.addElement(this)
+     **/
 }
 
 fun Report.release(): Boolean {
@@ -33,12 +33,12 @@ fun Report.release(): Boolean {
     val member = this.reportToMember() ?: return false
 
     if (member.isDetained()) {
-        detainedReports.remove(this)
-        member.unmute()
+    detainedReports.remove(this)
+    member.unmute()
     }
 
     return true
-    */
+     */
     return true
 }
 
