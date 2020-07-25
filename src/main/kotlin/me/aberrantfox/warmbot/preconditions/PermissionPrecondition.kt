@@ -10,13 +10,11 @@ import me.jakejmattson.kutils.api.extensions.jda.toMember
 class PermissionPrecondition(private val permissionsService: PermissionsService) : Precondition() {
     override fun evaluate(event: CommandEvent<*>): PreconditionResult {
         val requiredPermissionLevel = event.command?.requiredPermissionLevel ?: DEFAULT_REQUIRED_PERMISSION
-        val guild = event.guild!!
-        val member = event.author.toMember(guild)!!
+        val member = event.author.toMember(event.guild!!)!!
 
         if (!permissionsService.hasClearance(member, requiredPermissionLevel))
             return Fail(Locale.FAIL_MISSING_CLEARANCE)
 
         return Pass
     }
-
 }
