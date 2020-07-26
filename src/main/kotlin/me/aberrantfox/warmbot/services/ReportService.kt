@@ -1,6 +1,7 @@
 package me.aberrantfox.warmbot.services
 
 import me.aberrantfox.warmbot.extensions.*
+import me.jakejmattson.kutils.api.Discord
 import me.jakejmattson.kutils.api.annotations.Service
 import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.jakejmattson.kutils.api.extensions.jda.*
@@ -35,7 +36,6 @@ data class QueuedReport(val messages: Vector<String> = Vector(), val user: Strin
 private val reports = Vector<Report>()
 private val queuedReports = Vector<QueuedReport>()
 
-
 fun User.toLiveReport() = findReport()?.toLiveReport(jda)
 fun User.findReport() = reports.firstOrNull { it.userId == this.id }
 fun MessageChannel.findReport() = reports.firstOrNull { it.channelId == this.id }
@@ -43,18 +43,20 @@ fun MessageChannel.toLiveReport() = findReport()?.toLiveReport(jda)
 
 @Service
 class ReportService(private val config: Configuration,
-                    private val loggingService: LoggingService) {
+                    private val loggingService: LoggingService,
+                    discord: Discord) {
     init {
-        loadReports()
+        loadReports(discord.jda)
     }
 
     fun getCommonGuilds(userObject: User) = userObject.mutualGuilds.filter { it.id in config.guildConfigurations.associateBy { it.guildId } }
 
-    private fun loadReports() =
+    private fun loadReports(jda: JDA) =
         reportsFolder.listFiles()?.forEach {
             val report = gson.fromJson(it.readText(), Report::class.java)
-            //TODO get channel
-            //if (report.reportToChannel() != null) reports.add(report) else it.delete()
+            val channel = jda.getTextChannelById(report.channelId)
+
+            if (channel != null) reports.add(report) else it.delete()
         }
 
     fun createReport(user: User, guild: Guild) {

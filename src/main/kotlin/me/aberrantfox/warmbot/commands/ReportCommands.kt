@@ -1,20 +1,24 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.warmbot.extensions.archiveString
+import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.listeners.deletionQueue
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.annotations.CommandSet
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.command.commands
-import net.dv8tion.jda.api.entities.*
+import me.jakejmattson.kutils.api.dsl.embed.embed
+import me.jakejmattson.kutils.api.extensions.jda.fullName
+import net.dv8tion.jda.api.entities.TextChannel
 
 @CommandSet("Report")
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands {
     command("Close") {
         description = Locale.CLOSE_DESCRIPTION
-        execute {
-            val channel = it.channel as TextChannel
+        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }) {
+            val inputChannel = it.args.first
+            val channel = inputChannel.toReportChannel()?.channel
+                ?: return@execute it.respond(createChannelError(inputChannel))
 
             deletionQueue.add(channel.id)
             channel.delete().queue()
@@ -24,13 +28,15 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("Archive") {
         description = Locale.ARCHIVE_DESCRIPTION
-        execute(EveryArg("Additional Info").makeOptional("")) {
-            val relevantGuild = configuration.getGuildConfig(it.message.guild.id)!!
-            val channel = it.channel as TextChannel
-            val report = channel.findReport()!!
-            val note = it.args.first
+        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }, EveryArg("Info").makeOptional("")) {
+            val (inputChannel, note) = it.args
 
-            val archiveChannel = relevantGuild.getLiveArchiveChannel(channel.jda)
+            val (channel, report) = inputChannel.toReportChannel()
+                ?: return@execute it.respond(createChannelError(inputChannel))
+
+            val config = configuration.getGuildConfig(channel.guild.id)
+
+            val archiveChannel = config?.getLiveArchiveChannel(channel.jda)
                 ?: return@execute it.respond("No archive channel available!")
 
             val archiveMessage = "User ID: ${report.userId}\nAdditional Information: " +
@@ -49,45 +55,35 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("Note") {
         description = Locale.NOTE_DESCRIPTION
-        execute(EveryArg) {
-            val note = it.args.first
+        execute(TextChannelArg("Report Channel").makeNullableOptional { it.channel as TextChannel }, EveryArg("Note")) {
+            val inputChannel = it.args.first!!
+            val channel = inputChannel.toReportChannel()?.channel
+                ?: return@execute it.respond(createChannelError(inputChannel))
 
-            it.respond {
-                addField("Note from ${it.author.name}", note, false)
-                color = infoColor
-            }
+            channel.sendMessage(
+                embed {
+                    author {
+                        name = it.author.fullName()
+                        iconUrl = it.author.effectiveAvatarUrl
+                    }
+                    description = it.args.second
+                    color = infoColor
+                }
+            ).queue()
 
             it.message.delete().queue()
             loggingService.command(it)
         }
     }
 
-    command("Move") {
-        description = Locale.MOVE_DESCRIPTION
-        execute(CategoryArg, BooleanArg("Sync Permissions").makeOptional(true)) {
-            val channel = it.channel as GuildChannel
-            val manager = channel.manager
-            val oldCategory = channel.parent
-            val (newCategory, shouldSync) = it.args
-
-            if (shouldSync) {
-                manager.sync().queue { manager.setParent(newCategory).queue() }
-            } else {
-                manager.setParent(newCategory).queue()
-            }
-
-            it.message.delete().queue()
-            val movement = "Moved from `${oldCategory?.name}` to `${newCategory.name}`."
-            val synced = "This channel was${if (!shouldSync) " not " else " "}synced with the new category."
-            loggingService.command(it, "$movement $synced")
-        }
-    }
-
     command("Tag") {
         description = Locale.TAG_DESCRIPTION
-        execute(AnyArg("Word or Emote")) {
-            val tag = it.args.first
-            val channel = it.channel as TextChannel
+        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }, AnyArg("Tag")) {
+            val inputChannel = it.args.first
+            val channel = inputChannel.toReportChannel()?.channel
+                ?: return@execute it.respond(createChannelError(inputChannel))
+
+            val tag = it.args.second
 
             channel.manager.setName("$tag-${channel.name}").queue()
             it.message.delete().queue()
@@ -97,9 +93,9 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("ResetTags") {
         description = Locale.RESET_TAGS_DESCRIPTION
-        execute { event ->
-            val channel = event.channel as TextChannel
-            val report = channel.findReport()!!
+        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }) { event ->
+            val inputChannel = event.args.first
+            val (channel, report) = inputChannel.toReportChannel() ?: return@execute event.respond(createChannelError(inputChannel))
 
             event.discord.jda.retrieveUserById(report.userId).queue {
                 val name = it.name.replace("\\s+".toRegex(), "-")
@@ -111,3 +107,5 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         }
     }
 }
+
+fun createChannelError(channel: TextChannel) = "Invalid report channel: ${channel.asMention}"

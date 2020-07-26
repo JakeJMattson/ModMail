@@ -13,13 +13,6 @@
 | SetReportCategory | Category     | Set the category where new reports will be opened.                    |
 | SetStaffRole      | Any          | Specify the role required to use this bot.                            |
 
-## Info
-| Commands    | Arguments          | Description                                                                                       |
-| ----------- | ------------------ | ------------------------------------------------------------------------------------------------- |
-| IsReport    | (Channel)          | Check whether or not a channel is a valid report channel.                                         |
-| PeekHistory | User               | Read the target user's DM history with the bot.                                                   |
-| ReportInfo  | (Channel), (Field) | Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all. |
-
 ## Macros
 | Commands    | Arguments                 | Description                                                                           |
 | ----------- | ------------------------- | ------------------------------------------------------------------------------------- |
@@ -36,21 +29,22 @@
 | SetPresence | (Playing/Watching/Listening), Presence Message | Set the Discord presence of the bot. |
 
 ## Report
-| Commands  | Arguments                    | Description                                                                                  |
-| --------- | ---------------------------- | -------------------------------------------------------------------------------------------- |
-| Archive   | (Additional Info)            | Archive the contents of the report as a text document in the archive channel.                |
-| Close     | <none>                       | Close the report channel that this command is invoked in. Alternatively, delete the channel. |
-| Move      | Category, (Sync Permissions) | Move a report from the current category to another category and sync permissions.            |
-| Note      | Text                         | Produce a note in a report channel in the form of an embed.                                  |
-| ResetTags | <none>                       | Reset a report channel to its original name.                                                 |
-| Tag       | Word or Emote                | Prepend a tag to the name of this report channel.                                            |
+| Commands  | Arguments                | Description                                                                                  |
+| --------- | ------------------------ | -------------------------------------------------------------------------------------------- |
+| Archive   | (Report Channel), (Info) | Archive the contents of the report as a text document in the archive channel.                |
+| Close     | (Report Channel)         | Close the report channel that this command is invoked in. Alternatively, delete the channel. |
+| Note      | (Report Channel), Note   | Produce a note in a report channel in the form of an embed.                                  |
+| ResetTags | (Report Channel)         | Reset a report channel to its original name.                                                 |
+| Tag       | (Report Channel), Tag    | Prepend a tag to the name of this report channel.                                            |
 
 ## ReportHelpers
-| Commands | Arguments                 | Description                                                               |
-| -------- | ------------------------- | ------------------------------------------------------------------------- |
-| Detain   | Member, (Initial Message) | Mute a user and open a report with them.                                  |
-| Open     | Member, (Initial Message) | Open a report with the target user and send the provided initial message. |
-| Release  | Member                    | Release a user from detainment and unmute them.                           |
+| Commands             | Arguments                 | Description                                                                                       |
+| -------------------- | ------------------------- | ------------------------------------------------------------------------------------------------- |
+| Detain               | Member, (Initial Message) | Mute a user and open a report with them.                                                          |
+| History, PeekHistory | User                      | Read the target user's DM history with the bot.                                                   |
+| Info, ReportInfo     | (Report Channel), (Field) | Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all. |
+| Open                 | Member, (Initial Message) | Open a report with the target user and send the provided initial message.                         |
+| Release              | (Report Channel), Member  | Release a user from detainment and unmute them.                                                   |
 
 ## Utility
 | Commands             | Arguments | Description                              |

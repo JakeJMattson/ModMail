@@ -41,4 +41,4 @@ fun MessageChannel.archiveString() = iterableHistory
         }
     }
 
-fun User.descriptor() = "${fullName()} :: $id :: $asMention"
+fun User.descriptor() = "$asMention :: ${fullName()} :: $id"

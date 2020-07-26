@@ -12,11 +12,10 @@ private val gson = GsonBuilder().setPrettyPrinting().create()
 val Locale: Messages = load()
 
 private fun load() = updateMessages(
-    if (messagesFile.exists()) {
-        messagesFile.readText()
-    } else {
+    if (!messagesFile.exists())
         Messages::class.java.getResource(resourcePath).readText()
-    }
+    else
+        messagesFile.readText()
 )
 
 private fun updateMessages(json: String): Messages {
@@ -31,6 +30,6 @@ infix fun String.inject(properties: Map<String, String>): String {
     val reader = StringReader(this)
 
     return StringWriter().apply {
-        VelocityEngine().evaluate(context, this, null, reader)
+        VelocityEngine().evaluate(context, this, "template", reader)
     }.toString()
 }

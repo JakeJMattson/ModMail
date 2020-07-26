@@ -1,6 +1,6 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.warmbot.extensions.descriptor
+import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.annotations.CommandSet
@@ -111,14 +111,56 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
     command("Release") {
         description = Locale.RELEASE_DESCRIPTION
-        execute(MemberArg) {
-            val targetMember = it.args.first
+        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }, MemberArg) {
+            val (inputChannel, targetMember) = it.args
+            val (_, report) = inputChannel.toReportChannel()
+                ?: return@execute it.respond(createChannelError(inputChannel))
 
             if (!targetMember.isDetained())
                 return@execute it.respond("This member is not detained.")
 
-            targetMember.user.findReport()?.release()
+            report.release()
             it.respond("${targetMember.fullName()} has been released.")
+        }
+    }
+
+    command("Info", "ReportInfo") {
+        description = Locale.INFO_DESCRIPTION
+        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel },
+            ChoiceArg("Field", "user", "channel", "all").makeOptional("user")) {
+
+            val (inputChannel, choice) = it.args
+            val report = inputChannel.toReportChannel()?.report
+                ?: return@execute it.respond(createChannelError(inputChannel))
+
+            val response = with(report) {
+                when (choice) {
+                    "user" -> userId
+                    "channel" -> channelId
+                    "all" -> "User ID: $userId\nChannel ID: $channelId"
+                    else -> "Invalid selection!"
+                }
+            }
+
+            inputChannel.sendMessage(response)
+        }
+    }
+
+    command("History", "PeekHistory") {
+        description = Locale.PEEK_HISTORY_DESCRIPTION
+        execute(UserArg) {
+            val user = it.args.first
+            val channel = it.channel
+
+            val privateChannel = user.openPrivateChannel().complete()
+                ?: return@execute it.respond("Unable to establish private channel. Direct messages are disabled or the bot is blocked.")
+
+            val history = privateChannel.archiveString().toByteArray()
+
+            if (history.isEmpty())
+                return@execute it.respond("No history available.")
+
+            channel.sendFile(history, "$${user.id}.txt").queue()
         }
     }
 }
