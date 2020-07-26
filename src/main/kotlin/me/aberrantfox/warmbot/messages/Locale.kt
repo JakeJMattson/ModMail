@@ -6,14 +6,13 @@ import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import java.io.*
 
-private const val resourcePath = "/default-messages.json"
 private val gson = GsonBuilder().setPrettyPrinting().create()
 
 val Locale: Messages = load()
 
 private fun load() = updateMessages(
     if (!messagesFile.exists())
-        Messages::class.java.getResource(resourcePath).readText()
+        gson.toJson(Messages()).apply { messagesFile.writeText(this) }
     else
         messagesFile.readText()
 )

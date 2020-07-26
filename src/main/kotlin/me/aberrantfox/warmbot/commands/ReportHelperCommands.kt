@@ -73,7 +73,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             val userEmbed = embed {
                 color = successColor
                 thumbnail = guild.iconUrl
-                addField("You've received a message from the staff of ${guild.name}!", Locale.BOT_DESCRIPTION, false)
+                addField("Chatting with ${guild.name}!", Locale.BOT_DESCRIPTION, false)
             }
 
             val embedData = EmbedData("New Report Opened!", "This report was opened by", message)
@@ -147,7 +147,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     }
 
     command("History") {
-        description = Locale.PEEK_HISTORY_DESCRIPTION
+        description = Locale.HISTORY_DESCRIPTION
         execute(UserArg) {
             val user = it.args.first
             val channel = it.channel

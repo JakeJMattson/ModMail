@@ -68,7 +68,7 @@ fun main(args: Array<String>) {
                 permissionsService.hasClearance(member, permission)
             }
 
-            discord.jda.presence.activity = Activity.playing(Locale.DEFAULT_DISCORD_PRESENCE)
+            discord.jda.presence.activity = Activity.playing(Locale.DISCORD_PRESENCE)
         }
     }
 }
