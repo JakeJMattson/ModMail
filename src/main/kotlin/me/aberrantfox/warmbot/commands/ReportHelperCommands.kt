@@ -49,7 +49,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                     val newReport = Report(targetUser.id, channel.id, guildId, ConcurrentHashMap())
                     reportService.addReport(newReport)
 
-                    if (detain) newReport.detain()
+                    if (detain) newReport.detain(it.jda)
 
                     event.respond("Success! Channel opened at: ${channel.asMention}")
                     loggingService.staffOpen(guild, channel.name, event.author)
@@ -119,12 +119,12 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             if (!targetMember.isDetained())
                 return@execute it.respond("This member is not detained.")
 
-            report.release()
+            report.release(it.discord.jda)
             it.respond("${targetMember.fullName()} has been released.")
         }
     }
 
-    command("Info", "ReportInfo") {
+    command("Info") {
         description = Locale.INFO_DESCRIPTION
         execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel },
             ChoiceArg("Field", "user", "channel", "all").makeOptional("user")) {
@@ -146,7 +146,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
         }
     }
 
-    command("History", "PeekHistory") {
+    command("History") {
         description = Locale.PEEK_HISTORY_DESCRIPTION
         execute(UserArg) {
             val user = it.args.first

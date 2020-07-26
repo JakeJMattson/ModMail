@@ -38,17 +38,17 @@
 | Tag       | (Report Channel), Tag    | Prepend a tag to the name of this report channel.                                            |
 
 ## ReportHelpers
-| Commands             | Arguments                 | Description                                                                                       |
-| -------------------- | ------------------------- | ------------------------------------------------------------------------------------------------- |
-| Detain               | Member, (Initial Message) | Mute a user and open a report with them.                                                          |
-| History, PeekHistory | User                      | Read the target user's DM history with the bot.                                                   |
-| Info, ReportInfo     | (Report Channel), (Field) | Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all. |
-| Open                 | Member, (Initial Message) | Open a report with the target user and send the provided initial message.                         |
-| Release              | (Report Channel), Member  | Release a user from detainment and unmute them.                                                   |
+| Commands | Arguments                 | Description                                                                                       |
+| -------- | ------------------------- | ------------------------------------------------------------------------------------------------- |
+| Detain   | Member, (Initial Message) | Mute a user and open a report with them.                                                          |
+| History  | User                      | Read the target user's DM history with the bot.                                                   |
+| Info     | (Report Channel), (Field) | Retrieve the requested id info from the target report channel. Fields: user, channel, guild, all. |
+| Open     | Member, (Initial Message) | Open a report with the target user and send the provided initial message.                         |
+| Release  | (Report Channel), Member  | Release a user from detainment and unmute them.                                                   |
 
 ## Utility
-| Commands             | Arguments | Description                              |
-| -------------------- | --------- | ---------------------------------------- |
-| Help                 | (Command) | Display a help menu.                     |
-| Status, Ping, Uptime | <none>    | Display network status and total uptime. |
+| Commands     | Arguments | Description                              |
+| ------------ | --------- | ---------------------------------------- |
+| Help         | (Command) | Display a help menu.                     |
+| Status, Ping | <none>    | Display network status and total uptime. |
 

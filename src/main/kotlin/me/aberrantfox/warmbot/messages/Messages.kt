@@ -14,7 +14,6 @@ class Messages(
     val CLOSE_DESCRIPTION: String = "",
     val ARCHIVE_DESCRIPTION: String = "",
     val NOTE_DESCRIPTION: String = "",
-    val MOVE_DESCRIPTION: String = "",
     val TAG_DESCRIPTION: String = "",
     val RESET_TAGS_DESCRIPTION: String = "",
 
@@ -22,11 +21,7 @@ class Messages(
     val OPEN_DESCRIPTION: String = "",
     val DETAIN_DESCRIPTION: String = "",
     val RELEASE_DESCRIPTION: String = "",
-    val CLOSE_ALL_DESCRIPTION: String = "",
-
-    //Info commands descriptions
     val INFO_DESCRIPTION: String = "",
-    val IS_REPORT_DESCRIPTION: String = "",
     val PEEK_HISTORY_DESCRIPTION: String = "",
 
     //Macro commands descriptions

@@ -10,7 +10,7 @@ private val startTime = Date()
 
 @CommandSet("Utility")
 fun utilityCommands() = commands {
-    command("Status", "Ping", "Uptime") {
+    command("Status", "Ping") {
         description = Locale.STATUS_DESCRIPTION
         execute { event ->
             val jda = event.discord.jda

@@ -24,8 +24,8 @@ fun main(args: Array<String>) {
     }
 
     bot(token) {
-        configure {
-            val (configuration, permissionsService) = it.getInjectionObjects(Configuration::class, PermissionsService::class)
+        configure { discord ->
+            val (configuration, permissionsService) = discord.getInjectionObjects(Configuration::class, PermissionsService::class)
 
             requiresGuild = true
 
@@ -38,7 +38,6 @@ fun main(args: Array<String>) {
             }
 
             mentionEmbed {
-                val discord = it.discord
                 val self = discord.jda.selfUser
                 val guild = it.guild
                 val guildConfig = configuration.getGuildConfig(guild?.id)
@@ -69,7 +68,7 @@ fun main(args: Array<String>) {
                 permissionsService.hasClearance(member, permission)
             }
 
-            it.jda.presence.activity = Activity.playing(Locale.DEFAULT_DISCORD_PRESENCE)
+            discord.jda.presence.activity = Activity.playing(Locale.DEFAULT_DISCORD_PRESENCE)
         }
     }
 }

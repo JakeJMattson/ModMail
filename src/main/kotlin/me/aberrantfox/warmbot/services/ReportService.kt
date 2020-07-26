@@ -31,7 +31,7 @@ data class LiveReport(val user: User,
     val member = user.toMember(guild)
 }
 
-data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
+private data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
 
 private val reports = Vector<Report>()
 private val queuedReports = Vector<QueuedReport>()
@@ -137,7 +137,7 @@ class ReportService(private val config: Configuration,
 }
 
 fun Report.close(jda: JDA) {
-    release()
+    release(jda)
     removeReport(this)
     toLiveReport(jda)?.let { sendReportClosedEmbed(it) }
 }
