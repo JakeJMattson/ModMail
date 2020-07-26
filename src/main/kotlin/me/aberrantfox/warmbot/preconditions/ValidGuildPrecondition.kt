@@ -1,17 +1,16 @@
 package me.aberrantfox.warmbot.preconditions
 
-import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.internal.command.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.Configuration
+import me.jakejmattson.kutils.api.dsl.command.CommandEvent
+import me.jakejmattson.kutils.api.dsl.preconditions.*
 
-@Precondition
-fun produceIsValidGuildPrecondition(configuration: Configuration) = exit@{ event: CommandEvent ->
-    val guildId = event.guild?.id ?: return@exit Fail(Locale.messages.FAIL_COMMAND_NOT_IN_GUILD)
+class ValidGuildPrecondition(private val configuration: Configuration) : Precondition() {
+    override fun evaluate(event: CommandEvent<*>): PreconditionResult {
+        val guildId = event.guild?.id ?: return Pass
 
-    if (guildId !in configuration.whitelist) return@exit Fail(Locale.messages.FAIL_GUILD_NOT_WHITELISTED)
+        if (!configuration.hasGuildConfig(guildId)) return Fail(Locale.FAIL_GUILD_NOT_CONFIGURED)
 
-    if (!configuration.hasGuildConfig(guildId)) return@exit Fail(Locale.messages.FAIL_GUILD_NOT_CONFIGURED)
-
-    return@exit Pass
+        return Pass
+    }
 }

@@ -1,3 +1,20 @@
+# Version 3.0.2
+
+### Misc Changes
+Upgraded from KUtils 0.9.17 to KUtils 0.13.0 and implemented the following upgrades
+```
+* Type inference - Command arguments are now type inferred; used destructuring where possible.
+* Improved Help  - Removed ListCommands in favor of the improved KUtils help system.
+* Mention embed  - Added a response on ping and replaced the following: Source, Author, BotInfo, Version
+* Permissions    - Added an improved permissions system and replaced the duplicate preconditions.
+* Conversations  - Conversations were completely re-written to match the new standard.
+```
+
+### Bug Fixes
+```
+* ResetTags - Resetting tags will now work with users who have spaces in their names.
+```
+
 # Version 3.0.1
 
 ### New Commands

@@ -50,7 +50,7 @@ If everything was set up properly, your bot should now be up and running!
 #### Full version
 
 1. Download and install the docker toolbox.
-2. Clone this repository: `git clone https://gitlab.com/Aberrantfox/WarmBot.git` - 
+2. Clone this repository: `git clone https://gitlab.com/jakejmattson/WarmBot.git` - 
     you can also just download and extract the zip file.
 3. Open the command prompt
 4. `cd /WarmBot` - cd into the directory
@@ -77,7 +77,7 @@ If everything was set up properly, your bot should now be up and running!
 #### Full version
 
 1. Download and install docker.
-2. Clone this repository: `git clone https://gitlab.com/Aberrantfox/WarmBot.git` -
+2. Clone this repository: `git clone https://gitlab.com/jakejmattson/WarmBot.git` -
     you can also just download and extract the zip file.
 3. Open a terminal or command prompt
 4. `cd /WarmBot` - cd into the directory

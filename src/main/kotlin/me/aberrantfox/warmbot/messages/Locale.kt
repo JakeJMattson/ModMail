@@ -1,48 +1,34 @@
 package me.aberrantfox.warmbot.messages
 
 import com.google.gson.GsonBuilder
-import me.aberrantfox.warmbot.services.*
+import me.aberrantfox.warmbot.services.messagesFile
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import java.io.*
 
-private const val resourcePath = "/default-messages.json"
-
 private val gson = GsonBuilder().setPrettyPrinting().create()
 
-object Locale {
-    lateinit var messages: Messages
+val Locale: Messages = load()
 
-    init {
-        if(!EnvironmentSettings.IS_TESTING_ENVIRONMENT) {
-            load()
-        } else {
-            messages = Messages()
-        }
-    }
+private fun load() = updateMessages(
+    if (!messagesFile.exists())
+        gson.toJson(Messages()).apply { messagesFile.writeText(this) }
+    else
+        messagesFile.readText()
+)
 
-    private const val templateName = "Dynamic template"
-    private val engine = VelocityEngine()
+private fun updateMessages(json: String): Messages {
+    messagesFile.writeText(json)
+    return gson.fromJson(json, Messages::class.java)
+}
 
-    fun inject(message: Messages.() -> String, vararg properties: Pair<String, String>): String {
-        val context = VelocityContext().apply { properties.forEach { put(it.first, it.second) } }
-        val reader = StringReader(messages.message())
+infix fun String.inject(properties: Pair<String, String>) = inject(mapOf(properties))
 
-        return StringWriter().apply {
-            engine.evaluate(context, this, templateName, reader)
-        }.toString()
-    }
+infix fun String.inject(properties: Map<String, String>): String {
+    val context = VelocityContext().apply { properties.forEach { put(it.key, it.value) } }
+    val reader = StringReader(this)
 
-    private fun load() = updateMessages(
-        if (messagesFile.exists()) {
-            messagesFile.readText()
-        } else {
-            Messages::class.java.getResource(resourcePath).readText()
-        }
-    )
-
-    private fun updateMessages(json: String) {
-        messages = gson.fromJson(json, Messages::class.java)
-        messagesFile.writeText(json)
-    }
+    return StringWriter().apply {
+        VelocityEngine().evaluate(context, this, "template", reader)
+    }.toString()
 }

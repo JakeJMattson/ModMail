@@ -1,5 +1,4 @@
 {
   "version": "${version}",
-  "author": "${project.author}",
   "repository": "${project.repository}"
 }

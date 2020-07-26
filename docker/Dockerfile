@@ -1,4 +1,4 @@
-FROM maven:3.6.0-jdk-11-slim AS build
+FROM maven:3.6.3-openjdk-15 AS build
 
 COPY pom.xml /pom.xml
 COPY src /src/
@@ -6,7 +6,7 @@ COPY src /src/
 RUN mvn clean package -f /pom.xml
 
 # Run stage
-FROM openjdk:12
+FROM openjdk:15
 
 ENV BOT_TOKEN=UNSET
 

@@ -1,54 +1,49 @@
 package me.aberrantfox.warmbot.listeners
 
 import com.google.common.eventbus.Subscribe
-import me.aberrantfox.kjdautils.api.dsl.embed
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent
-import net.dv8tion.jda.core.events.guild.member.*
-import java.awt.Color
+import me.jakejmattson.kutils.api.dsl.embed.embed
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent
+import net.dv8tion.jda.api.events.guild.member.*
 
 class GuildMigrationListener(val configuration: Configuration, private val guildService: GuildService) {
 
     @Subscribe
-    fun onGuildBotJoin(event: GuildJoinEvent) = guildService.initOrLeave(event.guild)
+    fun onGuildBotJoin(event: GuildJoinEvent) = guildService.initInGuild(event.guild)
 
     @Subscribe
     fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
         val member = event.member
         val user = member.user
+        val report = user.toLiveReport() ?: return
 
-        if (user.hasReportChannel()) {
-            val report = user.userToReport() ?: return
+        if (report.guild.id != event.guild.id)
+            return
 
-            if (report.guildId != event.guild.id)
-                return
+        report.channel.sendMessage(embed {
+            addField("User has rejoined server!", "This report is now reactivated.", false)
+            color = successColor
+        }).queue()
 
-            report.reportToChannel()?.sendMessage(embed {
-                addField("User has rejoined server!", "This report is now reactivated.", false)
-                setColor(Color.green)
-            })?.queue()
-
-            if (member.isDetained())
-                member.mute()
-        }
+        if (member.isDetained())
+            member.mute()
     }
 
     @Subscribe
-    fun onGuildMemberLeave(event: GuildMemberLeaveEvent) {
+    fun onGuildMemberLeave(event: GuildMemberRemoveEvent) {
         val user = event.user
         val guild = event.guild
 
-        if (!user.hasReportChannel()) return
-        val report = user.userToReport() ?: return
-        if (report.guildId != guild.id) return
+        val report = user.toLiveReport() ?: return
+        if (report.guild.id != guild.id) return
 
-        val message = if (guild.banList.complete().any { it.user.id == user.id }) "was banned from" else "has left"
+        val message = if (guild.retrieveBanList().complete().any { it.user.id == user.id }) "was banned from" else "has left"
 
-        report.reportToChannel()?.sendMessage(createResponse(message))?.queue()
+        report.channel.sendMessage(createResponse(message)).queue()
     }
 
     private fun createResponse(message: String) = embed {
         addField("User no longer in server!", "This user $message the server.", false)
-        setColor(Color.red)
+        color = failureColor
     }
 }

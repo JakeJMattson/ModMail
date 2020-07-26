@@ -1,51 +1,46 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.kjdautils.api.dsl.*
-import me.aberrantfox.kjdautils.extensions.jda.*
-import me.aberrantfox.kjdautils.internal.command.arguments.SentenceArg
-import me.aberrantfox.kjdautils.internal.logging.DefaultLogger
-import me.aberrantfox.warmbot.arguments.MemberArg
 import me.aberrantfox.warmbot.extensions.*
 import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
-import net.dv8tion.jda.core.entities.*
-import java.awt.Color
+import me.jakejmattson.kutils.api.annotations.CommandSet
+import me.jakejmattson.kutils.api.arguments.*
+import me.jakejmattson.kutils.api.dsl.command.*
+import me.jakejmattson.kutils.api.dsl.embed.embed
+import me.jakejmattson.kutils.api.extensions.jda.*
+import net.dv8tion.jda.api.entities.*
 import java.util.concurrent.ConcurrentHashMap
 
 @CommandSet("ReportHelpers")
 fun reportHelperCommands(configuration: Configuration, reportService: ReportService,
                          moderationService: ModerationService, loggingService: LoggingService) = commands {
 
-    data class EmbedData(val color: Color, val topic: String, val openMessage: String, val initialMessage: String)
+    data class EmbedData(val topic: String, val openMessage: String, val initialMessage: String)
 
-    fun openReport(event: CommandEvent, targetUser: User, guild: Guild, userEmbed: MessageEmbed, embedData: EmbedData, detain: Boolean = false) {
+    fun openReport(event: CommandEvent<*>, targetUser: User, guild: Guild, userEmbed: MessageEmbed, embedData: EmbedData, detain: Boolean = false) {
         val guildId = guild.id
-        val reportCategory = configuration.getGuildConfig(guildId)!!.reportCategory.idToCategory()
+        val reportCategory = configuration.getGuildConfig(guildId)!!.getLiveReportCategory(guild.jda)
 
         targetUser.openPrivateChannel().queue {
             it.sendMessage(userEmbed).queue({
-                reportCategory.createTextChannel(targetUser.name).queue { channel ->
+                reportCategory?.createTextChannel(targetUser.name)?.queue { channel ->
                     channel as TextChannel
 
                     val message = embedData.initialMessage
 
                     val initialMessage =
                         if (message.isNotEmpty()) {
-                            targetUser.sendPrivateMessage(message, DefaultLogger())
+                            targetUser.sendPrivateMessage(message)
                             message
                         } else {
-                            Locale.messages.DEFAULT_INITIAL_MESSAGE
+                            Locale.DEFAULT_INITIAL_MESSAGE
                         }
 
                     val reportEmbed = embed {
-                        setColor(embedData.color)
-                        setThumbnail(targetUser.effectiveAvatarUrl)
-                        addField(embedData.topic,
-                            "${targetUser.descriptor()} :: ${targetUser.asMention}",
-                            false)
-                        addField(embedData.openMessage,
-                            "${event.author.descriptor()} :: ${event.author.asMention}",
-                            false)
+                        color = if (!detain) successColor else failureColor
+                        thumbnail = targetUser.effectiveAvatarUrl
+                        addField(embedData.topic, targetUser.descriptor(), false)
+                        addField(embedData.openMessage, event.author.descriptor(), false)
                         addField("Initial Message", initialMessage, false)
                     }
 
@@ -54,48 +49,42 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                     val newReport = Report(targetUser.id, channel.id, guildId, ConcurrentHashMap())
                     reportService.addReport(newReport)
 
-                    if (detain) newReport.detain()
+                    if (detain) newReport.detain(it.jda)
 
                     event.respond("Success! Channel opened at: ${channel.asMention}")
                     loggingService.staffOpen(guild, channel.name, event.author)
                 }
             },
-            {
-                event.respond("Unable to contact the target user. Direct messages are disabled or the bot is blocked.")
-            })
+                {
+                    event.respond("Unable to contact the target user. Direct messages are disabled or the bot is blocked.")
+                })
         }
     }
 
     command("Open") {
-        requiresGuild = true
-        description = Locale.messages.OPEN_DESCRIPTION
-        expect(arg(MemberArg), arg(SentenceArg("Initial Message"), optional = true))
-        execute { event ->
-            val targetMember = event.args.component1() as Member
-            val message = event.args.component2() as String
+        description = Locale.OPEN_DESCRIPTION
+        execute(MemberArg, EveryArg("Initial Message").makeOptional("")) { event ->
+            val (targetMember, message) = event.args
             val guild = event.message.guild
 
             if (!hasValidState(event, guild, targetMember.user))
                 return@execute
 
             val userEmbed = embed {
-                setColor(Color.green)
-                setThumbnail(guild.iconUrl)
-                addField("You've received a message from the staff of ${guild.name}!", Locale.messages.BOT_DESCRIPTION, false)
+                color = successColor
+                thumbnail = guild.iconUrl
+                addField("Chatting with ${guild.name}!", Locale.BOT_DESCRIPTION, false)
             }
 
-            val embedData = EmbedData(Color.green, "New Report Opened!", "This report was opened by", message)
+            val embedData = EmbedData("New Report Opened!", "This report was opened by", message)
             openReport(event, targetMember.user, guild, userEmbed, embedData)
         }
     }
 
     command("Detain") {
-        requiresGuild = true
-        description = Locale.messages.DETAIN_DESCRIPTION
-        expect(arg(MemberArg), arg(SentenceArg("Initial Message"), optional = true))
-        execute { event ->
-            val targetMember = event.args.component1() as Member
-            val message = event.args.component2() as String
+        description = Locale.DETAIN_DESCRIPTION
+        execute(MemberArg, EveryArg("Initial Message").makeOptional("")) { event ->
+            val (targetMember, message) = event.args
             val guild = event.message.guild
 
             if (moderationService.hasStaffRole(targetMember))
@@ -110,62 +99,79 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                 return@execute
 
             val userEmbed = embed {
-                setColor(Color.red)
-                setThumbnail(guild.iconUrl)
-                addField("You've have been detained by the staff of ${guild.name}!", Locale.messages.USER_DETAIN_MESSAGE, false)
+                color = failureColor
+                thumbnail = guild.iconUrl
+                addField("You've have been detained by the staff of ${guild.name}!", Locale.USER_DETAIN_MESSAGE, false)
             }
 
-            val embedData = EmbedData(Color.red, "User Detained!", "This user was detained by", message)
+            val embedData = EmbedData("User Detained!", "This user was detained by", message)
             openReport(event, targetMember.user, guild, userEmbed, embedData, true)
         }
     }
 
     command("Release") {
-        requiresGuild = true
-        description = Locale.messages.RELEASE_DESCRIPTION
-        expect(MemberArg)
-        execute {
-            val targetMember = it.args.component1() as Member
+        description = Locale.RELEASE_DESCRIPTION
+        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }, MemberArg) {
+            val (inputChannel, targetMember) = it.args
+            val (_, report) = inputChannel.toReportChannel()
+                ?: return@execute it.respond(createChannelError(inputChannel))
 
             if (!targetMember.isDetained())
                 return@execute it.respond("This member is not detained.")
 
-            targetMember.user.userToReport()?.release()
+            report.release(it.discord.jda)
             it.respond("${targetMember.fullName()} has been released.")
         }
     }
 
-    command("CloseAll") {
-        requiresGuild = true
-        description = Locale.messages.CLOSE_ALL_DESCRIPTION
-        execute {
-            val guild = it.guild!!
-            val reportsFromGuild = reportService.getReportsFromGuild(guild.id)
+    command("Info") {
+        description = Locale.INFO_DESCRIPTION
+        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel },
+            ChoiceArg("Field", "user", "channel", "all").makeOptional("user")) {
 
-            if (reportsFromGuild.isEmpty()) return@execute it.respond("There are no reports to close.")
+            val (inputChannel, choice) = it.args
+            val report = inputChannel.toReportChannel()?.report
+                ?: return@execute it.respond(createChannelError(inputChannel))
 
-            reportsFromGuild.forEach { report ->
-                val channel = report.channelId.idToTextChannel()
-
-                channel.delete().queue()
-                loggingService.commandClose(guild, channel.name, it.author)
+            val response = with(report) {
+                when (choice) {
+                    "user" -> userId
+                    "channel" -> channelId
+                    "all" -> "User ID: $userId\nChannel ID: $channelId"
+                    else -> "Invalid selection!"
+                }
             }
 
-            it.respond("${reportsFromGuild.size} report(s) closed successfully.")
+            inputChannel.sendMessage(response)
+        }
+    }
+
+    command("History") {
+        description = Locale.HISTORY_DESCRIPTION
+        execute(UserArg) {
+            val user = it.args.first
+            val channel = it.channel
+
+            val privateChannel = user.openPrivateChannel().complete()
+                ?: return@execute it.respond("Unable to establish private channel. Direct messages are disabled or the bot is blocked.")
+
+            val history = privateChannel.archiveString().toByteArray()
+
+            if (history.isEmpty())
+                return@execute it.respond("No history available.")
+
+            channel.sendFile(history, "$${user.id}.txt").queue()
         }
     }
 }
 
-private fun hasValidState(event: CommandEvent, currentGuild: Guild, targetUser: User): Boolean {
-    if (!targetUser.hasReportChannel())
-        return true
-
-    val report = targetUser.userToReport() ?: return false
-    val reportGuild = report.guildId.idToGuild()
+private fun hasValidState(event: CommandEvent<*>, currentGuild: Guild, targetUser: User): Boolean {
+    val report = targetUser.toLiveReport() ?: return true
+    val reportGuild = report.guild
 
     event.respond("The target user already has an open report " +
         if (reportGuild == currentGuild) {
-            val channel = report.reportToChannel()?.asMention ?: "<Failed to retrieve channel>"
+            val channel = report.channel.asMention
             "at $channel."
         } else {
             "in ${reportGuild.name}."

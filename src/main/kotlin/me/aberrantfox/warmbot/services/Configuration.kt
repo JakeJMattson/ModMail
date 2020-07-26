@@ -1,10 +1,7 @@
 package me.aberrantfox.warmbot.services
 
-import me.aberrantfox.kjdautils.api.annotation.Data
-
-object EnvironmentSettings {
-    var IS_TESTING_ENVIRONMENT = false
-}
+import me.jakejmattson.kutils.api.dsl.data.Data
+import net.dv8tion.jda.api.JDA
 
 data class LoggingConfiguration(var loggingChannel: String = "insert-id",
                                 val logEdits: Boolean = true,
@@ -13,22 +10,24 @@ data class LoggingConfiguration(var loggingChannel: String = "insert-id",
                                 val logMemberOpen: Boolean = true,
                                 val logStaffOpen: Boolean = true,
                                 val logArchive: Boolean = true,
-                                val logClose: Boolean = true)
+                                val logClose: Boolean = true) {
+    fun getLiveChannel(jda: JDA) = jda.getTextChannelById(loggingChannel)
+}
 
-data class GuildConfiguration(var guildId: String = "insert-id",
+data class GuildConfiguration(val guildId: String = "insert-id",
                               var reportCategory: String = "insert-id",
                               var archiveChannel: String = "insert-id",
                               var staffRoleName: String = "Staff",
-                              val staffChannels: MutableList<String> = ArrayList(),
-                              val loggingConfiguration: LoggingConfiguration = LoggingConfiguration())
+                              val loggingConfiguration: LoggingConfiguration = LoggingConfiguration()) {
+    fun getLiveReportCategory(jda: JDA) = jda.getCategoryById(reportCategory)
+    fun getLiveArchiveChannel(jda: JDA) = jda.getTextChannelById(archiveChannel)
 
-@Data(configFile)
+}
+
 data class Configuration(val ownerId: String = "insert-id",
-                         val prefix: String = "!",
+                         var prefix: String = "!",
                          val maxOpenReports: Int = 50,
-                         val generateDocsAtRuntime: Boolean = false,
-                         val whitelist: MutableList<String> = ArrayList(),
-                         val guildConfigurations: MutableList<GuildConfiguration> = mutableListOf(GuildConfiguration())) {
+                         val guildConfigurations: MutableList<GuildConfiguration> = mutableListOf(GuildConfiguration())) : Data(configFile) {
     fun hasGuildConfig(guildId: String) = getGuildConfig(guildId) != null
-    fun getGuildConfig(guildId: String) = guildConfigurations.firstOrNull { it.guildId == guildId }
+    fun getGuildConfig(guildId: String?) = guildConfigurations.firstOrNull { it.guildId == guildId }
 }

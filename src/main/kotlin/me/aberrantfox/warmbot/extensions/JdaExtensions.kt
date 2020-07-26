@@ -1,22 +1,47 @@
 package me.aberrantfox.warmbot.extensions
 
-import me.aberrantfox.kjdautils.api.annotation.Service
-import net.dv8tion.jda.core.JDA
+import me.jakejmattson.kutils.api.dsl.command.CommandEvent
+import me.jakejmattson.kutils.api.extensions.jda.*
+import me.jakejmattson.kutils.api.extensions.stdlib.sanitiseMentions
+import net.dv8tion.jda.api.entities.*
 
-private lateinit var jda: JDA
+private const val embedNotation = "<---------- Embed ---------->"
 
-@Service
-class JdaInitializer(jdaInstance: JDA) { init { jda = jdaInstance } }
+fun Message.fullContent() = contentRaw + "\n" +
+    (attachments.takeIf { it.isNotEmpty() }
+        ?.map { it.url }
+        ?.reduce { a, b -> "$a\n $b" }
+        ?: "")
 
-fun String.idToUser() = jda.getUserById(this)
-fun String.idToTextChannel() = jda.getTextChannelById(this)
-fun String.idToPrivateChannel() = jda.getPrivateChannelById(this)
-fun String.idToCategory() = jda.getCategoryById(this)
-fun String.idToGuild() = jda.getGuildById(this)
-fun String.nameToRole() = jda.getRolesByName(this, true).firstOrNull()
+fun Message.cleanContent() = fullContent().trimEnd().sanitiseMentions()
 
-fun String.isValidChannel() = try { this.idToTextChannel(); true } catch (e: Exception) { false }
+fun MessageEmbed.toTextString() =
+    buildString {
+        appendln(embedNotation)
+        fields.forEach { append("${it.name}\n${it.value}\n") }
+        appendln(embedNotation)
+    }
 
-fun selfUser() = jda.selfUser
-fun getPrivateChannels() = jda.privateChannels
-fun guilds() = jda.guilds
+fun Message.addFailReaction() = addReaction("❌").queue()
+
+fun MessageChannel.archiveString() = iterableHistory
+    .reversed()
+    .dropLast(1)
+    .joinToString("\n") {
+        buildString {
+            append("${it.author.fullName()}: ")
+
+            if (it.embeds.isNotEmpty() && !it.containsURL()) {
+                it.embeds.forEach { embed ->
+                    appendln()
+                    append(embed.toTextString())
+                }
+            } else {
+                append(it.fullContent())
+            }
+        }
+    }
+
+fun User.descriptor() = "$asMention :: ${fullName()} :: $id"
+
+fun CommandEvent<*>.reactSuccess() = message.addReaction("✅").queue()

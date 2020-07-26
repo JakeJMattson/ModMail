@@ -1,42 +1,25 @@
 package me.aberrantfox.warmbot.services
 
-import me.aberrantfox.kjdautils.api.annotation.Service
-import me.aberrantfox.kjdautils.internal.command.ConversationService
-import me.aberrantfox.kjdautils.internal.di.PersistenceService
-import me.aberrantfox.warmbot.extensions.*
-import net.dv8tion.jda.core.entities.Guild
-import java.util.Timer
-import kotlin.concurrent.schedule
+import me.aberrantfox.warmbot.conversations.AutoSetupConversation
+import me.jakejmattson.kutils.api.Discord
+import me.jakejmattson.kutils.api.annotations.Service
+import me.jakejmattson.kutils.api.services.ConversationService
+import net.dv8tion.jda.api.entities.Guild
 
 @Service
-class GuildService(private val configuration: Configuration, private val conversationService: ConversationService,
-                   private val persistenceService: PersistenceService, jdaInitializer: JdaInitializer) {
-    init { consolidateWhitelist() }
+class GuildService(private val discord: Discord,
+                   private val configuration: Configuration,
+                   private val conversationService: ConversationService) {
+    fun initDanglingGuilds() {
+        discord.jda.guilds.filter { !configuration.hasGuildConfig(it.id) }.forEach { initInGuild(it) }
+    }
 
-    fun cleanseGuilds() =
-        guilds().forEach {
-            if (it.id !in configuration.whitelist) {
-                it.leave().queue()
-                configuration.guildConfigurations.remove(configuration.getGuildConfig(it.id))
-                persistenceService.save(configuration)
-            }
-        }
-
-    fun initOrLeave(guild: Guild) {
+    fun initInGuild(guild: Guild) {
         if (!configuration.hasGuildConfig(guild.id)) {
-            Timer().schedule(15000) {
-                if (guild.id in configuration.whitelist) startSetupConversation(guild) else guild.leave().queue()
-            }
-        } else if (guild.id !in configuration.whitelist) {
-            configuration.whitelist.add(guild.id)
+            startSetupConversation(guild)
         }
     }
 
     private fun startSetupConversation(guild: Guild) =
-        conversationService.createConversation(guild.ownerId, guild.id, "auto-setup")
-
-    private fun consolidateWhitelist() = configuration.apply {
-        guildConfigurations.forEach { if (it.guildId !in whitelist) whitelist.add(it.guildId) }
-        guilds().filter { !hasGuildConfig(it.id) }.forEach { initOrLeave(it) }
-    }
+        conversationService.startPrivateConversation<AutoSetupConversation>(guild.owner!!.user, configuration, guild)
 }
