@@ -11,7 +11,7 @@
 | SetArchiveChannel | Text Channel | Set the channel where reports will be sent when archived. |
 | SetLoggingChannel | Text Channel | Set the channel where events will be logged.              |
 | SetReportCategory | Category     | Set the category where new reports will be opened.        |
-| SetStaffRole      | Any          | Specify the role required to use this bot.                |
+| SetStaffRole      | Role         | Specify the role required to use this bot.                |
 
 ## Macros
 | Commands    | Arguments                 | Description                                           |

@@ -1,5 +1,6 @@
 package me.aberrantfox.warmbot.extensions
 
+import me.jakejmattson.kutils.api.dsl.command.CommandEvent
 import me.jakejmattson.kutils.api.extensions.jda.*
 import me.jakejmattson.kutils.api.extensions.stdlib.sanitiseMentions
 import net.dv8tion.jda.api.entities.*
@@ -42,3 +43,5 @@ fun MessageChannel.archiveString() = iterableHistory
     }
 
 fun User.descriptor() = "$asMention :: ${fullName()} :: $id"
+
+fun CommandEvent<*>.reactSuccess() = message.addReaction("✅").queue()

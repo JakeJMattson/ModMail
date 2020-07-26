@@ -95,7 +95,8 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         description = Locale.RESET_TAGS_DESCRIPTION
         execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }) { event ->
             val inputChannel = event.args.first
-            val (channel, report) = inputChannel.toReportChannel() ?: return@execute event.respond(createChannelError(inputChannel))
+            val (channel, report) = inputChannel.toReportChannel()
+                ?: return@execute event.respond(createChannelError(inputChannel))
 
             event.discord.jda.retrieveUserById(report.userId).queue {
                 val name = it.name.replace("\\s+".toRegex(), "-")

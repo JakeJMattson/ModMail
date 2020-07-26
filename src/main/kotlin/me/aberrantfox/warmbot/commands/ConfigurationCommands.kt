@@ -1,7 +1,7 @@
 package me.aberrantfox.warmbot.commands
 
-import me.aberrantfox.warmbot.extensions.requiredPermissionLevel
-import me.aberrantfox.warmbot.messages.*
+import me.aberrantfox.warmbot.extensions.*
+import me.aberrantfox.warmbot.messages.Locale
 import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.annotations.CommandSet
 import me.jakejmattson.kutils.api.arguments.*
@@ -19,7 +19,7 @@ fun configurationCommands(configuration: Configuration) = commands {
 
             configuration.getGuildConfig(reportCategory.guild.id)!!.reportCategory = reportCategory.id
             configuration.save()
-            it.respond(Locale.SET_REPORT_CATEGORY_SUCCESSFUL inject ("categoryName" to reportCategory.name))
+            it.reactSuccess()
         }
     }
 
@@ -30,20 +30,18 @@ fun configurationCommands(configuration: Configuration) = commands {
 
             configuration.getGuildConfig(archiveChannel.guild.id)!!.archiveChannel = archiveChannel.id
             configuration.save()
-            it.respond(Locale.SET_ARCHIVE_CHANNEL_SUCCESSFUL inject ("archiveChannel" to archiveChannel.name))
+            it.reactSuccess()
         }
     }
 
     command("SetStaffRole") {
         description = Locale.SET_STAFF_ROLE_DESCRIPTION
-        execute(AnyArg) {
-            val staffRoleName = it.args.first
-            val staffRole = it.discord.jda.getRolesByName(staffRoleName, true).firstOrNull()
-                ?: return@execute it.respond(Locale.FAIL_COULD_NOT_FIND_ROLE inject ("staffRoleName" to staffRoleName))
+        execute(RoleArg) {
+            val staffRole = it.args.first
 
             configuration.getGuildConfig(it.message.guild.id)!!.staffRoleName = staffRole.name
             configuration.save()
-            it.respond(Locale.SET_STAFF_ROLE_SUCCESSFUL inject ("staffRoleName" to staffRole.name))
+            it.reactSuccess()
         }
     }
 
@@ -54,7 +52,7 @@ fun configurationCommands(configuration: Configuration) = commands {
 
             configuration.getGuildConfig(loggingChannel.guild.id)!!.loggingConfiguration.loggingChannel = loggingChannel.id
             configuration.save()
-            it.respond(Locale.SET_LOGGING_CHANNEL_SUCCESSFUL inject ("loggingChannel" to loggingChannel.name))
+            it.reactSuccess()
         }
     }
 }

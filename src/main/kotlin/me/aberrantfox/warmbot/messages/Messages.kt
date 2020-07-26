@@ -40,16 +40,10 @@ class Messages(
     val STATUS_DESCRIPTION: String = "Display network status and total uptime.",
 
     //Success message
-    val SET_REPORT_CATEGORY_SUCCESSFUL: String = "Successfully set report category to :: \${categoryName}",
-    val SET_ARCHIVE_CHANNEL_SUCCESSFUL: String = "Successfully the archive channel to :: \${archiveChannel}",
-    val SET_LOGGING_CHANNEL_SUCCESSFUL: String = "Successfully the logging channel to :: \${loggingChannel}",
-    val SET_STAFF_ROLE_SUCCESSFUL: String = "\"Successfully set the staff role to :: \${staffRoleName}",
     val GUILD_SETUP_SUCCESSFUL: String = "Successfully configured for use! You can adjust these values at any time.",
 
     //Fail message
-    val FAIL_GUILD_SETUP: String = "**Error** :: The \${field} provided did not belong to the guild you started this conversation in.",
     val FAIL_MISSING_CLEARANCE: String = "Missing clearance to use this command.",
-    val FAIL_COULD_NOT_FIND_ROLE: String = "Could not find a role named :: \${staffRoleName}",
     val FAIL_GUILD_NOT_CONFIGURED: String = "This guild is not configured for use.",
 
     //Logging messages
