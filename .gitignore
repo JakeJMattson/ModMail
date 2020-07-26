@@ -1,5 +1,5 @@
 .idea/
-WarmBot.iml
+*.iml
 target/
 data/
 velocity.log

@@ -11,6 +11,6 @@ FROM openjdk:15
 ENV BOT_TOKEN=UNSET
 
 RUN mkdir /data/
-COPY --from=build /target/WarmBot-jar-with-dependencies.jar /Warmbot.jar
+COPY --from=build /target/modmail-jar-with-dependencies.jar /ModMail.jar
 
-CMD /usr/bin/java -jar /Warmbot.jar $BOT_TOKEN
+CMD /usr/bin/java -jar /ModMail.jar $BOT_TOKEN
