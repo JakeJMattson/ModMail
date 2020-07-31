@@ -1,5 +1,5 @@
 <a href="https://discord.gg/REZVVjA">
-  <img src="https://discordapp.com/api/guilds/453208597082406912/widget.png?style=banner2"/>
+  <img alt="Discord Banner" src="https://discordapp.com/api/guilds/453208597082406912/widget.png?style=banner2"/>
 </a>
 
 # ModMail

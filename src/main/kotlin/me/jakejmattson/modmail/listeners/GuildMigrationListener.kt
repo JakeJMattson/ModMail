@@ -1,8 +1,8 @@
 package me.jakejmattson.modmail.listeners
 
 import com.google.common.eventbus.Subscribe
+import me.jakejmattson.discordkt.api.dsl.embed.embed
 import me.jakejmattson.modmail.services.*
-import me.jakejmattson.kutils.api.dsl.embed.embed
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent
 import net.dv8tion.jda.api.events.guild.member.*
 

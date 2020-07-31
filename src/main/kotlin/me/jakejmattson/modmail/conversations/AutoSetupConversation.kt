@@ -1,8 +1,8 @@
 package me.jakejmattson.modmail.conversations
 
-import me.jakejmattson.kutils.api.arguments.BooleanArg
-import me.jakejmattson.kutils.api.dsl.conversation.*
-import me.jakejmattson.kutils.api.services.ConversationService
+import me.jakejmattson.discordkt.api.arguments.BooleanArg
+import me.jakejmattson.discordkt.api.dsl.conversation.*
+import me.jakejmattson.discordkt.api.services.ConversationService
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
 import net.dv8tion.jda.api.entities.*

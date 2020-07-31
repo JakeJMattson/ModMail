@@ -1,11 +1,11 @@
 package me.jakejmattson.modmail.preconditions
 
+import me.jakejmattson.discordkt.api.dsl.command.CommandEvent
+import me.jakejmattson.discordkt.api.dsl.preconditions.*
+import me.jakejmattson.discordkt.api.extensions.jda.toMember
 import me.jakejmattson.modmail.extensions.requiredPermissionLevel
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
-import me.jakejmattson.kutils.api.dsl.command.CommandEvent
-import me.jakejmattson.kutils.api.dsl.preconditions.*
-import me.jakejmattson.kutils.api.extensions.jda.toMember
 
 class PermissionPrecondition(private val permissionsService: PermissionsService) : Precondition() {
     override fun evaluate(event: CommandEvent<*>): PreconditionResult {

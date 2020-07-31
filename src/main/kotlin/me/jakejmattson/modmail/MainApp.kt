@@ -1,8 +1,8 @@
 package me.jakejmattson.modmail
 
 import com.google.gson.Gson
-import me.jakejmattson.kutils.api.dsl.bot
-import me.jakejmattson.kutils.api.extensions.jda.*
+import me.jakejmattson.discordkt.api.dsl.bot
+import me.jakejmattson.discordkt.api.extensions.jda.*
 import me.jakejmattson.modmail.extensions.requiredPermissionLevel
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
@@ -54,7 +54,7 @@ fun main(args: Array<String>) {
 
                 addInlineField("Required role", requiredRole)
                 addInlineField("Prefix", it.relevantPrefix)
-                addInlineField("Build Info", "`${discord.properties.kutilsVersion} - ${discord.properties.jdaVersion}`")
+                addInlineField("Build Info", "`${discord.properties.libraryVersion} - ${discord.properties.jdaVersion}`")
                 addInlineField("Source", project.repository)
             }
 

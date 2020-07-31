@@ -1,6 +1,6 @@
 package me.jakejmattson.modmail.services
 
-import me.jakejmattson.kutils.api.dsl.data.Data
+import me.jakejmattson.discordkt.api.dsl.data.Data
 import net.dv8tion.jda.api.JDA
 
 data class LoggingConfiguration(var loggingChannel: Long,

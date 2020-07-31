@@ -5,7 +5,7 @@ import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.modmail.services.findReport
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
-class ResponseListener() {
+class ResponseListener {
     @Subscribe
     fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
         if (event.author.isBot) return

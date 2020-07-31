@@ -1,8 +1,8 @@
 package me.jakejmattson.modmail.extensions
 
-import me.jakejmattson.kutils.api.dsl.command.CommandEvent
-import me.jakejmattson.kutils.api.extensions.jda.*
-import me.jakejmattson.kutils.api.extensions.stdlib.sanitiseMentions
+import me.jakejmattson.discordkt.api.dsl.command.CommandEvent
+import me.jakejmattson.discordkt.api.extensions.jda.*
+import me.jakejmattson.discordkt.api.extensions.stdlib.sanitiseMentions
 import net.dv8tion.jda.api.entities.*
 
 private const val embedNotation = "<---------- Embed ---------->"
@@ -13,7 +13,7 @@ fun Message.fullContent() = contentRaw + "\n" +
         ?.reduce { a, b -> "$a\n $b" }
         ?: "")
 
-fun Message.cleanContent() = fullContent().trimEnd().sanitiseMentions()
+fun Message.cleanContent() = fullContent().trimEnd().sanitiseMentions(jda)
 
 fun MessageEmbed.toTextString() =
     buildString {

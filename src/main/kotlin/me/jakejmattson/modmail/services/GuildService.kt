@@ -1,8 +1,8 @@
 package me.jakejmattson.modmail.services
 
-import me.jakejmattson.kutils.api.Discord
-import me.jakejmattson.kutils.api.annotations.Service
-import me.jakejmattson.kutils.api.services.ConversationService
+import me.jakejmattson.discordkt.api.Discord
+import me.jakejmattson.discordkt.api.annotations.Service
+import me.jakejmattson.discordkt.api.services.ConversationService
 import me.jakejmattson.modmail.conversations.AutoSetupConversation
 import net.dv8tion.jda.api.entities.Guild
 

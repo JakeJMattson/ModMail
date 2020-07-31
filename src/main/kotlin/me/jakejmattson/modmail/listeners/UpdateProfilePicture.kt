@@ -1,8 +1,8 @@
 package me.jakejmattson.modmail.listeners
 
 import com.google.common.eventbus.Subscribe
+import me.jakejmattson.discordkt.api.dsl.embed.toEmbedBuilder
 import me.jakejmattson.modmail.services.findReport
-import me.jakejmattson.kutils.api.dsl.embed.toEmbedBuilder
 import net.dv8tion.jda.api.events.user.update.UserUpdateAvatarEvent
 
 class UpdateProfilePicture {

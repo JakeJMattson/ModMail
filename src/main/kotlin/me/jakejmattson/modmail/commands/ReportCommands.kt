@@ -1,10 +1,10 @@
 package me.jakejmattson.modmail.commands
 
-import me.jakejmattson.kutils.api.annotations.CommandSet
-import me.jakejmattson.kutils.api.arguments.*
-import me.jakejmattson.kutils.api.dsl.command.commands
-import me.jakejmattson.kutils.api.dsl.embed.embed
-import me.jakejmattson.kutils.api.extensions.jda.fullName
+import me.jakejmattson.discordkt.api.annotations.CommandSet
+import me.jakejmattson.discordkt.api.arguments.*
+import me.jakejmattson.discordkt.api.dsl.command.commands
+import me.jakejmattson.discordkt.api.dsl.embed.embed
+import me.jakejmattson.discordkt.api.extensions.jda.fullName
 import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.modmail.listeners.deletionQueue
 import me.jakejmattson.modmail.messages.Locale

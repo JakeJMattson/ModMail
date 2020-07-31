@@ -1,9 +1,9 @@
 package me.jakejmattson.modmail.preconditions
 
+import me.jakejmattson.discordkt.api.dsl.command.CommandEvent
+import me.jakejmattson.discordkt.api.dsl.preconditions.*
+import me.jakejmattson.discordkt.api.extensions.jda.*
 import me.jakejmattson.modmail.services.*
-import me.jakejmattson.kutils.api.dsl.command.CommandEvent
-import me.jakejmattson.kutils.api.dsl.preconditions.*
-import me.jakejmattson.kutils.api.extensions.jda.*
 
 class MacroPrecondition : Precondition() {
     override fun evaluate(event: CommandEvent<*>): PreconditionResult {

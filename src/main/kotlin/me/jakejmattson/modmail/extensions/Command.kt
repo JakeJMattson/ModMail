@@ -1,7 +1,7 @@
 package me.jakejmattson.modmail.extensions
 
+import me.jakejmattson.discordkt.api.dsl.command.*
 import me.jakejmattson.modmail.services.*
-import me.jakejmattson.kutils.api.dsl.command.*
 
 val categoryPermissions: MutableMap<CommandsContainer, Permission> = mutableMapOf()
 val commandPermissions: MutableMap<Command, Permission> = mutableMapOf()

@@ -1,6 +1,6 @@
 package me.jakejmattson.modmail.services
 
-import me.jakejmattson.kutils.api.annotations.Service
+import me.jakejmattson.discordkt.api.annotations.Service
 import net.dv8tion.jda.api.entities.Member
 
 enum class Permission {

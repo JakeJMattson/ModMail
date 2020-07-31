@@ -1,11 +1,11 @@
 package me.jakejmattson.modmail.listeners
 
 import com.google.common.eventbus.Subscribe
+import me.jakejmattson.discordkt.api.dsl.embed.embed
+import me.jakejmattson.discordkt.api.extensions.jda.sendPrivateMessage
+import me.jakejmattson.discordkt.api.services.ConversationService
 import me.jakejmattson.modmail.extensions.fullContent
 import me.jakejmattson.modmail.services.*
-import me.jakejmattson.kutils.api.dsl.embed.embed
-import me.jakejmattson.kutils.api.extensions.jda.sendPrivateMessage
-import me.jakejmattson.kutils.api.services.ConversationService
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent
 
