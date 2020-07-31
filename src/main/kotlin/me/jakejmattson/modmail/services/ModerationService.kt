@@ -10,12 +10,10 @@ private val detainedReports = Vector<Report>()
 @Service
 class ModerationService(val configuration: Configuration) {
     fun hasStaffRole(member: Member): Boolean {
-        val jda = member.jda
         val guild = member.guild
-        val staffRoleName = configuration.getGuildConfig(guild.id)?.staffRoleName ?: return false
-        val staffRole = jda.getRolesByName(staffRoleName, true).firstOrNull() ?: return false
+        val staffRoleId = configuration[guild.idLong]?.staffRoleId ?: return false
 
-        return staffRole in member.roles
+        return member.roles.any { it.idLong == staffRoleId }
     }
 }
 
@@ -37,7 +35,7 @@ fun Report.release(jda: JDA): Boolean {
     return true
 }
 
-fun Member.isDetained() = detainedReports.any { it.userId == this.user.id }
+fun Member.isDetained() = detainedReports.any { it.userId == user.idLong }
 
 fun Member.mute(): Boolean {
     val mutedRole = guild.getRolesByName("Muted", true).firstOrNull() ?: return false

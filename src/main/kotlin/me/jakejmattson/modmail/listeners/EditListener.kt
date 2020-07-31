@@ -15,7 +15,7 @@ class EditListener(private val reportService: ReportService, private val logging
         if (event.author.id == jda.selfUser.id) return
 
         val report = event.channel.findReport() ?: return
-        val privateChannel = jda.privateChannels.firstOrNull { it.user.id == report.userId } ?: return
+        val privateChannel = jda.privateChannels.firstOrNull { it.user.idLong == report.userId } ?: return
         val targetMessage = report.messages[event.messageId]!!
 
         privateChannel.editMessageById(targetMessage, event.message).queue()
@@ -25,7 +25,7 @@ class EditListener(private val reportService: ReportService, private val logging
     fun onGuildMessageDelete(event: GuildMessageDeleteEvent) {
         val report = event.channel.findReport() ?: return
         val targetMessage = report.messages[event.messageId] ?: return
-        val privateChannel = event.jda.privateChannels.first { it.user.id == report.userId }
+        val privateChannel = event.jda.privateChannels.first { it.user.idLong == report.userId }
 
         privateChannel.deleteMessageById(targetMessage).queue()
         report.messages.remove(event.messageId)

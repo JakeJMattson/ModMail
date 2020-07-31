@@ -1,19 +1,19 @@
 package me.jakejmattson.modmail.services
 
-import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.kutils.api.Discord
 import me.jakejmattson.kutils.api.annotations.Service
 import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.jakejmattson.kutils.api.extensions.jda.*
+import me.jakejmattson.modmail.extensions.*
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.*
 import java.io.File
 import java.util.Vector
 import java.util.concurrent.ConcurrentHashMap
 
-data class Report(val userId: String,
-                  val channelId: String,
-                  val guildId: String,
+data class Report(val userId: Long,
+                  val channelId: Long,
+                  val guildId: Long,
                   val messages: MutableMap<String, String>) {
 
     fun toLiveReport(jda: JDA): LiveReport? {
@@ -37,8 +37,8 @@ private val reports = Vector<Report>()
 private val queuedReports = Vector<QueuedReport>()
 
 fun User.toLiveReport() = findReport()?.toLiveReport(jda)
-fun User.findReport() = reports.firstOrNull { it.userId == this.id }
-fun MessageChannel.findReport() = reports.firstOrNull { it.channelId == this.id }
+fun User.findReport() = reports.firstOrNull { it.userId == this.idLong }
+fun MessageChannel.findReport() = reports.firstOrNull { it.channelId == this.idLong }
 fun MessageChannel.toLiveReport() = findReport()?.toLiveReport(jda)
 
 @Service
@@ -49,7 +49,7 @@ class ReportService(private val config: Configuration,
         loadReports(discord.jda)
     }
 
-    fun getCommonGuilds(userObject: User) = userObject.mutualGuilds.filter { it.id in config.guildConfigurations.associateBy { it.guildId } }
+    fun getCommonGuilds(userObject: User) = userObject.mutualGuilds.filter { config.guildConfigurations[it.idLong] != null }
 
     private fun loadReports(jda: JDA) =
         reportsFolder.listFiles()?.forEach {
@@ -62,7 +62,7 @@ class ReportService(private val config: Configuration,
     fun createReport(user: User, guild: Guild) {
         if (guild.textChannels.size >= 250) return
 
-        val reportCategoryId = config.getGuildConfig(guild.id)?.reportCategory!!
+        val reportCategoryId = config[guild.idLong]?.reportCategory!!
         val reportCategory = user.jda.getCategoryById(reportCategoryId) ?: return
 
         reportCategory.createTextChannel(user.name).queue { channel ->
@@ -126,7 +126,7 @@ class ReportService(private val config: Configuration,
                 channel.sendMessage(it).queue()
         }
 
-        val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap())
+        val newReport = Report(user.idLong, channel.idLong, guild.idLong, ConcurrentHashMap())
         addReport(newReport)
 
         user.sendPrivateMessage(userMessage)
@@ -144,7 +144,7 @@ fun Report.close(jda: JDA) {
 
 private fun removeReport(report: Report) {
     reports.remove(report)
-    reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId) }?.delete()
+    reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId.toString()) }?.delete()
 }
 
 private fun sendReportClosedEmbed(report: LiveReport) =

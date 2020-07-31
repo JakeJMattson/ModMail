@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
             requiresGuild = true
 
             prefix {
-                if (it.guild != null) configuration.prefix else "<none>"
+                it.guild?.let { configuration[it.idLong]?.prefix.takeUnless { it.isNullOrBlank() } ?: "!" } ?: "<none>"
             }
 
             colors {
@@ -40,19 +40,18 @@ fun main(args: Array<String>) {
             mentionEmbed {
                 val self = discord.jda.selfUser
                 val guild = it.guild
-                val guildConfig = configuration.getGuildConfig(guild?.id)
+                val guildConfig = configuration[guild?.idLong]
 
                 val requiredRole = if (guild != null)
-                    guildConfig?.staffRoleName ?: "<Not Configured>"
+                    guildConfig?.getLiveArchiveChannel(discord.jda)?.name ?: "<Not Configured>"
                 else
                     "<Not Applicable>"
 
-                simpleTitle = "${self.fullName()} (modmail ${project.version})"
+                simpleTitle = "${self.fullName()} (ModMail ${project.version})"
                 description = "A Discord report management bot."
                 thumbnail = self.effectiveAvatarUrl
                 color = infoColor
 
-                addField("Contributors", "JakeyWakey#1569, Elliott#0001")
                 addInlineField("Required role", requiredRole)
                 addInlineField("Prefix", it.relevantPrefix)
                 addInlineField("Build Info", "`${discord.properties.kutilsVersion} - ${discord.properties.jdaVersion}`")

@@ -1,15 +1,15 @@
 package me.jakejmattson.modmail.commands
 
-import me.jakejmattson.modmail.extensions.requiredPermissionLevel
-import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.services.*
 import me.jakejmattson.kutils.api.annotations.CommandSet
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.command.commands
+import me.jakejmattson.modmail.extensions.requiredPermissionLevel
+import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.services.*
 import net.dv8tion.jda.api.entities.Activity
 
 @CommandSet("Owner")
-fun ownerCommands(configuration: Configuration, prefixService: PrefixService) = commands {
+fun ownerCommands(configuration: Configuration) = commands {
 
     requiredPermissionLevel = Permission.BOT_OWNER
 
@@ -18,7 +18,6 @@ fun ownerCommands(configuration: Configuration, prefixService: PrefixService) = 
         execute(AnyArg("Prefix")) {
             val prefix = it.args.first
 
-            prefixService.setPrefix(prefix)
             configuration.save()
 
             it.respond("Prefix set to: $prefix")

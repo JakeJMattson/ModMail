@@ -1,13 +1,13 @@
 package me.jakejmattson.modmail.commands
 
-import me.jakejmattson.modmail.extensions.*
-import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.services.*
 import me.jakejmattson.kutils.api.annotations.CommandSet
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.command.*
 import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.jakejmattson.kutils.api.extensions.jda.*
+import me.jakejmattson.modmail.extensions.*
+import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.services.*
 import net.dv8tion.jda.api.entities.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -18,8 +18,8 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     data class EmbedData(val topic: String, val openMessage: String, val initialMessage: String)
 
     fun openReport(event: CommandEvent<*>, targetUser: User, guild: Guild, userEmbed: MessageEmbed, embedData: EmbedData, detain: Boolean = false) {
-        val guildId = guild.id
-        val reportCategory = configuration.getGuildConfig(guildId)!!.getLiveReportCategory(guild.jda)
+        val guildId = guild.idLong
+        val reportCategory = configuration[guildId]!!.getLiveReportCategory(guild.jda)
 
         targetUser.openPrivateChannel().queue {
             it.sendMessage(userEmbed).queue({
@@ -46,7 +46,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
                     channel.sendMessage(reportEmbed).queue()
 
-                    val newReport = Report(targetUser.id, channel.id, guildId, ConcurrentHashMap())
+                    val newReport = Report(targetUser.idLong, channel.idLong, guildId, ConcurrentHashMap())
                     reportService.addReport(newReport)
 
                     if (detain) newReport.detain(it.jda)
@@ -135,8 +135,8 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
             val response = with(report) {
                 when (choice) {
-                    "user" -> userId
-                    "channel" -> channelId
+                    "user" -> userId.toString()
+                    "channel" -> channelId.toString()
                     "all" -> "User ID: $userId\nChannel ID: $channelId"
                     else -> "Invalid selection!"
                 }

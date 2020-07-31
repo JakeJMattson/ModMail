@@ -1,9 +1,9 @@
 package me.jakejmattson.modmail.services
 
-import me.jakejmattson.modmail.conversations.AutoSetupConversation
 import me.jakejmattson.kutils.api.Discord
 import me.jakejmattson.kutils.api.annotations.Service
 import me.jakejmattson.kutils.api.services.ConversationService
+import me.jakejmattson.modmail.conversations.AutoSetupConversation
 import net.dv8tion.jda.api.entities.Guild
 
 @Service
@@ -11,11 +11,11 @@ class GuildService(private val discord: Discord,
                    private val configuration: Configuration,
                    private val conversationService: ConversationService) {
     fun initDanglingGuilds() {
-        discord.jda.guilds.filter { !configuration.hasGuildConfig(it.id) }.forEach { initInGuild(it) }
+        discord.jda.guilds.filter { configuration[it.idLong] == null }.forEach { initInGuild(it) }
     }
 
     fun initInGuild(guild: Guild) {
-        if (!configuration.hasGuildConfig(guild.id)) {
+        if (configuration[guild.idLong] == null) {
             startSetupConversation(guild)
         }
     }

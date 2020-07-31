@@ -1,15 +1,15 @@
 package me.jakejmattson.modmail.preconditions
 
-import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.services.Configuration
 import me.jakejmattson.kutils.api.dsl.command.CommandEvent
 import me.jakejmattson.kutils.api.dsl.preconditions.*
+import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.services.Configuration
 
 class ValidGuildPrecondition(private val configuration: Configuration) : Precondition() {
     override fun evaluate(event: CommandEvent<*>): PreconditionResult {
-        val guildId = event.guild?.id ?: return Pass
+        val guildId = event.guild?.idLong ?: return Pass
 
-        if (!configuration.hasGuildConfig(guildId)) return Fail(Locale.FAIL_GUILD_NOT_CONFIGURED)
+        if (configuration[guildId] == null) return Fail(Locale.FAIL_GUILD_NOT_CONFIGURED)
 
         return Pass
     }

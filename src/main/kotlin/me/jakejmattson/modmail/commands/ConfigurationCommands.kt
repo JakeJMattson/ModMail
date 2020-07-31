@@ -1,11 +1,11 @@
 package me.jakejmattson.modmail.commands
 
-import me.jakejmattson.modmail.extensions.*
-import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.services.*
 import me.jakejmattson.kutils.api.annotations.CommandSet
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.command.commands
+import me.jakejmattson.modmail.extensions.*
+import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.services.*
 
 @CommandSet("Configuration")
 fun configurationCommands(configuration: Configuration) = commands {
@@ -17,7 +17,7 @@ fun configurationCommands(configuration: Configuration) = commands {
         execute(CategoryArg) {
             val reportCategory = it.args.first
 
-            configuration.getGuildConfig(reportCategory.guild.id)!!.reportCategory = reportCategory.id
+            configuration[reportCategory.guild.idLong]!!.reportCategory = reportCategory.idLong
             configuration.save()
             it.reactSuccess()
         }
@@ -28,7 +28,7 @@ fun configurationCommands(configuration: Configuration) = commands {
         execute(TextChannelArg) {
             val archiveChannel = it.args.first
 
-            configuration.getGuildConfig(archiveChannel.guild.id)!!.archiveChannel = archiveChannel.id
+            configuration[archiveChannel.guild.idLong]!!.archiveChannel = archiveChannel.idLong
             configuration.save()
             it.reactSuccess()
         }
@@ -39,7 +39,7 @@ fun configurationCommands(configuration: Configuration) = commands {
         execute(RoleArg) {
             val staffRole = it.args.first
 
-            configuration.getGuildConfig(it.message.guild.id)!!.staffRoleName = staffRole.name
+            configuration[it.message.guild.idLong]!!.staffRoleId = staffRole.idLong
             configuration.save()
             it.reactSuccess()
         }
@@ -50,7 +50,7 @@ fun configurationCommands(configuration: Configuration) = commands {
         execute(TextChannelArg) {
             val loggingChannel = it.args.first
 
-            configuration.getGuildConfig(loggingChannel.guild.id)!!.loggingConfiguration.loggingChannel = loggingChannel.id
+            configuration[loggingChannel.guild.idLong]!!.loggingConfiguration.loggingChannel = loggingChannel.idLong
             configuration.save()
             it.reactSuccess()
         }

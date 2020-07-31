@@ -1,10 +1,10 @@
 package me.jakejmattson.modmail.conversations
 
-import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.services.*
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.arguments.ArgumentType
 import me.jakejmattson.kutils.api.dsl.conversation.*
+import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.services.*
 import net.dv8tion.jda.api.entities.Guild
 
 class GuildSetupConversation : Conversation() {
@@ -18,9 +18,9 @@ class GuildSetupConversation : Conversation() {
         val archiveChannel = createPrompt(TextChannelArg, "Enter the channel where archived reports will be sent.") { it.guild == guild }
         val loggingChannel = createPrompt(TextChannelArg, "Enter the channel where information will be logged.") { it.guild == guild }
         val staffRole = createPrompt(RoleArg(guildId = guild.id), "Enter the role required to give commands to this bot.") { it.guild == guild }
-        val guildConfig = GuildConfiguration(guild.id, reportCategory.id, archiveChannel.id, staffRole.name, LoggingConfiguration(loggingChannel.id))
+        val guildConfig = GuildConfiguration("!", reportCategory.idLong, archiveChannel.idLong, staffRole.idLong, LoggingConfiguration(loggingChannel.idLong))
 
-        config.guildConfigurations.add(guildConfig)
+        config.guildConfigurations[guild.idLong] = guildConfig
         config.save()
 
         respond(Locale.GUILD_SETUP_SUCCESSFUL)

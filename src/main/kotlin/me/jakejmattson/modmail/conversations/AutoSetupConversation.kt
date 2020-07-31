@@ -1,10 +1,10 @@
 package me.jakejmattson.modmail.conversations
 
-import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.services.*
 import me.jakejmattson.kutils.api.arguments.BooleanArg
 import me.jakejmattson.kutils.api.dsl.conversation.*
 import me.jakejmattson.kutils.api.services.ConversationService
+import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.services.*
 import net.dv8tion.jda.api.entities.*
 import java.util.Timer
 import kotlin.concurrent.schedule
@@ -121,9 +121,9 @@ class AutoSetupConversation(private val conversationService: ConversationService
         archiveChannel.manager.setParent(holderCategory).queue()
         loggingChannel.manager.setParent(holderCategory).queue()
 
-        val logConfig = LoggingConfiguration(loggingChannel.id)
-        val guildConfiguration = GuildConfiguration(guild.id, reportCategory.id, archiveChannel.id, role.name, logConfig)
-        config.guildConfigurations.add(guildConfiguration)
+        val logConfig = LoggingConfiguration(loggingChannel.idLong)
+        val guildConfiguration = GuildConfiguration("!", reportCategory.idLong, archiveChannel.idLong, role.idLong, logConfig)
+        config.guildConfigurations[guild.idLong] = guildConfiguration
         config.save()
     }
 }

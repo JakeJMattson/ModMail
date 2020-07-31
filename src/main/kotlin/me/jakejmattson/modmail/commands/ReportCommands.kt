@@ -1,14 +1,14 @@
 package me.jakejmattson.modmail.commands
 
-import me.jakejmattson.modmail.extensions.*
-import me.jakejmattson.modmail.listeners.deletionQueue
-import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.services.*
 import me.jakejmattson.kutils.api.annotations.CommandSet
 import me.jakejmattson.kutils.api.arguments.*
 import me.jakejmattson.kutils.api.dsl.command.commands
 import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.jakejmattson.kutils.api.extensions.jda.fullName
+import me.jakejmattson.modmail.extensions.*
+import me.jakejmattson.modmail.listeners.deletionQueue
+import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.services.*
 import net.dv8tion.jda.api.entities.TextChannel
 
 @CommandSet("Report")
@@ -34,7 +34,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             val (channel, report) = inputChannel.toReportChannel()
                 ?: return@execute it.respond(createChannelError(inputChannel))
 
-            val config = configuration.getGuildConfig(channel.guild.id)
+            val config = configuration[channel.guild.idLong]
 
             val archiveChannel = config?.getLiveArchiveChannel(channel.jda)
                 ?: return@execute it.respond("No archive channel available!")

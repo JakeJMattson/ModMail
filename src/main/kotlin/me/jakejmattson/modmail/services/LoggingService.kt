@@ -1,11 +1,11 @@
 package me.jakejmattson.modmail.services
 
-import me.jakejmattson.modmail.messages.*
 import me.jakejmattson.kutils.api.Discord
 import me.jakejmattson.kutils.api.annotations.Service
 import me.jakejmattson.kutils.api.dsl.command.CommandEvent
 import me.jakejmattson.kutils.api.dsl.embed.embed
 import me.jakejmattson.kutils.api.extensions.jda.fullName
+import me.jakejmattson.modmail.messages.*
 import net.dv8tion.jda.api.entities.*
 
 @Service
@@ -13,7 +13,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
     private val jda = discord.jda
 
     init {
-        config.guildConfigurations
+        config.guildConfigurations.values
             .mapNotNull { it.loggingConfiguration.takeUnless { it.getLiveChannel(discord.jda) == null } }
             .forEach { loggingConfig ->
                 if (loggingConfig.logStartup)
@@ -76,7 +76,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
         log(config, message)
     }
 
-    fun command(command: CommandEvent<*>, additionalInfo: String = "") = getLogConfig(command.guild!!.id).apply {
+    fun command(command: CommandEvent<*>, additionalInfo: String = "") = getLogConfig(command.guild!!.idLong).apply {
         val author = command.author.fullName()
         val commandName = command.command!!.names.first()
         val channelName = command.channel.name
@@ -94,9 +94,9 @@ class LoggingService(private val discord: Discord, private val config: Configura
     private fun String.pairTo(user: User?) = this to (user?.fullName() ?: "<user>")
 
     private val Guild.logConfig
-        get() = getLogConfig(id)
+        get() = getLogConfig(idLong)
 
-    private fun getLogConfig(guildId: String) = config.getGuildConfig(guildId)!!.loggingConfiguration
+    private fun getLogConfig(guildId: Long) = config[guildId]!!.loggingConfiguration
     private fun log(config: LoggingConfiguration, message: String) = config.getLiveChannel(jda)?.sendMessage(message)?.queue()
     private fun logEmbed(config: LoggingConfiguration, embed: MessageEmbed) = config.getLiveChannel(jda)?.sendMessage(embed)?.queue()
 
