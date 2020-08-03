@@ -37,13 +37,15 @@ class GuildMigrationListener(val configuration: Configuration, private val guild
         val report = user.toLiveReport() ?: return
         if (report.guild.id != guild.id) return
 
-        val message = if (guild.retrieveBanList().complete().any { it.user.id == user.id }) "was banned from" else "has left"
+        val message = guild.retrieveBanList().complete().firstOrNull { it.user.id == user.id }?.let {
+            "This user was banned for reason: ${it.reason}"
+        } ?: "This user has left the server."
 
         report.channel.sendMessage(createResponse(message)).queue()
     }
 
     private fun createResponse(message: String) = embed {
-        addField("User no longer in server!", "This user $message the server.", false)
+        addField("User no longer in server!", message)
         color = failureColor
     }
 }

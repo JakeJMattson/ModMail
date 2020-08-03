@@ -6,10 +6,7 @@ import net.dv8tion.jda.api.JDA
 data class LoggingConfiguration(var loggingChannel: Long,
                                 val logEdits: Boolean = true,
                                 val logCommands: Boolean = true,
-                                val logStartup: Boolean = true,
-                                val logMemberOpen: Boolean = true,
-                                val logStaffOpen: Boolean = true,
-                                val logArchive: Boolean = true,
+                                val logOpen: Boolean = true,
                                 val logClose: Boolean = true) {
     fun getLiveChannel(jda: JDA) = jda.getTextChannelById(loggingChannel)
 }
@@ -24,7 +21,7 @@ data class GuildConfiguration(var prefix: String,
     fun getLiveRole(jda: JDA) = jda.getRoleById(staffRoleId)
 }
 
-data class Configuration(val ownerId: String = "insert-id",
+data class Configuration(val ownerId: Long = 0,
                          val guildConfigurations: MutableMap<Long, GuildConfiguration> = mutableMapOf()) : Data(configFile) {
     operator fun get(id: Long?) = id?.let { guildConfigurations[it] }
 }

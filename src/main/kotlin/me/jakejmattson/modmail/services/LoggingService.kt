@@ -15,10 +15,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
     init {
         config.guildConfigurations.values
             .mapNotNull { it.loggingConfiguration.takeUnless { it.getLiveChannel(discord.jda) == null } }
-            .forEach { loggingConfig ->
-                if (loggingConfig.logStartup)
-                    log(loggingConfig, Locale.STARTUP_LOG)
-            }
+            .forEach { log(it, Locale.STARTUP_LOG) }
     }
 
     fun memberOpen(report: Report) {
@@ -26,7 +23,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
         val config = liveReport.guild.logConfig
         val message = Locale.MEMBER_OPEN_LOG inject "user".pairTo(liveReport.user)
 
-        if (config.logMemberOpen)
+        if (config.logOpen)
             log(config, message)
     }
 
@@ -34,7 +31,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
         val config = guild.logConfig
         val message = Locale.STAFF_OPEN_LOG inject mapOf("channel" to channelName, "staff".pairTo(staff))
 
-        if (config.logStaffOpen)
+        if (config.logOpen)
             log(config, message)
     }
 
@@ -42,7 +39,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
         val config = guild.logConfig
         val message = Locale.ARCHIVE_LOG inject mapOf("channel" to channelName, "staff".pairTo(staff))
 
-        if (config.logArchive)
+        if (config.logClose)
             log(config, message)
     }
 
@@ -76,7 +73,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
         log(config, message)
     }
 
-    fun command(command: CommandEvent<*>, additionalInfo: String = "") = getLogConfig(command.guild!!.idLong).apply {
+    fun command(command: CommandEvent<*>, additionalInfo: String = "") = command.guild!!.logConfig.apply {
         val author = command.author.fullName()
         val commandName = command.command!!.names.first()
         val channelName = command.channel.name
@@ -94,9 +91,8 @@ class LoggingService(private val discord: Discord, private val config: Configura
     private fun String.pairTo(user: User?) = this to (user?.fullName() ?: "<user>")
 
     private val Guild.logConfig
-        get() = getLogConfig(idLong)
+        get() = config[idLong]!!.loggingConfiguration
 
-    private fun getLogConfig(guildId: Long) = config[guildId]!!.loggingConfiguration
     private fun log(config: LoggingConfiguration, message: String) = config.getLiveChannel(jda)?.sendMessage(message)?.queue()
     private fun logEmbed(config: LoggingConfiguration, embed: MessageEmbed) = config.getLiveChannel(jda)?.sendMessage(embed)?.queue()
 
