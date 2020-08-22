@@ -8,12 +8,12 @@ import me.jakejmattson.modmail.extensions.*
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.*
 import java.io.File
-import java.util.Vector
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-data class Report(val userId: Long,
-                  val channelId: Long,
-                  val guildId: Long,
+data class Report(val userId: String,
+                  val channelId: String,
+                  val guildId: String,
                   val messages: MutableMap<String, String>) {
 
     fun toLiveReport(jda: JDA): LiveReport? {
@@ -37,19 +37,17 @@ private val reports = Vector<Report>()
 private val queuedReports = Vector<QueuedReport>()
 
 fun User.toLiveReport() = findReport()?.toLiveReport(jda)
-fun User.findReport() = reports.firstOrNull { it.userId == this.idLong }
-fun MessageChannel.findReport() = reports.firstOrNull { it.channelId == this.idLong }
+fun User.findReport() = reports.firstOrNull { it.userId == this.id }
+fun MessageChannel.findReport() = reports.firstOrNull { it.channelId == this.id }
 fun MessageChannel.toLiveReport() = findReport()?.toLiveReport(jda)
 
 @Service
 class ReportService(private val config: Configuration,
                     private val loggingService: LoggingService,
-                    discord: Discord) {
+                    private val discord: Discord) {
     init {
         loadReports(discord.jda)
     }
-
-    fun getCommonGuilds(userObject: User) = userObject.mutualGuilds.filter { config.guildConfigurations[it.idLong] != null }
 
     private fun loadReports(jda: JDA) =
         reportsFolder.listFiles()?.forEach {
@@ -78,7 +76,7 @@ class ReportService(private val config: Configuration,
     fun receiveFromUser(message: Message) {
         val user = message.author
         val userID = user.id
-        val safeMessage = message.cleanContent()
+        val safeMessage = message.cleanContent(discord)
 
         with(user.findReport()) {
             val liveReport = this?.toLiveReport(message.jda) ?: return@with
@@ -126,7 +124,7 @@ class ReportService(private val config: Configuration,
                 channel.sendMessage(it).queue()
         }
 
-        val newReport = Report(user.idLong, channel.idLong, guild.idLong, ConcurrentHashMap())
+        val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap())
         addReport(newReport)
 
         user.sendPrivateMessage(userMessage)

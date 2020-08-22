@@ -3,7 +3,7 @@ package me.jakejmattson.modmail.services
 import me.jakejmattson.discordkt.api.annotations.Service
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.Member
-import java.util.Vector
+import java.util.*
 
 private val detainedReports = Vector<Report>()
 
@@ -35,7 +35,7 @@ fun Report.release(jda: JDA): Boolean {
     return true
 }
 
-fun Member.isDetained() = detainedReports.any { it.userId == user.idLong }
+fun Member.isDetained() = detainedReports.any { it.userId == user.id }
 
 fun Member.mute(): Boolean {
     val mutedRole = guild.getRolesByName("Muted", true).firstOrNull() ?: return false

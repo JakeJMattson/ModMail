@@ -1,74 +1,37 @@
 package me.jakejmattson.modmail.listeners
 
 import com.google.common.eventbus.Subscribe
-import me.jakejmattson.discordkt.api.dsl.embed.embed
-import me.jakejmattson.discordkt.api.extensions.jda.sendPrivateMessage
 import me.jakejmattson.discordkt.api.services.ConversationService
-import me.jakejmattson.modmail.extensions.fullContent
+import me.jakejmattson.modmail.conversations.GuildChoiceConversation
 import me.jakejmattson.modmail.services.*
-import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent
 
-class ReportListener(private val reportService: ReportService, private val conversationService: ConversationService) {
-    private val heldMessages = mutableMapOf<String, Message>()
-    private val sentChoice = HashSet<String>()
-
+class ReportListener(private val config: Configuration,
+                     private val reportService: ReportService,
+                     private val conversationService: ConversationService) {
     @Subscribe
     fun onPrivateMessageReceived(event: PrivateMessageReceivedEvent) {
-        val user = event.author
+        val user = event.author.takeUnless { it.isBot } ?: return
 
-        if (user.isBot || conversationService.hasConversation(user, user.openPrivateChannel().complete())) return
+        if (conversationService.hasConversation(user, user.openPrivateChannel().complete())) return
 
         val message = event.message
-        val content = message.fullContent().trim()
-        val commonGuilds = reportService.getCommonGuilds(user)
+        val commonGuilds = user.mutualGuilds.filter { config.guildConfigurations[it.idLong] != null }
 
         when {
             user.findReport() != null -> {
                 reportService.receiveFromUser(message)
             }
-            sentChoice.contains(user.id) -> {
-                if (content.toIntOrNull() != null)
-                    return user.sendPrivateMessage("Choice must be an number.")
-
-                val selection = content.toInt()
-
-                if (selection !in 0..commonGuilds.lastIndex)
-                    return user.sendPrivateMessage("Choice must be a valid guild ID.")
-
-                val firstMessage = heldMessages.getOrDefault(user.id, message)
-                reportService.createReport(user, commonGuilds[selection])
-                reportService.receiveFromUser(firstMessage)
-                heldMessages.remove(user.id)
-                sentChoice.remove(user.id)
-            }
             commonGuilds.size > 1 -> {
-                heldMessages[user.id] = message
-                user.sendPrivateMessage(buildGuildChoiceEmbed(commonGuilds))
-                sentChoice.add(user.id)
+                conversationService.startPrivateConversation<GuildChoiceConversation>(user, commonGuilds, message)
             }
             else -> {
-                val guild = commonGuilds.first()
-                reportService.apply {
+                val guild = commonGuilds.firstOrNull() ?: return
+                with(reportService) {
                     createReport(user, guild)
                     receiveFromUser(message)
                 }
             }
         }
     }
-
-    private fun buildGuildChoiceEmbed(commonGuilds: List<Guild>) =
-        embed {
-            simpleTitle = "Please choose which server's staff you'd like to contact."
-            description = "Respond with the number that correlates with the desired server to get started."
-            thumbnail = commonGuilds.first().jda.selfUser.effectiveAvatarUrl
-            color = infoColor
-
-            commonGuilds.forEachIndexed { index, guild ->
-                field {
-                    name = "$index) ${guild.name}"
-                    inline = false
-                }
-            }
-        }
 }

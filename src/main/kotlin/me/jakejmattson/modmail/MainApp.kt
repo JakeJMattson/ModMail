@@ -67,7 +67,15 @@ fun main(args: Array<String>) {
                 permissionsService.hasClearance(member, permission)
             }
 
-            discord.jda.presence.activity = Activity.playing(Locale.DISCORD_PRESENCE)
+            val guildService = discord.getInjectionObjects(GuildService::class)
+
+            with(discord.jda) {
+                presence.activity = Activity.playing(Locale.DISCORD_PRESENCE)
+
+                guilds.forEach {
+                    guildService.initInGuild(it)
+                }
+            }
         }
     }
 }

@@ -18,8 +18,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     data class EmbedData(val topic: String, val openMessage: String, val initialMessage: String)
 
     fun openReport(event: CommandEvent<*>, targetUser: User, guild: Guild, userEmbed: MessageEmbed, embedData: EmbedData, detain: Boolean = false) {
-        val guildId = guild.idLong
-        val reportCategory = configuration[guildId]!!.getLiveReportCategory(guild.jda)
+        val reportCategory = configuration[guild.idLong]!!.getLiveReportCategory(guild.jda)
 
         targetUser.openPrivateChannel().queue {
             it.sendMessage(userEmbed).queue({
@@ -46,7 +45,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
                     channel.sendMessage(reportEmbed).queue()
 
-                    val newReport = Report(targetUser.idLong, channel.idLong, guildId, ConcurrentHashMap())
+                    val newReport = Report(targetUser.id, channel.id, guild.id, ConcurrentHashMap())
                     reportService.addReport(newReport)
 
                     if (detain) newReport.detain(it.jda)
