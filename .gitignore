@@ -1,6 +1,12 @@
+# IntelliJ
 .idea/
 *.iml
-target/
+
+# Gradle
+.gradle/
+build/
+gradle.properties
+
 data/
 velocity.log
 old-conf/
