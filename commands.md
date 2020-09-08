@@ -1,9 +1,9 @@
 # Commands
 
-## Key
-| Symbol     | Meaning                    |
-| ---------- | -------------------------- |
-| (Argument) | This argument is optional. |
+## Key 
+| Symbol      | Meaning                        |
+| ----------- | ------------------------------ |
+| (Argument)  | Argument is not required.      |
 
 ## Configuration
 | Commands          | Arguments    | Description                                               |
@@ -40,10 +40,10 @@
 ## ReportHelpers
 | Commands | Arguments                 | Description                                                               |
 | -------- | ------------------------- | ------------------------------------------------------------------------- |
-| Detain   | Member, (Initial Message) | Mute a user and open a report with them.                                  |
+| Detain   | Member                    | Mute a user and open a report with them.                                  |
 | History  | User                      | Read the target user's DM history with the bot.                           |
 | Info     | (Report Channel), (Field) | Retrieve info from the target report channel - user/channel/all.          |
-| Open     | Member, (Initial Message) | Open a report with the target user and send the provided initial message. |
+| Open     | Member                    | Open a report with the target user and send the provided initial message. |
 | Release  | (Report Channel), Member  | Release a user from detainment and unmute them.                           |
 
 ## Utility

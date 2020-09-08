@@ -1,58 +1,63 @@
 package me.jakejmattson.modmail.listeners
 
-import com.google.common.eventbus.Subscribe
+import com.gitlab.kordlib.common.entity.Snowflake
+import com.gitlab.kordlib.core.behavior.edit
+import com.gitlab.kordlib.core.event.channel.TypingStartEvent
+import com.gitlab.kordlib.core.event.message.*
 import me.jakejmattson.discordkt.api.Discord
+import me.jakejmattson.discordkt.api.dsl.listeners
+import me.jakejmattson.discordkt.api.extensions.toSnowflake
 import me.jakejmattson.modmail.extensions.cleanContent
 import me.jakejmattson.modmail.services.*
-import net.dv8tion.jda.api.events.message.guild.*
-import net.dv8tion.jda.api.events.message.priv.PrivateMessageUpdateEvent
-import net.dv8tion.jda.api.events.user.UserTypingEvent
 
-class EditListener(private val discord: Discord, private val reportService: ReportService, private val loggingService: LoggingService) {
-    @Subscribe
-    fun onGuildMessageUpdate(event: GuildMessageUpdateEvent) {
-        val jda = event.jda
+fun editListener(discord: Discord, reportService: ReportService, loggingService: LoggingService) = listeners {
+    on<MessageUpdateEvent> {
+        val message = this.message.asMessage()
+        val author = message.author!!
 
-        if (event.author.id == jda.selfUser.id) return
+        if (getMessage().getGuildOrNull() != null) {
+            if (author.id == kord.getSelf().id) return@on
 
-        val report = event.channel.findReport() ?: return
-        val privateChannel = jda.privateChannels.firstOrNull { it.user.id == report.userId } ?: return
-        val targetMessage = report.messages[event.messageId]!!
+            val report = channel.findReport() ?: return@on
+            val privateChannel = report.userId.toSnowflake()?.let { kord.getUser(it)?.getDmChannel() } ?: return@on
+            val targetMessage = Snowflake(report.messages[messageId.value]!!)
 
-        privateChannel.editMessageById(targetMessage, event.message).queue()
+            privateChannel.getMessage(targetMessage).edit {
+                content = new.content
+            }
+        }
+        else {
+            val report = author.findReport() ?: return@on
+            val liveReport = report.toLiveReport(kord) ?: return@on
+            val targetMessage = report.messages[messageId.value]?.toSnowflake() ?: return@on
+            val channel = liveReport.channel
+            val guildMessage = channel.getMessage(targetMessage)
+            val newContent = message.cleanContent(discord)
+
+            loggingService.edit(liveReport, guildMessage.cleanContent(discord), newContent)
+            channel.getMessage(targetMessage).edit {
+                content = newContent
+            }
+        }
     }
 
-    @Subscribe
-    fun onGuildMessageDelete(event: GuildMessageDeleteEvent) {
-        val report = event.channel.findReport() ?: return
-        val targetMessage = report.messages[event.messageId] ?: return
-        val privateChannel = event.jda.privateChannels.first { it.user.id == report.userId }
+    on<TypingStartEvent> {
+        if (getGuild() != null)
+            return@on
 
-        privateChannel.deleteMessageById(targetMessage).queue()
-        report.messages.remove(event.messageId)
+        user.toLiveReport()?.channel?.type()
+    }
+
+    on<MessageDeleteEvent> {
+        getGuild() ?: return@on
+
+        val report = channel.findReport() ?: return@on
+        val targetMessage = report.messages[messageId.value]?.toSnowflake() ?: return@on
+        val privateChannel = report.userId.toSnowflake()?.let { kord.getUser(it)?.getDmChannel() } ?: return@on
+
+        privateChannel.deleteMessage(targetMessage)
+        report.messages.remove(messageId.value)
 
         reportService.writeReportToFile(report)
-    }
-
-    @Subscribe
-    fun onUserTypingEvent(event: UserTypingEvent) {
-        event.privateChannel ?: return
-
-        val report = event.user.toLiveReport() ?: return
-
-        report.channel.sendTyping().queue()
-    }
-
-    @Subscribe
-    fun onPrivateMessageUpdate(event: PrivateMessageUpdateEvent) {
-        val report = event.author.findReport() ?: return
-        val liveReport = report.toLiveReport(event.jda) ?: return
-        val targetMessage = report.messages[event.messageId] ?: return
-        val channel = liveReport.channel
-        val guildMessage = channel.retrieveMessageById(targetMessage).complete()
-        val newContent = event.message.cleanContent(discord)
-
-        loggingService.edit(liveReport, guildMessage.cleanContent(discord), newContent)
-        channel.editMessageById(targetMessage, newContent).queue()
     }
 }

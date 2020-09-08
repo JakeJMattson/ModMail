@@ -1,10 +1,14 @@
 package me.jakejmattson.modmail.services
 
+import com.gitlab.kordlib.core.entity.Guild
+import kotlinx.serialization.*
+import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.annotations.Service
-import net.dv8tion.jda.api.entities.Guild
 
+@Serializable
 data class Macro(var name: String, var message: String)
 
+@Serializable
 data class MacroMap(val map: HashMap<String, ArrayList<Macro>> = hashMapOf())
 
 @Service
@@ -13,7 +17,7 @@ class MacroService {
 
     private fun ArrayList<Macro>.hasMacro(name: String) = this.any { it.name.toLowerCase() == name.toLowerCase() }
 
-    fun getGuildMacros(guild: Guild) = macroMap.map.getOrPut(guild.id) { arrayListOf() }
+    fun getGuildMacros(guild: Guild) = macroMap.map.getOrPut(guild.id.value) { arrayListOf() }
 
     fun addMacro(name: String, message: String, guild: Guild): Pair<Boolean, String> {
         val macroList = getGuildMacros(guild)
@@ -58,10 +62,10 @@ class MacroService {
     }
 }
 
-private fun saveMacros(macros: MacroMap) = save(macroFile, macros)
+private fun saveMacros(macros: MacroMap) = macroFile.writeText(Json.encodeToString(macros))
 
 private fun loadMacros() =
     if (macroFile.exists())
-        gson.fromJson(macroFile.readText(), MacroMap::class.java)
+        Json.decodeFromString(macroFile.readText())
     else
         MacroMap()

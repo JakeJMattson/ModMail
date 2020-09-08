@@ -1,31 +1,34 @@
 package me.jakejmattson.modmail.services
 
+import com.gitlab.kordlib.core.*
+import com.gitlab.kordlib.core.behavior.GuildBehavior
+import com.gitlab.kordlib.core.entity.Member
+import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.api.annotations.Service
-import net.dv8tion.jda.api.JDA
-import net.dv8tion.jda.api.entities.Member
+import me.jakejmattson.discordkt.api.extensions.toSnowflake
 import java.util.*
 
 private val detainedReports = Vector<Report>()
 
 @Service
 class ModerationService(val configuration: Configuration) {
-    fun hasStaffRole(member: Member): Boolean {
+    suspend fun hasStaffRole(member: Member): Boolean {
         val guild = member.guild
-        val staffRoleId = configuration[guild.idLong]?.staffRoleId ?: return false
+        val staffRoleId = configuration[guild.id.longValue]?.staffRoleId ?: return false
 
-        return member.roles.any { it.idLong == staffRoleId }
+        return member.roles.any { it.id.longValue == staffRoleId }
     }
 }
 
-fun Report.detain(jda: JDA) {
-    val member = toLiveReport(jda)?.member ?: return
+suspend fun Report.detain(kord: Kord) {
+    val member = guildId.toSnowflake()?.let { toLiveReport(kord)?.user?.asMember(it) } ?: return
 
     if (!member.isDetained())
         detainedReports.addElement(this)
 }
 
-fun Report.release(jda: JDA): Boolean {
-    val member = toLiveReport(jda)?.member ?: return false
+suspend fun Report.release(kord: Kord): Boolean {
+    val member = guildId.toSnowflake()?.let { toLiveReport(kord)?.user?.asMember(it) } ?: return false
 
     if (member.isDetained()) {
         detainedReports.remove(this)
@@ -35,22 +38,24 @@ fun Report.release(jda: JDA): Boolean {
     return true
 }
 
-fun Member.isDetained() = detainedReports.any { it.userId == user.id }
+fun Member.isDetained() = detainedReports.any { it.userId == id.value }
 
-fun Member.mute(): Boolean {
-    val mutedRole = guild.getRolesByName("Muted", true).firstOrNull() ?: return false
+suspend fun Member.mute(): Boolean {
+    val mutedRole = guild.getMutedRole() ?: return false
 
-    if (!this.roles.contains(mutedRole))
-        guild.modifyMemberRoles(this, roles + mutedRole).queue()
+    if (mutedRole !in roles.toList())
+        addRole(mutedRole.id)
+
+    return true
+}
+
+suspend fun Member.unmute(): Boolean {
+    val mutedRole = guild.getMutedRole() ?: return false
+
+    if (mutedRole in roles.toList())
+        removeRole(mutedRole.id)
 
     return true
 }
 
-fun Member.unmute(): Boolean {
-    val mutedRole = guild.getRolesByName("Muted", true).firstOrNull() ?: return false
-
-    if (roles.contains(mutedRole))
-        guild.modifyMemberRoles(this, roles - mutedRole).queue()
-
-    return true
-}
+private suspend fun GuildBehavior.getMutedRole() = roles.firstOrNull { it.name.equals("muted", true) }

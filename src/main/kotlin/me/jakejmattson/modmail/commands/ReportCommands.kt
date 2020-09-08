@@ -1,112 +1,113 @@
 package me.jakejmattson.modmail.commands
 
-import me.jakejmattson.discordkt.api.annotations.CommandSet
+import com.gitlab.kordlib.core.behavior.channel.*
+import com.gitlab.kordlib.core.entity.channel.TextChannel
 import me.jakejmattson.discordkt.api.arguments.*
-import me.jakejmattson.discordkt.api.dsl.command.commands
-import me.jakejmattson.discordkt.api.dsl.embed.embed
-import me.jakejmattson.discordkt.api.extensions.jda.fullName
+import me.jakejmattson.discordkt.api.dsl.commands
+import me.jakejmattson.discordkt.api.extensions.toSnowflake
 import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.modmail.listeners.deletionQueue
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
-import net.dv8tion.jda.api.entities.TextChannel
 
-@CommandSet("Report")
-fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands {
+fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands("Report") {
     command("Close") {
         description = Locale.CLOSE_DESCRIPTION
         execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }) {
-            val inputChannel = it.args.first
+            val inputChannel = args.first
             val channel = inputChannel.toReportChannel()?.channel
-                ?: return@execute it.respond(createChannelError(inputChannel))
+                ?: return@execute respond(createChannelError(inputChannel))
 
             deletionQueue.add(channel.id)
-            channel.delete().queue()
-            loggingService.commandClose(it.guild!!, channel.name, it.author)
+            channel.delete()
+            loggingService.commandClose(guild!!, channel.name, author)
         }
     }
 
     command("Archive") {
         description = Locale.ARCHIVE_DESCRIPTION
         execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }, EveryArg("Info").makeOptional("")) {
-            val (inputChannel, note) = it.args
+            val (inputChannel, note) = args
 
             val (channel, report) = inputChannel.toReportChannel()
-                ?: return@execute it.respond(createChannelError(inputChannel))
+                ?: return@execute respond(createChannelError(inputChannel))
 
-            val config = configuration[channel.guild.idLong]
+            val config = configuration[channel.guild.id.longValue]
 
-            val archiveChannel = config?.getLiveArchiveChannel(channel.jda)
-                ?: return@execute it.respond("No archive channel available!")
+            val archiveChannel = config?.getLiveArchiveChannel(channel.kord)
+                ?: return@execute respond("No archive channel available!")
 
             val archiveMessage = "User ID: ${report.userId}\nAdditional Information: " +
                 if (note.isNotEmpty()) note else "<None>"
 
-            archiveChannel.sendMessage(archiveMessage).queue()
-
-            archiveChannel.sendFile(it.channel.archiveString().toByteArray(), "$${it.channel.name}.txt").queue {
+            archiveChannel.createMessage {
+                content = archiveMessage
+                addFile("$${channel.name}.txt", channel.archiveString().toByteArray().inputStream())
                 deletionQueue.add(channel.id)
-                channel.delete().queue()
+                channel.delete()
             }
 
-            loggingService.archive(it.guild!!, channel.name, it.author)
+            loggingService.archive(guild!!, channel.name, author)
         }
     }
 
     command("Note") {
         description = Locale.NOTE_DESCRIPTION
         execute(TextChannelArg("Report Channel").makeNullableOptional { it.channel as TextChannel }, EveryArg("Note")) {
-            val inputChannel = it.args.first!!
+            val inputChannel = args.first!!
             val channel = inputChannel.toReportChannel()?.channel
-                ?: return@execute it.respond(createChannelError(inputChannel))
+                ?: return@execute respond(createChannelError(inputChannel))
+            val messageAuthor = author
 
-            channel.sendMessage(
-                embed {
-                    author {
-                        name = it.author.fullName()
-                        iconUrl = it.author.effectiveAvatarUrl
-                    }
-                    description = it.args.second
-                    color = infoColor
+            channel.createEmbed {
+                author {
+                    name = messageAuthor.tag
+                    icon = messageAuthor.avatar.url
                 }
-            ).queue()
+                description = args.second
+            }
 
-            it.message.delete().queue()
-            loggingService.command(it)
+            message.delete()
+            loggingService.command(this)
         }
     }
 
     command("Tag") {
         description = Locale.TAG_DESCRIPTION
         execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }, AnyArg("Tag")) {
-            val inputChannel = it.args.first
+            val inputChannel = args.first
             val channel = inputChannel.toReportChannel()?.channel
-                ?: return@execute it.respond(createChannelError(inputChannel))
+                ?: return@execute respond(createChannelError(inputChannel))
 
-            val tag = it.args.second
+            val tag = args.second
 
-            channel.manager.setName("$tag-${channel.name}").queue()
-            it.message.delete().queue()
-            loggingService.command(it, "Added tag :: $tag")
+            channel.edit {
+                name = "$tag-${channel.name}"
+            }
+
+            loggingService.command(this, "Added tag :: $tag")
+            message.delete()
         }
     }
 
     command("ResetTags") {
         description = Locale.RESET_TAGS_DESCRIPTION
-        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }) { event ->
-            val inputChannel = event.args.first
+        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }) {
+            val inputChannel = args.first
             val (channel, report) = inputChannel.toReportChannel()
-                ?: return@execute event.respond(createChannelError(inputChannel))
+                ?: return@execute respond(createChannelError(inputChannel))
 
-            event.discord.jda.retrieveUserById(report.userId).queue {
-                val name = it.name.replace("\\s+".toRegex(), "-")
-                channel.manager.setName(name).queue()
-                loggingService.command(event, "Channel is now $name")
+            val user = report.userId.toSnowflake()?.let { discord.api.getUser(it) } ?: return@execute
+            val newName = user.username
+
+            channel.edit {
+                name = newName
             }
 
-            event.message.delete().queue()
+            loggingService.command(this, "Channel is now $newName")
+            message.delete()
         }
     }
 }
 
-fun createChannelError(channel: TextChannel) = "Invalid report channel: ${channel.asMention}"
+fun createChannelError(channel: TextChannel) = "Invalid report channel: ${channel.mention}"

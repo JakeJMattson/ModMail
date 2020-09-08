@@ -1,21 +1,22 @@
 package me.jakejmattson.modmail.extensions
 
-import me.jakejmattson.discordkt.api.dsl.command.*
+import me.jakejmattson.discordkt.api.dsl.*
 import me.jakejmattson.modmail.services.*
+import kotlin.collections.set
 
-val categoryPermissions: MutableMap<CommandsContainer, Permission> = mutableMapOf()
+val categoryPermissions: MutableMap<String, Permission> = mutableMapOf()
 val commandPermissions: MutableMap<Command, Permission> = mutableMapOf()
 
-var CommandsContainer.requiredPermissionLevel
-    get() = categoryPermissions[this] ?: DEFAULT_REQUIRED_PERMISSION
+var CommandSetBuilder.requiredPermissionLevel
+    get() = categoryPermissions[this.category] ?: DEFAULT_REQUIRED_PERMISSION
     set(value) {
-        categoryPermissions[this] = value
+        categoryPermissions[this.category] = value
     }
 
 var Command.requiredPermissionLevel: Permission
     get() {
         val setLevel = categoryPermissions.toList()
-            .firstOrNull { this in it.first.commands }?.second
+            .firstOrNull { this.category in it.first }?.second
 
         val cmdLevel = commandPermissions[this]
 

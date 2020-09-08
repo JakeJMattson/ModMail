@@ -1,24 +1,23 @@
 package me.jakejmattson.modmail.listeners
 
-import com.google.common.eventbus.Subscribe
+import com.gitlab.kordlib.common.entity.Snowflake
+import com.gitlab.kordlib.core.event.channel.TextChannelDeleteEvent
+import me.jakejmattson.discordkt.api.dsl.listeners
 import me.jakejmattson.modmail.services.*
-import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent
 
-val deletionQueue = ArrayList<String>()
+val deletionQueue = ArrayList<Snowflake>()
 
-class ChannelDeletionListener(private val loggingService: LoggingService) {
-    @Subscribe
-    fun onTextChannelDelete(event: TextChannelDeleteEvent) {
-        val channel = event.channel
-        val report = channel.findReport() ?: return
+fun channelDeletion(loggingService: LoggingService) = listeners {
+    on<TextChannelDeleteEvent> {
+        val report = channel.findReport() ?: return@on
 
-        report.close(channel.jda)
+        report.close(channel.kord)
 
         if (channel.id in deletionQueue) {
             deletionQueue.remove(channel.id)
-            return
+            return@on
         }
 
-        loggingService.manualClose(event.guild, channel.name)
+        loggingService.manualClose(channel.getGuild(), channel.name)
     }
 }

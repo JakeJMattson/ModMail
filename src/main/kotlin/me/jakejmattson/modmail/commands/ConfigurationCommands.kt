@@ -1,58 +1,55 @@
 package me.jakejmattson.modmail.commands
 
-import me.jakejmattson.discordkt.api.annotations.CommandSet
 import me.jakejmattson.discordkt.api.arguments.*
-import me.jakejmattson.discordkt.api.dsl.command.commands
+import me.jakejmattson.discordkt.api.dsl.commands
 import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
 
-@CommandSet("Configuration")
-fun configurationCommands(configuration: Configuration) = commands {
-
+fun configurationCommands(configuration: Configuration) = commands("Configuration") {
     requiredPermissionLevel = Permission.GUILD_OWNER
 
     command("SetReportCategory") {
         description = Locale.SET_REPORT_CATEGORY_DESCRIPTION
         execute(CategoryArg) {
-            val reportCategory = it.args.first
+            val reportCategory = args.first
 
-            configuration[reportCategory.guild.idLong]!!.reportCategory = reportCategory.idLong
+            configuration[reportCategory.guild.id.longValue]!!.reportCategory = reportCategory.id.longValue
             configuration.save()
-            it.reactSuccess()
+            reactSuccess()
         }
     }
 
     command("SetArchiveChannel") {
         description = Locale.SET_ARCHIVE_CHANNEL_DESCRIPTION
         execute(TextChannelArg) {
-            val archiveChannel = it.args.first
+            val archiveChannel = args.first
 
-            configuration[archiveChannel.guild.idLong]!!.archiveChannel = archiveChannel.idLong
+            configuration[archiveChannel.guild.id.longValue]!!.archiveChannel = archiveChannel.id.longValue
             configuration.save()
-            it.reactSuccess()
+            reactSuccess()
         }
     }
 
     command("SetStaffRole") {
         description = Locale.SET_STAFF_ROLE_DESCRIPTION
         execute(RoleArg) {
-            val staffRole = it.args.first
+            val staffRole = args.first
 
-            configuration[it.message.guild.idLong]!!.staffRoleId = staffRole.idLong
+            configuration[message.getGuild().id.longValue]!!.staffRoleId = staffRole.id.longValue
             configuration.save()
-            it.reactSuccess()
+            reactSuccess()
         }
     }
 
     command("SetLoggingChannel") {
         description = Locale.SET_LOGGING_CHANNEL_DESCRIPTION
         execute(TextChannelArg) {
-            val loggingChannel = it.args.first
+            val loggingChannel = args.first
 
-            configuration[loggingChannel.guild.idLong]!!.loggingConfiguration.loggingChannel = loggingChannel.idLong
+            configuration[loggingChannel.guild.id.longValue]!!.loggingConfiguration.loggingChannel = loggingChannel.id.longValue
             configuration.save()
-            it.reactSuccess()
+            reactSuccess()
         }
     }
 }

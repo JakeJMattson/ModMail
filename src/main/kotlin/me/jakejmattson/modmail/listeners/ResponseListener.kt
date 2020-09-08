@@ -1,27 +1,22 @@
 package me.jakejmattson.modmail.listeners
 
-import com.google.common.eventbus.Subscribe
+import com.gitlab.kordlib.core.event.message.MessageCreateEvent
+import me.jakejmattson.discordkt.api.dsl.listeners
 import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.modmail.services.findReport
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
-class ResponseListener {
-    @Subscribe
-    fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
-        if (event.author.isBot) return
+fun responseListener() = listeners {
+    on<MessageCreateEvent> {
+        getGuild() ?: return@on
+        if (message.author?.isBot == true) return@on
 
-        with(event.message) {
-            //TODO Figure out how to check for the relevant prefix
+        with(message) {
+            val report = channel.findReport() ?: return@on
+            val liveReport = report.toLiveReport(kord) ?: return@on addFailReaction()
+            val content = fullContent().takeUnless { it.trim().isBlank() } ?: return@on
+            val newMessage = liveReport.user.getDmChannel().createMessage(content)
 
-            val report = event.channel.findReport() ?: return
-            val liveReport = report.toLiveReport(jda) ?: return addFailReaction()
-            val content = fullContent().takeUnless { it.trim().isBlank() } ?: return
-
-            liveReport.user.openPrivateChannel().queue {
-                it.sendMessage(content).queue { receivedMessage ->
-                    report.messages[id] = receivedMessage.id
-                }
-            }
+            report.messages[id.value] = newMessage.id.value
         }
     }
 }

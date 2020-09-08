@@ -1,21 +1,22 @@
 package me.jakejmattson.modmail
 
-import com.google.gson.Gson
+import kotlinx.serialization.*
+import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.dsl.bot
-import me.jakejmattson.discordkt.api.extensions.jda.*
+import me.jakejmattson.discordkt.api.extensions.addInlineField
 import me.jakejmattson.modmail.extensions.requiredPermissionLevel
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
-import net.dv8tion.jda.api.entities.Activity
 import java.awt.Color
 import kotlin.system.exitProcess
 
+@Serializable
 private data class Properties(val version: String, val repository: String)
 
 private val propFile = Properties::class.java.getResource("/properties.json").readText()
-private val project = Gson().fromJson(propFile, Properties::class.java)
+private val project = Json.decodeFromString<Properties>(propFile)
 
-fun main(args: Array<String>) {
+suspend fun main(args: Array<String>) {
     val token = args.firstOrNull()
 
     if (token == null || token == "UNSET") {
@@ -24,58 +25,55 @@ fun main(args: Array<String>) {
     }
 
     bot(token) {
-        configure { discord ->
-            val (configuration, permissionsService) = discord.getInjectionObjects(Configuration::class, PermissionsService::class)
+        prefix {
+            val configuration = discord.getInjectionObjects(Configuration::class)
+            guild?.let { configuration[it.id.longValue]?.prefix.takeUnless { it.isNullOrBlank() } ?: "!" } ?: "<none>"
+        }
 
+        configure {
             requiresGuild = true
+            theme = Color(0x00bfff)
+        }
 
-            prefix {
-                it.guild?.let { configuration[it.idLong]?.prefix.takeUnless { it.isNullOrBlank() } ?: "!" } ?: "<none>"
+        mentionEmbed {
+            val self = api.getSelf()
+            val guild = it.guild
+            val configuration = it.discord.getInjectionObjects(Configuration::class)
+            val guildConfig = configuration[guild?.id?.longValue]
+
+            val requiredRole = if (guild != null)
+                guildConfig?.getLiveArchiveChannel(it.discord.api)?.name ?: "<Not Configured>"
+            else
+                "<Not Applicable>"
+
+            title = "ModMail ${project.version}"
+            description = "A Discord report management bot."
+
+            thumbnail {
+                url = self.avatar.url
             }
 
-            colors {
-                infoColor = Color(0x00bfff)
+            addInlineField("Prefix", it.prefix())
+            addInlineField("Required role", requiredRole)
+            addInlineField("Source", project.repository)
+
+            footer {
+                val versions = it.discord.versions
+                text = "${versions.library} - ${versions.kord}"
             }
+        }
 
-            mentionEmbed {
-                val self = discord.jda.selfUser
-                val guild = it.guild
-                val guildConfig = configuration[guild?.idLong]
+        permissions {
+            val guild = guild ?: return@permissions false
+            val member = user.asMember(guild.id)
+            val permission = command.requiredPermissionLevel
+            val permissionsService = discord.getInjectionObjects(PermissionsService::class)
+            
+            permissionsService.hasClearance(member, permission)
+        }
 
-                val requiredRole = if (guild != null)
-                    guildConfig?.getLiveArchiveChannel(discord.jda)?.name ?: "<Not Configured>"
-                else
-                    "<Not Applicable>"
-
-                simpleTitle = "${self.fullName()} (ModMail ${project.version})"
-                description = "A Discord report management bot."
-                thumbnail = self.effectiveAvatarUrl
-                color = infoColor
-
-                addInlineField("Required role", requiredRole)
-                addInlineField("Prefix", it.relevantPrefix)
-                addInlineField("Build Info", "`${discord.properties.libraryVersion} - ${discord.properties.jdaVersion}`")
-                addInlineField("Source", project.repository)
-            }
-
-            visibilityPredicate {
-                val guild = it.guild ?: return@visibilityPredicate false
-
-                val member = it.user.toMember(guild)!!
-                val permission = it.command.requiredPermissionLevel
-
-                permissionsService.hasClearance(member, permission)
-            }
-
-            val guildService = discord.getInjectionObjects(GuildService::class)
-
-            with(discord.jda) {
-                presence.activity = Activity.playing(Locale.DISCORD_PRESENCE)
-
-                guilds.forEach {
-                    guildService.initInGuild(it)
-                }
-            }
+        presence {
+            playing(Locale.DISCORD_PRESENCE)
         }
     }
 }

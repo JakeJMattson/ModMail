@@ -1,25 +1,34 @@
 package me.jakejmattson.modmail.services
 
+import com.gitlab.kordlib.common.entity.Snowflake
+import com.gitlab.kordlib.core.Kord
+import com.gitlab.kordlib.core.behavior.*
+import com.gitlab.kordlib.core.behavior.channel.*
+import com.gitlab.kordlib.core.entity.*
+import com.gitlab.kordlib.core.entity.channel.TextChannel
+import com.gitlab.kordlib.rest.Image
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.count
+import kotlinx.serialization.*
+import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.annotations.Service
-import me.jakejmattson.discordkt.api.dsl.embed.embed
-import me.jakejmattson.discordkt.api.extensions.jda.*
-import me.jakejmattson.modmail.extensions.*
-import net.dv8tion.jda.api.JDA
-import net.dv8tion.jda.api.entities.*
+import me.jakejmattson.discordkt.api.extensions.*
+import me.jakejmattson.modmail.extensions.cleanContent
 import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
+@Serializable
 data class Report(val userId: String,
                   val channelId: String,
                   val guildId: String,
-                  val messages: MutableMap<String, String>) {
+                  val messages: MutableMap<String, String> = mutableMapOf()) {
 
-    fun toLiveReport(jda: JDA): LiveReport? {
-        val user = jda.getUserById(userId) ?: return null
-        val channel = jda.getTextChannelById(channelId) ?: return null
-        val guild = jda.getGuildById(guildId) ?: return null
+    suspend fun toLiveReport(api: Kord): LiveReport? {
+        val user = userId.toSnowflake()?.let { api.getUser(it) } ?: return null
+        val channel = channelId.toSnowflake()?.let { api.getChannel(it) } as? TextChannel ?: return null
+        val guild = guildId.toSnowflake()?.let { api.getGuild(it) } ?: return null
 
         return LiveReport(user, channel, guild)
     }
@@ -27,45 +36,43 @@ data class Report(val userId: String,
 
 data class LiveReport(val user: User,
                       val channel: TextChannel,
-                      val guild: Guild) {
-    val member = user.toMember(guild)
-}
+                      val guild: Guild)
 
-private data class QueuedReport(val messages: Vector<String> = Vector(), val user: String)
+private data class QueuedReport(val messages: Vector<String> = Vector(), val user: Snowflake)
 
 private val reports = Vector<Report>()
-private val queuedReports = Vector<QueuedReport>()
 
-fun User.toLiveReport() = findReport()?.toLiveReport(jda)
-fun User.findReport() = reports.firstOrNull { it.userId == this.id }
-fun MessageChannel.findReport() = reports.firstOrNull { it.channelId == this.id }
-fun MessageChannel.toLiveReport() = findReport()?.toLiveReport(jda)
+suspend fun UserBehavior.toLiveReport() = findReport()?.toLiveReport(kord)
+fun UserBehavior.findReport() = reports.firstOrNull { it.userId == id.value }
+fun MessageChannelBehavior.findReport() = reports.firstOrNull { it.channelId == id.value }
+suspend fun MessageChannelBehavior.toLiveReport() = findReport()?.toLiveReport(kord)
 
 @Service
 class ReportService(private val config: Configuration,
                     private val loggingService: LoggingService,
                     private val discord: Discord) {
     init {
-        loadReports(discord.jda)
+        GlobalScope.launch {
+            reportsFolder.listFiles()?.forEach {
+                val report = Json.decodeFromString<Report>(it.readText())
+                val channel = report.channelId.toSnowflake()?.let { discord.api.getChannel(it) }
+
+                if (channel != null) reports.add(report) else it.delete()
+            }
+        }
     }
 
-    private fun loadReports(jda: JDA) =
-        reportsFolder.listFiles()?.forEach {
-            val report = gson.fromJson(it.readText(), Report::class.java)
-            val channel = jda.getTextChannelById(report.channelId)
+    suspend fun createReport(user: User, guild: Guild) {
+        if (guild.channels.count() >= 250) return
 
-            if (channel != null) reports.add(report) else it.delete()
+        val reportCategory = config[guild.id.longValue]?.getLiveReportCategory(guild.kord) ?: return
+
+        val reportChannel = guild.createTextChannel {
+            name = user.username
+            parentId = reportCategory.id
         }
 
-    fun createReport(user: User, guild: Guild) {
-        if (guild.textChannels.size >= 250) return
-
-        val reportCategoryId = config[guild.idLong]?.reportCategory!!
-        val reportCategory = user.jda.getCategoryById(reportCategoryId) ?: return
-
-        reportCategory.createTextChannel(user.name).queue { channel ->
-            createReportChannel(channel as TextChannel, user, guild)
-        }
+        createReportChannel(reportChannel, user, guild)
     }
 
     fun addReport(report: Report) {
@@ -73,71 +80,56 @@ class ReportService(private val config: Configuration,
         writeReportToFile(report)
     }
 
-    fun receiveFromUser(message: Message) {
-        val user = message.author
-        val userID = user.id
+    suspend fun receiveFromUser(message: Message) {
+        val user = message.author!!
         val safeMessage = message.cleanContent(discord)
 
         with(user.findReport()) {
-            val liveReport = this?.toLiveReport(message.jda) ?: return@with
+            val liveReport = this?.toLiveReport(message.kord) ?: return@with
 
             if (safeMessage.isEmpty()) return
 
-            liveReport.channel.sendMessage(safeMessage).queue {
-                messages[message.id] = it.id
-            }
-
-            return
-        }
-
-        val queued = queuedReports.firstOrNull { it.user == userID }
-
-        if (queued == null) {
-            val vector = Vector<String>()
-            vector.add(safeMessage)
-            queuedReports.add(QueuedReport(vector, userID))
-        } else {
-            queued.messages.addElement(safeMessage)
+            val newMessage = liveReport.channel.createMessage(safeMessage)
+            messages[message.id.value] = newMessage.id.value
         }
     }
 
     fun writeReportToFile(report: Report) =
-        File("$reportsFolder/${report.channelId}.json").writeText(gson.toJson(report))
+        File("$reportsFolder/${report.channelId}.json").writeText(Json.encodeToString(report))
 
-    private fun createReportChannel(channel: TextChannel, user: User, guild: Guild) {
-        val userMessage = embed {
-            color = successColor
-            simpleTitle = "You've successfully opened a report with the staff of ${guild.name}"
-            description = "Someone will respond shortly, please be patient."
-            thumbnail = guild.iconUrl
+    private suspend fun createReportChannel(channel: TextChannel, user: User, guild: Guild) {
+        println("Creating channel")
+
+        channel.createEmbed {
+            author {
+                name = user.tag
+                icon = user.avatar.url
+                url = user.profileLink
+            }
         }
 
-        val openingMessage = embed {
-            addField("New Report Opened!", user.descriptor(), false)
-            thumbnail = user.effectiveAvatarUrl
-            color = successColor
-        }
+        //TODO send opening messages
 
-        channel.sendMessage(openingMessage).queue()
-        queuedReports.first { it.user == user.id }.messages.forEach {
-            if (it.isNotEmpty())
-                channel.sendMessage(it).queue()
-        }
-
-        val newReport = Report(user.id, channel.id, guild.id, ConcurrentHashMap())
+        val newReport = Report(user.id.value, channel.id.value, guild.id.value, ConcurrentHashMap())
         addReport(newReport)
 
-        user.sendPrivateMessage(userMessage)
-        loggingService.memberOpen(newReport)
+        user.sendPrivateMessage {
+            title = "You've successfully opened a report with the staff of ${guild.name}"
+            description = "Someone will respond shortly, please be patient."
 
-        queuedReports.removeAll { it.user == user.id }
+            thumbnail {
+                url = guild.getIconUrl(Image.Format.PNG)!!
+            }
+        }
+
+        loggingService.memberOpen(newReport)
     }
 }
 
-fun Report.close(jda: JDA) {
-    release(jda)
+suspend fun Report.close(api: Kord) {
+    release(api)
     removeReport(this)
-    toLiveReport(jda)?.let { sendReportClosedEmbed(it) }
+    toLiveReport(api)?.let { sendReportClosedEmbed(it) }
 }
 
 private fun removeReport(report: Report) {
@@ -145,10 +137,9 @@ private fun removeReport(report: Report) {
     reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId.toString()) }?.delete()
 }
 
-private fun sendReportClosedEmbed(report: LiveReport) =
-    report.user.sendPrivateMessage(embed {
-        color = failureColor
-        simpleTitle = "The staff of ${report.guild.name} have closed this report."
+private suspend fun sendReportClosedEmbed(report: LiveReport) =
+    report.user.sendPrivateMessage {
+        title = "The staff of ${report.guild.name} have closed this report."
         description = "If you continue to reply, a new report will be created."
-    })
+    }
 

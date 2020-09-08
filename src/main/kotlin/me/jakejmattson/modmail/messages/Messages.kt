@@ -1,5 +1,8 @@
 package me.jakejmattson.modmail.messages
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 class Messages(
     //User-facing
     val DISCORD_PRESENCE: String = "DM to contact Staff",

@@ -1,7 +1,8 @@
 package me.jakejmattson.modmail.services
 
+import com.gitlab.kordlib.core.any
+import com.gitlab.kordlib.core.entity.Member
 import me.jakejmattson.discordkt.api.annotations.Service
-import net.dv8tion.jda.api.entities.Member
 
 enum class Permission {
     BOT_OWNER,
@@ -14,9 +15,9 @@ val DEFAULT_REQUIRED_PERMISSION = Permission.STAFF
 
 @Service
 class PermissionsService(private val configuration: Configuration) {
-    fun hasClearance(member: Member, requiredPermissionLevel: Permission) = member.getPermissionLevel().ordinal <= requiredPermissionLevel.ordinal
+    suspend fun hasClearance(member: Member, requiredPermissionLevel: Permission) = member.getPermissionLevel().ordinal <= requiredPermissionLevel.ordinal
 
-    private fun Member.getPermissionLevel() =
+    private suspend fun Member.getPermissionLevel() =
         when {
             isBotOwner() -> Permission.BOT_OWNER
             isGuildOwner() -> Permission.GUILD_OWNER
@@ -24,7 +25,7 @@ class PermissionsService(private val configuration: Configuration) {
             else -> Permission.NONE
         }
 
-    private fun Member.isBotOwner() = user.idLong == configuration.ownerId
-    private fun Member.isGuildOwner() = isOwner
-    private fun Member.isStaff() = configuration[guild.idLong]?.getLiveRole(guild.jda) in roles
+    private fun Member.isBotOwner() = id.longValue == configuration.ownerId
+    private suspend fun Member.isGuildOwner() = isOwner()
+    private suspend fun Member.isStaff() = roles.any { it.id.longValue == configuration[guild.id.longValue]?.staffRoleId }
 }

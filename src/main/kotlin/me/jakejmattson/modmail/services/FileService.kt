@@ -1,6 +1,5 @@
 package me.jakejmattson.modmail.services
 
-import com.google.gson.GsonBuilder
 import java.io.File
 
 private const val rootFolder = "data"
@@ -19,6 +18,3 @@ private fun File.createParentsAndFile(): File {
 }
 
 private fun createDirectories(parentPath: String) = File(parentPath).apply { mkdirs() }
-
-val gson = GsonBuilder().setPrettyPrinting().create()!!
-fun save(file: File, data: Any) = file.writeText(gson.toJson(data))

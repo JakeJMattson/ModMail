@@ -1,51 +1,44 @@
 package me.jakejmattson.modmail.listeners
 
-import com.google.common.eventbus.Subscribe
-import me.jakejmattson.discordkt.api.dsl.embed.embed
+import com.gitlab.kordlib.core.behavior.channel.createEmbed
+import com.gitlab.kordlib.core.event.guild.*
+import com.gitlab.kordlib.core.firstOrNull
+import me.jakejmattson.discordkt.api.dsl.listeners
+import me.jakejmattson.discordkt.api.extensions.addField
 import me.jakejmattson.modmail.services.*
-import net.dv8tion.jda.api.events.guild.GuildJoinEvent
-import net.dv8tion.jda.api.events.guild.member.*
+import java.awt.Color
 
-class GuildMigrationListener(val configuration: Configuration, private val guildService: GuildService) {
+fun guildMigration(guildService: GuildService) = listeners {
+    on<MemberLeaveEvent> {
+        val report = user.toLiveReport() ?: return@on
+        if (report.guild.id != guild.id) return@on
 
-    @Subscribe
-    fun onGuildBotJoin(event: GuildJoinEvent) = guildService.initInGuild(event.guild)
+        val message = guild.bans.firstOrNull { it.user.id == user.id }?.let {
+            "This user was banned for reason: ${it.reason}"
+        } ?: "This user has left the server."
 
-    @Subscribe
-    fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
-        val member = event.member
-        val user = member.user
-        val report = user.toLiveReport() ?: return
+        report.channel.createEmbed {
+            addField("User no longer in server!", message)
+            color = Color.red
+        }
+    }
 
-        if (report.guild.id != event.guild.id)
-            return
+    on<MemberJoinEvent> {
+        val report = member.asUser().toLiveReport() ?: return@on
 
-        report.channel.sendMessage(embed {
-            addField("User has rejoined server!", "This report is now reactivated.", false)
-            color = successColor
-        }).queue()
+        if (report.guild.id != guild.id)
+            return@on
+
+        report.channel.createEmbed {
+            addField("User has rejoined server!", "This report is now reactivated.")
+            color = Color.green
+        }
 
         if (member.isDetained())
             member.mute()
     }
 
-    @Subscribe
-    fun onGuildMemberLeave(event: GuildMemberRemoveEvent) {
-        val user = event.user
-        val guild = event.guild
-
-        val report = user.toLiveReport() ?: return
-        if (report.guild.id != guild.id) return
-
-        val message = guild.retrieveBanList().complete().firstOrNull { it.user.id == user.id }?.let {
-            "This user was banned for reason: ${it.reason}"
-        } ?: "This user has left the server."
-
-        report.channel.sendMessage(createResponse(message)).queue()
-    }
-
-    private fun createResponse(message: String) = embed {
-        addField("User no longer in server!", message)
-        color = failureColor
+    on<GuildCreateEvent> {
+        guildService.initInGuild(guild)
     }
 }
