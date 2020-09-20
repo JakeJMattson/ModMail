@@ -38,8 +38,6 @@ data class LiveReport(val user: User,
                       val channel: TextChannel,
                       val guild: Guild)
 
-private data class QueuedReport(val messages: Vector<String> = Vector(), val user: Snowflake)
-
 private val reports = Vector<Report>()
 
 suspend fun UserBehavior.toLiveReport() = findReport()?.toLiveReport(kord)

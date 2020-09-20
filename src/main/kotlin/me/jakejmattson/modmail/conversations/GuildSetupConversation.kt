@@ -1,6 +1,7 @@
 package me.jakejmattson.modmail.conversations
 
 import com.gitlab.kordlib.core.entity.Guild
+import com.gitlab.kordlib.core.entity.channel.TextChannel
 import com.gitlab.kordlib.rest.Image
 import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.dsl.*
@@ -21,8 +22,8 @@ class GuildSetupConversation : Conversation() {
         suspend fun <T> createPrompt(arg: ArgumentType<T>, prompt: String, isValid: (T) -> Boolean) = promptUntil(arg, prompt, "Input must be from the original guild.", isValid)
 
         val reportCategory = createPrompt(CategoryArg(guildId = guild.id), "Enter the category where new reports are created.") { it.guild == guild }
-        val archiveChannel = createPrompt(TextChannelArg, "Enter the channel where archived reports will be sent.") { it.guild == guild }
-        val loggingChannel = createPrompt(TextChannelArg, "Enter the channel where information will be logged.") { it.guild == guild }
+        val archiveChannel = createPrompt(ChannelArg<TextChannel>(), "Enter the channel where archived reports will be sent.") { it.guild == guild }
+        val loggingChannel = createPrompt(ChannelArg<TextChannel>(), "Enter the channel where information will be logged.") { it.guild == guild }
         val staffRole = createPrompt(RoleArg(guildId = guild.id), "Enter the role required to give commands to this bot.") { it.guild == guild }
         val guildConfig = GuildConfiguration("!", reportCategory.id.longValue, archiveChannel.id.longValue, staffRole.id.longValue, LoggingConfiguration(loggingChannel.id.longValue))
 

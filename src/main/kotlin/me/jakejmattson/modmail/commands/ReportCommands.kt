@@ -13,7 +13,7 @@ import me.jakejmattson.modmail.services.*
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands("Report") {
     command("Close") {
         description = Locale.CLOSE_DESCRIPTION
-        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }) {
+        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel.asChannel() as TextChannel }) {
             val inputChannel = args.first
             val channel = inputChannel.toReportChannel()?.channel
                 ?: return@execute respond(createChannelError(inputChannel))
@@ -26,7 +26,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("Archive") {
         description = Locale.ARCHIVE_DESCRIPTION
-        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }, EveryArg("Info").makeOptional("")) {
+        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }, EveryArg("Info").makeOptional("")) {
             val (inputChannel, note) = args
 
             val (channel, report) = inputChannel.toReportChannel()
@@ -53,7 +53,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("Note") {
         description = Locale.NOTE_DESCRIPTION
-        execute(TextChannelArg("Report Channel").makeNullableOptional { it.channel as TextChannel }, EveryArg("Note")) {
+        execute(ChannelArg<TextChannel>("Report Channel").makeNullableOptional { it.channel as TextChannel }, EveryArg("Note")) {
             val inputChannel = args.first!!
             val channel = inputChannel.toReportChannel()?.channel
                 ?: return@execute respond(createChannelError(inputChannel))
@@ -74,7 +74,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("Tag") {
         description = Locale.TAG_DESCRIPTION
-        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }, AnyArg("Tag")) {
+        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }, AnyArg("Tag")) {
             val inputChannel = args.first
             val channel = inputChannel.toReportChannel()?.channel
                 ?: return@execute respond(createChannelError(inputChannel))
@@ -92,7 +92,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     command("ResetTags") {
         description = Locale.RESET_TAGS_DESCRIPTION
-        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }) {
+        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }) {
             val inputChannel = args.first
             val (channel, report) = inputChannel.toReportChannel()
                 ?: return@execute respond(createChannelError(inputChannel))

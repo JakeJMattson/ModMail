@@ -88,7 +88,7 @@ fun reportHelperCommands(configuration: Configuration,
 
     command("Release") {
         description = Locale.RELEASE_DESCRIPTION
-        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }, MemberArg) {
+        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }, MemberArg) {
             val (inputChannel, targetMember) = args
             val (_, report) = inputChannel.toReportChannel()
                 ?: return@execute respond(createChannelError(inputChannel))
@@ -103,7 +103,7 @@ fun reportHelperCommands(configuration: Configuration,
 
     command("Info") {
         description = Locale.INFO_DESCRIPTION
-        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel },
+        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel },
             ChoiceArg("Field", "user", "channel", "all").makeOptional("user")) {
 
             val (inputChannel, choice) = args

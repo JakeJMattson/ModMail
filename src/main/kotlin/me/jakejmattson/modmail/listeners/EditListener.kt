@@ -41,13 +41,6 @@ fun editListener(discord: Discord, reportService: ReportService, loggingService:
         }
     }
 
-    on<TypingStartEvent> {
-        if (getGuild() != null)
-            return@on
-
-        user.toLiveReport()?.channel?.type()
-    }
-
     on<MessageDeleteEvent> {
         getGuild() ?: return@on
 
@@ -59,5 +52,12 @@ fun editListener(discord: Discord, reportService: ReportService, loggingService:
         report.messages.remove(messageId.value)
 
         reportService.writeReportToFile(report)
+    }
+
+    on<TypingStartEvent> {
+        if (getGuild() != null)
+            return@on
+
+        user.toLiveReport()?.channel?.type()
     }
 }

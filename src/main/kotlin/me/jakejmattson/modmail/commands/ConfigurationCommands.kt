@@ -22,7 +22,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
 
     command("SetArchiveChannel") {
         description = Locale.SET_ARCHIVE_CHANNEL_DESCRIPTION
-        execute(TextChannelArg) {
+        execute(ChannelArg) {
             val archiveChannel = args.first
 
             configuration[archiveChannel.guild.id.longValue]!!.archiveChannel = archiveChannel.id.longValue
@@ -44,7 +44,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
 
     command("SetLoggingChannel") {
         description = Locale.SET_LOGGING_CHANNEL_DESCRIPTION
-        execute(TextChannelArg) {
+        execute(ChannelArg) {
             val loggingChannel = args.first
 
             configuration[loggingChannel.guild.id.longValue]!!.loggingConfiguration.loggingChannel = loggingChannel.id.longValue
