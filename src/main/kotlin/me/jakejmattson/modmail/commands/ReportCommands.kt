@@ -4,38 +4,52 @@ import com.gitlab.kordlib.core.behavior.channel.*
 import com.gitlab.kordlib.core.entity.channel.TextChannel
 import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.dsl.commands
-import me.jakejmattson.discordkt.api.extensions.toSnowflake
+import me.jakejmattson.discordkt.api.extensions.toSnowflakeOrNull
 import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.modmail.listeners.deletionQueue
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
 
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands("Report") {
-    command("Close") {
+    guildCommand("Close") {
         description = Locale.CLOSE_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel.asChannel() as TextChannel }) {
-            val inputChannel = args.first
+            val inputChannel = it.first
             val channel = inputChannel.toReportChannel()?.channel
-                ?: return@execute respond(createChannelError(inputChannel))
+
+            if (channel == null) {
+                respond(createChannelError(inputChannel))
+                return@execute
+            }
 
             deletionQueue.add(channel.id)
             channel.delete()
-            loggingService.commandClose(guild!!, channel.name, author)
+            loggingService.commandClose(guild, channel.name, author)
         }
     }
 
-    command("Archive") {
+    guildCommand("Archive") {
         description = Locale.ARCHIVE_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }, EveryArg("Info").makeOptional("")) {
-            val (inputChannel, note) = args
+            val (inputChannel, note) = it
 
-            val (channel, report) = inputChannel.toReportChannel()
-                ?: return@execute respond(createChannelError(inputChannel))
+            val reportChannel = inputChannel.toReportChannel()
+
+            if (reportChannel == null) {
+                respond(createChannelError(inputChannel))
+                return@execute
+            }
+
+            val (channel, report) = reportChannel
 
             val config = configuration[channel.guild.id.longValue]
 
             val archiveChannel = config?.getLiveArchiveChannel(channel.kord)
-                ?: return@execute respond("No archive channel available!")
+
+            if (archiveChannel == null) {
+                respond("No archive channel available!")
+                return@execute
+            }
 
             val archiveMessage = "User ID: ${report.userId}\nAdditional Information: " +
                 if (note.isNotEmpty()) note else "<None>"
@@ -47,24 +61,28 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
                 channel.delete()
             }
 
-            loggingService.archive(guild!!, channel.name, author)
+            loggingService.archive(guild, channel.name, author)
         }
     }
 
-    command("Note") {
+    guildCommand("Note") {
         description = Locale.NOTE_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeNullableOptional { it.channel as TextChannel }, EveryArg("Note")) {
-            val inputChannel = args.first!!
+            val inputChannel = it.first!!
             val channel = inputChannel.toReportChannel()?.channel
-                ?: return@execute respond(createChannelError(inputChannel))
             val messageAuthor = author
+
+            if (channel == null) {
+                respond(createChannelError(inputChannel))
+                return@execute
+            }
 
             channel.createEmbed {
                 author {
                     name = messageAuthor.tag
                     icon = messageAuthor.avatar.url
                 }
-                description = args.second
+                description = it.second
             }
 
             message.delete()
@@ -72,14 +90,18 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         }
     }
 
-    command("Tag") {
+    guildCommand("Tag") {
         description = Locale.TAG_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }, AnyArg("Tag")) {
-            val inputChannel = args.first
+            val inputChannel = it.first
             val channel = inputChannel.toReportChannel()?.channel
-                ?: return@execute respond(createChannelError(inputChannel))
 
-            val tag = args.second
+            if (channel == null) {
+                respond(createChannelError(inputChannel))
+                return@execute
+            }
+
+            val tag = it.second
 
             channel.edit {
                 name = "$tag-${channel.name}"
@@ -90,14 +112,21 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         }
     }
 
-    command("ResetTags") {
+    guildCommand("ResetTags") {
         description = Locale.RESET_TAGS_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }) {
-            val inputChannel = args.first
-            val (channel, report) = inputChannel.toReportChannel()
-                ?: return@execute respond(createChannelError(inputChannel))
+            val inputChannel = it.first
 
-            val user = report.userId.toSnowflake()?.let { discord.api.getUser(it) } ?: return@execute
+            val reportChannel = inputChannel.toReportChannel()
+
+            if (reportChannel == null) {
+                respond(createChannelError(inputChannel))
+                return@execute
+            }
+
+            val (channel, report) = reportChannel
+
+            val user = report.userId.toSnowflakeOrNull()?.let { discord.api.getUser(it) } ?: return@execute
             val newName = user.username
 
             channel.edit {

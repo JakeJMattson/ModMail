@@ -11,7 +11,7 @@ private val startTime = Date()
 
 @ExperimentalTime
 fun utilityCommands() = commands("Utility") {
-    command("Status", "Ping") {
+    guildCommand("Status", "Ping") {
         description = Locale.STATUS_DESCRIPTION
         execute {
             respond {

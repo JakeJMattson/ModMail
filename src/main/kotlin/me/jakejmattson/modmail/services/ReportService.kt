@@ -1,6 +1,5 @@
 package me.jakejmattson.modmail.services
 
-import com.gitlab.kordlib.common.entity.Snowflake
 import com.gitlab.kordlib.core.Kord
 import com.gitlab.kordlib.core.behavior.*
 import com.gitlab.kordlib.core.behavior.channel.*
@@ -26,9 +25,9 @@ data class Report(val userId: String,
                   val messages: MutableMap<String, String> = mutableMapOf()) {
 
     suspend fun toLiveReport(api: Kord): LiveReport? {
-        val user = userId.toSnowflake()?.let { api.getUser(it) } ?: return null
-        val channel = channelId.toSnowflake()?.let { api.getChannel(it) } as? TextChannel ?: return null
-        val guild = guildId.toSnowflake()?.let { api.getGuild(it) } ?: return null
+        val user = userId.toSnowflakeOrNull()?.let { api.getUser(it) } ?: return null
+        val channel = channelId.toSnowflakeOrNull()?.let { api.getChannel(it) } as? TextChannel ?: return null
+        val guild = guildId.toSnowflakeOrNull()?.let { api.getGuild(it) } ?: return null
 
         return LiveReport(user, channel, guild)
     }
@@ -53,7 +52,7 @@ class ReportService(private val config: Configuration,
         GlobalScope.launch {
             reportsFolder.listFiles()?.forEach {
                 val report = Json.decodeFromString<Report>(it.readText())
-                val channel = report.channelId.toSnowflake()?.let { discord.api.getChannel(it) }
+                val channel = report.channelId.toSnowflakeOrNull()?.let { discord.api.getChannel(it) }
 
                 if (channel != null) reports.add(report) else it.delete()
             }

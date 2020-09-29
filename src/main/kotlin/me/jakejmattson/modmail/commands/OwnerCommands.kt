@@ -9,10 +9,10 @@ import me.jakejmattson.modmail.services.*
 fun ownerCommands(configuration: Configuration) = commands("Owner") {
     requiredPermissionLevel = Permission.BOT_OWNER
 
-    command("SetPrefix") {
+    guildCommand("SetPrefix") {
         description = "Set the bot's prefix."
         execute(AnyArg("Prefix")) {
-            val prefix = args.first
+            val prefix = it.first
 
             configuration.save()
 
@@ -20,11 +20,11 @@ fun ownerCommands(configuration: Configuration) = commands("Owner") {
         }
     }
 
-    command("SetPresence") {
+    guildCommand("SetPresence") {
         description = Locale.SET_PRESENCE_DESCRIPTION
         execute(ChoiceArg("Playing/Watching/Listening", "Playing", "Watching", "Listening").makeOptional("Playing"),
             EveryArg("Presence Message")) {
-            val (choice, text) = args
+            val (choice, text) = it
 
             discord.api.editPresence {
                 when (choice.toLowerCase()) {

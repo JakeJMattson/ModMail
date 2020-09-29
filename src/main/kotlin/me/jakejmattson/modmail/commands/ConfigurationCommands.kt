@@ -9,10 +9,10 @@ import me.jakejmattson.modmail.services.*
 fun configurationCommands(configuration: Configuration) = commands("Configuration") {
     requiredPermissionLevel = Permission.GUILD_OWNER
 
-    command("SetReportCategory") {
+    guildCommand("SetReportCategory") {
         description = Locale.SET_REPORT_CATEGORY_DESCRIPTION
         execute(CategoryArg) {
-            val reportCategory = args.first
+            val reportCategory = it.first
 
             configuration[reportCategory.guild.id.longValue]!!.reportCategory = reportCategory.id.longValue
             configuration.save()
@@ -20,10 +20,10 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
         }
     }
 
-    command("SetArchiveChannel") {
+    guildCommand("SetArchiveChannel") {
         description = Locale.SET_ARCHIVE_CHANNEL_DESCRIPTION
         execute(ChannelArg) {
-            val archiveChannel = args.first
+            val archiveChannel = it.first
 
             configuration[archiveChannel.guild.id.longValue]!!.archiveChannel = archiveChannel.id.longValue
             configuration.save()
@@ -31,10 +31,10 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
         }
     }
 
-    command("SetStaffRole") {
+    guildCommand("SetStaffRole") {
         description = Locale.SET_STAFF_ROLE_DESCRIPTION
         execute(RoleArg) {
-            val staffRole = args.first
+            val staffRole = it.first
 
             configuration[message.getGuild().id.longValue]!!.staffRoleId = staffRole.id.longValue
             configuration.save()
@@ -42,10 +42,10 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
         }
     }
 
-    command("SetLoggingChannel") {
+    guildCommand("SetLoggingChannel") {
         description = Locale.SET_LOGGING_CHANNEL_DESCRIPTION
         execute(ChannelArg) {
-            val loggingChannel = args.first
+            val loggingChannel = it.first
 
             configuration[loggingChannel.guild.id.longValue]!!.loggingConfiguration.loggingChannel = loggingChannel.id.longValue
             configuration.save()

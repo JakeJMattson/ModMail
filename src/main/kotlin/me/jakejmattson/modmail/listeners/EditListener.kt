@@ -6,7 +6,7 @@ import com.gitlab.kordlib.core.event.channel.TypingStartEvent
 import com.gitlab.kordlib.core.event.message.*
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.dsl.listeners
-import me.jakejmattson.discordkt.api.extensions.toSnowflake
+import me.jakejmattson.discordkt.api.extensions.toSnowflakeOrNull
 import me.jakejmattson.modmail.extensions.cleanContent
 import me.jakejmattson.modmail.services.*
 
@@ -19,17 +19,17 @@ fun editListener(discord: Discord, reportService: ReportService, loggingService:
             if (author.id == kord.getSelf().id) return@on
 
             val report = channel.findReport() ?: return@on
-            val privateChannel = report.userId.toSnowflake()?.let { kord.getUser(it)?.getDmChannel() } ?: return@on
+            val privateChannel = report.userId.toSnowflakeOrNull()?.let { kord.getUser(it)?.getDmChannel() }
+                ?: return@on
             val targetMessage = Snowflake(report.messages[messageId.value]!!)
 
             privateChannel.getMessage(targetMessage).edit {
                 content = new.content
             }
-        }
-        else {
+        } else {
             val report = author.findReport() ?: return@on
             val liveReport = report.toLiveReport(kord) ?: return@on
-            val targetMessage = report.messages[messageId.value]?.toSnowflake() ?: return@on
+            val targetMessage = report.messages[messageId.value]?.toSnowflakeOrNull() ?: return@on
             val channel = liveReport.channel
             val guildMessage = channel.getMessage(targetMessage)
             val newContent = message.cleanContent(discord)
@@ -45,8 +45,8 @@ fun editListener(discord: Discord, reportService: ReportService, loggingService:
         getGuild() ?: return@on
 
         val report = channel.findReport() ?: return@on
-        val targetMessage = report.messages[messageId.value]?.toSnowflake() ?: return@on
-        val privateChannel = report.userId.toSnowflake()?.let { kord.getUser(it)?.getDmChannel() } ?: return@on
+        val targetMessage = report.messages[messageId.value]?.toSnowflakeOrNull() ?: return@on
+        val privateChannel = report.userId.toSnowflakeOrNull()?.let { kord.getUser(it)?.getDmChannel() } ?: return@on
 
         privateChannel.deleteMessage(targetMessage)
         report.messages.remove(messageId.value)

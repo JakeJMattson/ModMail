@@ -5,7 +5,7 @@ import me.jakejmattson.discordkt.api.extensions.*
 import me.jakejmattson.modmail.services.*
 
 class MacroPrecondition : Precondition() {
-    override suspend fun evaluate(event: CommandEvent<*>): PreconditionResult {
+    override suspend fun evaluate(event: CommandEvent): PreconditionResult {
         val commandName = event.rawInputs.commandName.toLowerCase()
 
         if (event.command != null) return Pass

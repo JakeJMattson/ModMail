@@ -17,7 +17,7 @@ fun reportHelperCommands(configuration: Configuration,
                          moderationService: ModerationService,
                          loggingService: LoggingService) = commands("ReportHelpers") {
 
-    suspend fun openReport(event: CommandEvent<*>, targetUser: User, guild: Guild, detain: Boolean = false) {
+    suspend fun openReport(event: CommandEvent, targetUser: User, guild: Guild, detain: Boolean = false) {
         val reportCategory = configuration[guild.id.longValue]!!.getLiveReportCategory(guild.kord)
         val privateChannel = targetUser.getDmChannel()
 
@@ -51,31 +51,35 @@ fun reportHelperCommands(configuration: Configuration,
         loggingService.staffOpen(guild, (event.channel as TextChannel).name, event.author)
     }
 
-    command("Open") {
+    guildCommand("Open") {
         description = Locale.OPEN_DESCRIPTION
         execute(MemberArg) {
-            val targetMember = args.first
+            val targetMember = it.first
 
-            if (!hasValidState(this, guild!!, targetMember))
+            if (!hasValidState(this, guild, targetMember))
                 return@execute
 
-            openReport(this, targetMember.asUser(), guild!!)
+            openReport(this, targetMember.asUser(), guild)
         }
     }
 
-    command("Detain") {
+    guildCommand("Detain") {
         description = Locale.DETAIN_DESCRIPTION
         execute(MemberArg) {
-            val targetMember = args.first
-            val guild = guild!!
+            val targetMember = it.first
+            val guild = guild
 
-            if (moderationService.hasStaffRole(targetMember))
-                return@execute respond("You cannot detain another staff member.")
+            if (moderationService.hasStaffRole(targetMember)) {
+                respond("You cannot detain another staff member.")
+                return@execute
+            }
 
             targetMember.mute()
 
-            if (targetMember.isDetained())
-                return@execute respond("This member is already detained.")
+            if (targetMember.isDetained()) {
+                respond("This member is already detained.")
+                return@execute
+            }
 
             val user = targetMember.asUser()
 
@@ -86,34 +90,44 @@ fun reportHelperCommands(configuration: Configuration,
         }
     }
 
-    command("Release") {
+    guildCommand("Release") {
         description = Locale.RELEASE_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }, MemberArg) {
-            val (inputChannel, targetMember) = args
-            val (_, report) = inputChannel.toReportChannel()
-                ?: return@execute respond(createChannelError(inputChannel))
+            val (inputChannel, targetMember) = it
+            val report = inputChannel.toReportChannel()?.report
 
-            if (!targetMember.isDetained())
-                return@execute respond("This member is not detained.")
+            if (report == null) {
+                respond(createChannelError(inputChannel))
+                return@execute
+            }
+
+            if (!targetMember.isDetained()) {
+                respond("This member is not detained.")
+                return@execute
+            }
 
             report.release(discord.api)
             respond("${targetMember.tag} has been released.")
         }
     }
 
-    command("Info") {
+    guildCommand("Info") {
         description = Locale.INFO_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel },
             ChoiceArg("Field", "user", "channel", "all").makeOptional("user")) {
 
-            val (inputChannel, choice) = args
+            val (inputChannel, choice) = it
             val report = inputChannel.toReportChannel()?.report
-                ?: return@execute respond(createChannelError(inputChannel))
+
+            if (report == null) {
+                respond(createChannelError(inputChannel))
+                return@execute
+            }
 
             val response = with(report) {
                 when (choice) {
-                    "user" -> userId.toString()
-                    "channel" -> channelId.toString()
+                    "user" -> userId
+                    "channel" -> channelId
                     "all" -> "User ID: $userId\nChannel ID: $channelId"
                     else -> "Invalid selection!"
                 }
@@ -123,14 +137,16 @@ fun reportHelperCommands(configuration: Configuration,
         }
     }
 
-    command("History") {
+    guildCommand("History") {
         description = Locale.HISTORY_DESCRIPTION
         execute(UserArg) {
-            val user = args.first
+            val user = it.first
             val history = user.getDmChannel().archiveString().toByteArray()
 
-            if (history.isEmpty())
-                return@execute respond("No history available.")
+            if (history.isEmpty()) {
+                respond("No history available.")
+                return@execute
+            }
 
             channel.createMessage {
                 addFile("$${user.id}.txt", history.inputStream())
@@ -139,7 +155,7 @@ fun reportHelperCommands(configuration: Configuration,
     }
 }
 
-private suspend fun hasValidState(event: CommandEvent<*>, currentGuild: Guild, targetUser: User): Boolean {
+private suspend fun hasValidState(event: CommandEvent, currentGuild: Guild, targetUser: User): Boolean {
     val report = targetUser.toLiveReport() ?: return true
     val reportGuild = report.guild
 

@@ -8,47 +8,47 @@ import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.MacroService
 
 fun macroCommands(macroService: MacroService) = commands("Macros") {
-    command("AddMacro") {
+    guildCommand("AddMacro") {
         description = Locale.ADD_MACRO_DESCRIPTION
         execute(AnyArg("Macro Name"), EveryArg("Macro Content")) {
-            val (name, message) = args
-            val response = macroService.addMacro(name, message, guild!!)
+            val (name, message) = it
+            val response = macroService.addMacro(name, message, guild)
             respond(response.second)
         }
     }
 
-    command("RemoveMacro") {
+    guildCommand("RemoveMacro") {
         description = Locale.REMOVE_MACRO_DESCRIPTION
         execute(MacroArg) {
-            val macro = args.first
-            val response = macroService.removeMacro(macro, guild!!)
+            val macro = it.first
+            val response = macroService.removeMacro(macro, guild)
             respond(response.second)
         }
     }
 
-    command("RenameMacro") {
+    guildCommand("RenameMacro") {
         description = Locale.RENAME_MACRO_DESCRIPTION
         execute(MacroArg, AnyArg("New Name")) {
-            val (macro, newName) = args
-            val response = macroService.editName(macro, newName, guild!!)
+            val (macro, newName) = it
+            val response = macroService.editName(macro, newName, guild)
             respond(response.second)
         }
     }
 
-    command("EditMacro") {
+    guildCommand("EditMacro") {
         description = Locale.EDIT_MACRO_DESCRIPTION
         execute(MacroArg, EveryArg("New Message")) {
-            val (macro, message) = args
+            val (macro, message) = it
             val response = macroService.editMessage(macro, message)
             respond(response.second)
         }
     }
 
-    command("ListMacros") {
+    guildCommand("ListMacros") {
         description = Locale.LIST_MACROS_DESCRIPTION
         execute {
             respond {
-                addField("Currently Available Macros", macroService.listMacros(guild!!))
+                addField("Currently Available Macros", macroService.listMacros(guild))
             }
         }
     }

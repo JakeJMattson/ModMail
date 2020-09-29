@@ -16,8 +16,8 @@ private data class Properties(val version: String, val repository: String)
 private val propFile = Properties::class.java.getResource("/properties.json").readText()
 private val project = Json.decodeFromString<Properties>(propFile)
 
-suspend fun main(args: Array<String>) {
-    val token = args.firstOrNull()
+suspend fun main(it: Array<String>) {
+    val token = it.firstOrNull()
 
     if (token == null || token == "UNSET") {
         println("You must specify the token with the -e flag when running via docker, or as the first command line param.")
@@ -31,7 +31,7 @@ suspend fun main(args: Array<String>) {
         }
 
         configure {
-            requiresGuild = true
+            allowMentionPrefix = true
             theme = Color(0x00bfff)
         }
 
@@ -68,7 +68,7 @@ suspend fun main(args: Array<String>) {
             val member = user.asMember(guild.id)
             val permission = command.requiredPermissionLevel
             val permissionsService = discord.getInjectionObjects(PermissionsService::class)
-            
+
             permissionsService.hasClearance(member, permission)
         }
 

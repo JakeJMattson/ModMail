@@ -5,7 +5,7 @@ import com.gitlab.kordlib.core.behavior.GuildBehavior
 import com.gitlab.kordlib.core.entity.Member
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.api.annotations.Service
-import me.jakejmattson.discordkt.api.extensions.toSnowflake
+import me.jakejmattson.discordkt.api.extensions.toSnowflakeOrNull
 import java.util.*
 
 private val detainedReports = Vector<Report>()
@@ -21,14 +21,14 @@ class ModerationService(val configuration: Configuration) {
 }
 
 suspend fun Report.detain(kord: Kord) {
-    val member = guildId.toSnowflake()?.let { toLiveReport(kord)?.user?.asMember(it) } ?: return
+    val member = guildId.toSnowflakeOrNull()?.let { toLiveReport(kord)?.user?.asMember(it) } ?: return
 
     if (!member.isDetained())
         detainedReports.addElement(this)
 }
 
 suspend fun Report.release(kord: Kord): Boolean {
-    val member = guildId.toSnowflake()?.let { toLiveReport(kord)?.user?.asMember(it) } ?: return false
+    val member = guildId.toSnowflakeOrNull()?.let { toLiveReport(kord)?.user?.asMember(it) } ?: return false
 
     if (member.isDetained()) {
         detainedReports.remove(this)
