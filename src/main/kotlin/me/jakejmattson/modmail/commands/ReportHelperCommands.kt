@@ -17,7 +17,7 @@ fun reportHelperCommands(configuration: Configuration,
                          moderationService: ModerationService,
                          loggingService: LoggingService) = commands("ReportHelpers") {
 
-    suspend fun openReport(event: CommandEvent, targetUser: User, guild: Guild, detain: Boolean = false) {
+    suspend fun openReport(event: CommandEvent<*>, targetUser: User, guild: Guild, detain: Boolean = false) {
         val reportCategory = configuration[guild.id.longValue]!!.getLiveReportCategory(guild.kord)
         val privateChannel = targetUser.getDmChannel()
 
@@ -54,7 +54,7 @@ fun reportHelperCommands(configuration: Configuration,
     guildCommand("Open") {
         description = Locale.OPEN_DESCRIPTION
         execute(MemberArg) {
-            val targetMember = it.first
+            val targetMember = args.first
 
             if (!hasValidState(this, guild, targetMember))
                 return@execute
@@ -66,7 +66,7 @@ fun reportHelperCommands(configuration: Configuration,
     guildCommand("Detain") {
         description = Locale.DETAIN_DESCRIPTION
         execute(MemberArg) {
-            val targetMember = it.first
+            val targetMember = args.first
             val guild = guild
 
             if (moderationService.hasStaffRole(targetMember)) {
@@ -93,7 +93,7 @@ fun reportHelperCommands(configuration: Configuration,
     guildCommand("Release") {
         description = Locale.RELEASE_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }, MemberArg) {
-            val (inputChannel, targetMember) = it
+            val (inputChannel, targetMember) = args
             val report = inputChannel.toReportChannel()?.report
 
             if (report == null) {
@@ -116,7 +116,7 @@ fun reportHelperCommands(configuration: Configuration,
         execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel },
             ChoiceArg("Field", "user", "channel", "all").makeOptional("user")) {
 
-            val (inputChannel, choice) = it
+            val (inputChannel, choice) = args
             val report = inputChannel.toReportChannel()?.report
 
             if (report == null) {
@@ -140,7 +140,7 @@ fun reportHelperCommands(configuration: Configuration,
     guildCommand("History") {
         description = Locale.HISTORY_DESCRIPTION
         execute(UserArg) {
-            val user = it.first
+            val user = args.first
             val history = user.getDmChannel().archiveString().toByteArray()
 
             if (history.isEmpty()) {
@@ -155,7 +155,7 @@ fun reportHelperCommands(configuration: Configuration,
     }
 }
 
-private suspend fun hasValidState(event: CommandEvent, currentGuild: Guild, targetUser: User): Boolean {
+private suspend fun hasValidState(event: CommandEvent<*>, currentGuild: Guild, targetUser: User): Boolean {
     val report = targetUser.toLiveReport() ?: return true
     val reportGuild = report.guild
 

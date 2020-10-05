@@ -3,7 +3,7 @@ package me.jakejmattson.modmail.listeners
 import com.gitlab.kordlib.core.event.message.MessageCreateEvent
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.api.dsl.listeners
-import me.jakejmattson.discordkt.api.extensions.mutualGuilds
+import me.jakejmattson.discordkt.api.extensions.*
 import me.jakejmattson.discordkt.api.services.ConversationService
 import me.jakejmattson.modmail.conversations.GuildChoiceConversation
 import me.jakejmattson.modmail.extensions.*
@@ -37,12 +37,7 @@ fun reportListener(config: Configuration, reportService: ReportService, conversa
                 val report = channel.findReport() ?: return@on
                 val liveReport = report.toLiveReport(kord) ?: return@on addFailReaction()
                 val content = fullContent().takeUnless { it.trim().isBlank() } ?: return@on
-
-                println(report)
-                println(content)
-                println(liveReport.user.getDmChannel())
-
-                val newMessage = liveReport.user.getDmChannel().createMessage(content)
+                val newMessage = user.sendPrivateMessage(content)
 
                 report.messages[id.value] = newMessage.id.value
             }

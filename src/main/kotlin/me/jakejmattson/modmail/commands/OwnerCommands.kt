@@ -12,7 +12,7 @@ fun ownerCommands(configuration: Configuration) = commands("Owner") {
     guildCommand("SetPrefix") {
         description = "Set the bot's prefix."
         execute(AnyArg("Prefix")) {
-            val prefix = it.first
+            val prefix = args.first
 
             configuration.save()
 
@@ -24,7 +24,7 @@ fun ownerCommands(configuration: Configuration) = commands("Owner") {
         description = Locale.SET_PRESENCE_DESCRIPTION
         execute(ChoiceArg("Playing/Watching/Listening", "Playing", "Watching", "Listening").makeOptional("Playing"),
             EveryArg("Presence Message")) {
-            val (choice, text) = it
+            val (choice, text) = args
 
             discord.api.editPresence {
                 when (choice.toLowerCase()) {

@@ -26,7 +26,7 @@ class Messages(
     val RESET_TAGS_DESCRIPTION: String = "Reset a report channel to its original name.",
 
     //Report helper commands descriptions
-    val OPEN_DESCRIPTION: String = "Open a report with the target user and send the provided initial message.",
+    val OPEN_DESCRIPTION: String = "Open a report with the target user.",
     val DETAIN_DESCRIPTION: String = "Mute a user and open a report with them.",
     val RELEASE_DESCRIPTION: String = "Release a user from detainment and unmute them.",
     val INFO_DESCRIPTION: String = "Retrieve info from the target report channel - user/channel/all.",

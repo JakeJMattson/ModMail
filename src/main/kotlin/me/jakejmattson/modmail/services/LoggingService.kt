@@ -78,7 +78,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
         log(config, message)
     }
 
-    suspend fun command(command: CommandEvent, additionalInfo: String = "") = command.guild!!.logConfig.apply {
+    suspend fun command(command: CommandEvent<*>, additionalInfo: String = "") = command.guild!!.logConfig.apply {
         val author = command.author.tag
         val commandName = command.command!!.names.first()
         val channelName = (command.channel as TextChannel).name

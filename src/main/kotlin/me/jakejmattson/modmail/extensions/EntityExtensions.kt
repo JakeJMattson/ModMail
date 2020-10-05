@@ -45,5 +45,5 @@ suspend fun MessageChannel.archiveString() = messages.toList()
 
 fun User.descriptor() = "$mention :: $tag :: ${id.value}"
 
-suspend fun CommandEvent.reactSuccess() = message.addReaction(Emojis.whiteCheckMark.toReaction())
+suspend fun CommandEvent<*>.reactSuccess() = message.addReaction(Emojis.whiteCheckMark.toReaction())
 suspend fun Message.addFailReaction() = addReaction(Emojis.x.toReaction())

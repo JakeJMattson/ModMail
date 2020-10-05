@@ -12,7 +12,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
     guildCommand("SetReportCategory") {
         description = Locale.SET_REPORT_CATEGORY_DESCRIPTION
         execute(CategoryArg) {
-            val reportCategory = it.first
+            val reportCategory = args.first
 
             configuration[reportCategory.guild.id.longValue]!!.reportCategory = reportCategory.id.longValue
             configuration.save()
@@ -23,7 +23,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
     guildCommand("SetArchiveChannel") {
         description = Locale.SET_ARCHIVE_CHANNEL_DESCRIPTION
         execute(ChannelArg) {
-            val archiveChannel = it.first
+            val archiveChannel = args.first
 
             configuration[archiveChannel.guild.id.longValue]!!.archiveChannel = archiveChannel.id.longValue
             configuration.save()
@@ -34,7 +34,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
     guildCommand("SetStaffRole") {
         description = Locale.SET_STAFF_ROLE_DESCRIPTION
         execute(RoleArg) {
-            val staffRole = it.first
+            val staffRole = args.first
 
             configuration[message.getGuild().id.longValue]!!.staffRoleId = staffRole.id.longValue
             configuration.save()
@@ -45,7 +45,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
     guildCommand("SetLoggingChannel") {
         description = Locale.SET_LOGGING_CHANNEL_DESCRIPTION
         execute(ChannelArg) {
-            val loggingChannel = it.first
+            val loggingChannel = args.first
 
             configuration[loggingChannel.guild.id.longValue]!!.loggingConfiguration.loggingChannel = loggingChannel.id.longValue
             configuration.save()

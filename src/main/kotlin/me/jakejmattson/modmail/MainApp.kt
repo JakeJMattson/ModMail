@@ -31,7 +31,6 @@ suspend fun main(it: Array<String>) {
         }
 
         configure {
-            allowMentionPrefix = true
             theme = Color(0x00bfff)
         }
 

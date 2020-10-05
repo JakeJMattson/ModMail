@@ -14,7 +14,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     guildCommand("Close") {
         description = Locale.CLOSE_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel.asChannel() as TextChannel }) {
-            val inputChannel = it.first
+            val inputChannel = args.first
             val channel = inputChannel.toReportChannel()?.channel
 
             if (channel == null) {
@@ -31,7 +31,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     guildCommand("Archive") {
         description = Locale.ARCHIVE_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }, EveryArg("Info").makeOptional("")) {
-            val (inputChannel, note) = it
+            val (inputChannel, note) = args
 
             val reportChannel = inputChannel.toReportChannel()
 
@@ -41,9 +41,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             }
 
             val (channel, report) = reportChannel
-
             val config = configuration[channel.guild.id.longValue]
-
             val archiveChannel = config?.getLiveArchiveChannel(channel.kord)
 
             if (archiveChannel == null) {
@@ -68,7 +66,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     guildCommand("Note") {
         description = Locale.NOTE_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeNullableOptional { it.channel as TextChannel }, EveryArg("Note")) {
-            val inputChannel = it.first!!
+            val inputChannel = args.first!!
             val channel = inputChannel.toReportChannel()?.channel
             val messageAuthor = author
 
@@ -82,7 +80,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
                     name = messageAuthor.tag
                     icon = messageAuthor.avatar.url
                 }
-                description = it.second
+                description = args.second
             }
 
             message.delete()
@@ -93,7 +91,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     guildCommand("Tag") {
         description = Locale.TAG_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }, AnyArg("Tag")) {
-            val inputChannel = it.first
+            val inputChannel = args.first
             val channel = inputChannel.toReportChannel()?.channel
 
             if (channel == null) {
@@ -101,7 +99,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
                 return@execute
             }
 
-            val tag = it.second
+            val tag = args.second
 
             channel.edit {
                 name = "$tag-${channel.name}"
@@ -115,7 +113,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     guildCommand("ResetTags") {
         description = Locale.RESET_TAGS_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }) {
-            val inputChannel = it.first
+            val inputChannel = args.first
 
             val reportChannel = inputChannel.toReportChannel()
 

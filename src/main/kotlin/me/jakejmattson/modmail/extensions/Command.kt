@@ -5,7 +5,7 @@ import me.jakejmattson.modmail.services.*
 import kotlin.collections.set
 
 val categoryPermissions: MutableMap<String, Permission> = mutableMapOf()
-val commandPermissions: MutableMap<Command<*>, Permission> = mutableMapOf()
+val commandPermissions: MutableMap<Command, Permission> = mutableMapOf()
 
 var CommandSetBuilder.requiredPermissionLevel
     get() = categoryPermissions[category] ?: DEFAULT_REQUIRED_PERMISSION
@@ -13,7 +13,7 @@ var CommandSetBuilder.requiredPermissionLevel
         categoryPermissions[category] = value
     }
 
-var Command<*>.requiredPermissionLevel: Permission
+var Command.requiredPermissionLevel: Permission
     get() {
         val setLevel = categoryPermissions.toList()
             .firstOrNull { category in it.first }?.second
