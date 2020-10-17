@@ -1,30 +1,28 @@
 package me.jakejmattson.modmail.preconditions
 
-import me.jakejmattson.discordkt.api.dsl.*
+import me.jakejmattson.discordkt.api.dsl.precondition
 import me.jakejmattson.discordkt.api.extensions.*
 import me.jakejmattson.modmail.services.*
 
-class MacroPrecondition : Precondition() {
-    override suspend fun evaluate(event: CommandEvent<*>): PreconditionResult {
-        val commandName = event.rawInputs.commandName.toLowerCase()
+fun macroPrecondition() = precondition {
+    val commandName = rawInputs.commandName.toLowerCase()
 
-        if (event.command != null) return Pass
+    if (command != null) return@precondition
 
-        val macroService = event.discord.getInjectionObjects(MacroService::class)
-        val macro = macroService.getGuildMacros(event.guild!!).firstOrNull { it.name.toLowerCase() == commandName }
-            ?: return Fail()
+    val macroService = discord.getInjectionObjects(MacroService::class)
+    val macro = macroService.getGuildMacros(guild!!).firstOrNull { it.name.toLowerCase() == commandName }
+        ?: return@precondition fail()
 
-        event.respond {
-            val report = event.channel.toLiveReport()
+    respond {
+        val report = channel.toLiveReport()
 
-            if (report != null) {
-                report.user.sendPrivateMessage(macro.message)
-                addField("Macro Sent (${event.author.tag})", macro.message)
-            } else {
-                addField("Macro Text (Not Sent)", macro.message)
-            }
+        if (report != null) {
+            report.user.sendPrivateMessage(macro.message)
+            addField("Macro Sent (${this@precondition.author.tag})", macro.message)
+        } else {
+            addField("Macro Text (Not Sent)", macro.message)
         }
-
-        return Fail()
     }
+
+    fail()
 }

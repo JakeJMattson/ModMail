@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 group = "me.jakejmattson"
 version = "3.1.0"
 
@@ -19,6 +17,6 @@ dependencies {
     implementation("org.apache.velocity:velocity:1.7")
 }
 
-tasks.withType<KotlinCompile> {
+tasks.compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
