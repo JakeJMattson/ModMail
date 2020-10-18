@@ -11,6 +11,5 @@ class GuildService(private val discord: Discord, private val configuration: Conf
         //configuration[guild.id.longValue] ?: startSetupConversation(guild)
     }
 
-    private suspend fun startSetupConversation(guild: Guild)
-        = guildSetupConversation(discord, configuration, guild).startPrivately(guild.owner.asUser())
+    private suspend fun startSetupConversation(guild: Guild) = guildSetupConversation(configuration, guild).startPrivately(discord, guild.owner.asUser())
 }

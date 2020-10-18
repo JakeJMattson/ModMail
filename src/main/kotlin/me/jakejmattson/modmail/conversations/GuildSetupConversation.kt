@@ -3,13 +3,13 @@ package me.jakejmattson.modmail.conversations
 import com.gitlab.kordlib.core.entity.Guild
 import com.gitlab.kordlib.core.entity.channel.TextChannel
 import com.gitlab.kordlib.rest.Image
-import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.arguments.*
-import me.jakejmattson.discordkt.api.dsl.*
+import me.jakejmattson.discordkt.api.dsl.conversation
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
+import kotlin.collections.set
 
-fun guildSetupConversation(discord: Discord, config: Configuration, guild: Guild) = conversation(discord) {
+fun guildSetupConversation(config: Configuration, guild: Guild) = conversation {
     respond {
         title = guild.name
         description = "Starting setup..."

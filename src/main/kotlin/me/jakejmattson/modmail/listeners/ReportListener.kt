@@ -21,7 +21,7 @@ fun reportListener(discord: Discord, config: Configuration, reportService: Repor
             when {
                 user.findReport() != null -> reportService.receiveFromUser(message)
                 validGuilds.size > 1 -> {
-                    guildChoiceConversation(discord, reportService, validGuilds, message).startPrivately(user)
+                    guildChoiceConversation(reportService, validGuilds, message).startPrivately(discord, user)
                 }
                 else -> {
                     val guild = validGuilds.firstOrNull() ?: return@on

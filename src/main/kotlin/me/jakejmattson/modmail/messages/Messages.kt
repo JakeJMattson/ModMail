@@ -46,7 +46,6 @@ class Messages(
     val GUILD_SETUP_SUCCESSFUL: String = "Successfully configured for use! You can adjust these values at any time.",
 
     //Fail message
-    val FAIL_MISSING_CLEARANCE: String = "Missing clearance to use this command.",
     val FAIL_GUILD_NOT_CONFIGURED: String = "This guild is not configured for use.",
 
     //Logging messages
@@ -58,14 +57,4 @@ class Messages(
     val MANUAL_CLOSE_LOG: String = "Staff action :: \${channel} was deleted. See the server audit log for more information.",
     val COMMAND_LOG: String = "\${author} invoked `\${commandName}` in \${channelName}. \${additionalInfo}",
     val ERROR_LOG: String = "Error :: \${message}",
-
-    //Default setup info
-    val DEFAULT_REPORT_CATEGORY_NAME: String = "modmail-Reports",
-    val DEFAULT_HOLDER_CATEGORY_NAME: String = "modmail",
-    val DEFAULT_ARCHIVE_CHANNEL_NAME: String = "Archive",
-    val DEFAULT_LOGGING_CHANNEL_NAME: String = "Logging",
-    val DEFAULT_STAFF_ROLE_NAME: String = "Staff",
-
-    //Misc
-    val DEFAULT_INITIAL_MESSAGE: String = "<No initial message provided>"
 )

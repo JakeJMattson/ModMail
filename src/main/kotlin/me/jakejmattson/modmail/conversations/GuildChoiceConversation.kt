@@ -1,12 +1,11 @@
 package me.jakejmattson.modmail.conversations
 
 import com.gitlab.kordlib.core.entity.*
-import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.arguments.IntegerRangeArg
 import me.jakejmattson.discordkt.api.dsl.conversation
 import me.jakejmattson.modmail.services.ReportService
 
-fun guildChoiceConversation(discord: Discord, reportService: ReportService, guilds: List<Guild>, message: Message) = conversation(discord) {
+fun guildChoiceConversation(reportService: ReportService, guilds: List<Guild>, message: Message) = conversation {
     val guildIndex = promptEmbed(IntegerRangeArg(1, guilds.size)) {
         title = "Select Server"
         description = "Respond with the server you want to contact."

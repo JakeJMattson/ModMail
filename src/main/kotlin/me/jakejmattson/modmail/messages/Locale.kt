@@ -7,7 +7,7 @@ import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import java.io.*
 
-val Locale: Messages = load()
+val Locale = load()
 
 private fun load() = updateMessages(
     if (!messagesFile.exists())

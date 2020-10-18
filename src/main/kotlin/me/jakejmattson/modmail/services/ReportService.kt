@@ -84,7 +84,7 @@ class ReportService(private val config: Configuration,
         with(user.findReport()) {
             val liveReport = this?.toLiveReport(message.kord) ?: return@with
 
-            if (safeMessage.isEmpty()) return
+            if (safeMessage.isEmpty) return
 
             val newMessage = liveReport.channel.createMessage(safeMessage)
             messages[message.id.value] = newMessage.id.value
