@@ -1,4 +1,5 @@
 {
-  "version": "${version}",
-  "repository": "${project.repository}"
+  "version": "4.0.0",
+  "kotlin": "1.4.10",
+  "repository": "https://github.com/JakeJMattson/ModMail"
 }

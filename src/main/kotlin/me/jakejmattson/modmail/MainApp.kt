@@ -3,7 +3,7 @@ package me.jakejmattson.modmail
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.dsl.bot
-import me.jakejmattson.discordkt.api.extensions.addInlineField
+import me.jakejmattson.discordkt.api.extensions.*
 import me.jakejmattson.modmail.extensions.requiredPermissionLevel
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
@@ -11,7 +11,7 @@ import java.awt.Color
 import kotlin.system.exitProcess
 
 @Serializable
-private data class Properties(val version: String, val repository: String)
+private data class Properties(val version: String, val kotlin: String, val repository: String)
 
 private val propFile = Properties::class.java.getResource("/properties.json").readText()
 private val project = Json.decodeFromString<Properties>(propFile)
@@ -38,10 +38,10 @@ suspend fun main(it: Array<String>) {
             val self = api.getSelf()
             val guild = it.guild
             val configuration = it.discord.getInjectionObjects(Configuration::class)
-            val guildConfig = configuration[guild?.id?.longValue]
+            val staffId = configuration[guild?.id?.longValue]?.staffRoleId
 
             val requiredRole = if (guild != null)
-                guildConfig?.getLiveArchiveChannel(it.discord.api)?.name ?: "<Not Configured>"
+                staffId?.let { guild.getRole(it.toSnowflake()) }?.mention ?: "<Not Configured>"
             else
                 "<Not Applicable>"
 
@@ -53,12 +53,12 @@ suspend fun main(it: Array<String>) {
             }
 
             addInlineField("Prefix", it.prefix())
-            addInlineField("Required role", requiredRole)
-            addInlineField("Source", project.repository)
+            addInlineField("Required Role", requiredRole)
+            addInlineField("Source", "[GitHub](${project.repository})")
 
             footer {
                 val versions = it.discord.versions
-                text = "${versions.library} - ${versions.kord}"
+                text = "${versions.library} - ${versions.kord} - ${project.kotlin}"
             }
         }
 

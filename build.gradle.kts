@@ -1,5 +1,7 @@
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
+
 group = "me.jakejmattson"
-version = "3.1.0"
+version = "4.0.0"
 
 plugins {
     kotlin("jvm") version "1.4.10"
@@ -7,16 +9,30 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     jcenter()
 }
 
 dependencies {
-    implementation("me.jakejmattson:DiscordKt:0.21.0-SNAPSHOT")
+    implementation("me.jakejmattson:DiscordKt:0.21.0")
     implementation("org.apache.velocity:velocity:1.7")
 }
 
-tasks.compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+tasks {
+    val resourcePath = "src/main/resources"
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    copy {
+        from(file("$resourcePath/properties-template.json"))
+        into(file(resourcePath))
+        rename { "properties.json" }
+        expand(
+            "version" to version,
+            "kotlin" to KotlinCompilerVersion.VERSION,
+            "repository" to "https://github.com/JakeJMattson/ModMail"
+        )
+    }
 }
