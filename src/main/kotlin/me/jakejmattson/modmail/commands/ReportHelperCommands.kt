@@ -10,6 +10,7 @@ import me.jakejmattson.discordkt.api.extensions.addField
 import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
+import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
 fun reportHelperCommands(configuration: Configuration,
@@ -17,32 +18,37 @@ fun reportHelperCommands(configuration: Configuration,
                          moderationService: ModerationService,
                          loggingService: LoggingService) = commands("ReportHelpers") {
 
-    suspend fun openReport(event: CommandEvent<*>, targetUser: User, guild: Guild, detain: Boolean = false) {
+    suspend fun Member.openReport(event: CommandEvent<*>, detain: Boolean = false) {
+        val guild = guild.asGuild()
         val reportCategory = configuration[guild.id.longValue]!!.getLiveReportCategory(guild.kord)
-        val privateChannel = targetUser.getDmChannel()
+        val privateChannel = getDmChannel()
 
         privateChannel.createEmbed {
-            if (detain)
+            if (detain) {
+                color = Color.green
                 addField("You've have been detained by the staff of ${guild.name}!", Locale.USER_DETAIN_MESSAGE)
-            else
+            }
+            else {
+                color = Color.red
                 addField("Chatting with ${guild.name}!", Locale.BOT_DESCRIPTION)
+            }
         }
 
         val reportChannel = guild.createTextChannel {
-            name = targetUser.username
+            name = username
             parentId = reportCategory?.id
         }
 
         reportChannel.createEmbed {
             author {
-                name = targetUser.username
-                icon = targetUser.avatar.url
+                name = username
+                icon = avatar.url
             }
 
-            description = targetUser.descriptor()
+            description = descriptor()
         }
 
-        val newReport = Report(targetUser.id.value, reportChannel.id.value, guild.id.value, ConcurrentHashMap())
+        val newReport = Report(id.value, reportChannel.id.value, guild.id.value, ConcurrentHashMap())
         reportService.addReport(newReport)
 
         if (detain) newReport.detain(guild.kord)
@@ -59,7 +65,7 @@ fun reportHelperCommands(configuration: Configuration,
             if (!hasValidState(this, guild, targetMember))
                 return@execute
 
-            openReport(this, targetMember.asUser(), guild)
+            targetMember.openReport(this)
         }
     }
 
@@ -81,12 +87,11 @@ fun reportHelperCommands(configuration: Configuration,
                 return@execute
             }
 
-            val user = targetMember.asUser()
 
-            if (!hasValidState(this, guild, user))
+            if (!hasValidState(this, guild, targetMember))
                 return@execute
 
-            openReport(this, user, guild, true)
+            targetMember.openReport(this, true)
         }
     }
 

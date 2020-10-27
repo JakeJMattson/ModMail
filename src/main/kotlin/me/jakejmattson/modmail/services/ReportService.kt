@@ -4,7 +4,7 @@ import com.gitlab.kordlib.core.Kord
 import com.gitlab.kordlib.core.behavior.*
 import com.gitlab.kordlib.core.behavior.channel.*
 import com.gitlab.kordlib.core.entity.*
-import com.gitlab.kordlib.core.entity.channel.TextChannel
+import com.gitlab.kordlib.core.entity.channel.*
 import com.gitlab.kordlib.rest.Image
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.count
@@ -64,12 +64,7 @@ class ReportService(private val config: Configuration,
 
         val reportCategory = config[guild.id.longValue]?.getLiveReportCategory(guild.kord) ?: return
 
-        val reportChannel = guild.createTextChannel {
-            name = user.username
-            parentId = reportCategory.id
-        }
-
-        createReportChannel(reportChannel, user, guild)
+        createReportChannel(reportCategory, user, guild)
     }
 
     fun addReport(report: Report) {
@@ -94,10 +89,13 @@ class ReportService(private val config: Configuration,
     fun writeReportToFile(report: Report) =
         File("$reportsFolder/${report.channelId}.json").writeText(Json.encodeToString(report))
 
-    private suspend fun createReportChannel(channel: TextChannel, user: User, guild: Guild) {
-        println("Creating channel")
+    private suspend fun createReportChannel(category: Category, user: User, guild: Guild) {
+        val reportChannel = guild.createTextChannel {
+            name = user.username
+            parentId = category.id
+        }
 
-        channel.createEmbed {
+        reportChannel.createEmbed {
             author {
                 name = user.tag
                 icon = user.avatar.url
@@ -107,7 +105,7 @@ class ReportService(private val config: Configuration,
 
         //TODO send opening messages
 
-        val newReport = Report(user.id.value, channel.id.value, guild.id.value, ConcurrentHashMap())
+        val newReport = Report(user.id.value, reportChannel.id.value, guild.id.value, ConcurrentHashMap())
         addReport(newReport)
 
         user.sendPrivateMessage {

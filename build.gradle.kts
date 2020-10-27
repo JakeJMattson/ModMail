@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation("me.jakejmattson:DiscordKt:0.21.0")
+    implementation("me.jakejmattson:DiscordKt:0.21.1")
     implementation("org.apache.velocity:velocity:1.7")
 }
 
