@@ -3,6 +3,7 @@ package me.jakejmattson.modmail.preconditions
 import me.jakejmattson.discordkt.api.dsl.precondition
 import me.jakejmattson.discordkt.api.extensions.*
 import me.jakejmattson.modmail.services.*
+import java.awt.Color
 
 fun macroPrecondition() = precondition {
     val commandName = rawInputs.commandName.toLowerCase()
@@ -16,11 +17,23 @@ fun macroPrecondition() = precondition {
     respond {
         val report = channel.toLiveReport()
 
-        if (report != null) {
+        description = macro.message
+
+        color = if (report != null) {
             report.user.sendPrivateMessage(macro.message)
-            addField("Macro Sent (${this@precondition.author.tag})", macro.message)
+
+            author {
+                name = this@precondition.author.tag
+                icon = this@precondition.author.avatar.url
+            }
+
+            Color.green
         } else {
-            addField("Macro Text (Not Sent)", macro.message)
+            Color.red
+        }
+
+        footer {
+            text = "Macro: ${macro.name}"
         }
     }
 

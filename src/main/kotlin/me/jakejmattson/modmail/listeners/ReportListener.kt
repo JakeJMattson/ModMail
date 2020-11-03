@@ -34,10 +34,10 @@ fun reportListener(discord: Discord, config: Configuration, reportService: Repor
         } else {
             with(message) {
                 val report = channel.findReport() ?: return@on
-                report.toLiveReport(kord) ?: return@on addFailReaction()
+                val live = report.toLiveReport(kord) ?: return@on addFailReaction()
                 val prefix = config[getGuild().id.longValue]?.prefix ?: return@on
                 val content = fullContent().takeUnless { it.isBlank() || it.startsWith(prefix) } ?: return@on
-                val newMessage = user.sendPrivateMessage(content)
+                val newMessage = live.user.sendPrivateMessage(content)
 
                 report.messages[id.value] = newMessage.id.value
             }
