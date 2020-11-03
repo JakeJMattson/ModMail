@@ -1,5 +1,6 @@
 package me.jakejmattson.modmail
 
+import com.gitlab.kordlib.gateway.Intents
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.dsl.bot
@@ -35,7 +36,6 @@ suspend fun main(it: Array<String>) {
         }
 
         mentionEmbed {
-            val self = api.getSelf()
             val guild = it.guild
             val configuration = it.discord.getInjectionObjects(Configuration::class)
             val staffId = configuration[guild?.id?.longValue]?.staffRoleId
@@ -49,7 +49,7 @@ suspend fun main(it: Array<String>) {
             description = "A Discord report management bot."
 
             thumbnail {
-                url = self.avatar.url
+                url = it.discord.api.getSelf().avatar.url
             }
 
             addInlineField("Prefix", it.prefix())
@@ -73,6 +73,12 @@ suspend fun main(it: Array<String>) {
 
         presence {
             playing(Locale.DISCORD_PRESENCE)
+        }
+
+        intents {
+            Intents.nonPrivileged.intents.forEach {
+                + it
+            }
         }
     }
 }

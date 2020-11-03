@@ -44,7 +44,7 @@
 | History  | User                      | Read the target user's DM history with the bot.                  |
 | Info     | (Report Channel), (Field) | Retrieve info from the target report channel - user/channel/all. |
 | Open     | Member                    | Open a report with the target user.                              |
-| Release  | (Report Channel), Member  | Release a user from detainment and unmute them.                  |
+| Release  | (Report Channel)          | Release a user from detainment and unmute them.                  |
 
 ## Utility
 | Commands     | Arguments | Description                              |

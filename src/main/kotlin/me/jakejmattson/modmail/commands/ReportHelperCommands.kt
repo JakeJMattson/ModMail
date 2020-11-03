@@ -6,7 +6,7 @@ import com.gitlab.kordlib.core.entity.*
 import com.gitlab.kordlib.core.entity.channel.TextChannel
 import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.dsl.*
-import me.jakejmattson.discordkt.api.extensions.addField
+import me.jakejmattson.discordkt.api.extensions.*
 import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
@@ -27,8 +27,7 @@ fun reportHelperCommands(configuration: Configuration,
             if (detain) {
                 color = Color.green
                 addField("You've have been detained by the staff of ${guild.name}!", Locale.USER_DETAIN_MESSAGE)
-            }
-            else {
+            } else {
                 color = Color.red
                 addField("Chatting with ${guild.name}!", Locale.BOT_DESCRIPTION)
             }
@@ -73,7 +72,6 @@ fun reportHelperCommands(configuration: Configuration,
         description = Locale.DETAIN_DESCRIPTION
         execute(MemberArg) {
             val targetMember = args.first
-            val guild = guild
 
             if (moderationService.hasStaffRole(targetMember)) {
                 respond("You cannot detain another staff member.")
@@ -87,7 +85,6 @@ fun reportHelperCommands(configuration: Configuration,
                 return@execute
             }
 
-
             if (!hasValidState(this, guild, targetMember))
                 return@execute
 
@@ -97,8 +94,8 @@ fun reportHelperCommands(configuration: Configuration,
 
     guildCommand("Release") {
         description = Locale.RELEASE_DESCRIPTION
-        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }, MemberArg) {
-            val (inputChannel, targetMember) = args
+        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }) {
+            val (inputChannel) = args
             val report = inputChannel.toReportChannel()?.report
 
             if (report == null) {
@@ -106,13 +103,20 @@ fun reportHelperCommands(configuration: Configuration,
                 return@execute
             }
 
-            if (!targetMember.isDetained()) {
+            val member = guild.getMemberOrNull(report.userId.toSnowflake())
+
+            if (member == null) {
+                respond("This user is not in the server.")
+                return@execute
+            }
+
+            if (!member.isDetained()) {
                 respond("This member is not detained.")
                 return@execute
             }
 
             report.release(discord.api)
-            respond("${targetMember.tag} has been released.")
+            respond("${member.tag} has been released.")
         }
     }
 
