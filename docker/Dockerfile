@@ -1,16 +1,11 @@
-FROM maven:3.6.3-openjdk-15 AS build
+FROM gradle:6.7.0-jdk15 AS build
+COPY --chown=gradle:gradle . /modmail
+WORKDIR /modmail
+RUN gradle shadowJar --no-daemon
 
-COPY pom.xml /pom.xml
-COPY src /src/
-
-RUN mvn clean package -f /pom.xml
-
-# Run stage
-FROM openjdk:15
-
+FROM openjdk:8-jre-slim
 ENV BOT_TOKEN=UNSET
+RUN mkdir /config/
+COPY --from=build /modmail/build/libs/*.jar /ModMail.jar
 
-RUN mkdir /data/
-COPY --from=build /target/modmail-jar-with-dependencies.jar /ModMail.jar
-
-CMD /usr/bin/java -jar /ModMail.jar $BOT_TOKEN
+ENTRYPOINT ["java", "-jar", "/ModMail.jar", "$BOT_TOKEN"]
