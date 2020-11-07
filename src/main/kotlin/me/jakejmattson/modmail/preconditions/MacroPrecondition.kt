@@ -14,6 +14,8 @@ fun macroPrecondition() = precondition {
     val macro = macroService.getGuildMacros(guild!!).firstOrNull { it.name.toLowerCase() == commandName }
         ?: return@precondition fail()
 
+    message.delete()
+
     respond {
         val report = channel.toLiveReport()
 

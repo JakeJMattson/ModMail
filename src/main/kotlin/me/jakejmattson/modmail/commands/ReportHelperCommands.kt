@@ -1,5 +1,6 @@
 package me.jakejmattson.modmail.commands
 
+import com.gitlab.kordlib.common.exception.RequestException
 import com.gitlab.kordlib.core.behavior.channel.*
 import com.gitlab.kordlib.core.behavior.createTextChannel
 import com.gitlab.kordlib.core.entity.*
@@ -64,7 +65,14 @@ fun reportHelperCommands(configuration: Configuration,
             if (!hasValidState(this, guild, targetMember))
                 return@execute
 
-            targetMember.openReport(this)
+            try {
+                targetMember.openReport(this, false)
+            } catch (ex: RequestException) {
+                respond("Unable to contact the target user. " +
+                        "Direct messages are disabled or the bot is blocked.")
+
+                return@execute
+            }
         }
     }
 
@@ -78,8 +86,6 @@ fun reportHelperCommands(configuration: Configuration,
                 return@execute
             }
 
-            targetMember.mute()
-
             if (targetMember.isDetained()) {
                 respond("This member is already detained.")
                 return@execute
@@ -88,7 +94,17 @@ fun reportHelperCommands(configuration: Configuration,
             if (!hasValidState(this, guild, targetMember))
                 return@execute
 
-            targetMember.openReport(this, true)
+            try {
+                targetMember.openReport(this, true)
+            } catch (ex: RequestException) {
+                respond("Unable to contact the target user. " +
+                        "Direct messages are disabled or the bot is blocked. " +
+                        "Mute was not applied")
+
+                return@execute
+            }
+
+            targetMember.mute()
         }
     }
 
@@ -158,7 +174,7 @@ fun reportHelperCommands(configuration: Configuration,
             }
 
             channel.createMessage {
-                addFile("$${user.id}.txt", history.inputStream())
+                addFile("$${user.id.value}.txt", history.inputStream())
             }
         }
     }
