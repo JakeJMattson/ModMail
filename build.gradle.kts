@@ -9,12 +9,14 @@ plugins {
 }
 
 repositories {
+    mavenLocal()
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
     mavenCentral()
     jcenter()
 }
 
 dependencies {
-    implementation("me.jakejmattson:DiscordKt:0.21.3")
+    implementation("me.jakejmattson:DiscordKt:0.22.0-SNAPSHOT")
     implementation("org.apache.velocity:velocity:1.7")
 }
 

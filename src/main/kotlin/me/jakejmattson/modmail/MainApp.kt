@@ -1,6 +1,5 @@
 package me.jakejmattson.modmail
 
-import com.gitlab.kordlib.gateway.Intents
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.dsl.bot
@@ -73,12 +72,6 @@ suspend fun main(it: Array<String>) {
 
         presence {
             playing(Locale.DISCORD_PRESENCE)
-        }
-
-        intents {
-            Intents.nonPrivileged.intents.forEach {
-                + it
-            }
         }
     }
 }
