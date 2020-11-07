@@ -15,16 +15,18 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         description = Locale.CLOSE_DESCRIPTION
         execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel.asChannel() as TextChannel }) {
             val inputChannel = args.first
-            val channel = inputChannel.toReportChannel()?.channel
 
-            if (channel == null) {
+            val reportChannel = inputChannel.toReportChannel()
+
+            if (reportChannel == null) {
                 respond(createChannelError(inputChannel))
                 return@execute
             }
 
-            deletionQueue.add(channel.id)
-            channel.delete()
-            loggingService.commandClose(guild, channel.name, author)
+            reportChannel.report.release(discord.api)
+            deletionQueue.add(reportChannel.channel.id)
+            reportChannel.channel.delete()
+            loggingService.commandClose(guild, reportChannel.channel.name, author)
         }
     }
 
@@ -55,6 +57,8 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             archiveChannel.createMessage {
                 content = archiveMessage
                 addFile("$${channel.name}.txt", channel.archiveString().toByteArray().inputStream())
+
+                reportChannel.report.release(discord.api)
                 deletionQueue.add(channel.id)
                 channel.delete()
             }
