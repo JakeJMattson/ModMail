@@ -174,7 +174,7 @@ fun reportHelperCommands(configuration: Configuration,
             }
 
             channel.createMessage {
-                addFile("$${user.id}.txt", history.inputStream())
+                addFile("$${user.id.value}.txt", history.inputStream())
             }
         }
     }
