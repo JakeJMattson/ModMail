@@ -66,7 +66,7 @@ fun reportHelperCommands(configuration: Configuration,
                 return@execute
 
             try {
-                targetMember.openReport(this)
+                targetMember.openReport(this, false)
             } catch (ex: RequestException) {
                 respond("Unable to contact the target user. " +
                         "Direct messages are disabled or the bot is blocked.")
