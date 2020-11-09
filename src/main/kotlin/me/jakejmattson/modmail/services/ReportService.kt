@@ -14,6 +14,7 @@ import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.annotations.Service
 import me.jakejmattson.discordkt.api.extensions.*
 import me.jakejmattson.modmail.extensions.cleanContent
+import java.awt.Color
 import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -109,11 +110,16 @@ class ReportService(private val config: Configuration,
         addReport(newReport)
 
         user.sendPrivateMessage {
-            title = "You've successfully opened a report with the staff of ${guild.name}"
-            description = "Someone will respond shortly, please be patient."
+            color = Color.GREEN
 
-            thumbnail {
-                url = guild.getIconUrl(Image.Format.PNG)!!
+            field {
+                name = "A report has been created."
+                value = "Someone will respond shortly, please be patient."
+            }
+
+            author {
+                name = guild.name
+                icon = guild.getIconUrl(Image.Format.PNG)
             }
         }
 
@@ -134,7 +140,16 @@ private fun removeReport(report: Report) {
 
 private suspend fun sendReportClosedEmbed(report: LiveReport) =
     report.user.sendPrivateMessage {
-        title = "The staff of ${report.guild.name} have closed this report."
-        description = "If you continue to reply, a new report will be created."
+        color = Color.RED
+
+        field {
+            name = "This report has been closed."
+            value = "Any response will create a new report"
+        }
+
+        author {
+            name = report.guild.name
+            icon = report.guild.getIconUrl(Image.Format.PNG)
+        }
     }
 

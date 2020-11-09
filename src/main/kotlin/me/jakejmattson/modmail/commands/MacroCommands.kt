@@ -6,6 +6,7 @@ import me.jakejmattson.discordkt.api.extensions.addField
 import me.jakejmattson.modmail.arguments.MacroArg
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.MacroService
+import java.awt.Color
 
 fun macroCommands(macroService: MacroService) = commands("Macros") {
     guildCommand("AddMacro") {
@@ -13,7 +14,16 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
         execute(AnyArg("Macro Name"), EveryArg("Macro Content")) {
             val (name, message) = args
             val response = macroService.addMacro(name, message, guild)
-            respond(response.second)
+
+            respond {
+                description = message
+
+                color = if (response) Color.GREEN else Color.RED
+
+                footer {
+                    text = if (response) "Macro added: $name" else "Macro already exists: $name"
+                }
+            }
         }
     }
 
@@ -22,7 +32,16 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
         execute(MacroArg) {
             val macro = args.first
             val response = macroService.removeMacro(macro, guild)
-            respond(response.second)
+
+            respond {
+                description = macro.message
+
+                color = Color.RED
+
+                footer {
+                    text = "Macro removed: ${macro.name}"
+                }
+            }
         }
     }
 
