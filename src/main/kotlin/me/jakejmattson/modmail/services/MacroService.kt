@@ -19,24 +19,24 @@ class MacroService {
 
     fun getGuildMacros(guild: Guild) = macroMap.map.getOrPut(guild.id.value) { arrayListOf() }
 
-    fun addMacro(name: String, message: String, guild: Guild): Pair<Boolean, String> {
+    fun addMacro(name: String, message: String, guild: Guild): Boolean {
         val macroList = getGuildMacros(guild)
 
-        if (macroList.hasMacro(name)) return false to "This macro already exists!"
+        if (macroList.hasMacro(name)) return false
 
         macroList.add(Macro(name, message))
         saveMacros(macroMap)
 
-        return true to "Macro successfully added!\n$name - $message"
+        return true
     }
 
-    fun removeMacro(macro: Macro, guild: Guild): Pair<Boolean, String> {
+    fun removeMacro(macro: Macro, guild: Guild): Boolean {
         val macroList = getGuildMacros(guild)
 
         macroList.remove(macro)
         saveMacros(macroMap)
 
-        return true to "Macro successfully removed! :: ${macro.name}"
+        return true
     }
 
     fun listMacros(guild: Guild) = getGuildMacros(guild).map { it.name }.sorted().joinToString(", ")
