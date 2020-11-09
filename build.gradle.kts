@@ -6,6 +6,7 @@ version = "4.0.0"
 plugins {
     kotlin("jvm") version "1.4.10"
     kotlin("plugin.serialization") version "1.4.10"
+    id("com.github.johnrengelman.shadow") version "6.1.0"
 }
 
 repositories {
@@ -36,5 +37,14 @@ tasks {
             "kotlin" to KotlinCompilerVersion.VERSION,
             "repository" to "https://github.com/JakeJMattson/ModMail"
         )
+    }
+
+    shadowJar {
+        archiveFileName.set("ModMail.jar")
+        manifest {
+            attributes(
+                "Main-Class" to "me.jakejmattson.modmail.MainAppKt"
+            )
+        }
     }
 }
