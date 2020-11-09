@@ -5,6 +5,7 @@ import com.gitlab.kordlib.core.entity.channel.TextChannel
 import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.dsl.commands
 import me.jakejmattson.discordkt.api.extensions.toSnowflakeOrNull
+import me.jakejmattson.modmail.arguments.ReportChannelArg
 import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.modmail.listeners.deletionQueue
 import me.jakejmattson.modmail.messages.Locale
@@ -13,15 +14,8 @@ import me.jakejmattson.modmail.services.*
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands("Report") {
     guildCommand("Close") {
         description = Locale.CLOSE_DESCRIPTION
-        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel.asChannel() as TextChannel }) {
-            val inputChannel = args.first
-
-            val reportChannel = inputChannel.toReportChannel()
-
-            if (reportChannel == null) {
-                respond(createChannelError(inputChannel))
-                return@execute
-            }
+        execute(ReportChannelArg) {
+            val reportChannel = args.first
 
             reportChannel.report.release(discord.api)
             deletionQueue.add(reportChannel.channel.id)
@@ -32,15 +26,8 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     guildCommand("Archive") {
         description = Locale.ARCHIVE_DESCRIPTION
-        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }, EveryArg("Info").makeOptional("")) {
-            val (inputChannel, note) = args
-
-            val reportChannel = inputChannel.toReportChannel()
-
-            if (reportChannel == null) {
-                respond(createChannelError(inputChannel))
-                return@execute
-            }
+        execute(ReportChannelArg, EveryArg("Info").makeOptional("")) {
+            val (reportChannel, note) = args
 
             val (channel, report) = reportChannel
             val config = configuration[channel.guild.id.longValue]
@@ -69,15 +56,9 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     guildCommand("Note") {
         description = Locale.NOTE_DESCRIPTION
-        execute(ChannelArg<TextChannel>("Report Channel").makeNullableOptional { it.channel as TextChannel }, EveryArg("Note")) {
-            val inputChannel = args.first!!
-            val channel = inputChannel.toReportChannel()?.channel
+        execute(ReportChannelArg, EveryArg("Note")) {
+            val channel = args.first.channel
             val messageAuthor = author
-
-            if (channel == null) {
-                respond(createChannelError(inputChannel))
-                return@execute
-            }
 
             channel.createEmbed {
                 author {
@@ -94,15 +75,8 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     guildCommand("Tag") {
         description = Locale.TAG_DESCRIPTION
-        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }, AnyArg("Tag")) {
-            val inputChannel = args.first
-            val channel = inputChannel.toReportChannel()?.channel
-
-            if (channel == null) {
-                respond(createChannelError(inputChannel))
-                return@execute
-            }
-
+        execute(ReportChannelArg, AnyArg("Tag")) {
+            val channel = args.first.channel
             val tag = args.second
 
             channel.edit {
@@ -116,18 +90,9 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     guildCommand("ResetTags") {
         description = Locale.RESET_TAGS_DESCRIPTION
-        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }) {
-            val inputChannel = args.first
-
-            val reportChannel = inputChannel.toReportChannel()
-
-            if (reportChannel == null) {
-                respond(createChannelError(inputChannel))
-                return@execute
-            }
-
+        execute(ReportChannelArg) {
+            val reportChannel = args.first
             val (channel, report) = reportChannel
-
             val user = report.userId.toSnowflakeOrNull()?.let { discord.api.getUser(it) } ?: return@execute
             val newName = user.username
 
@@ -140,5 +105,3 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         }
     }
 }
-
-fun createChannelError(channel: TextChannel) = "Invalid report channel: ${channel.mention}"

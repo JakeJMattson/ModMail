@@ -8,6 +8,7 @@ import com.gitlab.kordlib.core.entity.channel.TextChannel
 import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.dsl.*
 import me.jakejmattson.discordkt.api.extensions.*
+import me.jakejmattson.modmail.arguments.ReportChannelArg
 import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
@@ -110,15 +111,8 @@ fun reportHelperCommands(configuration: Configuration,
 
     guildCommand("Release") {
         description = Locale.RELEASE_DESCRIPTION
-        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel }) {
-            val (inputChannel) = args
-            val report = inputChannel.toReportChannel()?.report
-
-            if (report == null) {
-                respond(createChannelError(inputChannel))
-                return@execute
-            }
-
+        execute(ReportChannelArg) {
+            val report = args.first.report
             val member = guild.getMemberOrNull(report.userId.toSnowflake())
 
             if (member == null) {
@@ -138,16 +132,9 @@ fun reportHelperCommands(configuration: Configuration,
 
     guildCommand("Info") {
         description = Locale.INFO_DESCRIPTION
-        execute(ChannelArg<TextChannel>("Report Channel").makeOptional { it.channel as TextChannel },
-            ChoiceArg("Field", "user", "channel", "all").makeOptional("user")) {
-
-            val (inputChannel, choice) = args
-            val report = inputChannel.toReportChannel()?.report
-
-            if (report == null) {
-                respond(createChannelError(inputChannel))
-                return@execute
-            }
+        execute(ReportChannelArg, ChoiceArg("Field", "user", "channel", "all").makeOptional("user")) {
+            val (reportChannel, choice) = args
+            val (channel, report) = reportChannel
 
             val response = with(report) {
                 when (choice) {
@@ -158,7 +145,7 @@ fun reportHelperCommands(configuration: Configuration,
                 }
             }
 
-            inputChannel.createMessage(response)
+            channel.createMessage(response)
         }
     }
 

@@ -44,6 +44,7 @@ suspend fun UserBehavior.toLiveReport() = findReport()?.toLiveReport(kord)
 fun UserBehavior.findReport() = reports.firstOrNull { it.userId == id.value }
 fun MessageChannelBehavior.findReport() = reports.firstOrNull { it.channelId == id.value }
 suspend fun MessageChannelBehavior.toLiveReport() = findReport()?.toLiveReport(kord)
+fun GuildBehavior.getReports() = reports.filter { it.guildId == id.value }
 
 @Service
 class ReportService(private val config: Configuration,
@@ -103,8 +104,6 @@ class ReportService(private val config: Configuration,
                 url = user.profileLink
             }
         }
-
-        //TODO send opening messages
 
         val newReport = Report(user.id.value, reportChannel.id.value, guild.id.value, ConcurrentHashMap())
         addReport(newReport)
