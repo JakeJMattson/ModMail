@@ -20,6 +20,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             reportChannel.report.release(discord.api)
             deletionQueue.add(reportChannel.channel.id)
             reportChannel.channel.delete()
+            handleInvocation(reportChannel)
             loggingService.commandClose(guild, reportChannel.channel.name, author)
         }
     }
@@ -50,6 +51,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
                 channel.delete()
             }
 
+            handleInvocation(reportChannel)
             loggingService.archive(guild, channel.name, author)
         }
     }
@@ -57,7 +59,8 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
     guildCommand("Note") {
         description = Locale.NOTE_DESCRIPTION
         execute(ReportChannelArg, EveryArg("Note")) {
-            val channel = args.first.channel
+            val reportChannel = args.first
+            val channel = reportChannel.channel
             val messageAuthor = author
 
             channel.createEmbed {
@@ -68,15 +71,16 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
                 description = args.second
             }
 
-            message.delete()
             loggingService.command(this)
+            handleInvocation(reportChannel)
         }
     }
 
     guildCommand("Tag") {
         description = Locale.TAG_DESCRIPTION
         execute(ReportChannelArg, AnyArg("Tag")) {
-            val channel = args.first.channel
+            val reportChannel = args.first
+            val channel = reportChannel.channel
             val tag = args.second
 
             channel.edit {
@@ -84,7 +88,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             }
 
             loggingService.command(this, "Added tag :: $tag")
-            message.delete()
+            handleInvocation(reportChannel)
         }
     }
 
@@ -101,7 +105,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             }
 
             loggingService.command(this, "Channel is now $newName")
-            message.delete()
+            handleInvocation(reportChannel)
         }
     }
 }

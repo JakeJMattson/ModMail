@@ -31,6 +31,7 @@ suspend fun main(it: Array<String>) {
         }
 
         configure {
+            commandReaction = null
             theme = Color(0x00bfff)
         }
 

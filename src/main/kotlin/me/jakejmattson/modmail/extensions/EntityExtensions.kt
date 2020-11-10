@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.dsl.CommandEvent
 import me.jakejmattson.discordkt.api.extensions.*
+import me.jakejmattson.modmail.arguments.ReportChannel
 
 private const val embedNotation = "<---------- Embed ---------->"
 
@@ -45,5 +46,12 @@ suspend fun MessageChannel.archiveString() = messages.toList()
 
 fun User.descriptor() = "$mention :: $tag :: ${id.value}"
 
-suspend fun CommandEvent<*>.reactSuccess() = message.addReaction(Emojis.whiteCheckMark.toReaction())
 suspend fun Message.addFailReaction() = addReaction(Emojis.x.toReaction())
+suspend fun CommandEvent<*>.reactSuccess() = reactWith(Emojis.whiteCheckMark)
+
+suspend fun CommandEvent<*>.handleInvocation(reportChannel: ReportChannel) {
+    if (reportChannel.wasTargeted)
+        reactSuccess()
+    else
+        message.delete()
+}
