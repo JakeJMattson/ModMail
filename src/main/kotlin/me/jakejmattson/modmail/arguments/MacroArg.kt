@@ -10,8 +10,9 @@ open class MacroArg(override val name: String = "Macro") : ArgumentType<Macro>()
     override suspend fun convert(arg: String, args: List<String>, event: CommandEvent<*>): ArgumentResult<Macro> {
         val macroService = event.discord.getInjectionObjects(MacroService::class)
 
-        val macro = macroService.getGuildMacros(event.guild!!).firstOrNull { it.name.toLowerCase() == arg.toLowerCase() }
-            ?: return Error("No such macro in this guild!")
+        val macro = macroService.getGuildMacros(event.guild!!)
+            .firstOrNull { it.name.toLowerCase() == arg.toLowerCase() }
+            ?: return Error("Unknown Macro")
 
         return Success(macro)
     }

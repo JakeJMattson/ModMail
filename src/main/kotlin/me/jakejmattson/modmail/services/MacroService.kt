@@ -8,16 +8,13 @@ import me.jakejmattson.discordkt.api.annotations.Service
 @Serializable
 data class Macro(var name: String, var message: String)
 
-@Serializable
-data class MacroMap(val map: HashMap<String, ArrayList<Macro>> = hashMapOf())
-
 @Service
 class MacroService {
     private val macroMap = loadMacros()
 
-    private fun ArrayList<Macro>.hasMacro(name: String) = this.any { it.name.toLowerCase() == name.toLowerCase() }
+    private fun MutableList<Macro>.hasMacro(name: String) = this.any { it.name.toLowerCase() == name.toLowerCase() }
 
-    fun getGuildMacros(guild: Guild) = macroMap.map.getOrPut(guild.id.value) { arrayListOf() }
+    fun getGuildMacros(guild: Guild) = macroMap.getOrPut(guild.id.value) { arrayListOf() }
 
     fun addMacro(name: String, message: String, guild: Guild): Boolean {
         val macroList = getGuildMacros(guild)
@@ -25,47 +22,42 @@ class MacroService {
         if (macroList.hasMacro(name)) return false
 
         macroList.add(Macro(name, message))
-        saveMacros(macroMap)
+        macroMap.save()
 
         return true
     }
 
-    fun removeMacro(macro: Macro, guild: Guild): Boolean {
-        val macroList = getGuildMacros(guild)
-
-        macroList.remove(macro)
-        saveMacros(macroMap)
-
-        return true
+    fun removeMacro(macro: Macro, guild: Guild) {
+        getGuildMacros(guild).remove(macro)
+        macroMap.save()
     }
 
-    fun listMacros(guild: Guild) = getGuildMacros(guild).map { it.name }.sorted().joinToString(", ")
-        .takeIf { it.isNotEmpty() } ?: "<No Macros added>"
+    fun listMacros(guild: Guild) = getGuildMacros(guild)
+        .map { it.name }
+        .sorted()
+        .joinToString()
+        .takeIf { it.isNotEmpty() }
+        ?: "<No Macros added>"
 
-    fun editName(macro: Macro, newName: String, guild: Guild): Pair<Boolean, String> {
-        val macroList = getGuildMacros(guild)
+    fun editName(macro: Macro, newName: String, guild: Guild): Boolean {
+        if (getGuildMacros(guild).hasMacro(newName)) return false
 
-        if (macroList.hasMacro(newName)) return false to "A macro with that name already exists!"
-
-        val oldName = macro.name
         macro.name = newName
-        saveMacros(macroMap)
+        macroMap.save()
 
-        return true to "Macro name updated!\n`$oldName` renamed to `$newName`"
+        return true
     }
 
-    fun editMessage(macro: Macro, newMessage: String): Pair<Boolean, String> {
+    fun editMessage(macro: Macro, newMessage: String) {
         macro.message = newMessage
-        saveMacros(macroMap)
-
-        return true to "Successfully changed macro message!"
+        macroMap.save()
     }
 }
 
-private fun saveMacros(macros: MacroMap) = macroFile.writeText(Json.encodeToString(macros))
+private fun Map<String, MutableList<Macro>>.save() = macroFile.writeText(Json.encodeToString(this))
 
 private fun loadMacros() =
     if (macroFile.exists())
         Json.decodeFromString(macroFile.readText())
     else
-        MacroMap()
+        mutableMapOf<String, MutableList<Macro>>()
