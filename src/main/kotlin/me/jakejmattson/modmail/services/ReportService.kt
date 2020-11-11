@@ -1,11 +1,12 @@
 package me.jakejmattson.modmail.services
 
-import com.gitlab.kordlib.core.Kord
+import com.gitlab.kordlib.core.*
 import com.gitlab.kordlib.core.behavior.*
 import com.gitlab.kordlib.core.behavior.channel.*
 import com.gitlab.kordlib.core.entity.*
 import com.gitlab.kordlib.core.entity.channel.*
 import com.gitlab.kordlib.rest.Image
+import com.gitlab.kordlib.rest.builder.message.EmbedBuilder
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.count
 import kotlinx.serialization.*
@@ -27,8 +28,8 @@ data class Report(val userId: String,
 
     suspend fun toLiveReport(api: Kord): LiveReport? {
         val user = userId.toSnowflakeOrNull()?.let { api.getUser(it) } ?: return null
-        val channel = channelId.toSnowflakeOrNull()?.let { api.getChannel(it) } as? TextChannel ?: return null
         val guild = guildId.toSnowflakeOrNull()?.let { api.getGuild(it) } ?: return null
+        val channel = channelId.toSnowflakeOrNull()?.let { guild.getChannelOfOrNull<TextChannel>(it) } ?: return null
 
         return LiveReport(user, channel, guild)
     }
@@ -126,29 +127,43 @@ class ReportService(private val config: Configuration,
     }
 }
 
-suspend fun Report.close(api: Kord) {
-    release(api)
+suspend fun Report.close(kord: Kord) {
+    release(kord)
     removeReport(this)
-    toLiveReport(api)?.let { sendReportClosedEmbed(it) }
+    sendReportClosedEmbed(this, kord)
 }
 
 private fun removeReport(report: Report) {
     reports.remove(report)
-    reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId.toString()) }?.delete()
+    reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId) }?.delete()
 }
 
-private suspend fun sendReportClosedEmbed(report: LiveReport) =
-    report.user.sendPrivateMessage {
+private suspend fun sendReportClosedEmbed(report: Report, kord: Kord) {
+    val guild = kord.getGuild(report.guildId.toSnowflake()) ?: return
+    val user = kord.getUser(report.userId.toSnowflake()) ?: return
+
+    val builder: EmbedBuilder.() -> Unit = {
         color = Color.RED
 
         field {
-            name = "This report has been closed."
-            value = "Any response will create a new report"
+            name = "Report Closed"
+            value = "Any response will create a new report."
         }
 
         author {
-            name = report.guild.name
-            icon = report.guild.getIconUrl(Image.Format.PNG)
+            name = guild.name
+            icon = guild.getIconUrl(Image.Format.PNG)
         }
     }
 
+    val mostRecentMessage = user.getDmChannel().messages.firstOrNull { it.author == kord.getSelf() }
+
+    if (mostRecentMessage != null)
+        mostRecentMessage.edit {
+            builder(embed!!)
+        }
+    else
+        user.sendPrivateMessage {
+            builder(this)
+        }
+}
