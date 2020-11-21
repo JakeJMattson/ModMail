@@ -14,7 +14,7 @@ class MacroService {
 
     private fun MutableList<Macro>.hasMacro(name: String) = this.any { it.name.toLowerCase() == name.toLowerCase() }
 
-    fun getGuildMacros(guild: Guild) = macroMap.getOrPut(guild.id.value) { arrayListOf() }
+    fun getGuildMacros(guild: Guild) = macroMap.getOrPut(guild.id.asString) { arrayListOf() }
 
     fun addMacro(name: String, message: String, guild: Guild): Boolean {
         val macroList = getGuildMacros(guild)

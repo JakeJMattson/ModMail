@@ -8,7 +8,7 @@ import me.jakejmattson.modmail.conversations.guildSetupConversation
 @Service
 class GuildService(private val discord: Discord, private val configuration: Configuration) {
     suspend fun initInGuild(guild: Guild) {
-        //configuration[guild.id.longValue] ?: startSetupConversation(guild)
+        //configuration[guild.id.value] ?: startSetupConversation(guild)
     }
 
     private suspend fun startSetupConversation(guild: Guild) = guildSetupConversation(configuration, guild).startPrivately(discord, guild.owner.asUser())

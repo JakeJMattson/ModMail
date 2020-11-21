@@ -24,7 +24,7 @@ fun editListener(discord: Discord, reportService: ReportService, loggingService:
             val targetMessage = Snowflake(report.messages[messageId.value]!!)
 
             privateChannel.getMessage(targetMessage).edit {
-                content = new.content
+                content = new.content.toString()
             }
         } else {
             val report = author.findReport() ?: return@on

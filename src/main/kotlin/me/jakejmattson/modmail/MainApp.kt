@@ -27,7 +27,7 @@ suspend fun main(it: Array<String>) {
     bot(token) {
         prefix {
             val configuration = discord.getInjectionObjects(Configuration::class)
-            guild?.let { configuration[it.id.longValue]?.prefix.takeUnless { it.isNullOrBlank() } ?: "!" } ?: "<none>"
+            guild?.let { configuration[it.id.value]?.prefix.takeUnless { it.isNullOrBlank() } ?: "!" } ?: "<none>"
         }
 
         configure {
@@ -38,7 +38,7 @@ suspend fun main(it: Array<String>) {
         mentionEmbed {
             val guild = it.guild
             val configuration = it.discord.getInjectionObjects(Configuration::class)
-            val staffId = configuration[guild?.id?.longValue]?.staffRoleId
+            val staffId = configuration[guild?.id?.value]?.staffRoleId
 
             val requiredRole = if (guild != null)
                 staffId?.let { guild.getRole(it.toSnowflake()) }?.mention ?: "<Not Configured>"

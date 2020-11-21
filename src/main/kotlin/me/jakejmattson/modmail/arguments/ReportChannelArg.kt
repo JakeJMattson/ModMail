@@ -26,7 +26,7 @@ open class ReportChannelArg(override val name: String = "Report Channel") : Argu
         return Error("Invalid Report Channel")
     }
 
-    override fun generateExamples(event: CommandEvent<*>): List<String> {
+    override suspend fun generateExamples(event: CommandEvent<*>): List<String> {
         return event.guild?.getReports()?.mapNotNull {
             runBlocking {
                 it.toLiveReport(event.discord.api)?.channel?.mention

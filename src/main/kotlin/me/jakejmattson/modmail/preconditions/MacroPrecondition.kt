@@ -1,5 +1,6 @@
 package me.jakejmattson.modmail.preconditions
 
+import com.gitlab.kordlib.common.kColor
 import me.jakejmattson.discordkt.api.dsl.precondition
 import me.jakejmattson.discordkt.api.extensions.*
 import me.jakejmattson.modmail.services.*
@@ -29,9 +30,9 @@ fun macroPrecondition() = precondition {
                 icon = this@precondition.author.avatar.url
             }
 
-            Color.green
+            Color.green.kColor
         } else {
-            Color.red
+            Color.red.kColor
         }
 
         footer {

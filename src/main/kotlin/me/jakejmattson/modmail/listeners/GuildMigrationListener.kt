@@ -1,5 +1,6 @@
 package me.jakejmattson.modmail.listeners
 
+import com.gitlab.kordlib.common.kColor
 import com.gitlab.kordlib.core.behavior.channel.createEmbed
 import com.gitlab.kordlib.core.event.guild.*
 import com.gitlab.kordlib.core.firstOrNull
@@ -19,7 +20,7 @@ fun guildMigration(guildService: GuildService) = listeners {
 
         report.channel.createEmbed {
             addField("User no longer in server!", message)
-            color = Color.red
+            color = Color.red.kColor
         }
     }
 
@@ -31,7 +32,7 @@ fun guildMigration(guildService: GuildService) = listeners {
 
         report.channel.createEmbed {
             addField("User has rejoined server!", "This report is now reactivated.")
-            color = Color.green
+            color = Color.green.kColor
         }
 
         if (member.isDetained())

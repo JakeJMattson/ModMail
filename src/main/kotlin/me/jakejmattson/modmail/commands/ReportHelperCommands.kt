@@ -1,6 +1,7 @@
 package me.jakejmattson.modmail.commands
 
 import com.gitlab.kordlib.common.exception.RequestException
+import com.gitlab.kordlib.common.kColor
 import com.gitlab.kordlib.core.behavior.channel.*
 import com.gitlab.kordlib.core.behavior.createTextChannel
 import com.gitlab.kordlib.core.entity.*
@@ -22,15 +23,15 @@ fun reportHelperCommands(configuration: Configuration,
 
     suspend fun Member.openReport(event: CommandEvent<*>, detain: Boolean = false) {
         val guild = guild.asGuild()
-        val reportCategory = configuration[guild.id.longValue]!!.getLiveReportCategory(guild.kord)
+        val reportCategory = configuration[guild.id.value]!!.getLiveReportCategory(guild.kord)
         val privateChannel = getDmChannel()
 
         privateChannel.createEmbed {
             if (detain) {
-                color = Color.green
+                color = Color.green.kColor
                 addField("You've have been detained by the staff of ${guild.name}!", Locale.USER_DETAIN_MESSAGE)
             } else {
-                color = Color.red
+                color = Color.red.kColor
                 addField("Chatting with ${guild.name}!", Locale.BOT_DESCRIPTION)
             }
         }
@@ -49,7 +50,7 @@ fun reportHelperCommands(configuration: Configuration,
             description = descriptor()
         }
 
-        val newReport = Report(id.value, reportChannel.id.value, guild.id.value, ConcurrentHashMap())
+        val newReport = Report(id.asString, reportChannel.id.asString, guild.id.asString, ConcurrentHashMap())
         reportService.addReport(newReport)
 
         if (detain) newReport.detain(guild.kord)

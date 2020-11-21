@@ -14,7 +14,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
         execute(CategoryArg) {
             val reportCategory = args.first
 
-            configuration[reportCategory.guild.id.longValue]!!.reportCategory = reportCategory.id.longValue
+            configuration[reportCategory.guild.id.value]!!.reportCategory = reportCategory.id.value
             configuration.save()
             reactSuccess()
         }
@@ -25,7 +25,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
         execute(ChannelArg) {
             val archiveChannel = args.first
 
-            configuration[archiveChannel.guild.id.longValue]!!.archiveChannel = archiveChannel.id.longValue
+            configuration[archiveChannel.guild.id.value]!!.archiveChannel = archiveChannel.id.value
             configuration.save()
             reactSuccess()
         }
@@ -36,7 +36,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
         execute(RoleArg) {
             val staffRole = args.first
 
-            configuration[message.getGuild().id.longValue]!!.staffRoleId = staffRole.id.longValue
+            configuration[message.getGuild().id.value]!!.staffRoleId = staffRole.id.value
             configuration.save()
             reactSuccess()
         }
@@ -47,7 +47,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
         execute(ChannelArg) {
             val loggingChannel = args.first
 
-            configuration[loggingChannel.guild.id.longValue]!!.loggingConfiguration.loggingChannel = loggingChannel.id.longValue
+            configuration[loggingChannel.guild.id.value]!!.loggingConfiguration.loggingChannel = loggingChannel.id.value
             configuration.save()
             reactSuccess()
         }

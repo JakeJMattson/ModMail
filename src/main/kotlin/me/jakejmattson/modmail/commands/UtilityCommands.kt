@@ -17,7 +17,7 @@ fun utilityCommands() = commands("Utility") {
             respond {
                 val seconds = (Date().time - startTime.time) / 1000
 
-                addField("Gateway Ping", discord.api.gateway.averagePing.inMilliseconds.roundToInt().toString())
+                addField("Gateway Ping", discord.api.gateway.averagePing?.inMilliseconds?.roundToInt().toString())
                 addField("Total Uptime", seconds.toTimeString())
             }
         }

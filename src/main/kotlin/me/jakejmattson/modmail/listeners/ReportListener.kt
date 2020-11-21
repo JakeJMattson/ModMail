@@ -16,7 +16,7 @@ fun reportListener(discord: Discord, config: Configuration, reportService: Repor
         if (getGuild() == null) {
             if (Conversations.hasConversation(user, message.channel)) return@on
 
-            val validGuilds = user.mutualGuilds.toList().filter { config.guildConfigurations[it.id.longValue] != null }
+            val validGuilds = user.mutualGuilds.toList().filter { config.guildConfigurations[it.id.value] != null }
 
             when {
                 user.findReport() != null -> reportService.receiveFromUser(message)
@@ -35,11 +35,11 @@ fun reportListener(discord: Discord, config: Configuration, reportService: Repor
             with(message) {
                 val report = channel.findReport() ?: return@on
                 val live = report.toLiveReport(kord) ?: return@on addFailReaction()
-                val prefix = config[getGuild().id.longValue]?.prefix ?: return@on
+                val prefix = config[getGuild().id.value]?.prefix ?: return@on
                 val content = fullContent().takeUnless { it.isBlank() || it.startsWith(prefix) } ?: return@on
                 val newMessage = live.user.sendPrivateMessage(content)
 
-                report.messages[id.value] = newMessage.id.value
+                report.messages[id.asString] = newMessage.id.asString
             }
         }
     }

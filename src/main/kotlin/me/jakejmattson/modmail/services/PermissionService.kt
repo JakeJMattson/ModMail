@@ -25,7 +25,7 @@ class PermissionsService(private val configuration: Configuration) {
             else -> Permission.NONE
         }
 
-    private fun Member.isBotOwner() = id.longValue == configuration.ownerId
+    private fun Member.isBotOwner() = id.value == configuration.ownerId
     private suspend fun Member.isGuildOwner() = isOwner()
-    private suspend fun Member.isStaff() = roles.any { it.id.longValue == configuration[guild.id.longValue]?.staffRoleId }
+    private suspend fun Member.isStaff() = roles.any { it.id.value == configuration[guild.id.value]?.staffRoleId }
 }

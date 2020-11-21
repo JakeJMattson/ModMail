@@ -17,7 +17,7 @@ open class MacroArg(override val name: String = "Macro") : ArgumentType<Macro>()
         return Success(macro)
     }
 
-    override fun generateExamples(event: CommandEvent<*>): List<String> {
+    override suspend fun generateExamples(event: CommandEvent<*>): List<String> {
         val macroService = event.discord.getInjectionObjects(MacroService::class)
         return macroService.getGuildMacros(event.guild!!).map { it.name }.takeIf { it.isNotEmpty() }
             ?: listOf("<No Macros>")

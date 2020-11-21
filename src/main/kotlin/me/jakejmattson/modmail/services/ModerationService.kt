@@ -14,9 +14,9 @@ private val detainedReports = Vector<Report>()
 class ModerationService(val configuration: Configuration) {
     suspend fun hasStaffRole(member: Member): Boolean {
         val guild = member.guild
-        val staffRoleId = configuration[guild.id.longValue]?.staffRoleId ?: return false
+        val staffRoleId = configuration[guild.id.value]?.staffRoleId ?: return false
 
-        return member.roles.any { it.id.longValue == staffRoleId }
+        return member.roles.any { it.id.value == staffRoleId }
     }
 }
 
@@ -38,7 +38,7 @@ suspend fun Report.release(kord: Kord): Boolean {
     return true
 }
 
-fun Member.isDetained() = detainedReports.any { it.userId == id.value }
+fun Member.isDetained() = detainedReports.any { it.userId == id.asString }
 
 suspend fun Member.mute(): Boolean {
     val mutedRole = guild.getMutedRole() ?: return false

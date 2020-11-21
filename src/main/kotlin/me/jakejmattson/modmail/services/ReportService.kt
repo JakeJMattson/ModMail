@@ -1,5 +1,6 @@
 package me.jakejmattson.modmail.services
 
+import com.gitlab.kordlib.common.kColor
 import com.gitlab.kordlib.core.*
 import com.gitlab.kordlib.core.behavior.*
 import com.gitlab.kordlib.core.behavior.channel.*
@@ -42,10 +43,10 @@ data class LiveReport(val user: User,
 private val reports = Vector<Report>()
 
 suspend fun UserBehavior.toLiveReport() = findReport()?.toLiveReport(kord)
-fun UserBehavior.findReport() = reports.firstOrNull { it.userId == id.value }
-fun MessageChannelBehavior.findReport() = reports.firstOrNull { it.channelId == id.value }
+fun UserBehavior.findReport() = reports.firstOrNull { it.userId == id.asString }
+fun MessageChannelBehavior.findReport() = reports.firstOrNull { it.channelId == id.asString }
 suspend fun MessageChannelBehavior.toLiveReport() = findReport()?.toLiveReport(kord)
-fun GuildBehavior.getReports() = reports.filter { it.guildId == id.value }
+fun GuildBehavior.getReports() = reports.filter { it.guildId == id.asString }
 
 @Service
 class ReportService(private val config: Configuration,
@@ -65,7 +66,7 @@ class ReportService(private val config: Configuration,
     suspend fun createReport(user: User, guild: Guild) {
         if (guild.channels.count() >= 250) return
 
-        val reportCategory = config[guild.id.longValue]?.getLiveReportCategory(guild.kord) ?: return
+        val reportCategory = config[guild.id.value]?.getLiveReportCategory(guild.kord) ?: return
 
         createReportChannel(reportCategory, user, guild)
     }
@@ -85,7 +86,7 @@ class ReportService(private val config: Configuration,
             if (safeMessage.isEmpty) return
 
             val newMessage = liveReport.channel.createMessage(safeMessage)
-            messages[message.id.value] = newMessage.id.value
+            messages[message.id.asString] = newMessage.id.asString
         }
     }
 
@@ -106,11 +107,11 @@ class ReportService(private val config: Configuration,
             }
         }
 
-        val newReport = Report(user.id.value, reportChannel.id.value, guild.id.value, ConcurrentHashMap())
+        val newReport = Report(user.id.asString, reportChannel.id.asString, guild.id.asString, ConcurrentHashMap())
         addReport(newReport)
 
         user.sendPrivateMessage {
-            color = Color.GREEN
+            color = Color.GREEN.kColor
 
             field {
                 name = "A report has been created."
@@ -143,7 +144,7 @@ private suspend fun sendReportClosedEmbed(report: Report, kord: Kord) {
     val user = kord.getUser(report.userId.toSnowflake()) ?: return
 
     val builder: EmbedBuilder.() -> Unit = {
-        color = Color.RED
+        color = Color.RED.kColor
 
         field {
             name = "Report Closed"

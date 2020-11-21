@@ -96,7 +96,7 @@ class LoggingService(private val discord: Discord, private val config: Configura
     private fun String.pairTo(user: User?) = this to (user?.tag ?: "<user>")
 
     private val Guild.logConfig
-        get() = config[id.longValue]!!.loggingConfiguration
+        get() = config[id.value]!!.loggingConfiguration
 
     private suspend fun log(config: LoggingConfiguration, message: String) = config.getLiveChannel(api)?.createMessage(message)
     private suspend fun logEmbed(config: LoggingConfiguration, embed: EmbedBuilder) = config.getLiveChannel(api)?.createMessage {

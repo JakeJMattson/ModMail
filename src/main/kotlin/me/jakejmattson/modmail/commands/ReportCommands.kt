@@ -31,7 +31,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             val (reportChannel, note) = args
 
             val (channel, report) = reportChannel
-            val config = configuration[channel.guild.id.longValue]
+            val config = configuration[channel.guild.id.value]
             val archiveChannel = config?.getLiveArchiveChannel(channel.kord)
 
             if (archiveChannel == null) {
