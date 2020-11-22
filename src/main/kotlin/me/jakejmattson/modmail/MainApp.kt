@@ -3,7 +3,7 @@ package me.jakejmattson.modmail
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.dsl.bot
-import me.jakejmattson.discordkt.api.extensions.*
+import me.jakejmattson.discordkt.api.extensions.addInlineField
 import me.jakejmattson.modmail.extensions.requiredPermissionLevel
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
@@ -25,6 +25,9 @@ suspend fun main(it: Array<String>) {
     }
 
     bot(token) {
+        val initialConfig = Json.decodeFromString<Configuration>(configFile.readText())
+        inject(initialConfig)
+
         prefix {
             val configuration = discord.getInjectionObjects(Configuration::class)
             guild?.let { configuration[it.id.value]?.prefix.takeUnless { it.isNullOrBlank() } ?: "!" } ?: "<none>"
@@ -41,7 +44,7 @@ suspend fun main(it: Array<String>) {
             val staffId = configuration[guild?.id?.value]?.staffRoleId
 
             val requiredRole = if (guild != null)
-                staffId?.let { guild.getRole(it.toSnowflake()) }?.mention ?: "<Not Configured>"
+                staffId?.let { guild.getRole(it) }?.mention ?: "<Not Configured>"
             else
                 "<Not Applicable>"
 

@@ -24,7 +24,7 @@ fun guildSetupConversation(config: Configuration, guild: Guild) = conversation {
     val archiveChannel = createPrompt(ChannelArg<TextChannel>(), "Enter the channel where archived reports will be sent.") { it.guild == guild }
     val loggingChannel = createPrompt(ChannelArg<TextChannel>(), "Enter the channel where information will be logged.") { it.guild == guild }
     val staffRole = createPrompt(RoleArg(guildId = guild.id), "Enter the role required to give commands to this bot.") { it.guild == guild }
-    val guildConfig = GuildConfiguration("!", reportCategory.id.value, archiveChannel.id.value, staffRole.id.value, LoggingConfiguration(loggingChannel.id.value))
+    val guildConfig = GuildConfiguration("!", reportCategory.id, archiveChannel.id, staffRole.id, LoggingConfiguration(loggingChannel.id))
 
     config.guildConfigurations[guild.id.value] = guildConfig
     config.save()

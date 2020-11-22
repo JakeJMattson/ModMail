@@ -16,7 +16,7 @@ class ModerationService(val configuration: Configuration) {
         val guild = member.guild
         val staffRoleId = configuration[guild.id.value]?.staffRoleId ?: return false
 
-        return member.roles.any { it.id.value == staffRoleId }
+        return member.roles.any { it.id == staffRoleId }
     }
 }
 

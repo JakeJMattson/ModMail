@@ -6,7 +6,7 @@ private const val rootFolder = "data"
 private const val configFolder = "$rootFolder/config"
 private const val persistenceFolder = "$rootFolder/persistence"
 private const val macrosFolder = "$persistenceFolder/macros"
-const val configFile = "$configFolder/config.json"
+val configFile = File("$configFolder/config.json")
 
 val reportsFolder = createDirectories("$persistenceFolder/reports")
 val macroFile = File(macrosFolder, "macros.json").createParentsAndFile()

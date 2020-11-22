@@ -36,8 +36,7 @@ fun reportHelperCommands(configuration: Configuration,
             }
         }
 
-        val reportChannel = guild.createTextChannel {
-            name = username
+        val reportChannel = guild.createTextChannel(username) {
             parentId = reportCategory?.id
         }
 
