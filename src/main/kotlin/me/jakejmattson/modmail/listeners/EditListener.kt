@@ -1,12 +1,10 @@
 package me.jakejmattson.modmail.listeners
 
-import com.gitlab.kordlib.common.entity.Snowflake
 import com.gitlab.kordlib.core.behavior.edit
 import com.gitlab.kordlib.core.event.channel.TypingStartEvent
 import com.gitlab.kordlib.core.event.message.*
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.dsl.listeners
-import me.jakejmattson.discordkt.api.extensions.toSnowflakeOrNull
 import me.jakejmattson.modmail.extensions.cleanContent
 import me.jakejmattson.modmail.services.*
 

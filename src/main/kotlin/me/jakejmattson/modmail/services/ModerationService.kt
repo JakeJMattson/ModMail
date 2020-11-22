@@ -5,7 +5,6 @@ import com.gitlab.kordlib.core.behavior.GuildBehavior
 import com.gitlab.kordlib.core.entity.Member
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.api.annotations.Service
-import me.jakejmattson.discordkt.api.extensions.toSnowflakeOrNull
 import java.util.*
 
 private val detainedReports = Vector<Report>()

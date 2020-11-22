@@ -5,8 +5,6 @@ import com.gitlab.kordlib.core.Kord
 import com.gitlab.kordlib.core.entity.channel.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.Json.Default.encodeToString
-import me.jakejmattson.discordkt.api.dsl.Data
 
 @Serializable
 data class LoggingConfiguration(var loggingChannel: Snowflake,

@@ -7,7 +7,6 @@ import me.jakejmattson.modmail.arguments.MacroArg
 import me.jakejmattson.modmail.extensions.reactSuccess
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.MacroService
-import java.awt.Color
 
 fun macroCommands(macroService: MacroService) = commands("Macros") {
     guildCommand("AddMacro") {

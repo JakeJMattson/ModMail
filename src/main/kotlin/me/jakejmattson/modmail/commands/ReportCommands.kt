@@ -1,10 +1,8 @@
 package me.jakejmattson.modmail.commands
 
 import com.gitlab.kordlib.core.behavior.channel.*
-import com.gitlab.kordlib.core.entity.channel.TextChannel
 import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.dsl.commands
-import me.jakejmattson.discordkt.api.extensions.toSnowflakeOrNull
 import me.jakejmattson.modmail.arguments.ReportChannelArg
 import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.modmail.listeners.deletionQueue

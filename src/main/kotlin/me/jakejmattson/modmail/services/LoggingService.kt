@@ -12,7 +12,7 @@ import me.jakejmattson.discordkt.api.extensions.addField
 import me.jakejmattson.modmail.messages.*
 
 @Service
-class LoggingService(private val discord: Discord, private val config: Configuration) {
+class LoggingService(discord: Discord, private val config: Configuration) {
     private val api = discord.api
 
     init {
