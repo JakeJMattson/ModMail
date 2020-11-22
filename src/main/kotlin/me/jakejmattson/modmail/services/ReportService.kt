@@ -1,5 +1,6 @@
 package me.jakejmattson.modmail.services
 
+import com.gitlab.kordlib.common.entity.Snowflake
 import com.gitlab.kordlib.common.kColor
 import com.gitlab.kordlib.core.*
 import com.gitlab.kordlib.core.behavior.*
@@ -22,31 +23,29 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 @Serializable
-data class Report(val userId: String,
-                  val channelId: String,
-                  val guildId: String,
-                  val messages: MutableMap<String, String> = mutableMapOf()) {
+data class Report(val userId: Snowflake,
+                  val channelId: Snowflake,
+                  val guildId: Snowflake,
+                  val messages: MutableMap<Snowflake, Snowflake> = mutableMapOf()) {
 
     suspend fun toLiveReport(api: Kord): LiveReport? {
-        val user = userId.toSnowflakeOrNull()?.let { api.getUser(it) } ?: return null
-        val guild = guildId.toSnowflakeOrNull()?.let { api.getGuild(it) } ?: return null
-        val channel = channelId.toSnowflakeOrNull()?.let { guild.getChannelOfOrNull<TextChannel>(it) } ?: return null
+        val user = api.getUser(userId) ?: return null
+        val guild = api.getGuild(guildId) ?: return null
+        val channel = guild.getChannelOfOrNull<TextChannel>(channelId) ?: return null
 
         return LiveReport(user, channel, guild)
     }
 }
 
-data class LiveReport(val user: User,
-                      val channel: TextChannel,
-                      val guild: Guild)
+data class LiveReport(val user: User, val channel: TextChannel, val guild: Guild)
 
 private val reports = Vector<Report>()
 
 suspend fun UserBehavior.toLiveReport() = findReport()?.toLiveReport(kord)
-fun UserBehavior.findReport() = reports.firstOrNull { it.userId == id.asString }
-fun MessageChannelBehavior.findReport() = reports.firstOrNull { it.channelId == id.asString }
+fun UserBehavior.findReport() = reports.firstOrNull { it.userId == id }
+fun MessageChannelBehavior.findReport() = reports.firstOrNull { it.channelId == id }
 suspend fun MessageChannelBehavior.toLiveReport() = findReport()?.toLiveReport(kord)
-fun GuildBehavior.getReports() = reports.filter { it.guildId == id.asString }
+fun GuildBehavior.getReports() = reports.filter { it.guildId == id }
 
 @Service
 class ReportService(private val config: Configuration,
@@ -56,7 +55,7 @@ class ReportService(private val config: Configuration,
         GlobalScope.launch {
             reportsFolder.listFiles()?.forEach {
                 val report = Json.decodeFromString<Report>(it.readText())
-                val channel = report.channelId.toSnowflakeOrNull()?.let { discord.api.getChannel(it) }
+                val channel = discord.api.getChannel(report.channelId)
 
                 if (channel != null) reports.add(report) else it.delete()
             }
@@ -86,7 +85,7 @@ class ReportService(private val config: Configuration,
             if (safeMessage.isEmpty) return
 
             val newMessage = liveReport.channel.createMessage(safeMessage)
-            messages[message.id.asString] = newMessage.id.asString
+            messages[message.id] = newMessage.id
         }
     }
 
@@ -94,8 +93,7 @@ class ReportService(private val config: Configuration,
         File("$reportsFolder/${report.channelId}.json").writeText(Json.encodeToString(report))
 
     private suspend fun createReportChannel(category: Category, user: User, guild: Guild) {
-        val reportChannel = guild.createTextChannel {
-            name = user.username
+        val reportChannel = guild.createTextChannel(user.username) {
             parentId = category.id
         }
 
@@ -107,7 +105,7 @@ class ReportService(private val config: Configuration,
             }
         }
 
-        val newReport = Report(user.id.asString, reportChannel.id.asString, guild.id.asString, ConcurrentHashMap())
+        val newReport = Report(user.id, reportChannel.id, guild.id, ConcurrentHashMap())
         addReport(newReport)
 
         user.sendPrivateMessage {
@@ -136,12 +134,12 @@ suspend fun Report.close(kord: Kord) {
 
 private fun removeReport(report: Report) {
     reports.remove(report)
-    reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId) }?.delete()
+    reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId.asString) }?.delete()
 }
 
 private suspend fun sendReportClosedEmbed(report: Report, kord: Kord) {
-    val guild = kord.getGuild(report.guildId.toSnowflake()) ?: return
-    val user = kord.getUser(report.userId.toSnowflake()) ?: return
+    val guild = kord.getGuild(report.guildId) ?: return
+    val user = kord.getUser(report.userId) ?: return
 
     val builder: EmbedBuilder.() -> Unit = {
         color = Color.RED.kColor

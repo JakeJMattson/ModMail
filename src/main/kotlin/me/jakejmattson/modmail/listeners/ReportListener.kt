@@ -11,7 +11,7 @@ import me.jakejmattson.modmail.services.*
 
 fun reportListener(discord: Discord, config: Configuration, reportService: ReportService) = listeners {
     on<MessageCreateEvent> {
-        val user = message.author!!.takeUnless { it.isBot == true } ?: return@on
+        val user = message.author!!.takeUnless { it.isBot } ?: return@on
 
         if (getGuild() == null) {
             if (Conversations.hasConversation(user, message.channel)) return@on
@@ -39,7 +39,7 @@ fun reportListener(discord: Discord, config: Configuration, reportService: Repor
                 val content = fullContent().takeUnless { it.isBlank() || it.startsWith(prefix) } ?: return@on
                 val newMessage = live.user.sendPrivateMessage(content)
 
-                report.messages[id.asString] = newMessage.id.asString
+                report.messages[id] = newMessage.id
             }
         }
     }

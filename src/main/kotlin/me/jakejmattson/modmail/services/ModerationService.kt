@@ -21,14 +21,14 @@ class ModerationService(val configuration: Configuration) {
 }
 
 suspend fun Report.detain(kord: Kord) {
-    val member = guildId.toSnowflakeOrNull()?.let { toLiveReport(kord)?.user?.asMember(it) } ?: return
+    val member = toLiveReport(kord)?.user?.asMember(guildId) ?: return
 
     if (!member.isDetained())
         detainedReports.addElement(this)
 }
 
 suspend fun Report.release(kord: Kord): Boolean {
-    val member = guildId.toSnowflakeOrNull()?.let { toLiveReport(kord)?.user?.asMember(it) } ?: return false
+    val member = toLiveReport(kord)?.user?.asMember(guildId) ?: return false
 
     if (member.isDetained()) {
         detainedReports.remove(this)
@@ -38,7 +38,7 @@ suspend fun Report.release(kord: Kord): Boolean {
     return true
 }
 
-fun Member.isDetained() = detainedReports.any { it.userId == id.asString }
+fun Member.isDetained() = detainedReports.any { it.userId == id }
 
 suspend fun Member.mute(): Boolean {
     val mutedRole = guild.getMutedRole() ?: return false

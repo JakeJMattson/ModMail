@@ -97,7 +97,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         execute(ReportChannelArg) {
             val reportChannel = args.first
             val (channel, report) = reportChannel
-            val user = report.userId.toSnowflakeOrNull()?.let { discord.api.getUser(it) } ?: return@execute
+            val user = discord.api.getUser(report.userId) ?: return@execute
             val newName = user.username
 
             channel.edit {

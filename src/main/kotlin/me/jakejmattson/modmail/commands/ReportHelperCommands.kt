@@ -49,7 +49,7 @@ fun reportHelperCommands(configuration: Configuration,
             description = descriptor()
         }
 
-        val newReport = Report(id.asString, reportChannel.id.asString, guild.id.asString, ConcurrentHashMap())
+        val newReport = Report(id, reportChannel.id, guild.id, ConcurrentHashMap())
         reportService.addReport(newReport)
 
         if (detain) newReport.detain(guild.kord)
@@ -113,7 +113,7 @@ fun reportHelperCommands(configuration: Configuration,
         description = Locale.RELEASE_DESCRIPTION
         execute(ReportChannelArg) {
             val report = args.first.report
-            val member = guild.getMemberOrNull(report.userId.toSnowflake())
+            val member = guild.getMemberOrNull(report.userId)
 
             if (member == null) {
                 respond("This user is not in the server.")
@@ -138,8 +138,8 @@ fun reportHelperCommands(configuration: Configuration,
 
             val response = with(report) {
                 when (choice) {
-                    "user" -> userId
-                    "channel" -> channelId
+                    "user" -> userId.asString
+                    "channel" -> channelId.asString
                     "all" -> "User ID: $userId\nChannel ID: $channelId"
                     else -> "Invalid selection!"
                 }
