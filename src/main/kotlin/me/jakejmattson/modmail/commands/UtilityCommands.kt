@@ -9,6 +9,7 @@ import kotlin.time.ExperimentalTime
 
 private val startTime = Date()
 
+@Suppress("unused")
 @ExperimentalTime
 fun utilityCommands() = commands("Utility") {
     guildCommand("Status", "Ping") {

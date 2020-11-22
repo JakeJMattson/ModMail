@@ -8,6 +8,7 @@ import me.jakejmattson.discordkt.api.dsl.listeners
 import me.jakejmattson.modmail.extensions.cleanContent
 import me.jakejmattson.modmail.services.*
 
+@Suppress("unused")
 fun editListener(discord: Discord, reportService: ReportService, loggingService: LoggingService) = listeners {
     on<MessageUpdateEvent> {
         val message = this.message.asMessage()

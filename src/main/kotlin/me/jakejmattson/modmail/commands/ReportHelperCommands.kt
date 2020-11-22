@@ -16,6 +16,7 @@ import me.jakejmattson.modmail.services.*
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
+@Suppress("unused")
 fun reportHelperCommands(configuration: Configuration,
                          reportService: ReportService,
                          moderationService: ModerationService,

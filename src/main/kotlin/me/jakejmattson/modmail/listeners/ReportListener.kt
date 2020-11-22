@@ -9,6 +9,7 @@ import me.jakejmattson.modmail.conversations.guildChoiceConversation
 import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.modmail.services.*
 
+@Suppress("unused")
 fun reportListener(discord: Discord, config: Configuration, reportService: ReportService) = listeners {
     on<MessageCreateEvent> {
         val user = message.author!!.takeUnless { it.isBot } ?: return@on

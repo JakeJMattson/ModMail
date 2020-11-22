@@ -8,6 +8,7 @@ import me.jakejmattson.modmail.extensions.reactSuccess
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.MacroService
 
+@Suppress("unused")
 fun macroCommands(macroService: MacroService) = commands("Macros") {
     guildCommand("AddMacro") {
         description = Locale.ADD_MACRO_DESCRIPTION

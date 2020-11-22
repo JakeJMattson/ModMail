@@ -6,6 +6,7 @@ import me.jakejmattson.modmail.extensions.*
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
 
+@Suppress("unused")
 fun configurationCommands(configuration: Configuration) = commands("Configuration") {
     requiredPermissionLevel = Permission.GUILD_OWNER
 

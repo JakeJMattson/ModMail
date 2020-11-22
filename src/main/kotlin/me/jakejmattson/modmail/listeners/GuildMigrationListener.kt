@@ -9,6 +9,7 @@ import me.jakejmattson.discordkt.api.extensions.addField
 import me.jakejmattson.modmail.services.*
 import java.awt.Color
 
+@Suppress("unused")
 fun guildMigration(guildService: GuildService) = listeners {
     on<MemberLeaveEvent> {
         val report = user.toLiveReport() ?: return@on

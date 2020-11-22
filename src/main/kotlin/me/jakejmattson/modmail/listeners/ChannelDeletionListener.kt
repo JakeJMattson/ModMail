@@ -7,6 +7,7 @@ import me.jakejmattson.modmail.services.*
 
 val deletionQueue = ArrayList<Snowflake>()
 
+@Suppress("unused")
 fun channelDeletion(loggingService: LoggingService) = listeners {
     on<TextChannelDeleteEvent> {
         val report = channel.findReport() ?: return@on

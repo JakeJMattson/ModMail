@@ -9,6 +9,7 @@ import me.jakejmattson.modmail.listeners.deletionQueue
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
 
+@Suppress("unused")
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands("Report") {
     guildCommand("Close") {
         description = Locale.CLOSE_DESCRIPTION

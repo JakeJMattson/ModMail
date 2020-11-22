@@ -6,6 +6,7 @@ import me.jakejmattson.discordkt.api.extensions.*
 import me.jakejmattson.modmail.services.*
 import java.awt.Color
 
+@Suppress("unused")
 fun macroPrecondition() = precondition {
     val commandName = rawInputs.commandName.toLowerCase()
 

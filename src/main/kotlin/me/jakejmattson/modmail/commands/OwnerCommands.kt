@@ -6,6 +6,7 @@ import me.jakejmattson.modmail.extensions.requiredPermissionLevel
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
 
+@Suppress("unused")
 fun ownerCommands(configuration: Configuration) = commands("Owner") {
     requiredPermissionLevel = Permission.BOT_OWNER
 
