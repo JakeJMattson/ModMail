@@ -12,7 +12,7 @@ data class Macro(var name: String, var message: String)
 class MacroService {
     private val macroMap = loadMacros()
 
-    private fun MutableList<Macro>.hasMacro(name: String) = this.any { it.name.toLowerCase() == name.toLowerCase() }
+    private fun MutableList<Macro>.hasMacro(name: String) = this.any { it.name.equals(name, true) }
 
     fun getGuildMacros(guild: Guild) = macroMap.getOrPut(guild.id.asString) { arrayListOf() }
 

@@ -15,7 +15,7 @@ fun ownerCommands(configuration: Configuration) = commands("Owner") {
         execute(AnyArg("Prefix")) {
             val prefix = args.first
 
-            configuration[guild.id.value]?.prefix = prefix
+            configuration[guild.id]?.prefix = prefix
             configuration.save()
 
             respond("Prefix set to: $prefix")

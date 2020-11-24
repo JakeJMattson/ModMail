@@ -6,5 +6,5 @@ import me.jakejmattson.modmail.services.Configuration
 
 @Suppress("unused")
 fun validGuildPrecondition(configuration: Configuration) = precondition {
-    guild?.id?.value?.let { configuration[it] } ?: fail(Locale.FAIL_GUILD_NOT_CONFIGURED)
+    guild?.id?.let { configuration[it] } ?: fail(Locale.FAIL_GUILD_NOT_CONFIGURED)
 }

@@ -26,8 +26,8 @@ data class GuildConfiguration(var prefix: String,
 }
 
 @Serializable
-data class Configuration(val ownerId: Long = 0,
-                         val guildConfigurations: MutableMap<Long, GuildConfiguration> = mutableMapOf()) {
-    operator fun get(id: Long?) = id?.let { guildConfigurations[it] }
+data class Configuration(val ownerId: Snowflake = Snowflake(0),
+                         val guildConfigurations: MutableMap<Snowflake, GuildConfiguration> = mutableMapOf()) {
+    operator fun get(id: Snowflake?) = id?.let { guildConfigurations[it] }
     fun save() = configFile.writeText(Json.encodeToString(this))
 }

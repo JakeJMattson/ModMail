@@ -26,7 +26,7 @@ fun guildSetupConversation(config: Configuration, guild: Guild) = conversation {
     val staffRole = createPrompt(RoleArg(guildId = guild.id), "Enter the role required to give commands to this bot.") { it.guild == guild }
     val guildConfig = GuildConfiguration("!", reportCategory.id, archiveChannel.id, staffRole.id, LoggingConfiguration(loggingChannel.id))
 
-    config.guildConfigurations[guild.id.value] = guildConfig
+    config.guildConfigurations[guild.id] = guildConfig
     config.save()
 
     respond(Locale.GUILD_SETUP_SUCCESSFUL)

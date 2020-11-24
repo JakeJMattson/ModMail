@@ -13,7 +13,7 @@ private val detainedReports = Vector<Report>()
 class ModerationService(val configuration: Configuration) {
     suspend fun hasStaffRole(member: Member): Boolean {
         val guild = member.guild
-        val staffRoleId = configuration[guild.id.value]?.staffRoleId ?: return false
+        val staffRoleId = configuration[guild.id]?.staffRoleId ?: return false
 
         return member.roles.any { it.id == staffRoleId }
     }

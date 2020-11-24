@@ -11,7 +11,7 @@ open class MacroArg(override val name: String = "Macro") : ArgumentType<Macro>()
         val macroService = event.discord.getInjectionObjects(MacroService::class)
 
         val macro = macroService.getGuildMacros(event.guild!!)
-            .firstOrNull { it.name.toLowerCase() == arg.toLowerCase() }
+            .firstOrNull { it.name.equals(arg, true) }
             ?: return Error("Unknown Macro")
 
         return Success(macro)
