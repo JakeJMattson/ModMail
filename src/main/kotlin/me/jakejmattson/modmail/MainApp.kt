@@ -25,11 +25,10 @@ suspend fun main(it: Array<String>) {
     }
 
     bot(token) {
-        val initialConfig = Json.decodeFromString<Configuration>(configFile.readText())
-        inject(initialConfig)
+        val configuration = Json.decodeFromString<Configuration>(configFile.readText())
+        inject(configuration)
 
         prefix {
-            val configuration = discord.getInjectionObjects(Configuration::class)
             guild?.let { configuration[it.id]?.prefix.takeUnless { it.isNullOrBlank() } ?: "!" } ?: "<none>"
         }
 
@@ -40,7 +39,6 @@ suspend fun main(it: Array<String>) {
 
         mentionEmbed {
             val guild = it.guild
-            val configuration = it.discord.getInjectionObjects(Configuration::class)
             val staffId = configuration[guild?.id]?.staffRoleId
 
             val requiredRole = if (guild != null)

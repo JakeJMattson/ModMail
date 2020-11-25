@@ -71,7 +71,7 @@ fun reportHelperCommands(configuration: Configuration,
                 targetMember.openReport(this, false)
             } catch (ex: RequestException) {
                 respond("Unable to contact the target user. " +
-                        "Direct messages are disabled or the bot is blocked.")
+                    "Direct messages are disabled or the bot is blocked.")
 
                 return@execute
             }
@@ -100,8 +100,8 @@ fun reportHelperCommands(configuration: Configuration,
                 targetMember.openReport(this, true)
             } catch (ex: RequestException) {
                 respond("Unable to contact the target user. " +
-                        "Direct messages are disabled or the bot is blocked. " +
-                        "Mute was not applied")
+                    "Direct messages are disabled or the bot is blocked. " +
+                    "Mute was not applied")
 
                 return@execute
             }

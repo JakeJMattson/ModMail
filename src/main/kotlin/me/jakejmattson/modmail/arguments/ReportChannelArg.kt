@@ -37,6 +37,6 @@ open class ReportChannelArg(override val name: String = "Report Channel") : Argu
 
 data class ReportChannel(val channel: TextChannel, val report: Report, val wasTargeted: Boolean)
 
-fun TextChannel.toReportChannel(wasTargeted: Boolean) = findReport()?.let {
-    report -> ReportChannel(this, report, wasTargeted)
+fun TextChannel.toReportChannel(wasTargeted: Boolean) = findReport()?.let { report ->
+    ReportChannel(this, report, wasTargeted)
 }
