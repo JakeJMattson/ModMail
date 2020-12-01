@@ -28,7 +28,7 @@ class ReportListener(private val reportService: ReportService, private val conve
                 reportService.receiveFromUser(message)
             }
             sentChoice.contains(user.id) -> {
-                if (content.toIntOrNull() != null)
+                if (content.toIntOrNull() == null)
                     return user.sendPrivateMessage("Choice must be an number.")
 
                 val selection = content.toInt()
