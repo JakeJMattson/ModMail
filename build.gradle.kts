@@ -4,8 +4,8 @@ group = "me.jakejmattson"
 version = "4.0.0"
 
 plugins {
-    kotlin("jvm") version "1.4.20"
-    kotlin("plugin.serialization") version "1.4.20"
+    kotlin("jvm") version "1.4.21"
+    kotlin("plugin.serialization") version "1.4.21"
     id("com.github.johnrengelman.shadow") version "6.1.0"
     id("com.github.ben-manes.versions") version "0.36.0"
 }
@@ -13,6 +13,7 @@ plugins {
 repositories {
     mavenLocal()
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    maven("https://dl.bintray.com/kordlib/Kord")
     mavenCentral()
     jcenter()
 }

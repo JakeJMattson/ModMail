@@ -1,11 +1,11 @@
 package me.jakejmattson.modmail.commands
 
-import com.gitlab.kordlib.common.exception.RequestException
-import com.gitlab.kordlib.common.kColor
-import com.gitlab.kordlib.core.behavior.channel.*
-import com.gitlab.kordlib.core.behavior.createTextChannel
-import com.gitlab.kordlib.core.entity.*
-import com.gitlab.kordlib.core.entity.channel.TextChannel
+import dev.kord.common.exception.RequestException
+import dev.kord.common.kColor
+import dev.kord.core.behavior.channel.*
+import dev.kord.core.behavior.createTextChannel
+import dev.kord.core.entity.*
+import dev.kord.core.entity.channel.TextChannel
 import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.dsl.*
 import me.jakejmattson.discordkt.api.extensions.*
@@ -133,7 +133,7 @@ fun reportHelperCommands(configuration: Configuration,
 
     guildCommand("Info") {
         description = Locale.INFO_DESCRIPTION
-        execute(ReportChannelArg, ChoiceArg("Field", "user", "channel", "all").makeOptional("user")) {
+        execute(ReportChannelArg, ChoiceArg("Field", "user", "channel", "all").optional("user")) {
             val (reportChannel, choice) = args
             val (channel, report) = reportChannel
 

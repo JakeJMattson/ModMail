@@ -1,9 +1,9 @@
 package me.jakejmattson.modmail.services
 
-import com.gitlab.kordlib.core.behavior.channel.createMessage
-import com.gitlab.kordlib.core.entity.*
-import com.gitlab.kordlib.core.entity.channel.TextChannel
-import com.gitlab.kordlib.rest.builder.message.EmbedBuilder
+import dev.kord.core.behavior.channel.createMessage
+import dev.kord.core.entity.*
+import dev.kord.core.entity.channel.TextChannel
+import dev.kord.rest.builder.message.EmbedBuilder
 import kotlinx.coroutines.*
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.annotations.Service

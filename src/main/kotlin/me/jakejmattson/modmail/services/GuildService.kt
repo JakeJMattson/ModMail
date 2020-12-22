@@ -1,6 +1,6 @@
 package me.jakejmattson.modmail.services
 
-import com.gitlab.kordlib.core.entity.Guild
+import dev.kord.core.entity.Guild
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.annotations.Service
 import me.jakejmattson.modmail.conversations.guildSetupConversation

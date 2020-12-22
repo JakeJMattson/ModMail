@@ -1,6 +1,6 @@
 package me.jakejmattson.modmail.preconditions
 
-import com.gitlab.kordlib.common.kColor
+import dev.kord.common.kColor
 import me.jakejmattson.discordkt.api.dsl.precondition
 import me.jakejmattson.discordkt.api.extensions.*
 import me.jakejmattson.modmail.services.*

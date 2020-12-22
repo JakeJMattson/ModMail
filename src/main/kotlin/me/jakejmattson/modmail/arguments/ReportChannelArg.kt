@@ -1,13 +1,13 @@
 package me.jakejmattson.modmail.arguments
 
-import com.gitlab.kordlib.core.entity.channel.TextChannel
+import dev.kord.core.entity.channel.TextChannel
 import kotlinx.coroutines.runBlocking
 import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.dsl.CommandEvent
 import me.jakejmattson.discordkt.api.extensions.toSnowflakeOrNull
 import me.jakejmattson.modmail.services.*
 
-open class ReportChannelArg(override val name: String = "Report Channel") : ArgumentType<ReportChannel>() {
+open class ReportChannelArg(override val name: String = "Report Channel") : ArgumentType<ReportChannel> {
     companion object : ReportChannelArg()
 
     override suspend fun convert(arg: String, args: List<String>, event: CommandEvent<*>): ArgumentResult<ReportChannel> {

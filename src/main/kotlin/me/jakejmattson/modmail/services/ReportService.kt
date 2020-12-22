@@ -1,14 +1,14 @@
 package me.jakejmattson.modmail.services
 
-import com.gitlab.kordlib.common.entity.Snowflake
-import com.gitlab.kordlib.common.kColor
-import com.gitlab.kordlib.core.*
-import com.gitlab.kordlib.core.behavior.*
-import com.gitlab.kordlib.core.behavior.channel.*
-import com.gitlab.kordlib.core.entity.*
-import com.gitlab.kordlib.core.entity.channel.*
-import com.gitlab.kordlib.rest.Image
-import com.gitlab.kordlib.rest.builder.message.EmbedBuilder
+import dev.kord.common.entity.Snowflake
+import dev.kord.common.kColor
+import dev.kord.core.*
+import dev.kord.core.behavior.*
+import dev.kord.core.behavior.channel.*
+import dev.kord.core.entity.*
+import dev.kord.core.entity.channel.*
+import dev.kord.rest.Image
+import dev.kord.rest.builder.message.EmbedBuilder
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.count
 import kotlinx.serialization.*

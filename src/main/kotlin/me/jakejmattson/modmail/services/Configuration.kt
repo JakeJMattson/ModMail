@@ -1,8 +1,8 @@
 package me.jakejmattson.modmail.services
 
-import com.gitlab.kordlib.common.entity.Snowflake
-import com.gitlab.kordlib.core.Kord
-import com.gitlab.kordlib.core.entity.channel.*
+import dev.kord.common.entity.Snowflake
+import dev.kord.core.Kord
+import dev.kord.core.entity.channel.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 

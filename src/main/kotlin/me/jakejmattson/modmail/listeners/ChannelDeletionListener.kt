@@ -1,7 +1,7 @@
 package me.jakejmattson.modmail.listeners
 
-import com.gitlab.kordlib.common.entity.Snowflake
-import com.gitlab.kordlib.core.event.channel.TextChannelDeleteEvent
+import dev.kord.common.entity.Snowflake
+import dev.kord.core.event.channel.TextChannelDeleteEvent
 import me.jakejmattson.discordkt.api.dsl.listeners
 import me.jakejmattson.modmail.services.*
 

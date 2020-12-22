@@ -1,8 +1,8 @@
 package me.jakejmattson.modmail.services
 
-import com.gitlab.kordlib.core.*
-import com.gitlab.kordlib.core.behavior.GuildBehavior
-import com.gitlab.kordlib.core.entity.Member
+import dev.kord.core.*
+import dev.kord.core.behavior.GuildBehavior
+import dev.kord.core.entity.Member
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.api.annotations.Service
 import java.util.*

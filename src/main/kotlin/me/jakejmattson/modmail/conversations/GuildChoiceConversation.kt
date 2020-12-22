@@ -1,6 +1,6 @@
 package me.jakejmattson.modmail.conversations
 
-import com.gitlab.kordlib.core.entity.*
+import dev.kord.core.entity.*
 import me.jakejmattson.discordkt.api.arguments.IntegerRangeArg
 import me.jakejmattson.discordkt.api.dsl.conversation
 import me.jakejmattson.modmail.services.ReportService

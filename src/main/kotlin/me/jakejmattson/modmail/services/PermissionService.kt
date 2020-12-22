@@ -1,7 +1,7 @@
 package me.jakejmattson.modmail.services
 
-import com.gitlab.kordlib.core.any
-import com.gitlab.kordlib.core.entity.Member
+import dev.kord.core.any
+import dev.kord.core.entity.Member
 import me.jakejmattson.discordkt.api.annotations.Service
 
 enum class Permission {

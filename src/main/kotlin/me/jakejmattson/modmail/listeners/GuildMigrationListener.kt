@@ -1,9 +1,9 @@
 package me.jakejmattson.modmail.listeners
 
-import com.gitlab.kordlib.common.kColor
-import com.gitlab.kordlib.core.behavior.channel.createEmbed
-import com.gitlab.kordlib.core.event.guild.*
-import com.gitlab.kordlib.core.firstOrNull
+import dev.kord.common.kColor
+import dev.kord.core.behavior.channel.createEmbed
+import dev.kord.core.event.guild.*
+import dev.kord.core.firstOrNull
 import me.jakejmattson.discordkt.api.dsl.listeners
 import me.jakejmattson.discordkt.api.extensions.addField
 import me.jakejmattson.modmail.services.*

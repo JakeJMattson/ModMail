@@ -1,8 +1,8 @@
 package me.jakejmattson.modmail.conversations
 
-import com.gitlab.kordlib.core.entity.Guild
-import com.gitlab.kordlib.core.entity.channel.TextChannel
-import com.gitlab.kordlib.rest.Image
+import dev.kord.core.entity.Guild
+import dev.kord.core.entity.channel.TextChannel
+import dev.kord.rest.Image
 import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.dsl.conversation
 import me.jakejmattson.modmail.messages.Locale

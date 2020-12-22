@@ -1,8 +1,8 @@
 package me.jakejmattson.modmail.listeners
 
-import com.gitlab.kordlib.core.behavior.edit
-import com.gitlab.kordlib.core.event.channel.TypingStartEvent
-import com.gitlab.kordlib.core.event.message.*
+import dev.kord.core.behavior.edit
+import dev.kord.core.event.channel.TypingStartEvent
+import dev.kord.core.event.message.*
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.dsl.listeners
 import me.jakejmattson.modmail.extensions.cleanContent

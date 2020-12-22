@@ -1,6 +1,6 @@
 package me.jakejmattson.modmail.listeners
 
-import com.gitlab.kordlib.core.event.message.MessageCreateEvent
+import dev.kord.core.event.message.MessageCreateEvent
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.dsl.*

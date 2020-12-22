@@ -1,6 +1,6 @@
 package me.jakejmattson.modmail.commands
 
-import com.gitlab.kordlib.core.behavior.channel.*
+import dev.kord.core.behavior.channel.*
 import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.dsl.commands
 import me.jakejmattson.modmail.arguments.ReportChannelArg
@@ -26,7 +26,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     guildCommand("Archive") {
         description = Locale.ARCHIVE_DESCRIPTION
-        execute(ReportChannelArg, EveryArg("Info").makeOptional("")) {
+        execute(ReportChannelArg, EveryArg("Info").optional("")) {
             val (reportChannel, note) = args
 
             val (channel, report) = reportChannel
