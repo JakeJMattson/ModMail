@@ -6,6 +6,7 @@ import dev.kord.core.behavior.channel.*
 import dev.kord.core.behavior.createTextChannel
 import dev.kord.core.entity.*
 import dev.kord.core.entity.channel.TextChannel
+import dev.kord.rest.Image
 import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.dsl.*
 import me.jakejmattson.discordkt.api.extensions.*
@@ -35,20 +36,17 @@ fun reportHelperCommands(configuration: Configuration,
                 color = Color.red.kColor
                 addField("Chatting with ${guild.name}!", Locale.BOT_DESCRIPTION)
             }
+
+            thumbnail {
+                url = guild.getIconUrl(Image.Format.JPEG) ?: ""
+            }
         }
 
         val reportChannel = guild.createTextChannel(username) {
             parentId = reportCategory?.id
         }
 
-        reportChannel.createEmbed {
-            author {
-                name = username
-                icon = avatar.url
-            }
-
-            description = descriptor()
-        }
+        reportOpenEmbed(reportChannel, detain)
 
         val newReport = Report(id, reportChannel.id, guild.id, ConcurrentHashMap())
         reportService.addReport(newReport)

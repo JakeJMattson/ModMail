@@ -16,7 +16,7 @@ import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.annotations.Service
 import me.jakejmattson.discordkt.api.extensions.*
-import me.jakejmattson.modmail.extensions.cleanContent
+import me.jakejmattson.modmail.extensions.*
 import java.awt.Color
 import java.io.File
 import java.util.*
@@ -97,13 +97,7 @@ class ReportService(private val config: Configuration,
             parentId = category.id
         }
 
-        reportChannel.createEmbed {
-            author {
-                name = user.tag
-                icon = user.avatar.url
-                url = user.profileLink
-            }
-        }
+        user.asMember(guild.id).reportOpenEmbed(reportChannel, false)
 
         val newReport = Report(user.id, reportChannel.id, guild.id, ConcurrentHashMap())
         addReport(newReport)
@@ -135,6 +129,16 @@ suspend fun Report.close(kord: Kord) {
 private fun removeReport(report: Report) {
     reports.remove(report)
     reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId.asString) }?.delete()
+}
+
+suspend fun Member.reportOpenEmbed(channel: TextChannel, detain: Boolean = false) = channel.createEmbed {
+    author {
+        name = username
+        icon = avatar.url
+    }
+
+    description = descriptor()
+    color = if (detain) Color.RED.kColor else Color.GREEN.kColor
 }
 
 private suspend fun sendReportClosedEmbed(report: Report, kord: Kord) {

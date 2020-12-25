@@ -22,8 +22,10 @@ class ModerationService(val configuration: Configuration) {
 suspend fun Report.detain(kord: Kord) {
     val member = toLiveReport(kord)?.user?.asMember(guildId) ?: return
 
-    if (!member.isDetained())
+    if (!member.isDetained()) {
         detainedReports.addElement(this)
+        member.mute()
+    }
 }
 
 suspend fun Report.release(kord: Kord): Boolean {
