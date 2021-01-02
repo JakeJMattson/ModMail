@@ -7,6 +7,10 @@ import me.aberrantfox.warmbot.services.*
 import me.jakejmattson.kutils.api.dsl.bot
 import me.jakejmattson.kutils.api.extensions.jda.*
 import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.JDABuilder
+import net.dv8tion.jda.api.requests.GatewayIntent
+import net.dv8tion.jda.api.utils.ChunkingFilter
+import net.dv8tion.jda.api.utils.MemberCachePolicy
 import java.awt.Color
 import kotlin.system.exitProcess
 
@@ -24,6 +28,13 @@ fun main(args: Array<String>) {
     }
 
     bot(token) {
+        client { token ->
+            JDABuilder.createDefault(token)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
+                .setChunkingFilter(ChunkingFilter.ALL)
+                .enableIntents(GatewayIntent.GUILD_MEMBERS)
+        }
+
         configure { discord ->
             val (configuration, permissionsService) = discord.getInjectionObjects(Configuration::class, PermissionsService::class)
 
