@@ -111,9 +111,12 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
     command("Release") {
         description = Locale.RELEASE_DESCRIPTION
-        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }, MemberArg) {
-            val (inputChannel, targetMember) = it.args
+        execute(TextChannelArg("Report Channel").makeOptional { it.channel as TextChannel }) {
+            val inputChannel = it.args.first
             val (_, report) = inputChannel.toReportChannel()
+                ?: return@execute it.respond(createChannelError(inputChannel))
+
+            val targetMember = report.toLiveReport(it.discord.jda)?.member
                 ?: return@execute it.respond(createChannelError(inputChannel))
 
             if (!targetMember.isDetained())
