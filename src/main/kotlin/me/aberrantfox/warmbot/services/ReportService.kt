@@ -137,9 +137,9 @@ class ReportService(private val config: Configuration,
 }
 
 fun Report.close(jda: JDA) {
+    sendReportClosedEmbed(this, jda)
     release(jda)
     removeReport(this)
-    toLiveReport(jda)?.let { sendReportClosedEmbed(it) }
 }
 
 private fun removeReport(report: Report) {
@@ -147,10 +147,13 @@ private fun removeReport(report: Report) {
     reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId) }?.delete()
 }
 
-private fun sendReportClosedEmbed(report: LiveReport) =
-    report.user.sendPrivateMessage(embed {
+private fun sendReportClosedEmbed(report: Report, jda: JDA) {
+    val user = jda.getUserById(report.userId) ?: return
+    val guild = jda.getGuildById(report.guildId) ?: return
+    
+    user.sendPrivateMessage(embed {
         color = failureColor
-        simpleTitle = "The staff of ${report.guild.name} have closed this report."
+        simpleTitle = "The staff of ${guild.name} have closed this report."
         description = "If you continue to reply, a new report will be created."
     })
-
+}
