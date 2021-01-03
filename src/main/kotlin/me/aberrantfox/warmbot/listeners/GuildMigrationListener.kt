@@ -34,12 +34,14 @@ class GuildMigrationListener(val configuration: Configuration, private val guild
         val user = event.user
         val guild = event.guild
 
-        val report = user.toLiveReport() ?: return
-        if (report.guild.id != guild.id) return
+        val report = user.findReport() ?: return
+        if (report.guildId != guild.id) return
+
+        val channel = event.jda.getTextChannelById(report.channelId) ?: return
 
         val message = if (guild.retrieveBanList().complete().any { it.user.id == user.id }) "was banned from" else "has left"
 
-        report.channel.sendMessage(createResponse(message)).queue()
+        channel.sendMessage(createResponse(message)).queue()
     }
 
     private fun createResponse(message: String) = embed {
