@@ -32,7 +32,7 @@ fun main(args: Array<String>) {
             JDABuilder.createDefault(token)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .setChunkingFilter(ChunkingFilter.ALL)
-                .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGE_TYPING)
         }
 
         configure { discord ->
