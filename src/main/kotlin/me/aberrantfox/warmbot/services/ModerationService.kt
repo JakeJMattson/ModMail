@@ -1,6 +1,7 @@
 package me.aberrantfox.warmbot.services
 
 import me.jakejmattson.kutils.api.annotations.Service
+import me.jakejmattson.kutils.api.extensions.jda.toMember
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.Member
 import java.util.Vector
@@ -27,7 +28,8 @@ fun Report.detain(jda: JDA) {
 }
 
 fun Report.release(jda: JDA): Boolean {
-    val member = toLiveReport(jda)?.member ?: return false
+    val guild = jda.getGuildById(guildId) ?: return false
+    val member = jda.getUserById(userId)?.toMember(guild) ?: return false
 
     if (member.isDetained()) {
         detainedReports.remove(this)
