@@ -10,7 +10,7 @@ fun guildChoiceConversation(reportService: ReportService, guilds: List<Guild>, m
         title = "Select Server"
         description = "Respond with the server you want to contact."
         thumbnail {
-            url = discord.api.getSelf().avatar.url
+            url = discord.kord.getSelf().avatar.url
         }
 
         guilds.toList().forEachIndexed { index, guild ->

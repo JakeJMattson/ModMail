@@ -2,7 +2,7 @@ package me.jakejmattson.modmail.extensions
 
 import dev.kord.core.entity.*
 import dev.kord.core.entity.channel.MessageChannel
-import dev.kord.kordx.emoji.*
+import dev.kord.x.emoji.*
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.dsl.CommandEvent

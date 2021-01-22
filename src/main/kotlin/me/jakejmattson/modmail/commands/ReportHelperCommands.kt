@@ -124,7 +124,7 @@ fun reportHelperCommands(configuration: Configuration,
                 return@execute
             }
 
-            report.release(discord.api)
+            report.release(discord.kord)
             respond("${member.tag} has been released.")
         }
     }

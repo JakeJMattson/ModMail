@@ -28,7 +28,7 @@ fun ownerCommands(configuration: Configuration) = commands("Owner") {
             EveryArg("Presence Message")) {
             val (choice, text) = args
 
-            discord.api.editPresence {
+            discord.kord.editPresence {
                 when (choice.toLowerCase()) {
                     "watching" -> watching(text)
                     "listening" -> listening(text)

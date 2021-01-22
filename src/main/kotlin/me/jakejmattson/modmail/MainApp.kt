@@ -50,7 +50,7 @@ suspend fun main(it: Array<String>) {
             description = "A Discord report management bot."
 
             thumbnail {
-                url = it.discord.api.getSelf().avatar.url
+                url = it.discord.kord.getSelf().avatar.url
             }
 
             addInlineField("Prefix", it.prefix())

@@ -10,9 +10,11 @@ import me.jakejmattson.modmail.services.*
 open class ReportChannelArg(override val name: String = "Report Channel") : ArgumentType<ReportChannel> {
     companion object : ReportChannelArg()
 
+    override val description = "A report channel"
+
     override suspend fun convert(arg: String, args: List<String>, event: CommandEvent<*>): ArgumentResult<ReportChannel> {
         val argChannel = arg.toSnowflakeOrNull()?.let {
-            event.discord.api.getChannelOf<TextChannel>(it)
+            event.discord.kord.getChannelOf<TextChannel>(it)
         }?.toReportChannel(true)
 
         if (argChannel != null)
@@ -29,7 +31,7 @@ open class ReportChannelArg(override val name: String = "Report Channel") : Argu
     override suspend fun generateExamples(event: CommandEvent<*>): List<String> {
         return event.guild?.getReports()?.mapNotNull {
             runBlocking {
-                it.toLiveReport(event.discord.api)?.channel?.mention
+                it.toLiveReport(event.discord.kord)?.channel?.mention
             }
         } ?: listOf("<No Reports>")
     }

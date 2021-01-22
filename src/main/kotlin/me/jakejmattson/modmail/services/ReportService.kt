@@ -55,7 +55,7 @@ class ReportService(private val config: Configuration,
         GlobalScope.launch {
             reportsFolder.listFiles()?.forEach {
                 val report = Json.decodeFromString<Report>(it.readText())
-                val channel = discord.api.getChannel(report.channelId)
+                val channel = discord.kord.getChannel(report.channelId)
 
                 if (channel != null) reports.add(report) else it.delete()
             }

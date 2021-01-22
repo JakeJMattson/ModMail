@@ -7,6 +7,8 @@ import me.jakejmattson.modmail.services.*
 open class MacroArg(override val name: String = "Macro") : ArgumentType<Macro> {
     companion object : MacroArg()
 
+    override val description = "A ModMail macro"
+
     override suspend fun convert(arg: String, args: List<String>, event: CommandEvent<*>): ArgumentResult<Macro> {
         val macroService = event.discord.getInjectionObjects(MacroService::class)
 

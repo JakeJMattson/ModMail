@@ -13,7 +13,7 @@ import me.jakejmattson.modmail.messages.*
 
 @Service
 class LoggingService(discord: Discord, private val config: Configuration) {
-    private val api = discord.api
+    private val api = discord.kord
 
     init {
         GlobalScope.launch {

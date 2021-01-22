@@ -16,7 +16,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         execute(ReportChannelArg) {
             val reportChannel = args.first
 
-            reportChannel.report.release(discord.api)
+            reportChannel.report.release(discord.kord)
             deletionQueue.add(reportChannel.channel.id)
             reportChannel.channel.delete()
             handleInvocation(reportChannel)
@@ -45,7 +45,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
                 content = archiveMessage
                 addFile("$${channel.name}.txt", channel.archiveString().toByteArray().inputStream())
 
-                reportChannel.report.release(discord.api)
+                reportChannel.report.release(discord.kord)
                 deletionQueue.add(channel.id)
                 channel.delete()
             }
@@ -96,7 +96,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         execute(ReportChannelArg) {
             val reportChannel = args.first
             val (channel, report) = reportChannel
-            val user = discord.api.getUser(report.userId) ?: return@execute
+            val user = discord.kord.getUser(report.userId) ?: return@execute
             val newName = user.username
 
             channel.edit {
