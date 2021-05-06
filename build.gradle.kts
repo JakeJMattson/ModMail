@@ -4,10 +4,10 @@ group = "me.jakejmattson"
 version = "4.0.0"
 
 plugins {
-    kotlin("jvm") version "1.4.21"
-    kotlin("plugin.serialization") version "1.4.21"
-    id("com.github.johnrengelman.shadow") version "6.1.0"
-    id("com.github.ben-manes.versions") version "0.36.0"
+    kotlin("jvm") version "1.5.0"
+    kotlin("plugin.serialization") version "1.5.0"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.ben-manes.versions") version "0.38.0"
 }
 
 repositories {
