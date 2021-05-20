@@ -1,5 +1,7 @@
 package me.jakejmattson.modmail
 
+import dev.kord.gateway.Intent
+import dev.kord.gateway.Intents
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.dsl.bot
@@ -35,6 +37,7 @@ suspend fun main(it: Array<String>) {
         configure {
             commandReaction = null
             theme = Color(0x00bfff)
+            intents = Intents.nonPrivileged.values
         }
 
         mentionEmbed {
