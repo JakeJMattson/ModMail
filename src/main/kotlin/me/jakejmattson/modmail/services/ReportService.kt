@@ -1,5 +1,6 @@
 package me.jakejmattson.modmail.services
 
+import dev.kord.common.entity.MessageType
 import dev.kord.common.entity.Snowflake
 import dev.kord.common.kColor
 import dev.kord.core.*
@@ -84,13 +85,24 @@ class ReportService(private val config: Configuration,
 
             if (safeMessage.isEmpty()) return
 
-            val newMessage = liveReport.channel.createMessage(safeMessage)
+            val newMessage = liveReport.channel.createMessage {
+                content = safeMessage
+
+                if (message.type is MessageType.Reply) {
+                    this.messageReference = messages.entries.firstOrNull { it.value == message.referencedMessage!!.id }?.key
+                }
+
+                allowedMentions {
+                    repliedUser = false
+                }
+            }
+
             messages[message.id] = newMessage.id
         }
     }
 
     fun writeReportToFile(report: Report) =
-        File("$reportsFolder/${report.channelId}.json").writeText(Json.encodeToString(report))
+        File("$reportsFolder/${report.channelId.value}.json").writeText(Json.encodeToString(report))
 
     private suspend fun createReportChannel(category: Category, user: User, guild: Guild) {
         val reportChannel = guild.createTextChannel(user.username) {
