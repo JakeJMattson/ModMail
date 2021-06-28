@@ -1,13 +1,19 @@
 package me.jakejmattson.modmail.commands
 
-import dev.kord.core.behavior.channel.*
-import me.jakejmattson.discordkt.api.arguments.*
+import dev.kord.core.behavior.channel.createEmbed
+import dev.kord.core.behavior.channel.createMessage
+import dev.kord.core.behavior.channel.edit
+import me.jakejmattson.discordkt.api.arguments.AnyArg
+import me.jakejmattson.discordkt.api.arguments.EveryArg
 import me.jakejmattson.discordkt.api.dsl.commands
 import me.jakejmattson.modmail.arguments.ReportChannelArg
-import me.jakejmattson.modmail.extensions.*
+import me.jakejmattson.modmail.extensions.archiveString
+import me.jakejmattson.modmail.extensions.handleInvocation
 import me.jakejmattson.modmail.listeners.deletionQueue
 import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.services.*
+import me.jakejmattson.modmail.services.Configuration
+import me.jakejmattson.modmail.services.LoggingService
+import me.jakejmattson.modmail.services.release
 
 @Suppress("unused")
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands("Report") {

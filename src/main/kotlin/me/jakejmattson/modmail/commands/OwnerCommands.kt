@@ -1,10 +1,14 @@
 package me.jakejmattson.modmail.commands
 
-import me.jakejmattson.discordkt.api.arguments.*
+import me.jakejmattson.discordkt.api.arguments.AnyArg
+import me.jakejmattson.discordkt.api.arguments.ChoiceArg
+import me.jakejmattson.discordkt.api.arguments.EveryArg
 import me.jakejmattson.discordkt.api.dsl.commands
 import me.jakejmattson.modmail.extensions.requiredPermissionLevel
 import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.services.*
+import me.jakejmattson.modmail.services.Configuration
+import me.jakejmattson.modmail.services.Permission
+import java.util.*
 
 @Suppress("unused")
 fun ownerCommands(configuration: Configuration) = commands("Owner") {
@@ -29,7 +33,7 @@ fun ownerCommands(configuration: Configuration) = commands("Owner") {
             val (choice, text) = args
 
             discord.kord.editPresence {
-                when (choice.toLowerCase()) {
+                when (choice.lowercase()) {
                     "watching" -> watching(text)
                     "listening" -> listening(text)
                     else -> playing(text)

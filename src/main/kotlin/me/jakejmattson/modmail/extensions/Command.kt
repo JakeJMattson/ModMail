@@ -1,7 +1,9 @@
 package me.jakejmattson.modmail.extensions
 
-import me.jakejmattson.discordkt.api.dsl.*
-import me.jakejmattson.modmail.services.*
+import me.jakejmattson.discordkt.api.dsl.Command
+import me.jakejmattson.discordkt.api.dsl.CommandSetBuilder
+import me.jakejmattson.modmail.services.DEFAULT_REQUIRED_PERMISSION
+import me.jakejmattson.modmail.services.Permission
 import kotlin.collections.set
 
 val categoryPermissions: MutableMap<String, Permission> = mutableMapOf()

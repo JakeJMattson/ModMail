@@ -2,8 +2,10 @@ package me.jakejmattson.modmail.services
 
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
-import dev.kord.core.entity.channel.*
-import kotlinx.serialization.*
+import dev.kord.core.entity.channel.Category
+import dev.kord.core.entity.channel.TextChannel
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Serializable

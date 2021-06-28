@@ -1,14 +1,16 @@
 package me.jakejmattson.modmail
 
-import dev.kord.gateway.Intent
-import dev.kord.gateway.Intents
-import kotlinx.serialization.*
+import dev.kord.common.annotation.KordPreview
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.dsl.bot
 import me.jakejmattson.discordkt.api.extensions.addInlineField
 import me.jakejmattson.modmail.extensions.requiredPermissionLevel
 import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.services.*
+import me.jakejmattson.modmail.services.Configuration
+import me.jakejmattson.modmail.services.PermissionsService
+import me.jakejmattson.modmail.services.configFile
 import java.awt.Color
 import kotlin.system.exitProcess
 
@@ -18,6 +20,7 @@ private data class Properties(val version: String, val kotlin: String, val repos
 private val propFile = Properties::class.java.getResource("/properties.json").readText()
 private val project = Json.decodeFromString<Properties>(propFile)
 
+@OptIn(KordPreview::class)
 suspend fun main(it: Array<String>) {
     val token = it.firstOrNull()
 
@@ -37,7 +40,6 @@ suspend fun main(it: Array<String>) {
         configure {
             commandReaction = null
             theme = Color(0x00bfff)
-            intents = Intents.nonPrivileged.values
         }
 
         mentionEmbed {

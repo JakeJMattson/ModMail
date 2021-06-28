@@ -1,15 +1,18 @@
 package me.jakejmattson.modmail.services
 
 import dev.kord.core.behavior.channel.createMessage
-import dev.kord.core.entity.*
+import dev.kord.core.entity.Guild
+import dev.kord.core.entity.User
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.builder.message.EmbedBuilder
-import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.annotations.Service
 import me.jakejmattson.discordkt.api.dsl.CommandEvent
 import me.jakejmattson.discordkt.api.extensions.addField
-import me.jakejmattson.modmail.messages.*
+import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.messages.inject
 
 @Service
 class LoggingService(discord: Discord, private val config: Configuration) {

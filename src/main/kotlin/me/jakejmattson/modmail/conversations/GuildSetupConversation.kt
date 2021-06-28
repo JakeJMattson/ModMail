@@ -6,7 +6,9 @@ import dev.kord.rest.Image
 import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.dsl.conversation
 import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.services.*
+import me.jakejmattson.modmail.services.Configuration
+import me.jakejmattson.modmail.services.GuildConfiguration
+import me.jakejmattson.modmail.services.LoggingConfiguration
 import kotlin.collections.set
 
 fun guildSetupConversation(config: Configuration, guild: Guild) = conversation {

@@ -3,21 +3,29 @@ package me.jakejmattson.modmail.services
 import dev.kord.common.entity.MessageType
 import dev.kord.common.entity.Snowflake
 import dev.kord.common.kColor
-import dev.kord.core.*
+import dev.kord.core.Kord
 import dev.kord.core.behavior.*
-import dev.kord.core.behavior.channel.*
+import dev.kord.core.behavior.channel.MessageChannelBehavior
+import dev.kord.core.behavior.channel.createEmbed
+import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.entity.*
-import dev.kord.core.entity.channel.*
+import dev.kord.core.entity.channel.Category
+import dev.kord.core.entity.channel.TextChannel
+import dev.kord.core.firstOrNull
 import dev.kord.rest.Image
 import dev.kord.rest.builder.message.EmbedBuilder
-import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.count
-import kotlinx.serialization.*
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.annotations.Service
-import me.jakejmattson.discordkt.api.extensions.*
-import me.jakejmattson.modmail.extensions.*
+import me.jakejmattson.discordkt.api.extensions.sendPrivateMessage
+import me.jakejmattson.modmail.extensions.cleanContent
+import me.jakejmattson.modmail.extensions.descriptor
 import java.awt.Color
 import java.io.File
 import java.util.*
@@ -88,12 +96,12 @@ class ReportService(private val config: Configuration,
             val newMessage = liveReport.channel.createMessage {
                 content = safeMessage
 
-                if (message.type is MessageType.Reply) {
-                    this.messageReference = messages.entries.firstOrNull { it.value == message.referencedMessage!!.id }?.key
-                }
-
                 allowedMentions {
                     repliedUser = false
+                }
+
+                if (message.type is MessageType.Reply) {
+                    messageReference = messages.entries.firstOrNull { it.value == message.referencedMessage!!.id }?.key
                 }
             }
 

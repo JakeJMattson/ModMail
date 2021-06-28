@@ -2,7 +2,8 @@ package me.jakejmattson.modmail.listeners
 
 import dev.kord.core.behavior.edit
 import dev.kord.core.event.channel.TypingStartEvent
-import dev.kord.core.event.message.*
+import dev.kord.core.event.message.MessageDeleteEvent
+import dev.kord.core.event.message.MessageUpdateEvent
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.dsl.listeners
 import me.jakejmattson.modmail.extensions.cleanContent

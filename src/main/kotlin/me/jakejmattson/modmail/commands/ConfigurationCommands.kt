@@ -1,10 +1,14 @@
 package me.jakejmattson.modmail.commands
 
-import me.jakejmattson.discordkt.api.arguments.*
+import me.jakejmattson.discordkt.api.arguments.CategoryArg
+import me.jakejmattson.discordkt.api.arguments.ChannelArg
+import me.jakejmattson.discordkt.api.arguments.RoleArg
 import me.jakejmattson.discordkt.api.dsl.commands
-import me.jakejmattson.modmail.extensions.*
+import me.jakejmattson.modmail.extensions.reactSuccess
+import me.jakejmattson.modmail.extensions.requiredPermissionLevel
 import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.services.*
+import me.jakejmattson.modmail.services.Configuration
+import me.jakejmattson.modmail.services.Permission
 
 @Suppress("unused")
 fun configurationCommands(configuration: Configuration) = commands("Configuration") {

@@ -3,11 +3,19 @@ package me.jakejmattson.modmail.listeners
 import dev.kord.core.event.message.MessageCreateEvent
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.api.Discord
-import me.jakejmattson.discordkt.api.dsl.*
-import me.jakejmattson.discordkt.api.extensions.*
+import me.jakejmattson.discordkt.api.dsl.Conversations
+import me.jakejmattson.discordkt.api.dsl.listeners
+import me.jakejmattson.discordkt.api.extensions.mutualGuilds
+import me.jakejmattson.discordkt.api.extensions.sendPrivateMessage
 import me.jakejmattson.modmail.conversations.guildChoiceConversation
-import me.jakejmattson.modmail.extensions.*
-import me.jakejmattson.modmail.services.*
+import me.jakejmattson.modmail.extensions.addFailReaction
+import me.jakejmattson.modmail.extensions.fullContent
+import me.jakejmattson.modmail.services.Configuration
+import me.jakejmattson.modmail.services.ReportService
+import me.jakejmattson.modmail.services.findReport
+import kotlin.collections.filter
+import kotlin.collections.firstOrNull
+import kotlin.collections.set
 
 @Suppress("unused")
 fun reportListener(discord: Discord, config: Configuration, reportService: ReportService) = listeners {

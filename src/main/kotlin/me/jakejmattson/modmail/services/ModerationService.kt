@@ -1,8 +1,10 @@
 package me.jakejmattson.modmail.services
 
-import dev.kord.core.*
+import dev.kord.core.Kord
+import dev.kord.core.any
 import dev.kord.core.behavior.GuildBehavior
 import dev.kord.core.entity.Member
+import dev.kord.core.firstOrNull
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.api.annotations.Service
 import java.util.*

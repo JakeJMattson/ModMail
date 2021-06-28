@@ -2,7 +2,8 @@ package me.jakejmattson.modmail.arguments
 
 import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.dsl.CommandEvent
-import me.jakejmattson.modmail.services.*
+import me.jakejmattson.modmail.services.Macro
+import me.jakejmattson.modmail.services.MacroService
 
 open class MacroArg(override val name: String = "Macro") : ArgumentType<Macro> {
     companion object : MacroArg()

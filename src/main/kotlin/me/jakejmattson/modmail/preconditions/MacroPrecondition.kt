@@ -2,18 +2,20 @@ package me.jakejmattson.modmail.preconditions
 
 import dev.kord.common.kColor
 import me.jakejmattson.discordkt.api.dsl.precondition
-import me.jakejmattson.discordkt.api.extensions.*
-import me.jakejmattson.modmail.services.*
+import me.jakejmattson.discordkt.api.extensions.sendPrivateMessage
+import me.jakejmattson.modmail.services.MacroService
+import me.jakejmattson.modmail.services.toLiveReport
 import java.awt.Color
+import java.util.*
 
 @Suppress("unused")
 fun macroPrecondition() = precondition {
-    val commandName = rawInputs.commandName.toLowerCase()
+    val commandName = rawInputs.commandName.lowercase(Locale.getDefault())
 
     if (command != null) return@precondition
 
     val macroService = discord.getInjectionObjects(MacroService::class)
-    val macro = macroService.getGuildMacros(guild!!).firstOrNull { it.name.toLowerCase() == commandName }
+    val macro = macroService.getGuildMacros(guild!!).firstOrNull { it.name.lowercase() == commandName }
         ?: return@precondition fail()
 
     message.delete()

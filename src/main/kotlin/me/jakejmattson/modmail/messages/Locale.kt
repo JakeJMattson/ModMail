@@ -1,11 +1,13 @@
 package me.jakejmattson.modmail.messages
 
-import kotlinx.serialization.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.jakejmattson.modmail.services.messagesFile
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
-import java.io.*
+import java.io.StringReader
+import java.io.StringWriter
 
 val Locale = load()
 

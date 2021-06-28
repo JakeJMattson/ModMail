@@ -3,7 +3,7 @@
 ## Key 
 | Symbol      | Meaning                        |
 | ----------- | ------------------------------ |
-| (Argument)  | Argument is not required.      |
+| [Argument]  | Argument is not required.      |
 
 ## Configuration
 | Commands          | Arguments | Description                                               |
@@ -26,12 +26,12 @@
 | Commands    | Arguments                                      | Description                          |
 | ----------- | ---------------------------------------------- | ------------------------------------ |
 | SetPrefix   | Prefix                                         | Set the bot's prefix.                |
-| SetPresence | (Playing/Watching/Listening), Presence Message | Set the Discord presence of the bot. |
+| SetPresence | [Playing/Watching/Listening], Presence Message | Set the Discord presence of the bot. |
 
 ## Report
 | Commands  | Arguments              | Description                                       |
 | --------- | ---------------------- | ------------------------------------------------- |
-| Archive   | Report Channel, (Info) | Archive the contents of this report as text.      |
+| Archive   | Report Channel, [Info] | Archive the contents of this report as text.      |
 | Close     | Report Channel         | Delete a report channel and end this report.      |
 | Note      | Report Channel, Note   | Add an embed note in this report channel.         |
 | ResetTags | Report Channel         | Reset a report channel to its original name.      |
@@ -42,13 +42,13 @@
 | -------- | ----------------------- | ---------------------------------------------------------------- |
 | Detain   | Member                  | Mute a user and open a report with them.                         |
 | History  | User                    | Read the target user's DM history with the bot.                  |
-| Info     | Report Channel, (Field) | Retrieve info from the target report channel - user/channel/all. |
+| Info     | Report Channel, [Field] | Retrieve info from the target report channel - user/channel/all. |
 | Open     | Member                  | Open a report with the target user.                              |
 | Release  | Report Channel          | Release a user from detainment and unmute them.                  |
 
 ## Utility
 | Commands     | Arguments | Description                              |
 | ------------ | --------- | ---------------------------------------- |
-| Help         | (Command) | Display a help menu.                     |
+| Help         | [Command] | Display a help menu.                     |
 | Status, Ping |           | Display network status and total uptime. |
 
