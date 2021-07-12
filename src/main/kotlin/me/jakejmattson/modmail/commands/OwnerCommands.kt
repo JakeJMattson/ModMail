@@ -29,7 +29,7 @@ fun ownerCommands(configuration: Configuration) = commands("Owner") {
     guildCommand("SetPresence") {
         description = Locale.SET_PRESENCE_DESCRIPTION
         execute(ChoiceArg("Playing/Watching/Listening", "Playing", "Watching", "Listening").optional("Playing"),
-            EveryArg("Presence Message")) {
+            EveryArg("Presence")) {
             val (choice, text) = args
 
             discord.kord.editPresence {

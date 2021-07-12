@@ -2,27 +2,40 @@ package me.jakejmattson.modmail.conversations
 
 import dev.kord.core.entity.Guild
 import dev.kord.core.entity.Message
-import me.jakejmattson.discordkt.api.arguments.IntegerRangeArg
-import me.jakejmattson.discordkt.api.dsl.conversation
+import dev.kord.x.emoji.DiscordEmoji
+import kotlinx.coroutines.flow.toList
+import me.jakejmattson.discordkt.api.Discord
+import me.jakejmattson.discordkt.api.conversations.conversation
+import me.jakejmattson.discordkt.api.extensions.mutualGuilds
+import me.jakejmattson.modmail.services.Configuration
 import me.jakejmattson.modmail.services.ReportService
 
-fun guildChoiceConversation(reportService: ReportService, guilds: List<Guild>, message: Message) = conversation {
-    val guildIndex = promptEmbed(IntegerRangeArg(1, guilds.size)) {
-        title = "Select Server"
-        description = "Respond with the server you want to contact."
-        thumbnail {
-            url = discord.kord.getSelf().avatar.url
-        }
+fun guildChoiceConversation(discord: Discord, message: Message) = conversation {
 
-        guilds.toList().forEachIndexed { index, guild ->
-            field {
-                name = "${index + 1}) ${guild.name}"
+    val reportService = discord.getInjectionObjects<ReportService>()
+    val config = discord.getInjectionObjects<Configuration>()
+    val guilds = user.mutualGuilds.toList().filter { config.guildConfigurations[it.id] != null }
+
+    val guild = promptButton<Guild> {
+        embed {
+            title = "Select Server"
+            description = "Select the server you want to contact."
+            thumbnail {
+                url = discord.kord.getSelf().avatar.url
             }
         }
-    } - 1
+
+        guilds.toList().chunked(5).forEach { row ->
+            buttons {
+                row.forEach { guild ->
+                    button(guild.name, null, guild)
+                }
+            }
+        }
+    }
 
     with(reportService) {
-        createReport(user, guilds[guildIndex])
+        createReport(user, guild)
         receiveFromUser(message)
     }
 }

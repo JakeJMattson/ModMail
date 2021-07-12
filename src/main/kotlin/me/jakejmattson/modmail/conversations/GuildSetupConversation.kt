@@ -4,7 +4,7 @@ import dev.kord.core.entity.Guild
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.Image
 import me.jakejmattson.discordkt.api.arguments.*
-import me.jakejmattson.discordkt.api.dsl.conversation
+import me.jakejmattson.discordkt.api.conversations.conversation
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.Configuration
 import me.jakejmattson.modmail.services.GuildConfiguration

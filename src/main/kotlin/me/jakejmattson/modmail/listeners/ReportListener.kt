@@ -3,7 +3,7 @@ package me.jakejmattson.modmail.listeners
 import dev.kord.core.event.message.MessageCreateEvent
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.api.Discord
-import me.jakejmattson.discordkt.api.dsl.Conversations
+import me.jakejmattson.discordkt.api.conversations.Conversations
 import me.jakejmattson.discordkt.api.dsl.listeners
 import me.jakejmattson.discordkt.api.extensions.mutualGuilds
 import me.jakejmattson.discordkt.api.extensions.sendPrivateMessage
@@ -23,14 +23,14 @@ fun reportListener(discord: Discord, config: Configuration, reportService: Repor
         val user = message.author!!.takeUnless { it.isBot } ?: return@on
 
         if (getGuild() == null) {
-            if (Conversations.hasConversation(user, message.channel)) return@on
+            if (Conversations.hasConversation(user, message.channel.asChannel())) return@on
 
             val validGuilds = user.mutualGuilds.toList().filter { config.guildConfigurations[it.id] != null }
 
             when {
                 user.findReport() != null -> reportService.receiveFromUser(message)
                 validGuilds.size > 1 -> {
-                    guildChoiceConversation(reportService, validGuilds, message).startPrivately(discord, user)
+                    guildChoiceConversation(discord, message).startPrivately(discord, user)
                 }
                 else -> {
                     val guild = validGuilds.firstOrNull() ?: return@on

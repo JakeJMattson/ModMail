@@ -9,7 +9,7 @@ import me.jakejmattson.modmail.services.Report
 import me.jakejmattson.modmail.services.findReport
 import me.jakejmattson.modmail.services.getReports
 
-open class ReportChannelArg(override val name: String = "Report Channel") : ArgumentType<ReportChannel> {
+open class ReportChannelArg(override val name: String = "ReportChannel") : ArgumentType<ReportChannel> {
     companion object : ReportChannelArg()
 
     override val description = "A report channel"
