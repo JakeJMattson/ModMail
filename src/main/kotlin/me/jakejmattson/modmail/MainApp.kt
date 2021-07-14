@@ -6,11 +6,8 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.dsl.bot
 import me.jakejmattson.discordkt.api.extensions.addInlineField
-import me.jakejmattson.modmail.extensions.requiredPermissionLevel
 import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.services.Configuration
-import me.jakejmattson.modmail.services.PermissionsService
-import me.jakejmattson.modmail.services.configFile
+import me.jakejmattson.modmail.services.*
 import java.awt.Color
 import kotlin.system.exitProcess
 
@@ -40,6 +37,7 @@ suspend fun main(it: Array<String>) {
         configure {
             commandReaction = null
             theme = Color(0x00bfff)
+            permissions(Permission.STAFF)
         }
 
         mentionEmbed {
@@ -63,18 +61,9 @@ suspend fun main(it: Array<String>) {
             addInlineField("Source", "[GitHub](${project.repository})")
 
             footer {
-                val versions = it.discord.versions
-                text = "${versions.library} - ${versions.kord} - ${project.kotlin}"
+                val (library, kotlin, kord) = it.discord.versions
+                text = "$library - $kord - $kotlin"
             }
-        }
-
-        permissions {
-            val guild = guild ?: return@permissions false
-            val member = user.asMember(guild.id)
-            val permission = command.requiredPermissionLevel
-            val permissionsService = discord.getInjectionObjects(PermissionsService::class)
-
-            permissionsService.hasClearance(member, permission)
         }
 
         presence {

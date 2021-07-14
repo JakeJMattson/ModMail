@@ -4,16 +4,12 @@ import me.jakejmattson.discordkt.api.arguments.AnyArg
 import me.jakejmattson.discordkt.api.arguments.ChoiceArg
 import me.jakejmattson.discordkt.api.arguments.EveryArg
 import me.jakejmattson.discordkt.api.dsl.commands
-import me.jakejmattson.modmail.extensions.requiredPermissionLevel
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.Configuration
 import me.jakejmattson.modmail.services.Permission
-import java.util.*
 
 @Suppress("unused")
-fun ownerCommands(configuration: Configuration) = commands("Owner") {
-    requiredPermissionLevel = Permission.BOT_OWNER
-
+fun ownerCommands(configuration: Configuration) = commands("Owner", Permission.BOT_OWNER) {
     guildCommand("SetPrefix") {
         description = "Set the bot's prefix."
         execute(AnyArg("Prefix")) {
