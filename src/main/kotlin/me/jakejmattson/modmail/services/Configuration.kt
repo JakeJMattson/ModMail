@@ -2,6 +2,7 @@ package me.jakejmattson.modmail.services
 
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
+import dev.kord.core.entity.Guild
 import dev.kord.core.entity.channel.Category
 import dev.kord.core.entity.channel.TextChannel
 import kotlinx.serialization.Serializable
@@ -30,6 +31,6 @@ data class GuildConfiguration(var prefix: String,
 @Serializable
 data class Configuration(val ownerId: Snowflake = Snowflake(0),
                          val guildConfigurations: MutableMap<Snowflake, GuildConfiguration> = mutableMapOf()) {
-    operator fun get(id: Snowflake?) = id?.let { guildConfigurations[it] }
+    operator fun get(guild: Guild) = guildConfigurations[guild.id]
     fun save() = configFile.writeText(Json.encodeToString(this))
 }

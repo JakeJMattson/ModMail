@@ -14,8 +14,8 @@ private val detainedReports = Vector<Report>()
 @Service
 class ModerationService(val configuration: Configuration) {
     suspend fun hasStaffRole(member: Member): Boolean {
-        val guild = member.guild
-        val staffRoleId = configuration[guild.id]?.staffRoleId ?: return false
+        val guild = member.getGuild()
+        val staffRoleId = configuration[guild]?.staffRoleId ?: return false
 
         return member.roles.any { it.id == staffRoleId }
     }

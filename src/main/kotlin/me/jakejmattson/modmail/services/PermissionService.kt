@@ -18,7 +18,7 @@ enum class Permission : PermissionSet {
             val guild = context.guild ?: return false
             val member = context.getMember()!!
             val configuration = context.discord.getInjectionObjects<Configuration>()
-            return member.roles.any { it.id == configuration[guild.id]?.staffRoleId }
+            return member.roles.any { it.id == configuration[guild]?.staffRoleId }
         }
     }
 }

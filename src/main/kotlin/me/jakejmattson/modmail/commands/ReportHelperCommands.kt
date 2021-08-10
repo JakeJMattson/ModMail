@@ -31,7 +31,7 @@ fun reportHelperCommands(configuration: Configuration,
 
     suspend fun Member.openReport(event: CommandEvent<*>, detain: Boolean = false) {
         val guild = guild.asGuild()
-        val reportCategory = configuration[guild.id]!!.getLiveReportCategory(guild.kord)
+        val reportCategory = configuration[guild]!!.getLiveReportCategory(guild.kord)
         val privateChannel = getDmChannel()
 
         privateChannel.createEmbed {

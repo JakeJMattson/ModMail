@@ -31,7 +31,7 @@ suspend fun main(it: Array<String>) {
         inject(configuration)
 
         prefix {
-            guild?.let { configuration[it.id]?.prefix.takeUnless { it.isNullOrBlank() } ?: "!" } ?: "<none>"
+            guild?.let { configuration[it]?.prefix.takeUnless { it.isNullOrBlank() } ?: "!" } ?: "<none>"
         }
 
         configure {
@@ -41,13 +41,9 @@ suspend fun main(it: Array<String>) {
         }
 
         mentionEmbed {
-            val guild = it.guild
-            val staffId = configuration[guild?.id]?.staffRoleId
-
-            val requiredRole = if (guild != null)
-                staffId?.let { guild.getRole(it) }?.mention ?: "<Not Configured>"
-            else
-                "<Not Applicable>"
+            val guild = it.guild ?: return@mentionEmbed
+            val staffId = configuration[guild]?.staffRoleId
+            val requiredRole = staffId?.let { guild.getRole(it) }?.mention ?: "<Not Configured>"
 
             title = "ModMail ${project.version}"
             description = "A Discord report management bot."

@@ -74,7 +74,7 @@ class ReportService(private val config: Configuration,
     suspend fun createReport(user: User, guild: Guild) {
         if (guild.channels.count() >= 250) return
 
-        val reportCategory = config[guild.id]?.getLiveReportCategory(guild.kord) ?: return
+        val reportCategory = config[guild]?.getLiveReportCategory(guild.kord) ?: return
 
         createReportChannel(reportCategory, user, guild)
     }

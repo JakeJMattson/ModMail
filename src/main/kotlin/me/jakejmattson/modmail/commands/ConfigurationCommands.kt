@@ -14,9 +14,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
     guildCommand("SetReportCategory") {
         description = Locale.SET_REPORT_CATEGORY_DESCRIPTION
         execute(CategoryArg) {
-            val reportCategory = args.first
-
-            configuration[reportCategory.guild.id]!!.reportCategory = reportCategory.id
+            configuration[guild]!!.reportCategory = args.first.id
             configuration.save()
             reactSuccess()
         }
@@ -25,9 +23,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
     guildCommand("SetArchiveChannel") {
         description = Locale.SET_ARCHIVE_CHANNEL_DESCRIPTION
         execute(ChannelArg) {
-            val archiveChannel = args.first
-
-            configuration[archiveChannel.guild.id]!!.archiveChannel = archiveChannel.id
+            configuration[guild]!!.archiveChannel = args.first.id
             configuration.save()
             reactSuccess()
         }
@@ -36,9 +32,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
     guildCommand("SetStaffRole") {
         description = Locale.SET_STAFF_ROLE_DESCRIPTION
         execute(RoleArg) {
-            val staffRole = args.first
-
-            configuration[message.getGuild().id]!!.staffRoleId = staffRole.id
+            configuration[guild]!!.staffRoleId = args.first.id
             configuration.save()
             reactSuccess()
         }
@@ -47,9 +41,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
     guildCommand("SetLoggingChannel") {
         description = Locale.SET_LOGGING_CHANNEL_DESCRIPTION
         execute(ChannelArg) {
-            val loggingChannel = args.first
-
-            configuration[loggingChannel.guild.id]!!.loggingConfiguration.loggingChannel = loggingChannel.id
+            configuration[guild]!!.loggingConfiguration.loggingChannel = args.first.id
             configuration.save()
             reactSuccess()
         }
