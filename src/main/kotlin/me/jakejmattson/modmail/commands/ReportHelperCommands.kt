@@ -13,8 +13,8 @@ import dev.kord.rest.Image
 import me.jakejmattson.discordkt.api.arguments.ChoiceArg
 import me.jakejmattson.discordkt.api.arguments.MemberArg
 import me.jakejmattson.discordkt.api.arguments.UserArg
-import me.jakejmattson.discordkt.api.dsl.CommandEvent
-import me.jakejmattson.discordkt.api.dsl.commands
+import me.jakejmattson.discordkt.api.commands.CommandEvent
+import me.jakejmattson.discordkt.api.commands.commands
 import me.jakejmattson.discordkt.api.extensions.addField
 import me.jakejmattson.modmail.arguments.ReportChannelArg
 import me.jakejmattson.modmail.extensions.archiveString
@@ -63,12 +63,12 @@ fun reportHelperCommands(configuration: Configuration,
         loggingService.staffOpen(guild, (event.channel as TextChannel).name, event.author)
     }
 
-    guildCommand("Open") {
+    slash("Open") {
         description = Locale.OPEN_DESCRIPTION
         execute(MemberArg) {
             val targetMember = args.first
 
-            if (!hasValidState(this, guild, targetMember))
+            if (!hasValidState(this, guild!!, targetMember))
                 return@execute
 
             try {

@@ -1,11 +1,14 @@
 package me.jakejmattson.modmail
 
 import dev.kord.common.annotation.KordPreview
+import dev.kord.gateway.Intent
+import dev.kord.gateway.PrivilegedIntent
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.dsl.bot
 import me.jakejmattson.discordkt.api.extensions.addInlineField
+import me.jakejmattson.discordkt.api.extensions.plus
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
 import java.awt.Color
@@ -17,7 +20,7 @@ private data class Properties(val version: String, val kotlin: String, val repos
 private val propFile = Properties::class.java.getResource("/properties.json").readText()
 private val project = Json.decodeFromString<Properties>(propFile)
 
-@OptIn(KordPreview::class)
+@OptIn(KordPreview::class, PrivilegedIntent::class)
 suspend fun main(it: Array<String>) {
     val token = it.firstOrNull()
 
@@ -37,6 +40,7 @@ suspend fun main(it: Array<String>) {
         configure {
             commandReaction = null
             theme = Color(0x00bfff)
+            intents = Intent.GuildMembers + Intent.Guilds + Intent.DirectMessages + Intent.DirectMessageTyping
             permissions(Permission.STAFF)
         }
 

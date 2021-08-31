@@ -20,7 +20,7 @@ fun guildSetupConversation(config: Configuration, guild: Guild) = conversation {
         }
     }
 
-    suspend fun <T> createPrompt(arg: ArgumentType<T>, prompt: String, isValid: (T) -> Boolean) = promptUntil(arg, prompt, "Input must be from the original guild.", isValid)
+    suspend fun <T> createPrompt(arg: Argument<T>, prompt: String, isValid: (T) -> Boolean) = promptUntil(arg, prompt, "Input must be from the original guild.", isValid)
 
     val reportCategory = createPrompt(CategoryArg(guildId = guild.id), "Enter the category where new reports are created.") { it.guild == guild }
     val archiveChannel = createPrompt(ChannelArg<TextChannel>(), "Enter the channel where archived reports will be sent.") { it.guild == guild }

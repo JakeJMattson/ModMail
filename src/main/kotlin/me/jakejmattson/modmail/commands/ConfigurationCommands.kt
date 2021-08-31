@@ -3,7 +3,7 @@ package me.jakejmattson.modmail.commands
 import me.jakejmattson.discordkt.api.arguments.CategoryArg
 import me.jakejmattson.discordkt.api.arguments.ChannelArg
 import me.jakejmattson.discordkt.api.arguments.RoleArg
-import me.jakejmattson.discordkt.api.dsl.commands
+import me.jakejmattson.discordkt.api.commands.commands
 import me.jakejmattson.modmail.extensions.reactSuccess
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.Configuration

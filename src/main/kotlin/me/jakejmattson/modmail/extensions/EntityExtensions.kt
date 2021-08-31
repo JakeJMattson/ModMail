@@ -8,7 +8,7 @@ import dev.kord.x.emoji.Emojis
 import dev.kord.x.emoji.toReaction
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.api.Discord
-import me.jakejmattson.discordkt.api.dsl.CommandEvent
+import me.jakejmattson.discordkt.api.commands.CommandEvent
 import me.jakejmattson.discordkt.api.extensions.containsURL
 import me.jakejmattson.discordkt.api.extensions.sanitiseMentions
 import me.jakejmattson.modmail.arguments.ReportChannel
@@ -57,5 +57,5 @@ suspend fun CommandEvent<*>.handleInvocation(reportChannel: ReportChannel) {
     if (reportChannel.wasTargeted)
         reactSuccess()
     else
-        message.delete()
+        message?.delete()
 }

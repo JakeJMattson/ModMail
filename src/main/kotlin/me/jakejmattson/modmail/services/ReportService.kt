@@ -14,6 +14,7 @@ import dev.kord.core.entity.channel.TextChannel
 import dev.kord.core.firstOrNull
 import dev.kord.rest.Image
 import dev.kord.rest.builder.message.EmbedBuilder
+import dev.kord.rest.builder.message.create.allowedMentions
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
@@ -183,7 +184,7 @@ private suspend fun sendReportClosedEmbed(report: Report, kord: Kord) {
 
     if (mostRecentMessage != null)
         mostRecentMessage.edit {
-            builder(embed!!)
+            builder(embeds?.first()!!)
         }
     else
         user.sendPrivateMessage {

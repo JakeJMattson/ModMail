@@ -3,13 +3,13 @@ package me.jakejmattson.modmail.arguments
 import dev.kord.core.entity.channel.TextChannel
 import kotlinx.coroutines.runBlocking
 import me.jakejmattson.discordkt.api.arguments.*
-import me.jakejmattson.discordkt.api.dsl.CommandEvent
+import me.jakejmattson.discordkt.api.commands.CommandEvent
 import me.jakejmattson.discordkt.api.extensions.toSnowflakeOrNull
 import me.jakejmattson.modmail.services.Report
 import me.jakejmattson.modmail.services.findReport
 import me.jakejmattson.modmail.services.getReports
 
-open class ReportChannelArg(override val name: String = "ReportChannel") : ArgumentType<ReportChannel> {
+open class ReportChannelArg(override val name: String = "ReportChannel") : Argument<ReportChannel> {
     companion object : ReportChannelArg()
 
     override val description = "A report channel"

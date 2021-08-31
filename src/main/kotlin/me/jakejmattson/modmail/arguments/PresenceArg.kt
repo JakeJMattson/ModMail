@@ -2,9 +2,9 @@ package me.jakejmattson.modmail.arguments
 
 import dev.kord.core.Kord
 import me.jakejmattson.discordkt.api.arguments.*
-import me.jakejmattson.discordkt.api.dsl.CommandEvent
+import me.jakejmattson.discordkt.api.commands.CommandEvent
 
-open class PresenceArg(override val name: String = "Presence") : ArgumentType<Presence> {
+open class PresenceArg(override val name: String = "Presence") : Argument<Presence> {
     companion object : MacroArg()
 
     override val description = "A presence type"

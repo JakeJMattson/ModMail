@@ -9,7 +9,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.annotations.Service
-import me.jakejmattson.discordkt.api.dsl.CommandEvent
+import me.jakejmattson.discordkt.api.commands.CommandEvent
 import me.jakejmattson.discordkt.api.extensions.addField
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.messages.inject
@@ -103,7 +103,7 @@ class LoggingService(discord: Discord, private val config: Configuration) {
 
     private suspend fun log(config: LoggingConfiguration, message: String) = config.getLiveChannel(api)?.createMessage(message)
     private suspend fun logEmbed(config: LoggingConfiguration, embed: EmbedBuilder) = config.getLiveChannel(api)?.createMessage {
-        this.embed = embed
+        embeds.add(embed)
     }
 
     private fun buildEditEmbed(report: LiveReport, old: String, new: String) = EmbedBuilder().apply {

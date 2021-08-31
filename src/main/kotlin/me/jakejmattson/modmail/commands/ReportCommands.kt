@@ -5,7 +5,7 @@ import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.channel.edit
 import me.jakejmattson.discordkt.api.arguments.AnyArg
 import me.jakejmattson.discordkt.api.arguments.EveryArg
-import me.jakejmattson.discordkt.api.dsl.commands
+import me.jakejmattson.discordkt.api.commands.commands
 import me.jakejmattson.modmail.arguments.ReportChannelArg
 import me.jakejmattson.modmail.extensions.archiveString
 import me.jakejmattson.modmail.extensions.handleInvocation

@@ -2,7 +2,7 @@ package me.jakejmattson.modmail.commands
 
 import me.jakejmattson.discordkt.api.arguments.AnyArg
 import me.jakejmattson.discordkt.api.arguments.EveryArg
-import me.jakejmattson.discordkt.api.dsl.commands
+import me.jakejmattson.discordkt.api.commands.commands
 import me.jakejmattson.discordkt.api.extensions.addField
 import me.jakejmattson.modmail.arguments.MacroArg
 import me.jakejmattson.modmail.extensions.reactSuccess
