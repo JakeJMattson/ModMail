@@ -12,8 +12,8 @@ import me.jakejmattson.modmail.services.Permission
 
 @Suppress("unused")
 fun ownerCommands(configuration: Configuration) = commands("Owner", Permission.BOT_OWNER) {
-    guildCommand("SetPrefix") {
-        description = "Set the bot's prefix."
+     command("Prefix") {
+        description = "Set the bot prefix."
         execute(AnyArg("Prefix")) {
             configuration[guild]?.prefix = args.first
             configuration.save()
@@ -21,7 +21,7 @@ fun ownerCommands(configuration: Configuration) = commands("Owner", Permission.B
         }
     }
 
-    guildCommand("SetPresence") {
+    command("Presence") {
         description = Locale.SET_PRESENCE_DESCRIPTION
         execute(PresenceArg().optional(Presence.PLAYING), EveryArg("Text")) {
             val (choice, text) = args

@@ -6,12 +6,12 @@
 | [Argument]  | Argument is not required.      |
 
 ## Configuration
-| Commands          | Arguments | Description                                               |
-| ----------------- | --------- | --------------------------------------------------------- |
-| SetArchiveChannel | Channel   | Set the channel where reports will be sent when archived. |
-| SetLoggingChannel | Channel   | Set the channel where events will be logged.              |
-| SetReportCategory | Category  | Set the category where new reports will be opened.        |
-| SetStaffRole      | Role      | Specify the role required to use this bot.                |
+| Commands       | Arguments | Description                                               |
+| -------------- | --------- | --------------------------------------------------------- |
+| ArchiveChannel | Channel   | Set the channel where reports will be sent when archived. |
+| LoggingChannel | Channel   | Set the channel where events will be logged.              |
+| ReportCategory | Category  | Set the category where new reports will be opened.        |
+| StaffRole      | Role      | Specify the role required to use this bot.                |
 
 ## Macros
 | Commands    | Arguments      | Description                                           |
@@ -23,10 +23,10 @@
 | RenameMacro | Macro, NewName | Change a macro's name, keeping the original response. |
 
 ## Owner
-| Commands    | Arguments        | Description                          |
-| ----------- | ---------------- | ------------------------------------ |
-| SetPrefix   | Prefix           | Set the bot's prefix.                |
-| SetPresence | [Presence], Text | Set the Discord presence of the bot. |
+| Commands | Arguments        | Description                          |
+| -------- | ---------------- | ------------------------------------ |
+| Prefix   | Prefix           | Set the bot prefix.                  |
+| Presence | [Presence], Text | Set the Discord presence of the bot. |
 
 ## Report
 | Commands  | Arguments             | Description                                       |
@@ -40,15 +40,15 @@
 ## ReportHelpers
 | Commands | Arguments              | Description                                                      |
 | -------- | ---------------------- | ---------------------------------------------------------------- |
-| Detain   | Member                 | Mute a user and open a report with them.                         |
+| Detain   | User                   | Mute a user and open a report with them.                         |
 | History  | User                   | Read the target user's DM history with the bot.                  |
 | Info     | ReportChannel, [Field] | Retrieve info from the target report channel - user/channel/all. |
-| Open     | Member                 | Open a report with the target user.                              |
+| Open     | User                   | Open a report with the target user.                              |
 | Release  | ReportChannel          | Release a user from detainment and unmute them.                  |
 
 ## Utility
-| Commands     | Arguments | Description                              |
-| ------------ | --------- | ---------------------------------------- |
-| Help         | [Command] | Display a help menu.                     |
-| Status, Ping |           | Display network status and total uptime. |
+| Commands | Arguments | Description                              |
+| -------- | --------- | ---------------------------------------- |
+| Help     | [Command] | Display a help menu.                     |
+| Status   |           | Display network status and total uptime. |
 

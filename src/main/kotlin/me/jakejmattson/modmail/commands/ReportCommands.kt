@@ -17,7 +17,7 @@ import me.jakejmattson.modmail.services.release
 
 @Suppress("unused")
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands("Report") {
-    guildCommand("Close") {
+    slash("Close") {
         description = Locale.CLOSE_DESCRIPTION
         execute(ReportChannelArg) {
             val reportChannel = args.first
@@ -30,7 +30,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         }
     }
 
-    guildCommand("Archive") {
+    slash("Archive") {
         description = Locale.ARCHIVE_DESCRIPTION
         execute(ReportChannelArg, EveryArg("Info").optional("")) {
             val (reportChannel, note) = args
@@ -44,8 +44,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
                 return@execute
             }
 
-            val archiveMessage = "User ID: ${report.userId}\nAdditional Information: " +
-                if (note.isNotEmpty()) note else "<None>"
+            val archiveMessage = "User ID: ${report.userId}\nAdditional Information: " + note.ifEmpty { "<None>" }
 
             archiveChannel.createMessage {
                 content = archiveMessage
@@ -61,7 +60,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         }
     }
 
-    guildCommand("Note") {
+    slash("Note") {
         description = Locale.NOTE_DESCRIPTION
         execute(ReportChannelArg, EveryArg("Note")) {
             val reportChannel = args.first
@@ -81,7 +80,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         }
     }
 
-    guildCommand("Tag") {
+    slash("Tag") {
         description = Locale.TAG_DESCRIPTION
         execute(ReportChannelArg, AnyArg("Tag")) {
             val reportChannel = args.first
@@ -97,7 +96,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         }
     }
 
-    guildCommand("ResetTags") {
+    slash("ResetTags") {
         description = Locale.RESET_TAGS_DESCRIPTION
         execute(ReportChannelArg) {
             val reportChannel = args.first

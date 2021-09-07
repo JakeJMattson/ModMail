@@ -11,7 +11,7 @@ import me.jakejmattson.modmail.services.Permission
 
 @Suppress("unused")
 fun configurationCommands(configuration: Configuration) = commands("Configuration", Permission.GUILD_OWNER) {
-    guildCommand("SetReportCategory") {
+    slash("ReportCategory") {
         description = Locale.SET_REPORT_CATEGORY_DESCRIPTION
         execute(CategoryArg) {
             configuration[guild]!!.reportCategory = args.first.id
@@ -20,7 +20,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
         }
     }
 
-    guildCommand("SetArchiveChannel") {
+    slash("ArchiveChannel") {
         description = Locale.SET_ARCHIVE_CHANNEL_DESCRIPTION
         execute(ChannelArg) {
             configuration[guild]!!.archiveChannel = args.first.id
@@ -29,7 +29,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
         }
     }
 
-    guildCommand("SetStaffRole") {
+    slash("StaffRole") {
         description = Locale.SET_STAFF_ROLE_DESCRIPTION
         execute(RoleArg) {
             configuration[guild]!!.staffRoleId = args.first.id
@@ -38,7 +38,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
         }
     }
 
-    guildCommand("SetLoggingChannel") {
+    slash("LoggingChannel") {
         description = Locale.SET_LOGGING_CHANNEL_DESCRIPTION
         execute(ChannelArg) {
             configuration[guild]!!.loggingConfiguration.loggingChannel = args.first.id

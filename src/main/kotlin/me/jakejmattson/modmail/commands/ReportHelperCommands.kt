@@ -63,12 +63,18 @@ fun reportHelperCommands(configuration: Configuration,
         loggingService.staffOpen(guild, (event.channel as TextChannel).name, event.author)
     }
 
-    slash("Open") {
+    slash("Open", "Open a Report") {
         description = Locale.OPEN_DESCRIPTION
-        execute(MemberArg) {
-            val targetMember = args.first
+        execute(UserArg) {
+            val user = args.first
+            val targetMember = user.asMemberOrNull(guild.id)
 
-            if (!hasValidState(this, guild!!, targetMember))
+            if (targetMember == null) {
+                println("User is no longer in this guild.")
+                return@execute
+            }
+
+            if (!hasValidState(this, guild, targetMember))
                 return@execute
 
             try {
@@ -82,10 +88,16 @@ fun reportHelperCommands(configuration: Configuration,
         }
     }
 
-    guildCommand("Detain") {
+    slash("Detain", "Detain this User") {
         description = Locale.DETAIN_DESCRIPTION
-        execute(MemberArg) {
-            val targetMember = args.first
+        execute(UserArg) {
+            val user = args.first
+            val targetMember = user.asMemberOrNull(guild.id)
+
+            if (targetMember == null) {
+                println("User is no longer in this guild.")
+                return@execute
+            }
 
             if (moderationService.hasStaffRole(targetMember)) {
                 respond("You cannot detain another staff member.")
@@ -114,7 +126,7 @@ fun reportHelperCommands(configuration: Configuration,
         }
     }
 
-    guildCommand("Release") {
+    slash("Release") {
         description = Locale.RELEASE_DESCRIPTION
         execute(ReportChannelArg) {
             val report = args.first.report
@@ -135,7 +147,7 @@ fun reportHelperCommands(configuration: Configuration,
         }
     }
 
-    guildCommand("Info") {
+    slash("Info") {
         description = Locale.INFO_DESCRIPTION
         execute(ReportChannelArg, ChoiceArg("Field", "user", "channel", "all").optional("user")) {
             val (reportChannel, choice) = args
@@ -154,7 +166,7 @@ fun reportHelperCommands(configuration: Configuration,
         }
     }
 
-    guildCommand("History") {
+    slash("History", "View Report History") {
         description = Locale.HISTORY_DESCRIPTION
         execute(UserArg) {
             val user = args.first

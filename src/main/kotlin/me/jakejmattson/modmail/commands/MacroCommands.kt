@@ -11,7 +11,7 @@ import me.jakejmattson.modmail.services.MacroService
 
 @Suppress("unused")
 fun macroCommands(macroService: MacroService) = commands("Macros") {
-    guildCommand("AddMacro") {
+    command("AddMacro") {
         description = Locale.ADD_MACRO_DESCRIPTION
         execute(AnyArg("Name"), EveryArg("Content")) {
             val (name, message) = args
@@ -24,7 +24,7 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
         }
     }
 
-    guildCommand("RemoveMacro") {
+    command("RemoveMacro") {
         description = Locale.REMOVE_MACRO_DESCRIPTION
         execute(MacroArg) {
             val macro = args.first
@@ -33,7 +33,7 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
         }
     }
 
-    guildCommand("RenameMacro") {
+    command("RenameMacro") {
         description = Locale.RENAME_MACRO_DESCRIPTION
         execute(MacroArg, AnyArg("NewName")) {
             val (macro, newName) = args
@@ -46,7 +46,7 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
         }
     }
 
-    guildCommand("EditMacro") {
+    command("EditMacro") {
         description = Locale.EDIT_MACRO_DESCRIPTION
         execute(MacroArg, EveryArg("Content")) {
             val (macro, message) = args
@@ -55,7 +55,7 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
         }
     }
 
-    guildCommand("ListMacros") {
+    command("ListMacros") {
         description = Locale.LIST_MACROS_DESCRIPTION
         execute {
             respond {
