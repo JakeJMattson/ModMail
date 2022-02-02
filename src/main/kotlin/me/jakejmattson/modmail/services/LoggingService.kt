@@ -11,6 +11,8 @@ import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.annotations.Service
 import me.jakejmattson.discordkt.api.commands.CommandEvent
 import me.jakejmattson.discordkt.api.extensions.addField
+import me.jakejmattson.discordkt.api.extensions.pfpUrl
+import me.jakejmattson.discordkt.api.extensions.thumbnail
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.messages.inject
 
@@ -121,9 +123,6 @@ class LoggingService(discord: Discord, private val config: Configuration) {
 
         createFields("Old Content", old)
         createFields("New Content", new)
-
-        thumbnail {
-            report.user.avatar.url
-        }
+        thumbnail(report.user.pfpUrl)
     }
 }

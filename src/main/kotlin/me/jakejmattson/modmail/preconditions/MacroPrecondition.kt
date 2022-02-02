@@ -2,6 +2,7 @@ package me.jakejmattson.modmail.preconditions
 
 import dev.kord.common.kColor
 import me.jakejmattson.discordkt.api.dsl.precondition
+import me.jakejmattson.discordkt.api.extensions.pfpUrl
 import me.jakejmattson.discordkt.api.extensions.sendPrivateMessage
 import me.jakejmattson.modmail.services.MacroService
 import me.jakejmattson.modmail.services.toLiveReport
@@ -30,7 +31,7 @@ fun macroPrecondition() = precondition {
 
             author {
                 name = this@precondition.author.tag
-                icon = this@precondition.author.avatar.url
+                icon = this@precondition.author.pfpUrl
             }
 
             Color.green.kColor

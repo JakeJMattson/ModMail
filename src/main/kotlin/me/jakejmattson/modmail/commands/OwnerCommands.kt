@@ -23,7 +23,7 @@ fun ownerCommands(configuration: Configuration) = commands("Owner", Permission.B
 
     command("Presence") {
         description = Locale.SET_PRESENCE_DESCRIPTION
-        execute(PresenceArg().optional(Presence.PLAYING), EveryArg("Text")) {
+        execute(PresenceArg.optional(Presence.PLAYING), EveryArg("Text")) {
             val (choice, text) = args
             choice.apply(discord.kord, text)
             reactSuccess()

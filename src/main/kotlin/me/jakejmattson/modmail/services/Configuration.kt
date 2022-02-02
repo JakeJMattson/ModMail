@@ -8,6 +8,7 @@ import dev.kord.core.entity.channel.TextChannel
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import me.jakejmattson.discordkt.api.dsl.Data
 
 @Serializable
 data class LoggingConfiguration(var loggingChannel: Snowflake,
@@ -30,7 +31,7 @@ data class GuildConfiguration(var prefix: String,
 
 @Serializable
 data class Configuration(val ownerId: Snowflake = Snowflake(0),
-                         val guildConfigurations: MutableMap<Snowflake, GuildConfiguration> = mutableMapOf()) {
+                         val guildConfigurations: MutableMap<Snowflake, GuildConfiguration> = mutableMapOf()) : Data() {
     operator fun get(guild: Guild) = guildConfigurations[guild.id]
-    fun save() = configFile.writeText(Json.encodeToString(this))
+    //fun save() = configFile.writeText(Json.encodeToString(this))
 }

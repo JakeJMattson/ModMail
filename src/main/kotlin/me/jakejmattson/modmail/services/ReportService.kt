@@ -24,6 +24,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.annotations.Service
+import me.jakejmattson.discordkt.api.extensions.pfpUrl
 import me.jakejmattson.discordkt.api.extensions.sendPrivateMessage
 import me.jakejmattson.modmail.extensions.cleanContent
 import me.jakejmattson.modmail.extensions.descriptor
@@ -155,7 +156,7 @@ private fun removeReport(report: Report) {
 suspend fun Member.reportOpenEmbed(channel: TextChannel, detain: Boolean = false) = channel.createEmbed {
     author {
         name = username
-        icon = avatar.url
+        icon = pfpUrl
     }
 
     description = descriptor()

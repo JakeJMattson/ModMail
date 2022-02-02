@@ -6,21 +6,21 @@ import dev.kord.gateway.PrivilegedIntent
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import me.jakejmattson.discordkt.api.dsl.Data
 import me.jakejmattson.discordkt.api.dsl.bot
-import me.jakejmattson.discordkt.api.extensions.addInlineField
-import me.jakejmattson.discordkt.api.extensions.plus
+import me.jakejmattson.discordkt.api.extensions.*
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
 import java.awt.Color
 import kotlin.system.exitProcess
 
 @Serializable
-private data class Properties(val version: String, val kotlin: String, val repository: String)
+private data class Properties(val version: String, val kotlin: String, val repository: String) : Data()
 
-private val propFile = Properties::class.java.getResource("/properties.json").readText()
-private val project = Json.decodeFromString<Properties>(propFile)
+private val propFile = Properties::class.java.getResource("/properties.json").path
 
-@OptIn(KordPreview::class, PrivilegedIntent::class)
+@KordPreview
+@PrivilegedIntent
 suspend fun main(it: Array<String>) {
     val token = it.firstOrNull()
 
@@ -30,11 +30,11 @@ suspend fun main(it: Array<String>) {
     }
 
     bot(token) {
-        val configuration = Json.decodeFromString<Configuration>(configFile.readText())
-        inject(configuration)
+        val configuration = data(configFile.path) { Configuration() }
+        val project = data(propFile) { Properties("0.0", "0.0", "0.0") }
 
         prefix {
-            guild?.let { configuration[it]?.prefix.takeUnless { it.isNullOrBlank() } ?: "!" } ?: "<none>"
+            guild?.let { configuration[it]?.prefix } ?: "!"
         }
 
         configure {
@@ -52,18 +52,11 @@ suspend fun main(it: Array<String>) {
             title = "ModMail ${project.version}"
             description = "A Discord report management bot."
 
-            thumbnail {
-                url = it.discord.kord.getSelf().avatar.url
-            }
-
+            thumbnail(it.discord.kord.getSelf().pfpUrl)
             addInlineField("Prefix", it.prefix())
             addInlineField("Required Role", requiredRole)
             addInlineField("Source", "[GitHub](${project.repository})")
-
-            footer {
-                val (library, kotlin, kord) = it.discord.versions
-                text = "$library - $kord - $kotlin"
-            }
+            footer(it.discord.versions.toString())
         }
 
         presence {

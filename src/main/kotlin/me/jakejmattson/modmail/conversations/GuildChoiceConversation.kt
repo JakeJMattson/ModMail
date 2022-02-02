@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.conversations.conversation
 import me.jakejmattson.discordkt.api.extensions.mutualGuilds
+import me.jakejmattson.discordkt.api.extensions.pfpUrl
 import me.jakejmattson.modmail.services.Configuration
 import me.jakejmattson.modmail.services.ReportService
 
@@ -21,7 +22,7 @@ fun guildChoiceConversation(discord: Discord, message: Message) = conversation {
             title = "Select Server"
             description = "Select the server you want to contact."
             thumbnail {
-                url = discord.kord.getSelf().avatar.url
+                url = discord.kord.getSelf().pfpUrl
             }
         }
 

@@ -11,7 +11,6 @@ import dev.kord.core.entity.User
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.Image
 import me.jakejmattson.discordkt.api.arguments.ChoiceArg
-import me.jakejmattson.discordkt.api.arguments.MemberArg
 import me.jakejmattson.discordkt.api.arguments.UserArg
 import me.jakejmattson.discordkt.api.commands.CommandEvent
 import me.jakejmattson.discordkt.api.commands.commands
@@ -32,9 +31,8 @@ fun reportHelperCommands(configuration: Configuration,
     suspend fun Member.openReport(event: CommandEvent<*>, detain: Boolean = false) {
         val guild = guild.asGuild()
         val reportCategory = configuration[guild]!!.getLiveReportCategory(guild.kord)
-        val privateChannel = getDmChannel()
 
-        privateChannel.createEmbed {
+        getDmChannel().createEmbed {
             if (detain) {
                 color = Color.green.kColor
                 addField("You've have been detained by the staff of ${guild.name}!", Locale.USER_DETAIN_MESSAGE)
@@ -59,7 +57,7 @@ fun reportHelperCommands(configuration: Configuration,
 
         if (detain) newReport.detain(guild.kord)
 
-        event.respond("Success! Channel opened at: ${reportChannel.mention}")
+        event.respond(reportChannel.mention)
         loggingService.staffOpen(guild, (event.channel as TextChannel).name, event.author)
     }
 
@@ -80,9 +78,7 @@ fun reportHelperCommands(configuration: Configuration,
             try {
                 targetMember.openReport(this, false)
             } catch (ex: RequestException) {
-                respond("Unable to contact the target user. " +
-                    "Direct messages are disabled or the bot is blocked.")
-
+                respond("Unable to contact the target user. Direct messages are disabled or the bot is blocked.")
                 return@execute
             }
         }
@@ -188,12 +184,11 @@ private suspend fun hasValidState(event: CommandEvent<*>, currentGuild: Guild, t
     val report = targetUser.toLiveReport() ?: return true
     val reportGuild = report.guild
 
-    event.respond("The target user already has an open report " +
+    event.respond(
         if (reportGuild == currentGuild) {
-            val channel = report.channel.mention
-            "at $channel."
+            report.channel.mention
         } else {
-            "in ${reportGuild.name}."
+            "The target user already has an open report in ${reportGuild.name}."
         }
     )
 

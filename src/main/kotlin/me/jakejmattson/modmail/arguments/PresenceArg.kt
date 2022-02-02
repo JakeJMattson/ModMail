@@ -5,7 +5,7 @@ import me.jakejmattson.discordkt.api.arguments.*
 import me.jakejmattson.discordkt.api.commands.CommandEvent
 
 open class PresenceArg(override val name: String = "Presence") : Argument<Presence> {
-    companion object : MacroArg()
+    companion object : PresenceArg()
 
     override val description = "A presence type"
 
