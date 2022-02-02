@@ -1,8 +1,8 @@
 package me.jakejmattson.modmail.commands
 
-import me.jakejmattson.discordkt.api.commands.commands
-import me.jakejmattson.discordkt.api.extensions.addField
-import me.jakejmattson.discordkt.api.extensions.toTimeString
+import me.jakejmattson.discordkt.commands.commands
+import me.jakejmattson.discordkt.extensions.addField
+import me.jakejmattson.discordkt.extensions.toTimeString
 import me.jakejmattson.modmail.messages.Locale
 import java.util.*
 import kotlin.math.roundToInt

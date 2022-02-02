@@ -22,10 +22,10 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import me.jakejmattson.discordkt.api.Discord
-import me.jakejmattson.discordkt.api.annotations.Service
-import me.jakejmattson.discordkt.api.extensions.pfpUrl
-import me.jakejmattson.discordkt.api.extensions.sendPrivateMessage
+import me.jakejmattson.discordkt.Discord
+import me.jakejmattson.discordkt.annotations.Service
+import me.jakejmattson.discordkt.extensions.pfpUrl
+import me.jakejmattson.discordkt.extensions.sendPrivateMessage
 import me.jakejmattson.modmail.extensions.cleanContent
 import me.jakejmattson.modmail.extensions.descriptor
 import java.awt.Color
@@ -39,9 +39,9 @@ data class Report(val userId: Snowflake,
                   val guildId: Snowflake,
                   val messages: MutableMap<Snowflake, Snowflake> = mutableMapOf()) {
 
-    suspend fun toLiveReport(api: Kord): LiveReport? {
-        val user = api.getUser(userId) ?: return null
-        val guild = api.getGuild(guildId) ?: return null
+    suspend fun toLiveReport(kord: Kord): LiveReport? {
+        val user = kord.getUser(userId) ?: return null
+        val guild = kord.getGuild(guildId) ?: return null
         val channel = guild.getChannelOfOrNull<TextChannel>(channelId) ?: return null
 
         return LiveReport(user, channel, guild)
@@ -150,7 +150,7 @@ suspend fun Report.close(kord: Kord) {
 
 private fun removeReport(report: Report) {
     reports.remove(report)
-    reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId.asString) }?.delete()
+    reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId.toString()) }?.delete()
 }
 
 suspend fun Member.reportOpenEmbed(channel: TextChannel, detain: Boolean = false) = channel.createEmbed {

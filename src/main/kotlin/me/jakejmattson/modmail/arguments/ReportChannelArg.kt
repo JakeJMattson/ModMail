@@ -2,9 +2,9 @@ package me.jakejmattson.modmail.arguments
 
 import dev.kord.core.entity.channel.TextChannel
 import kotlinx.coroutines.runBlocking
-import me.jakejmattson.discordkt.api.arguments.*
-import me.jakejmattson.discordkt.api.commands.CommandEvent
-import me.jakejmattson.discordkt.api.extensions.toSnowflakeOrNull
+import me.jakejmattson.discordkt.arguments.*
+import me.jakejmattson.discordkt.commands.CommandEvent
+import me.jakejmattson.discordkt.extensions.toSnowflakeOrNull
 import me.jakejmattson.modmail.services.Report
 import me.jakejmattson.modmail.services.findReport
 import me.jakejmattson.modmail.services.getReports

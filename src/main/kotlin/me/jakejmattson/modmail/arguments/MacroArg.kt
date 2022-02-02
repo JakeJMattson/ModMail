@@ -1,7 +1,7 @@
 package me.jakejmattson.modmail.arguments
 
-import me.jakejmattson.discordkt.api.arguments.*
-import me.jakejmattson.discordkt.api.commands.CommandEvent
+import me.jakejmattson.discordkt.arguments.*
+import me.jakejmattson.discordkt.commands.CommandEvent
 import me.jakejmattson.modmail.services.Macro
 import me.jakejmattson.modmail.services.MacroService
 

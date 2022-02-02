@@ -7,12 +7,12 @@ import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.builder.message.EmbedBuilder
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import me.jakejmattson.discordkt.api.Discord
-import me.jakejmattson.discordkt.api.annotations.Service
-import me.jakejmattson.discordkt.api.commands.CommandEvent
-import me.jakejmattson.discordkt.api.extensions.addField
-import me.jakejmattson.discordkt.api.extensions.pfpUrl
-import me.jakejmattson.discordkt.api.extensions.thumbnail
+import me.jakejmattson.discordkt.Discord
+import me.jakejmattson.discordkt.annotations.Service
+import me.jakejmattson.discordkt.commands.CommandEvent
+import me.jakejmattson.discordkt.extensions.addField
+import me.jakejmattson.discordkt.extensions.pfpUrl
+import me.jakejmattson.discordkt.extensions.thumbnail
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.messages.inject
 

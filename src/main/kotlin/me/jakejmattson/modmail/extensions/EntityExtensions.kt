@@ -7,10 +7,10 @@ import dev.kord.core.entity.channel.MessageChannel
 import dev.kord.x.emoji.Emojis
 import dev.kord.x.emoji.toReaction
 import kotlinx.coroutines.flow.toList
-import me.jakejmattson.discordkt.api.Discord
-import me.jakejmattson.discordkt.api.commands.CommandEvent
-import me.jakejmattson.discordkt.api.extensions.containsURL
-import me.jakejmattson.discordkt.api.extensions.sanitiseMentions
+import me.jakejmattson.discordkt.Discord
+import me.jakejmattson.discordkt.commands.CommandEvent
+import me.jakejmattson.discordkt.extensions.containsURL
+import me.jakejmattson.discordkt.extensions.sanitiseMentions
 import me.jakejmattson.modmail.arguments.ReportChannel
 
 private const val embedNotation = "<---------- Embed ---------->"

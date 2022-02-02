@@ -2,11 +2,11 @@ package me.jakejmattson.modmail.listeners
 
 import dev.kord.core.event.message.MessageCreateEvent
 import kotlinx.coroutines.flow.toList
-import me.jakejmattson.discordkt.api.Discord
-import me.jakejmattson.discordkt.api.conversations.Conversations
-import me.jakejmattson.discordkt.api.dsl.listeners
-import me.jakejmattson.discordkt.api.extensions.mutualGuilds
-import me.jakejmattson.discordkt.api.extensions.sendPrivateMessage
+import me.jakejmattson.discordkt.Discord
+import me.jakejmattson.discordkt.conversations.Conversations
+import me.jakejmattson.discordkt.dsl.listeners
+import me.jakejmattson.discordkt.extensions.mutualGuilds
+import me.jakejmattson.discordkt.extensions.sendPrivateMessage
 import me.jakejmattson.modmail.conversations.guildChoiceConversation
 import me.jakejmattson.modmail.extensions.addFailReaction
 import me.jakejmattson.modmail.extensions.fullContent

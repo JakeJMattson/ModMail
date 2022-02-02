@@ -1,8 +1,8 @@
 package me.jakejmattson.modmail.services
 
 import dev.kord.core.entity.Guild
-import me.jakejmattson.discordkt.api.Discord
-import me.jakejmattson.discordkt.api.annotations.Service
+import me.jakejmattson.discordkt.Discord
+import me.jakejmattson.discordkt.annotations.Service
 import me.jakejmattson.modmail.conversations.guildSetupConversation
 
 @Service

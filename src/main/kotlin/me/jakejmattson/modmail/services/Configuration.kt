@@ -6,9 +6,7 @@ import dev.kord.core.entity.Guild
 import dev.kord.core.entity.channel.Category
 import dev.kord.core.entity.channel.TextChannel
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import me.jakejmattson.discordkt.api.dsl.Data
+import me.jakejmattson.discordkt.dsl.Data
 
 @Serializable
 data class LoggingConfiguration(var loggingChannel: Snowflake,
@@ -16,7 +14,7 @@ data class LoggingConfiguration(var loggingChannel: Snowflake,
                                 val logCommands: Boolean = true,
                                 val logOpen: Boolean = true,
                                 val logClose: Boolean = true) {
-    suspend fun getLiveChannel(api: Kord) = api.getChannel(loggingChannel) as? TextChannel
+    suspend fun getLiveChannel(kord: Kord) = kord.getChannel(loggingChannel) as? TextChannel
 }
 
 @Serializable
@@ -25,8 +23,8 @@ data class GuildConfiguration(var prefix: String,
                               var archiveChannel: Snowflake,
                               var staffRoleId: Snowflake,
                               val loggingConfiguration: LoggingConfiguration) {
-    suspend fun getLiveReportCategory(api: Kord) = api.getChannel(reportCategory) as? Category
-    suspend fun getLiveArchiveChannel(api: Kord) = api.getChannel(archiveChannel) as? TextChannel
+    suspend fun getLiveReportCategory(kord: Kord) = kord.getChannel(reportCategory) as? Category
+    suspend fun getLiveArchiveChannel(kord: Kord) = kord.getChannel(archiveChannel) as? TextChannel
 }
 
 @Serializable

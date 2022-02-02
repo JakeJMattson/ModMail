@@ -1,8 +1,8 @@
 package me.jakejmattson.modmail.arguments
 
 import dev.kord.core.Kord
-import me.jakejmattson.discordkt.api.arguments.*
-import me.jakejmattson.discordkt.api.commands.CommandEvent
+import me.jakejmattson.discordkt.arguments.*
+import me.jakejmattson.discordkt.commands.CommandEvent
 
 open class PresenceArg(override val name: String = "Presence") : Argument<Presence> {
     companion object : PresenceArg()

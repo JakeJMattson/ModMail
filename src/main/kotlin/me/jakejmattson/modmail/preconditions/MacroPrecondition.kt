@@ -1,9 +1,9 @@
 package me.jakejmattson.modmail.preconditions
 
 import dev.kord.common.kColor
-import me.jakejmattson.discordkt.api.dsl.precondition
-import me.jakejmattson.discordkt.api.extensions.pfpUrl
-import me.jakejmattson.discordkt.api.extensions.sendPrivateMessage
+import me.jakejmattson.discordkt.dsl.precondition
+import me.jakejmattson.discordkt.extensions.pfpUrl
+import me.jakejmattson.discordkt.extensions.sendPrivateMessage
 import me.jakejmattson.modmail.services.MacroService
 import me.jakejmattson.modmail.services.toLiveReport
 import java.awt.Color

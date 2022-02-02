@@ -10,11 +10,11 @@ import dev.kord.core.entity.Member
 import dev.kord.core.entity.User
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.Image
-import me.jakejmattson.discordkt.api.arguments.ChoiceArg
-import me.jakejmattson.discordkt.api.arguments.UserArg
-import me.jakejmattson.discordkt.api.commands.CommandEvent
-import me.jakejmattson.discordkt.api.commands.commands
-import me.jakejmattson.discordkt.api.extensions.addField
+import me.jakejmattson.discordkt.arguments.ChoiceArg
+import me.jakejmattson.discordkt.arguments.UserArg
+import me.jakejmattson.discordkt.commands.CommandEvent
+import me.jakejmattson.discordkt.commands.commands
+import me.jakejmattson.discordkt.extensions.addField
 import me.jakejmattson.modmail.arguments.ReportChannelArg
 import me.jakejmattson.modmail.extensions.archiveString
 import me.jakejmattson.modmail.messages.Locale
@@ -151,8 +151,8 @@ fun reportHelperCommands(configuration: Configuration,
 
             val response = with(report) {
                 when (choice) {
-                    "user" -> userId.asString
-                    "channel" -> channelId.asString
+                    "user" -> userId.toString()
+                    "channel" -> channelId.toString()
                     "all" -> "User ID: $userId\nChannel ID: $channelId"
                     else -> "Invalid selection!"
                 }

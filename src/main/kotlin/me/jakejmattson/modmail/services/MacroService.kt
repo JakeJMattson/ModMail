@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import me.jakejmattson.discordkt.api.annotations.Service
+import me.jakejmattson.discordkt.annotations.Service
 
 @Serializable
 data class Macro(var name: String, var message: String)
@@ -16,7 +16,7 @@ class MacroService {
 
     private fun MutableList<Macro>.hasMacro(name: String) = this.any { it.name.equals(name, true) }
 
-    fun getGuildMacros(guild: Guild) = macroMap.getOrPut(guild.id.asString) { arrayListOf() }
+    fun getGuildMacros(guild: Guild) = macroMap.getOrPut(guild.id.toString()) { arrayListOf() }
 
     fun addMacro(name: String, message: String, guild: Guild): Boolean {
         val macroList = getGuildMacros(guild)

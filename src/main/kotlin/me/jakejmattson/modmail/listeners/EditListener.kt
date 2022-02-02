@@ -4,8 +4,8 @@ import dev.kord.core.behavior.edit
 import dev.kord.core.event.channel.TypingStartEvent
 import dev.kord.core.event.message.MessageDeleteEvent
 import dev.kord.core.event.message.MessageUpdateEvent
-import me.jakejmattson.discordkt.api.Discord
-import me.jakejmattson.discordkt.api.dsl.listeners
+import me.jakejmattson.discordkt.Discord
+import me.jakejmattson.discordkt.dsl.listeners
 import me.jakejmattson.modmail.extensions.cleanContent
 import me.jakejmattson.modmail.services.*
 

@@ -1,24 +1,17 @@
 package me.jakejmattson.modmail.services
 
-import dev.kord.core.any
-import me.jakejmattson.discordkt.api.dsl.PermissionContext
-import me.jakejmattson.discordkt.api.dsl.PermissionSet
+import me.jakejmattson.discordkt.dsl.Permission
+import me.jakejmattson.discordkt.dsl.PermissionSet
+import me.jakejmattson.discordkt.dsl.permission
 
-enum class Permission : PermissionSet {
-    BOT_OWNER {
-        override suspend fun hasPermission(context: PermissionContext): Boolean {
-            return context.discord.getInjectionObjects<Configuration>().ownerId == context.user.id
-        }
-    },
-    GUILD_OWNER {
-        override suspend fun hasPermission(context: PermissionContext) = context.getMember()?.isOwner() ?: false
-    },
-    STAFF {
-        override suspend fun hasPermission(context: PermissionContext): Boolean {
-            val guild = context.guild ?: return false
-            val member = context.getMember()!!
-            val configuration = context.discord.getInjectionObjects<Configuration>()
-            return member.roles.any { it.id == configuration[guild]?.staffRoleId }
-        }
+object Permissions : PermissionSet {
+    val BOT_OWNER = permission("Bot Owner") { users(discord.getInjectionObjects<Configuration>().ownerId) }
+    val GUILD_OWNER = permission("Guild Owner") { users(guild!!.ownerId) }
+
+    val STAFF = permission("Staff") {
+        discord.getInjectionObjects<Configuration>().guildConfigurations[guild?.id]?.staffRoleId?.let { roles(it) }
     }
+
+    override val hierarchy: List<Permission> = listOf(STAFF, GUILD_OWNER, BOT_OWNER)
+    override val commandDefault: Permission = STAFF
 }

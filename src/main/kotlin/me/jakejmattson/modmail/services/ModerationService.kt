@@ -6,7 +6,7 @@ import dev.kord.core.behavior.GuildBehavior
 import dev.kord.core.entity.Member
 import dev.kord.core.firstOrNull
 import kotlinx.coroutines.flow.toList
-import me.jakejmattson.discordkt.api.annotations.Service
+import me.jakejmattson.discordkt.annotations.Service
 import java.util.*
 
 private val detainedReports = Vector<Report>()

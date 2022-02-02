@@ -4,10 +4,10 @@ import dev.kord.core.entity.Guild
 import dev.kord.core.entity.Message
 import dev.kord.x.emoji.DiscordEmoji
 import kotlinx.coroutines.flow.toList
-import me.jakejmattson.discordkt.api.Discord
-import me.jakejmattson.discordkt.api.conversations.conversation
-import me.jakejmattson.discordkt.api.extensions.mutualGuilds
-import me.jakejmattson.discordkt.api.extensions.pfpUrl
+import me.jakejmattson.discordkt.Discord
+import me.jakejmattson.discordkt.conversations.conversation
+import me.jakejmattson.discordkt.extensions.mutualGuilds
+import me.jakejmattson.discordkt.extensions.pfpUrl
 import me.jakejmattson.modmail.services.Configuration
 import me.jakejmattson.modmail.services.ReportService
 
