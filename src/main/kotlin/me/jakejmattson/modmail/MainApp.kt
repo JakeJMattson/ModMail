@@ -1,6 +1,8 @@
 package me.jakejmattson.modmail
 
 import dev.kord.common.annotation.KordPreview
+import dev.kord.common.entity.Permission
+import dev.kord.common.entity.Permissions
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
 import kotlinx.serialization.Serializable
@@ -10,12 +12,15 @@ import me.jakejmattson.discordkt.extensions.*
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.*
 import java.awt.Color
+import java.time.Instant
 import kotlin.system.exitProcess
 
 @Serializable
 private data class Properties(val version: String, val kotlin: String, val repository: String) : Data()
 
 private val propFile = Properties::class.java.getResource("/properties.json").path
+
+private val startup = Instant.now()
 
 @KordPreview
 @PrivilegedIntent
@@ -39,7 +44,7 @@ suspend fun main(it: Array<String>) {
             commandReaction = null
             theme = Color(0x00bfff)
             intents = Intent.GuildMembers + Intent.Guilds + Intent.DirectMessages + Intent.DirectMessageTyping
-            permissions = Permissions
+            defaultPermissions = Permissions(Permission.All)
         }
 
         mentionEmbed {
@@ -54,6 +59,7 @@ suspend fun main(it: Array<String>) {
             addInlineField("Prefix", it.prefix())
             addInlineField("Required Role", requiredRole)
             addInlineField("Source", "[GitHub](${project.repository})")
+            addInlineField("Startup", TimeStamp.at(startup, TimeStyle.RELATIVE))
             footer(it.discord.versions.toString())
         }
 
