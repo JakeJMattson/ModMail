@@ -23,10 +23,10 @@
 | RenameMacro | Macro, NewName | Change a macro's name, keeping the original response. |
 
 ## Owner
-| Commands | Arguments        | Description                          |
-| -------- | ---------------- | ------------------------------------ |
-| Prefix   | Prefix           | Set the bot prefix.                  |
-| Presence | [Presence], Text | Set the Discord presence of the bot. |
+| Commands | Arguments  | Description                          |
+| -------- | ---------- | ------------------------------------ |
+| Prefix   | Prefix     | Set the bot prefix.                  |
+| Presence | Type, Text | Set the Discord presence of the bot. |
 
 ## Report
 | Commands  | Arguments             | Description                                       |
