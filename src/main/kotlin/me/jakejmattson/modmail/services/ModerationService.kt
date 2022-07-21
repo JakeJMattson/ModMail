@@ -1,10 +1,9 @@
 package me.jakejmattson.modmail.services
 
 import dev.kord.core.Kord
-import dev.kord.core.any
 import dev.kord.core.behavior.GuildBehavior
 import dev.kord.core.entity.Member
-import dev.kord.core.firstOrNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.annotations.Service
 import java.util.*
@@ -17,7 +16,7 @@ class ModerationService(val configuration: Configuration) {
         val guild = member.getGuild()
         val staffRoleId = configuration[guild]?.staffRoleId ?: return false
 
-        return member.roles.any { it.id == staffRoleId }
+        return member.roles.firstOrNull { it.id == staffRoleId } != null
     }
 }
 

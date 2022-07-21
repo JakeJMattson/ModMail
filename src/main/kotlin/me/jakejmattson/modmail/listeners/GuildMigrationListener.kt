@@ -5,7 +5,7 @@ import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.event.guild.GuildCreateEvent
 import dev.kord.core.event.guild.MemberJoinEvent
 import dev.kord.core.event.guild.MemberLeaveEvent
-import dev.kord.core.firstOrNull
+import kotlinx.coroutines.flow.firstOrNull
 import me.jakejmattson.discordkt.dsl.listeners
 import me.jakejmattson.discordkt.extensions.addField
 import me.jakejmattson.modmail.services.*

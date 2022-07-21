@@ -24,7 +24,7 @@ fun editListener(discord: Discord, reportService: ReportService, loggingService:
             val targetMessage = report.messages[messageId]!!
 
             privateChannel.getMessage(targetMessage).edit {
-                content = new.content.toString()
+                content = new.content.value
             }
         } else {
             val report = author.findReport() ?: return@on
@@ -35,6 +35,7 @@ fun editListener(discord: Discord, reportService: ReportService, loggingService:
             val newContent = message.cleanContent(discord)
 
             loggingService.edit(liveReport, guildMessage.cleanContent(discord), newContent)
+
             channel.getMessage(targetMessage).edit {
                 content = newContent
             }

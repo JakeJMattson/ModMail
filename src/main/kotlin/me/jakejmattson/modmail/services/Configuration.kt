@@ -31,5 +31,4 @@ data class GuildConfiguration(var prefix: String,
 data class Configuration(val ownerId: Snowflake = Snowflake(0),
                          val guildConfigurations: MutableMap<Snowflake, GuildConfiguration> = mutableMapOf()) : Data() {
     operator fun get(guild: Guild) = guildConfigurations[guild.id]
-    //fun save() = configFile.writeText(Json.encodeToString(this))
 }
