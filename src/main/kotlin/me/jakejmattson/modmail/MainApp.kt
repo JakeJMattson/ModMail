@@ -59,6 +59,7 @@ suspend fun main(it: Array<String>) {
             addInlineField("Prefix", it.prefix())
             addInlineField("Required Role", requiredRole)
             addInlineField("Source", "[GitHub](${project.repository})")
+            addInlineField("Ping", it.discord.kord.gateway.averagePing?.toString() ?: "Unknown")
             addInlineField("Startup", TimeStamp.at(startup, TimeStyle.RELATIVE))
             footer(it.discord.versions.toString())
         }
