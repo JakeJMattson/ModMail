@@ -21,6 +21,7 @@
 | ListMacros  |                | List all of the currently available macros.           |
 | RemoveMacro | Macro          | Removes a macro with the given name.                  |
 | RenameMacro | Macro, NewName | Change a macro's name, keeping the original response. |
+| SendMacro   | Macro          | Send a macro to a user through a report.              |
 
 ## Report
 | Commands  | Arguments             | Description                                       |

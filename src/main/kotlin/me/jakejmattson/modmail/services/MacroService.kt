@@ -14,7 +14,7 @@ data class Macro(var name: String, var message: String)
 class MacroService {
     private val macroMap = loadMacros()
 
-    private fun findMacro(guild: Guild, name: String) = getGuildMacros(guild).firstOrNull { it.name.equals(name, true) }
+    fun findMacro(guild: Guild, name: String) = getGuildMacros(guild).firstOrNull { it.name.equals(name, true) }
 
     private fun MutableList<Macro>.hasMacro(name: String) = this.any { it.name.equals(name, true) }
 

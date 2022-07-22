@@ -1,13 +1,16 @@
 package me.jakejmattson.modmail.commands
 
+import dev.kord.common.kColor
+import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.entity.interaction.GuildAutoCompleteInteraction
 import me.jakejmattson.discordkt.arguments.AnyArg
 import me.jakejmattson.discordkt.arguments.EveryArg
 import me.jakejmattson.discordkt.commands.commands
-import me.jakejmattson.discordkt.extensions.addField
-import me.jakejmattson.modmail.extensions.reactSuccess
+import me.jakejmattson.discordkt.extensions.*
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.MacroService
+import me.jakejmattson.modmail.services.toLiveReport
+import java.awt.Color
 
 @Suppress("unused")
 fun macroCommands(macroService: MacroService) = commands("Macros") {
@@ -17,6 +20,33 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
         macroService.getGuildMacros(guild)
             .map { it.name }
             .filter { it.contains(input, true) }
+    }
+
+    slash("SendMacro") {
+        description = "Send a macro to a user through a report."
+        execute(autoCompletingMacroArg()) {
+            val name = args.first
+            val macro = macroService.findMacro(guild, name)
+            val report = channel.toLiveReport()
+
+            if (macro == null) {
+                respond("`$name` does not exist.")
+                return@execute
+            }
+
+            if (report != null) {
+                report.user.sendPrivateMessage(macro.message)
+                respond("Macro content sent to user.")
+            } else
+                respond("Macro preview shown below.")
+
+            channel.createEmbed {
+                description = macro.message
+                color = if (report != null) Color.green.kColor else Color.red.kColor
+                author(this@execute.author)
+                footer("Macro: ${macro.name}")
+            }
+        }
     }
 
     slash("AddMacro") {
