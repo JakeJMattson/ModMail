@@ -37,14 +37,15 @@ suspend fun main(it: Array<String>) {
         val project = data(propFile) { Properties("0.0", "0.0", "0.0") }
 
         prefix {
-            guild?.let { configuration[it]?.prefix } ?: "!"
+            guild?.let { configuration[it]?.prefix } ?: " "
         }
 
         configure {
             commandReaction = null
+            dualRegistry = false
             theme = Color(0x00bfff)
             intents = Intent.GuildMembers + Intent.Guilds + Intent.DirectMessages + Intent.DirectMessageTyping
-            defaultPermissions = Permissions(Permission.All)
+            defaultPermissions = Permissions(Permission.ManageMessages)
         }
 
         mentionEmbed {
@@ -56,7 +57,6 @@ suspend fun main(it: Array<String>) {
             description = "A Discord report management bot."
 
             thumbnail(it.discord.kord.getSelf().pfpUrl)
-            addInlineField("Prefix", it.prefix())
             addInlineField("Required Role", requiredRole)
             addInlineField("Source", "[GitHub](${project.repository})")
             addInlineField("Ping", it.discord.kord.gateway.averagePing?.toString() ?: "Unknown")

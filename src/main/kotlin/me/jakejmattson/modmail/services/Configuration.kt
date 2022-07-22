@@ -28,8 +28,7 @@ data class GuildConfiguration(var prefix: String,
 }
 
 @Serializable
-data class Configuration(val ownerId: Snowflake = Snowflake(0),
-                         val guildConfigurations: MutableMap<Snowflake, GuildConfiguration> = mutableMapOf()) : Data() {
+data class Configuration(val guildConfigurations: MutableMap<Snowflake, GuildConfiguration> = mutableMapOf()) : Data() {
     operator fun get(guild: Guild) = guildConfigurations[guild.id]
 
     operator fun set(guild: Guild, configuration: GuildConfiguration) {
