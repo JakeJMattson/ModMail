@@ -3,6 +3,7 @@ package me.jakejmattson.modmail.commands
 import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.channel.edit
+import dev.kord.core.entity.channel.MessageChannel
 import dev.kord.core.entity.channel.TextChannel
 import me.jakejmattson.discordkt.arguments.AnyArg
 import me.jakejmattson.discordkt.arguments.EveryArg
@@ -15,16 +16,12 @@ import me.jakejmattson.modmail.listeners.deletionQueue
 import me.jakejmattson.modmail.locale.Locale
 import me.jakejmattson.modmail.services.*
 
-fun implicitReportChannel() = ReportChannelArg.optionalNullable {
-    (it.channel as? TextChannel)?.toReportChannel()
-}
-
 @Suppress("unused")
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands("Report") {
     slash("Close") {
         description = Locale.CLOSE_DESCRIPTION
-        execute(implicitReportChannel()) {
-            val reportChannel = args.first
+        execute {
+            val reportChannel = channel.toReportChannel()
 
             if (reportChannel == null) {
                 respond("Invalid report channel")
@@ -42,9 +39,9 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     slash("Archive") {
         description = Locale.ARCHIVE_DESCRIPTION
-        execute(implicitReportChannel(),
-            EveryArg("Info", "A message sent along side the archive file").optional("")) {
-            val (reportChannel, note) = args
+        execute(EveryArg("Info", "A message sent along side the archive file").optional("")) {
+            val (note) = args
+            val reportChannel = channel.toReportChannel()
 
             if (reportChannel == null) {
                 respond("Invalid report channel")
@@ -78,8 +75,8 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     slash("Note") {
         description = Locale.NOTE_DESCRIPTION
-        execute(implicitReportChannel(), EveryArg("Note", "The note content")) {
-            val reportChannel = args.first
+        execute(EveryArg("Note", "The note content")) {
+            val reportChannel = channel.toReportChannel()
 
             if (reportChannel == null) {
                 respond("Invalid report channel")
@@ -94,7 +91,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
                     name = messageAuthor.tag
                     icon = messageAuthor.pfpUrl
                 }
-                description = args.second
+                description = args.first
             }
 
             loggingService.command(this)
@@ -104,8 +101,8 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     slash("Tag") {
         description = Locale.TAG_DESCRIPTION
-        execute(implicitReportChannel(), AnyArg("Tag", "A prefix or emoji")) {
-            val reportChannel = args.first
+        execute(AnyArg("Tag", "A prefix or emoji")) {
+            val reportChannel = channel.toReportChannel()
 
             if (reportChannel == null) {
                 respond("Invalid report channel")
@@ -113,7 +110,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             }
 
             val channel = reportChannel.channel
-            val tag = args.second
+            val tag = args.first
 
             channel.edit {
                 name = "$tag-${channel.name}"
@@ -126,8 +123,8 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     slash("ResetTags") {
         description = Locale.RESET_TAGS_DESCRIPTION
-        execute(implicitReportChannel()) {
-            val reportChannel = args.first
+        execute {
+            val reportChannel = channel.toReportChannel()
 
             if (reportChannel == null) {
                 respond("Invalid report channel")

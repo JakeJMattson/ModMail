@@ -1,6 +1,7 @@
 package me.jakejmattson.modmail.arguments
 
 import dev.kord.core.entity.channel.Channel
+import dev.kord.core.entity.channel.MessageChannel
 import dev.kord.core.entity.channel.TextChannel
 import kotlinx.coroutines.runBlocking
 import me.jakejmattson.discordkt.Discord
@@ -20,7 +21,7 @@ open class ReportChannelArg(override val name: String = "ReportChannel") : Chann
     }
 
     override suspend fun transform(input: Channel, context: DiscordContext): Result<ReportChannel> {
-        val reportChannel = context.discord.kord.getChannelOf<TextChannel>(input.id)?.toReportChannel(true)
+        val reportChannel = context.discord.kord.getChannelOf<TextChannel>(input.id)?.toReportChannel()
 
         return if (reportChannel != null)
             Success(reportChannel)
@@ -37,8 +38,10 @@ open class ReportChannelArg(override val name: String = "ReportChannel") : Chann
     }
 }
 
-data class ReportChannel(val channel: TextChannel, val report: Report, val wasTargeted: Boolean)
+data class ReportChannel(val channel: TextChannel, val report: Report)
 
-fun TextChannel.toReportChannel(wasTargeted: Boolean) = findReport()?.let { report ->
-    ReportChannel(this, report, wasTargeted)
+fun TextChannel.toReportChannel() = findReport()?.let { report ->
+    ReportChannel(this, report)
 }
+
+fun MessageChannel.toReportChannel() = (this as? TextChannel)?.toReportChannel()

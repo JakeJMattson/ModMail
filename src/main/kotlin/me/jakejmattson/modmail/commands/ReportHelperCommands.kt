@@ -15,7 +15,7 @@ import me.jakejmattson.discordkt.arguments.UserArg
 import me.jakejmattson.discordkt.commands.CommandEvent
 import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.discordkt.extensions.addField
-import me.jakejmattson.modmail.arguments.ReportChannelArg
+import me.jakejmattson.modmail.arguments.toReportChannel
 import me.jakejmattson.modmail.extensions.archiveString
 import me.jakejmattson.modmail.locale.Locale
 import me.jakejmattson.modmail.services.*
@@ -121,8 +121,8 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
     slash("Release") {
         description = Locale.RELEASE_DESCRIPTION
-        execute(implicitReportChannel()) {
-            val report = args.first?.report
+        execute {
+            val report = channel.toReportChannel()?.report
 
             if (report == null) {
                 respond("Invalid report channel")
@@ -148,8 +148,9 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
     slash("Info") {
         description = Locale.INFO_DESCRIPTION
-        execute(implicitReportChannel(), ChoiceArg("Field", "The info to display", "user", "channel", "all").optional("user")) {
-            val (reportChannel, choice) = args
+        execute(ChoiceArg("Field", "The info to display", "user", "channel", "all").optional("user")) {
+            val choice = args.first
+            val reportChannel = channel.toReportChannel()
 
             if (reportChannel == null) {
                 respond("Invalid report channel")
