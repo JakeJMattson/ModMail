@@ -3,40 +3,53 @@ package me.jakejmattson.modmail.commands
 import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.channel.edit
+import dev.kord.core.entity.channel.TextChannel
 import me.jakejmattson.discordkt.arguments.AnyArg
 import me.jakejmattson.discordkt.arguments.EveryArg
 import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.discordkt.extensions.pfpUrl
 import me.jakejmattson.modmail.arguments.ReportChannelArg
+import me.jakejmattson.modmail.arguments.toReportChannel
 import me.jakejmattson.modmail.extensions.archiveString
 import me.jakejmattson.modmail.listeners.deletionQueue
 import me.jakejmattson.modmail.locale.Locale
-import me.jakejmattson.modmail.services.Configuration
-import me.jakejmattson.modmail.services.LoggingService
-import me.jakejmattson.modmail.services.release
+import me.jakejmattson.modmail.services.*
+
+fun implicitReportChannel() = ReportChannelArg.optionalNullable {
+    (it.channel as? TextChannel)?.toReportChannel()
+}
 
 @Suppress("unused")
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands("Report") {
     slash("Close") {
         description = Locale.CLOSE_DESCRIPTION
-        execute(ReportChannelArg) {
+        execute(implicitReportChannel()) {
             val reportChannel = args.first
+
+            if (reportChannel == null) {
+                respond("Invalid report channel")
+                return@execute
+            }
 
             reportChannel.report.release(discord.kord)
             deletionQueue.add(reportChannel.channel.id)
             reportChannel.channel.delete()
 
-            if (reportChannel.wasTargeted)
-                respond("Report was closed.")
-
+            respond("Report was closed.")
             loggingService.commandClose(guild, reportChannel.channel.name, author)
         }
     }
 
     slash("Archive") {
         description = Locale.ARCHIVE_DESCRIPTION
-        execute(ReportChannelArg, EveryArg("Info").optional("")) {
+        execute(implicitReportChannel(),
+            EveryArg("Info", "A message sent along side the archive file").optional("")) {
             val (reportChannel, note) = args
+
+            if (reportChannel == null) {
+                respond("Invalid report channel")
+                return@execute
+            }
 
             val (channel, report) = reportChannel
             val config = configuration[channel.getGuild()]
@@ -58,17 +71,21 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
                 channel.delete()
             }
 
-            if (reportChannel.wasTargeted)
-                respond("Report was archived.")
-
+            respond("Report was archived.")
             loggingService.archive(guild, channel.name, author)
         }
     }
 
     slash("Note") {
         description = Locale.NOTE_DESCRIPTION
-        execute(ReportChannelArg, EveryArg("Note")) {
+        execute(implicitReportChannel(), EveryArg("Note", "The note content")) {
             val reportChannel = args.first
+
+            if (reportChannel == null) {
+                respond("Invalid report channel")
+                return@execute
+            }
+
             val channel = reportChannel.channel
             val messageAuthor = author
 
@@ -87,8 +104,14 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     slash("Tag") {
         description = Locale.TAG_DESCRIPTION
-        execute(ReportChannelArg, AnyArg("Tag")) {
+        execute(implicitReportChannel(), AnyArg("Tag", "A prefix or emoji")) {
             val reportChannel = args.first
+
+            if (reportChannel == null) {
+                respond("Invalid report channel")
+                return@execute
+            }
+
             val channel = reportChannel.channel
             val tag = args.second
 
@@ -103,8 +126,14 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
     slash("ResetTags") {
         description = Locale.RESET_TAGS_DESCRIPTION
-        execute(ReportChannelArg) {
+        execute(implicitReportChannel()) {
             val reportChannel = args.first
+
+            if (reportChannel == null) {
+                respond("Invalid report channel")
+                return@execute
+            }
+
             val (channel, report) = reportChannel
             val user = discord.kord.getUser(report.userId) ?: return@execute
             val newName = user.username

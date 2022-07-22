@@ -51,7 +51,8 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
 
     slash("AddMacro") {
         description = Locale.ADD_MACRO_DESCRIPTION
-        execute(AnyArg("Name"), EveryArg("Content")) {
+        execute(AnyArg("Name", "The name used to reference this macro"),
+                EveryArg("Content", "The content displayed when this macro is sent")) {
             val (name, message) = args
             val wasAdded = macroService.addMacro(name, message, guild)
 
@@ -77,7 +78,7 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
 
     slash("RenameMacro") {
         description = Locale.RENAME_MACRO_DESCRIPTION
-        execute(autoCompletingMacroArg(), AnyArg("NewName")) {
+        execute(autoCompletingMacroArg(), AnyArg("NewName", "The new name to give this macro")) {
             val (name, newName) = args
             val wasChanged = macroService.editName(name, newName, guild)
 
@@ -90,7 +91,8 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
 
     slash("EditMacro") {
         description = Locale.EDIT_MACRO_DESCRIPTION
-        execute(autoCompletingMacroArg(), EveryArg("Content")) {
+        execute(autoCompletingMacroArg(),
+            EveryArg("Content", "The new content of the macro")) {
             val (name, message) = args
 
             val wasEdited = macroService.editMessage(name, message, guild)

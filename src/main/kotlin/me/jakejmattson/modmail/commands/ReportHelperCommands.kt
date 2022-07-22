@@ -121,8 +121,14 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
     slash("Release") {
         description = Locale.RELEASE_DESCRIPTION
-        execute(ReportChannelArg) {
-            val report = args.first.report
+        execute(implicitReportChannel()) {
+            val report = args.first?.report
+
+            if (report == null) {
+                respond("Invalid report channel")
+                return@execute
+            }
+
             val member = guild.getMemberOrNull(report.userId)
 
             if (member == null) {
@@ -142,8 +148,14 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
     slash("Info") {
         description = Locale.INFO_DESCRIPTION
-        execute(ReportChannelArg, ChoiceArg("Field", "user", "channel", "all").optional("user")) {
+        execute(implicitReportChannel(), ChoiceArg("Field", "The info to display", "user", "channel", "all").optional("user")) {
             val (reportChannel, choice) = args
+
+            if (reportChannel == null) {
+                respond("Invalid report channel")
+                return@execute
+            }
+
             val (channel, report) = reportChannel
 
             val response = with(report) {
