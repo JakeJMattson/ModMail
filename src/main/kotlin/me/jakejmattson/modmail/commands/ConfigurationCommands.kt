@@ -8,9 +8,23 @@ import me.jakejmattson.discordkt.arguments.RoleArg
 import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.modmail.messages.Locale
 import me.jakejmattson.modmail.services.Configuration
+import me.jakejmattson.modmail.services.GuildConfiguration
+import me.jakejmattson.modmail.services.LoggingConfiguration
 
 @Suppress("unused")
 fun configurationCommands(configuration: Configuration) = commands("Configuration", Permissions(Permission.All)) {
+    slash("Configure") {
+        description = "Configure the bot channels and settings"
+        execute(ChannelArg<Category>("Report Category", "The category where new reports will be created."),
+                ChannelArg("Archive Channel", "The channel where archived reports will be sent."),
+                ChannelArg("Logging Channel", "The channel where logging messages will be sent."),
+                RoleArg("Staff Role", "The role required to use this bot.")) {
+            val (reports, archive, logging, role) = args
+            configuration[guild] = GuildConfiguration("", reports.id, archive.id, role.id, LoggingConfiguration(logging.id))
+            configuration.save()
+        }
+    }
+
     slash("ReportCategory") {
         description = Locale.SET_REPORT_CATEGORY_DESCRIPTION
         execute(ChannelArg<Category>()) {
