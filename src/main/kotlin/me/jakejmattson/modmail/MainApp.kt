@@ -49,15 +49,10 @@ suspend fun main(it: Array<String>) {
         }
 
         mentionEmbed {
-            val guild = it.guild ?: return@mentionEmbed
-            val staffId = configuration[guild]?.staffRoleId
-            val requiredRole = staffId?.let { guild.getRole(it) }?.mention ?: "<Not Configured>"
-
             title = "ModMail ${project.version}"
             description = "A Discord report management bot."
 
             thumbnail(it.discord.kord.getSelf().pfpUrl)
-            addInlineField("Required Role", requiredRole)
             addInlineField("Source", "[GitHub](${project.repository})")
             addInlineField("Ping", it.discord.kord.gateway.averagePing?.toString() ?: "Unknown")
             addInlineField("Startup", TimeStamp.at(startup, TimeStyle.RELATIVE))

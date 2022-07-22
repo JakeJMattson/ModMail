@@ -21,7 +21,6 @@ data class LoggingConfiguration(var loggingChannel: Snowflake,
 data class GuildConfiguration(var prefix: String,
                               var reportCategory: Snowflake,
                               var archiveChannel: Snowflake,
-                              var staffRoleId: Snowflake,
                               val loggingConfiguration: LoggingConfiguration) {
     suspend fun getLiveReportCategory(kord: Kord) = kord.getChannel(reportCategory) as? Category
     suspend fun getLiveArchiveChannel(kord: Kord) = kord.getChannel(archiveChannel) as? TextChannel

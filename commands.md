@@ -6,12 +6,12 @@
 | [Argument]  | Argument is not required.      |
 
 ## Configuration
-| Commands       | Arguments | Description                                               |
-|----------------|-----------|-----------------------------------------------------------|
-| ArchiveChannel | Channel   | Set the channel where reports will be sent when archived. |
-| LoggingChannel | Channel   | Set the channel where events will be logged.              |
-| ReportCategory | Channel   | Set the category where new reports will be opened.        |
-| StaffRole      | Role      | Specify the role required to use this bot.                |
+| Commands       | Arguments                                      | Description                                               |
+|----------------|------------------------------------------------|-----------------------------------------------------------|
+| ArchiveChannel | Channel                                        | Set the channel where reports will be sent when archived. |
+| Configure      | ReportCategory, ArchiveChannel, LoggingChannel | Configure the bot channels and settings                   |
+| LoggingChannel | Channel                                        | Set the channel where events will be logged.              |
+| ReportCategory | Channel                                        | Set the category where new reports will be opened.        |
 
 ## Macros
 | Commands    | Arguments      | Description                                           |

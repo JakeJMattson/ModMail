@@ -5,20 +5,9 @@ import dev.kord.core.behavior.GuildBehavior
 import dev.kord.core.entity.Member
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
-import me.jakejmattson.discordkt.annotations.Service
 import java.util.*
 
 private val detainedReports = Vector<Report>()
-
-@Service
-class ModerationService(val configuration: Configuration) {
-    suspend fun hasStaffRole(member: Member): Boolean {
-        val guild = member.getGuild()
-        val staffRoleId = configuration[guild]?.staffRoleId ?: return false
-
-        return member.roles.firstOrNull { it.id == staffRoleId } != null
-    }
-}
 
 suspend fun Report.detain(kord: Kord) {
     val member = toLiveReport(kord)?.user?.asMember(guildId) ?: return

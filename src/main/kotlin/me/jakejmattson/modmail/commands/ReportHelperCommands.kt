@@ -23,10 +23,7 @@ import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("unused")
-fun reportHelperCommands(configuration: Configuration,
-                         reportService: ReportService,
-                         moderationService: ModerationService,
-                         loggingService: LoggingService) = commands("ReportHelpers") {
+fun reportHelperCommands(configuration: Configuration, reportService: ReportService, loggingService: LoggingService) = commands("ReportHelpers") {
 
     suspend fun Member.openReport(event: CommandEvent<*>, detain: Boolean = false) {
         val guild = guild.asGuild()
@@ -95,7 +92,7 @@ fun reportHelperCommands(configuration: Configuration,
                 return@execute
             }
 
-            if (moderationService.hasStaffRole(targetMember)) {
+            if (targetMember.getPermissions().contains(discord.configuration.defaultPermissions)) {
                 respond("You cannot detain another staff member.")
                 return@execute
             }

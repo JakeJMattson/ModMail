@@ -4,7 +4,6 @@ import dev.kord.common.entity.Permission
 import dev.kord.common.entity.Permissions
 import dev.kord.core.entity.channel.Category
 import me.jakejmattson.discordkt.arguments.ChannelArg
-import me.jakejmattson.discordkt.arguments.RoleArg
 import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.modmail.locale.Locale
 import me.jakejmattson.modmail.services.Configuration
@@ -15,12 +14,11 @@ import me.jakejmattson.modmail.services.LoggingConfiguration
 fun configurationCommands(configuration: Configuration) = commands("Configuration", Permissions(Permission.All)) {
     slash("Configure") {
         description = "Configure the bot channels and settings"
-        execute(ChannelArg<Category>("Report Category", "The category where new reports will be created."),
-                ChannelArg("Archive Channel", "The channel where archived reports will be sent."),
-                ChannelArg("Logging Channel", "The channel where logging messages will be sent."),
-                RoleArg("Staff Role", "The role required to use this bot.")) {
-            val (reports, archive, logging, role) = args
-            configuration[guild] = GuildConfiguration("", reports.id, archive.id, role.id, LoggingConfiguration(logging.id))
+        execute(ChannelArg<Category>("ReportCategory", "The category where new reports will be created."),
+                ChannelArg("ArchiveChannel", "The channel where archived reports will be sent."),
+                ChannelArg("LoggingChannel", "The channel where logging messages will be sent.")) {
+            val (reports, archive, logging) = args
+            configuration[guild] = GuildConfiguration("", reports.id, archive.id, LoggingConfiguration(logging.id))
             configuration.save()
         }
     }
@@ -52,16 +50,6 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
             configuration[guild]!!.loggingConfiguration.loggingChannel = channel.id
             configuration.save()
             respond("Logging channel updated to ${channel.mention}")
-        }
-    }
-
-    slash("StaffRole") {
-        description = Locale.SET_STAFF_ROLE_DESCRIPTION
-        execute(RoleArg) {
-            val role = args.first
-            configuration[guild]!!.staffRoleId = role.id
-            configuration.save()
-            respond("Staff role updated to ${role.mention}")
         }
     }
 }
