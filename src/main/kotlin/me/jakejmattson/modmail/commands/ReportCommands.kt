@@ -9,9 +9,8 @@ import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.discordkt.extensions.pfpUrl
 import me.jakejmattson.modmail.arguments.ReportChannelArg
 import me.jakejmattson.modmail.extensions.archiveString
-import me.jakejmattson.modmail.extensions.handleInvocation
 import me.jakejmattson.modmail.listeners.deletionQueue
-import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.locale.Locale
 import me.jakejmattson.modmail.services.Configuration
 import me.jakejmattson.modmail.services.LoggingService
 import me.jakejmattson.modmail.services.release
@@ -26,7 +25,10 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             reportChannel.report.release(discord.kord)
             deletionQueue.add(reportChannel.channel.id)
             reportChannel.channel.delete()
-            handleInvocation(reportChannel)
+
+            if (reportChannel.wasTargeted)
+                respond("Report was closed.")
+
             loggingService.commandClose(guild, reportChannel.channel.name, author)
         }
     }
@@ -56,7 +58,9 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
                 channel.delete()
             }
 
-            handleInvocation(reportChannel)
+            if (reportChannel.wasTargeted)
+                respond("Report was archived.")
+
             loggingService.archive(guild, channel.name, author)
         }
     }
@@ -77,7 +81,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             }
 
             loggingService.command(this)
-            handleInvocation(reportChannel)
+            respond("Note added.")
         }
     }
 
@@ -93,7 +97,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             }
 
             loggingService.command(this, "Added tag :: $tag")
-            handleInvocation(reportChannel)
+            respond("Tag added.")
         }
     }
 
@@ -110,7 +114,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             }
 
             loggingService.command(this, "Channel is now $newName")
-            handleInvocation(reportChannel)
+            respond("Tags reset.")
         }
     }
 }

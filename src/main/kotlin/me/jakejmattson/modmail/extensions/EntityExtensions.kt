@@ -8,10 +8,8 @@ import dev.kord.x.emoji.Emojis
 import dev.kord.x.emoji.toReaction
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.Discord
-import me.jakejmattson.discordkt.commands.CommandEvent
 import me.jakejmattson.discordkt.extensions.containsURL
 import me.jakejmattson.discordkt.extensions.sanitiseMentions
-import me.jakejmattson.modmail.arguments.ReportChannel
 
 private const val embedNotation = "<---------- Embed ---------->"
 
@@ -32,7 +30,6 @@ fun Embed.toTextString() =
 
 suspend fun MessageChannel.archiveString() = messages.toList()
     .reversed()
-    .dropLast(1)
     .joinToString("\n") {
         buildString {
             append("${it.author?.tag}: ")
@@ -51,11 +48,3 @@ suspend fun MessageChannel.archiveString() = messages.toList()
 fun User.descriptor() = "$mention\n$tag\n${id.value}"
 
 suspend fun Message.addFailReaction() = addReaction(Emojis.x.toReaction())
-suspend fun CommandEvent<*>.reactSuccess() = reactWith(Emojis.whiteCheckMark)
-
-suspend fun CommandEvent<*>.handleInvocation(reportChannel: ReportChannel) {
-    if (reportChannel.wasTargeted)
-        reactSuccess()
-    else
-        message?.delete()
-}

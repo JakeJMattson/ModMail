@@ -5,9 +5,7 @@ import dev.kord.core.entity.channel.TextChannel
 import kotlinx.coroutines.runBlocking
 import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.arguments.*
-import me.jakejmattson.discordkt.commands.CommandEvent
 import me.jakejmattson.discordkt.commands.DiscordContext
-import me.jakejmattson.discordkt.extensions.toSnowflakeOrNull
 import me.jakejmattson.modmail.services.Report
 import me.jakejmattson.modmail.services.findReport
 import me.jakejmattson.modmail.services.getReports
@@ -22,12 +20,12 @@ open class ReportChannelArg(override val name: String = "ReportChannel") : Chann
     }
 
     override suspend fun transform(input: Channel, context: DiscordContext): Result<ReportChannel> {
-        val reportChannel = input.toReportChannel(true)
+        val reportChannel = context.discord.kord.getChannelOf<TextChannel>(input.id)?.toReportChannel(true)
 
-        if (reportChannel != null)
-            return Success(reportChannel)
+        return if (reportChannel != null)
+            Success(reportChannel)
         else
-            return Error("Invalid Report Channel")
+            Error("Invalid Report Channel")
     }
 
     override suspend fun generateExamples(context: DiscordContext): List<String> {
@@ -41,6 +39,6 @@ open class ReportChannelArg(override val name: String = "ReportChannel") : Chann
 
 data class ReportChannel(val channel: TextChannel, val report: Report, val wasTargeted: Boolean)
 
-fun Channel.toReportChannel(wasTargeted: Boolean) = findReport()?.let { report ->
+fun TextChannel.toReportChannel(wasTargeted: Boolean) = findReport()?.let { report ->
     ReportChannel(this, report, wasTargeted)
 }

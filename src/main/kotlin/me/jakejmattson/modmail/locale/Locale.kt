@@ -1,4 +1,4 @@
-package me.jakejmattson.modmail.messages
+package me.jakejmattson.modmail.locale
 
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString

@@ -1,7 +1,7 @@
 package me.jakejmattson.modmail.preconditions
 
 import me.jakejmattson.discordkt.dsl.precondition
-import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.locale.Locale
 import me.jakejmattson.modmail.services.Configuration
 
 @Suppress("unused")

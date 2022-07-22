@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 import me.jakejmattson.discordkt.dsl.Data
 import me.jakejmattson.discordkt.dsl.bot
 import me.jakejmattson.discordkt.extensions.*
-import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.locale.Locale
 import me.jakejmattson.modmail.services.*
 import java.awt.Color
 import java.time.Instant

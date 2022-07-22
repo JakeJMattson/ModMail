@@ -17,7 +17,7 @@ import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.discordkt.extensions.addField
 import me.jakejmattson.modmail.arguments.ReportChannelArg
 import me.jakejmattson.modmail.extensions.archiveString
-import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.locale.Locale
 import me.jakejmattson.modmail.services.*
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap

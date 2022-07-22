@@ -13,8 +13,8 @@ import me.jakejmattson.discordkt.commands.CommandEvent
 import me.jakejmattson.discordkt.extensions.addField
 import me.jakejmattson.discordkt.extensions.pfpUrl
 import me.jakejmattson.discordkt.extensions.thumbnail
-import me.jakejmattson.modmail.messages.Locale
-import me.jakejmattson.modmail.messages.inject
+import me.jakejmattson.modmail.locale.Locale
+import me.jakejmattson.modmail.locale.inject
 
 @Service
 class LoggingService(discord: Discord, private val config: Configuration) {

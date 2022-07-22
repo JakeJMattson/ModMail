@@ -7,7 +7,7 @@ import me.jakejmattson.discordkt.arguments.AnyArg
 import me.jakejmattson.discordkt.arguments.EveryArg
 import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.discordkt.extensions.*
-import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.locale.Locale
 import me.jakejmattson.modmail.services.MacroService
 import me.jakejmattson.modmail.services.toLiveReport
 import java.awt.Color

@@ -6,7 +6,7 @@ import dev.kord.core.entity.channel.Category
 import me.jakejmattson.discordkt.arguments.ChannelArg
 import me.jakejmattson.discordkt.arguments.RoleArg
 import me.jakejmattson.discordkt.commands.commands
-import me.jakejmattson.modmail.messages.Locale
+import me.jakejmattson.modmail.locale.Locale
 import me.jakejmattson.modmail.services.Configuration
 import me.jakejmattson.modmail.services.GuildConfiguration
 import me.jakejmattson.modmail.services.LoggingConfiguration
