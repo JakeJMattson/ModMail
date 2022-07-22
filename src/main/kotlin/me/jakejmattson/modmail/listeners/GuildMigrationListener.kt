@@ -11,13 +11,11 @@ import me.jakejmattson.discordkt.dsl.listeners
 import me.jakejmattson.discordkt.extensions.addField
 import me.jakejmattson.discordkt.extensions.sendPrivateMessage
 import me.jakejmattson.discordkt.extensions.thumbnail
-import me.jakejmattson.modmail.services.isDetained
-import me.jakejmattson.modmail.services.mute
-import me.jakejmattson.modmail.services.toLiveReport
+import me.jakejmattson.modmail.services.*
 import java.awt.Color
 
 @Suppress("unused")
-fun guildMigration() = listeners {
+fun guildMigration(configuration: Configuration) = listeners {
     on<MemberLeaveEvent> {
         val report = user.toLiveReport() ?: return@on
         if (report.guild.id != guild.id) return@on
@@ -48,6 +46,8 @@ fun guildMigration() = listeners {
     }
 
     on<GuildCreateEvent> {
+        if (configuration[guild] != null) return@on
+
         guild.owner.sendPrivateMessage {
             title = "Please configure ${guild.name}"
             description = "Please run the `/configure` command inside your server. You will be asked for a few things."
