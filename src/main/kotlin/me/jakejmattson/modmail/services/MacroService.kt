@@ -14,6 +14,8 @@ data class Macro(var name: String, var message: String)
 class MacroService {
     private val macroMap = loadMacros()
 
+    private fun findMacro(guild: Guild, name: String) = getGuildMacros(guild).firstOrNull { it.name.equals(name, true) }
+
     private fun MutableList<Macro>.hasMacro(name: String) = this.any { it.name.equals(name, true) }
 
     fun getGuildMacros(guild: Guild) = macroMap.getOrPut(guild.id.toString()) { arrayListOf() }
@@ -29,9 +31,11 @@ class MacroService {
         return true
     }
 
-    fun removeMacro(macro: Macro, guild: Guild) {
-        getGuildMacros(guild).remove(macro)
+    fun removeMacro(name: String, guild: Guild): Boolean {
+        val macro = findMacro(guild, name) ?: return false
+        val wasRemoved = getGuildMacros(guild).remove(macro)
         macroMap.save()
+        return wasRemoved
     }
 
     fun listMacros(guild: Guild) = getGuildMacros(guild)
@@ -41,8 +45,9 @@ class MacroService {
         .takeIf { it.isNotEmpty() }
         ?: "<No Macros added>"
 
-    fun editName(macro: Macro, newName: String, guild: Guild): Boolean {
+    fun editName(name: String, newName: String, guild: Guild): Boolean {
         if (getGuildMacros(guild).hasMacro(newName)) return false
+        val macro = findMacro(guild, name) ?: return false
 
         macro.name = newName
         macroMap.save()
@@ -50,9 +55,11 @@ class MacroService {
         return true
     }
 
-    fun editMessage(macro: Macro, newMessage: String) {
+    fun editMessage(name: String, newMessage: String, guild: Guild): Boolean {
+        val macro = findMacro(guild, name) ?: return false
         macro.message = newMessage
         macroMap.save()
+        return true
     }
 }
 
