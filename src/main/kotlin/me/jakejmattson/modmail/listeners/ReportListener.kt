@@ -13,8 +13,6 @@ import me.jakejmattson.modmail.extensions.fullContent
 import me.jakejmattson.modmail.services.Configuration
 import me.jakejmattson.modmail.services.ReportService
 import me.jakejmattson.modmail.services.findReport
-import kotlin.collections.filter
-import kotlin.collections.firstOrNull
 import kotlin.collections.set
 
 @Suppress("unused")

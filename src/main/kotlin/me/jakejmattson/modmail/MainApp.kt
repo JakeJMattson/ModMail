@@ -9,8 +9,9 @@ import kotlinx.serialization.Serializable
 import me.jakejmattson.discordkt.dsl.Data
 import me.jakejmattson.discordkt.dsl.bot
 import me.jakejmattson.discordkt.extensions.*
-import me.jakejmattson.modmail.locale.Locale
-import me.jakejmattson.modmail.services.*
+import me.jakejmattson.modmail.services.Configuration
+import me.jakejmattson.modmail.services.Locale
+import me.jakejmattson.modmail.services.configFile
 import java.awt.Color
 import java.time.Instant
 import kotlin.system.exitProcess
@@ -44,7 +45,7 @@ suspend fun main(it: Array<String>) {
             commandReaction = null
             dualRegistry = false
             theme = Color(0x00bfff)
-            intents = Intent.GuildMembers + Intent.Guilds + Intent.DirectMessages + Intent.DirectMessageTyping
+            intents = Intent.GuildMembers + Intent.Guilds + Intent.DirectMessages + Intent.DirectMessageTyping + Intent.GuildMessageTyping
             defaultPermissions = Permissions(Permission.ManageMessages)
         }
 

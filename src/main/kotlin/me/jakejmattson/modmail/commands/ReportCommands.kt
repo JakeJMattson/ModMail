@@ -3,17 +3,13 @@ package me.jakejmattson.modmail.commands
 import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.channel.edit
-import dev.kord.core.entity.channel.MessageChannel
-import dev.kord.core.entity.channel.TextChannel
 import me.jakejmattson.discordkt.arguments.AnyArg
 import me.jakejmattson.discordkt.arguments.EveryArg
 import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.discordkt.extensions.pfpUrl
-import me.jakejmattson.modmail.arguments.ReportChannelArg
 import me.jakejmattson.modmail.arguments.toReportChannel
 import me.jakejmattson.modmail.extensions.archiveString
 import me.jakejmattson.modmail.listeners.deletionQueue
-import me.jakejmattson.modmail.locale.Locale
 import me.jakejmattson.modmail.services.*
 
 @Suppress("unused")

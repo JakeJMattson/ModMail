@@ -9,7 +9,7 @@
 | Commands       | Arguments                                      | Description                                               |
 |----------------|------------------------------------------------|-----------------------------------------------------------|
 | ArchiveChannel | Channel                                        | Set the channel where reports will be sent when archived. |
-| Configure      | ReportCategory, ArchiveChannel, LoggingChannel | Configure the bot channels and settings                   |
+| Configure      | ReportCategory, ArchiveChannel, LoggingChannel | Configure the bot channels and settings.                  |
 | LoggingChannel | Channel                                        | Set the channel where events will be logged.              |
 | ReportCategory | Category                                       | Set the category where new reports will be opened.        |
 

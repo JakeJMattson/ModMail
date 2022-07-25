@@ -17,7 +17,6 @@ import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.discordkt.extensions.addField
 import me.jakejmattson.modmail.arguments.toReportChannel
 import me.jakejmattson.modmail.extensions.archiveString
-import me.jakejmattson.modmail.locale.Locale
 import me.jakejmattson.modmail.services.*
 import java.awt.Color
 import java.util.concurrent.ConcurrentHashMap
@@ -157,7 +156,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                 return@execute
             }
 
-            val (channel, report) = reportChannel
+            val (_, report) = reportChannel
 
             val response = with(report) {
                 when (choice) {
@@ -168,7 +167,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                 }
             }
 
-            channel.createMessage(response)
+            respond(response)
         }
     }
 

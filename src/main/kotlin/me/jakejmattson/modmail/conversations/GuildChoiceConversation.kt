@@ -2,7 +2,6 @@ package me.jakejmattson.modmail.conversations
 
 import dev.kord.core.entity.Guild
 import dev.kord.core.entity.Message
-import dev.kord.x.emoji.DiscordEmoji
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.conversations.conversation

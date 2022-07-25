@@ -1,6 +1,23 @@
-package me.jakejmattson.modmail.locale
+package me.jakejmattson.modmail.services
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+
+val Locale = run {
+    val json = Json {
+        ignoreUnknownKeys = true
+        prettyPrint = true
+        encodeDefaults = true
+        serializersModule = SerializersModule { }
+    }
+
+    val messages = if (messagesFile.exists()) json.decodeFromString(messagesFile.readText()) else Messages()
+    messagesFile.writeText(json.encodeToString(messages))
+    messages
+}
 
 @Serializable
 class Messages(
@@ -10,13 +27,10 @@ class Messages(
     val USER_DETAIN_MESSAGE: String = "You have been muted during this detainment period. Please use this time to converse with us. Send messages here to reply.",
 
     //Configuration commands descriptions
-    val SET_REPORT_CATEGORY_DESCRIPTION: String = "Set the category where new reports will be opened.",
-    val SET_ARCHIVE_CHANNEL_DESCRIPTION: String = "Set the channel where reports will be sent when archived.",
-    val SET_STAFF_ROLE_DESCRIPTION: String = "Specify the role required to use this bot.",
-    val SET_LOGGING_CHANNEL_DESCRIPTION: String = "Set the channel where events will be logged.",
-
-    //Owner commands descriptions
-    val SET_PRESENCE_DESCRIPTION: String = "Set the Discord presence of the bot.",
+    val CONFIGURE_DESCRIPTION: String = "Configure the bot channels and settings.",
+    val REPORT_CATEGORY_DESCRIPTION: String = "Set the category where new reports will be opened.",
+    val ARCHIVE_CHANNEL_DESCRIPTION: String = "Set the channel where reports will be sent when archived.",
+    val LOGGING_CHANNEL_DESCRIPTION: String = "Set the channel where events will be logged.",
 
     //Report commands descriptions
     val CLOSE_DESCRIPTION: String = "Delete a report channel and end this report.",
@@ -39,22 +53,6 @@ class Messages(
     val EDIT_MACRO_DESCRIPTION: String = "Change a macro's response message.",
     val LIST_MACROS_DESCRIPTION: String = "List all of the currently available macros.",
 
-    //Utility commands descriptions
-    val STATUS_DESCRIPTION: String = "Display network status and total uptime.",
-
-    //Success message
-    val GUILD_SETUP_SUCCESSFUL: String = "Successfully configured for use! You can adjust these values at any time.",
-
     //Fail message
     val FAIL_GUILD_NOT_CONFIGURED: String = "This guild is not configured for use.",
-
-    //Logging messages
-    val STARTUP_LOG: String = "Bot successfully initialized!",
-    val MEMBER_OPEN_LOG: String = "New report opened by \${user}",
-    val STAFF_OPEN_LOG: String = "Staff action :: \${staff} opened \${channel}",
-    val ARCHIVE_LOG: String = "Staff action :: \${staff} archived \${channel}",
-    val COMMAND_CLOSE_LOG: String = "Staff action :: \${staff} closed \${channel}",
-    val MANUAL_CLOSE_LOG: String = "Staff action :: \${channel} was deleted. See the server audit log for more information.",
-    val COMMAND_LOG: String = "\${author} invoked `\${commandName}` in \${channelName}. \${additionalInfo}",
-    val ERROR_LOG: String = "Error :: \${message}",
 )

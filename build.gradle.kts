@@ -18,7 +18,6 @@ repositories {
 
 dependencies {
     implementation("me.jakejmattson:DiscordKt:0.23.0-SNAPSHOT")
-    implementation("org.apache.velocity:velocity:1.7")
 }
 
 tasks {

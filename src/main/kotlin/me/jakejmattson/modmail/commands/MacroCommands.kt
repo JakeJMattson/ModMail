@@ -7,14 +7,14 @@ import me.jakejmattson.discordkt.arguments.AnyArg
 import me.jakejmattson.discordkt.arguments.EveryArg
 import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.discordkt.extensions.*
-import me.jakejmattson.modmail.locale.Locale
+import me.jakejmattson.modmail.services.Locale
 import me.jakejmattson.modmail.services.MacroService
 import me.jakejmattson.modmail.services.toLiveReport
 import java.awt.Color
 
 @Suppress("unused")
 fun macroCommands(macroService: MacroService) = commands("Macros") {
-    fun autoCompletingMacroArg() = AnyArg("Macro", "The name of a macro.").autocomplete {
+    fun autoCompletingMacroArg() = AnyArg("Macro", "The name of a macro").autocomplete {
         val guild = (interaction as GuildAutoCompleteInteraction).getGuild()
 
         macroService.getGuildMacros(guild)
@@ -52,7 +52,7 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
     slash("AddMacro") {
         description = Locale.ADD_MACRO_DESCRIPTION
         execute(AnyArg("Name", "The name used to reference this macro"),
-                EveryArg("Content", "The content displayed when this macro is sent")) {
+            EveryArg("Content", "The content displayed when this macro is sent")) {
             val (name, message) = args
             val wasAdded = macroService.addMacro(name, message, guild)
 

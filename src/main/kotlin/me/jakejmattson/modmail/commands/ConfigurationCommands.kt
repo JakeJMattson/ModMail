@@ -5,18 +5,15 @@ import dev.kord.common.entity.Permissions
 import dev.kord.core.entity.channel.Category
 import me.jakejmattson.discordkt.arguments.ChannelArg
 import me.jakejmattson.discordkt.commands.commands
-import me.jakejmattson.modmail.locale.Locale
-import me.jakejmattson.modmail.services.Configuration
-import me.jakejmattson.modmail.services.GuildConfiguration
-import me.jakejmattson.modmail.services.LoggingConfiguration
+import me.jakejmattson.modmail.services.*
 
 @Suppress("unused")
 fun configurationCommands(configuration: Configuration) = commands("Configuration", Permissions(Permission.All)) {
     slash("Configure") {
-        description = "Configure the bot channels and settings"
+        description = Locale.CONFIGURE_DESCRIPTION
         execute(ChannelArg<Category>("ReportCategory", "The category where new reports will be created"),
-                ChannelArg("ArchiveChannel", "The channel where archived reports will be sent"),
-                ChannelArg("LoggingChannel", "The channel where logging messages will be sent")) {
+            ChannelArg("ArchiveChannel", "The channel where archived reports will be sent"),
+            ChannelArg("LoggingChannel", "The channel where logging messages will be sent")) {
             val (reports, archive, logging) = args
             configuration[guild] = GuildConfiguration("", reports.id, archive.id, LoggingConfiguration(logging.id))
             configuration.save()
@@ -24,7 +21,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
     }
 
     slash("ReportCategory") {
-        description = Locale.SET_REPORT_CATEGORY_DESCRIPTION
+        description = Locale.REPORT_CATEGORY_DESCRIPTION
         execute(ChannelArg<Category>("Category", "The category where new reports will be created")) {
             val category = args.first
             configuration[guild]!!.reportCategory = category.id
@@ -34,7 +31,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
     }
 
     slash("ArchiveChannel") {
-        description = Locale.SET_ARCHIVE_CHANNEL_DESCRIPTION
+        description = Locale.ARCHIVE_CHANNEL_DESCRIPTION
         execute(ChannelArg("Channel", "The channel where archived reports will be sent")) {
             val channel = args.first
             configuration[guild]!!.archiveChannel = channel.id
@@ -44,8 +41,8 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
     }
 
     slash("LoggingChannel") {
-        description = Locale.SET_LOGGING_CHANNEL_DESCRIPTION
-        execute(ChannelArg("Channel", "The channel where logging messages will be sent.")) {
+        description = Locale.LOGGING_CHANNEL_DESCRIPTION
+        execute(ChannelArg("Channel", "The channel where logging messages will be sent")) {
             val channel = args.first
             configuration[guild]!!.loggingConfiguration.loggingChannel = channel.id
             configuration.save()

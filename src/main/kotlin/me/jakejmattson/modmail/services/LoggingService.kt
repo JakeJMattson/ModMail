@@ -5,33 +5,21 @@ import dev.kord.core.entity.Guild
 import dev.kord.core.entity.User
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.builder.message.EmbedBuilder
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.annotations.Service
 import me.jakejmattson.discordkt.commands.CommandEvent
 import me.jakejmattson.discordkt.extensions.addField
 import me.jakejmattson.discordkt.extensions.pfpUrl
 import me.jakejmattson.discordkt.extensions.thumbnail
-import me.jakejmattson.modmail.locale.Locale
-import me.jakejmattson.modmail.locale.inject
 
 @Service
 class LoggingService(discord: Discord, private val config: Configuration) {
     private val api = discord.kord
 
-    init {
-        GlobalScope.launch {
-            config.guildConfigurations.values
-                .mapNotNull { it.loggingConfiguration.takeUnless { it.getLiveChannel(api) == null } }
-                .forEach { log(it, Locale.STARTUP_LOG) }
-        }
-    }
-
     suspend fun memberOpen(report: Report) {
         val liveReport = report.toLiveReport(api) ?: return
         val config = liveReport.guild.logConfig
-        val message = Locale.MEMBER_OPEN_LOG inject "user".pairTo(liveReport.user)
+        val message = "New report opened by ${liveReport.user.tag}"
 
         if (config.logOpen)
             log(config, message)
@@ -39,7 +27,7 @@ class LoggingService(discord: Discord, private val config: Configuration) {
 
     suspend fun staffOpen(guild: Guild, channelName: String, staff: User) {
         val config = guild.logConfig
-        val message = Locale.STAFF_OPEN_LOG inject mapOf("channel" to channelName, "staff".pairTo(staff))
+        val message = "Staff action :: ${staff.tag} opened $channelName"
 
         if (config.logOpen)
             log(config, message)
@@ -47,7 +35,7 @@ class LoggingService(discord: Discord, private val config: Configuration) {
 
     suspend fun archive(guild: Guild, channelName: String, staff: User) {
         val config = guild.logConfig
-        val message = Locale.ARCHIVE_LOG inject mapOf("channel" to channelName, "staff".pairTo(staff))
+        val message = "Staff action :: ${staff.tag} archived $channelName"
 
         if (config.logClose)
             log(config, message)
@@ -55,7 +43,7 @@ class LoggingService(discord: Discord, private val config: Configuration) {
 
     suspend fun commandClose(guild: Guild, channelName: String, staff: User) {
         val config = guild.logConfig
-        val message = Locale.COMMAND_CLOSE_LOG inject mapOf("channel" to channelName, "staff".pairTo(staff))
+        val message = "Staff action :: ${staff.tag} closed $channelName"
 
         if (config.logClose)
             log(config, message)
@@ -63,7 +51,7 @@ class LoggingService(discord: Discord, private val config: Configuration) {
 
     suspend fun manualClose(guild: Guild, channelName: String) {
         val config = guild.logConfig
-        val message = Locale.MANUAL_CLOSE_LOG inject ("channel" to channelName)
+        val message = "Staff action :: $channelName was deleted. See the server audit log for more information."
 
         if (config.logClose)
             log(config, message)
@@ -76,29 +64,14 @@ class LoggingService(discord: Discord, private val config: Configuration) {
             logEmbed(config, buildEditEmbed(report, old, new))
     }
 
-    suspend fun error(guild: Guild, content: String) {
-        val config = guild.logConfig
-        val message = Locale.ERROR_LOG inject ("message" to content)
-
-        log(config, message)
-    }
-
     suspend fun command(command: CommandEvent<*>, additionalInfo: String = "") = command.guild!!.logConfig.apply {
         val author = command.author.tag
         val commandName = command.command!!.names.first()
         val channelName = (command.channel as TextChannel).name
 
-        if (logCommands) log(this, Locale.COMMAND_LOG inject
-            mapOf(
-                "author" to author,
-                "commandName" to commandName,
-                "channelName" to channelName,
-                "additionalInfo" to additionalInfo
-            )
-        )
+        if (logCommands)
+            log(this, "$author invoked `${commandName}` in ${channelName}. $additionalInfo")
     }
-
-    private fun String.pairTo(user: User?) = this to (user?.tag ?: "<user>")
 
     private val Guild.logConfig
         get() = config[this]!!.loggingConfiguration
