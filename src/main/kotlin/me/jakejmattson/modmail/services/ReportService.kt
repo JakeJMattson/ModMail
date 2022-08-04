@@ -10,6 +10,7 @@ import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.entity.*
 import dev.kord.core.entity.channel.Category
+import dev.kord.core.entity.channel.MessageChannel
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.Image
 import dev.kord.rest.builder.message.EmbedBuilder
@@ -48,6 +49,14 @@ data class Report(val userId: Snowflake,
 }
 
 data class LiveReport(val user: User, val channel: TextChannel, val guild: Guild)
+
+data class ReportChannel(val channel: TextChannel, val report: Report)
+
+fun TextChannel.toReportChannel() = findReport()?.let { report ->
+    ReportChannel(this, report)
+}
+
+fun MessageChannel.toReportChannel() = (this as? TextChannel)?.toReportChannel()
 
 private val reports = Vector<Report>()
 
