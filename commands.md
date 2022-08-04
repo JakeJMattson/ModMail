@@ -4,6 +4,17 @@
 | Symbol      | Meaning                        |
 |-------------|--------------------------------|
 | [Argument]  | Argument is not required.      |
+| /Category   | This is a subcommand group.    |
+
+## /Macro
+| Commands | Arguments      | Description                                           |
+|----------|----------------|-------------------------------------------------------|
+| Add      | Name, Content  | Add a custom command to send text in a report.        |
+| Edit     | Macro, Content | Change a macro's response message.                    |
+| List     |                | List all of the currently available macros.           |
+| Remove   | Macro          | Removes a macro with the given name.                  |
+| Rename   | Macro, NewName | Change a macro's name, keeping the original response. |
+| Send     | Macro          | Send a macro to a user through a report.              |
 
 ## Configuration
 | Commands       | Arguments                                      | Description                                               |
@@ -12,16 +23,6 @@
 | Configure      | ReportCategory, ArchiveChannel, LoggingChannel | Configure the bot channels and settings.                  |
 | LoggingChannel | Channel                                        | Set the channel where events will be logged.              |
 | ReportCategory | Category                                       | Set the category where new reports will be opened.        |
-
-## Macros
-| Commands    | Arguments      | Description                                           |
-|-------------|----------------|-------------------------------------------------------|
-| AddMacro    | Name, Content  | Add a custom command to send text in a report.        |
-| EditMacro   | Macro, Content | Change a macro's response message.                    |
-| ListMacros  |                | List all of the currently available macros.           |
-| RemoveMacro | Macro          | Removes a macro with the given name.                  |
-| RenameMacro | Macro, NewName | Change a macro's name, keeping the original response. |
-| SendMacro   | Macro          | Send a macro to a user through a report.              |
 
 ## Report
 | Commands  | Arguments | Description                                       |

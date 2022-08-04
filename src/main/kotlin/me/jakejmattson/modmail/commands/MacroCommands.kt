@@ -6,6 +6,7 @@ import dev.kord.core.entity.interaction.GuildAutoCompleteInteraction
 import me.jakejmattson.discordkt.arguments.AnyArg
 import me.jakejmattson.discordkt.arguments.EveryArg
 import me.jakejmattson.discordkt.commands.commands
+import me.jakejmattson.discordkt.commands.subcommand
 import me.jakejmattson.discordkt.extensions.*
 import me.jakejmattson.modmail.services.Locale
 import me.jakejmattson.modmail.services.MacroService
@@ -13,7 +14,7 @@ import me.jakejmattson.modmail.services.toLiveReport
 import java.awt.Color
 
 @Suppress("unused")
-fun macroCommands(macroService: MacroService) = commands("Macros") {
+fun macroCommands(macroService: MacroService) = subcommand("Macro") {
     fun autoCompletingMacroArg() = AnyArg("Macro", "The name of a macro").autocomplete {
         val guild = (interaction as GuildAutoCompleteInteraction).getGuild()
 
@@ -22,7 +23,7 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
             .filter { it.contains(input, true) }
     }
 
-    slash("SendMacro") {
+    sub("Send") {
         description = "Send a macro to a user through a report."
         execute(autoCompletingMacroArg()) {
             val name = args.first
@@ -49,7 +50,7 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
         }
     }
 
-    slash("AddMacro") {
+    sub("Add") {
         description = Locale.ADD_MACRO_DESCRIPTION
         execute(AnyArg("Name", "The name used to reference this macro"),
             EveryArg("Content", "The content displayed when this macro is sent")) {
@@ -63,7 +64,7 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
         }
     }
 
-    slash("RemoveMacro") {
+    sub("Remove") {
         description = Locale.REMOVE_MACRO_DESCRIPTION
         execute(autoCompletingMacroArg()) {
             val name = args.first
@@ -76,7 +77,7 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
         }
     }
 
-    slash("RenameMacro") {
+    sub("Rename") {
         description = Locale.RENAME_MACRO_DESCRIPTION
         execute(autoCompletingMacroArg(), AnyArg("NewName", "The new name to give this macro")) {
             val (name, newName) = args
@@ -89,7 +90,7 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
         }
     }
 
-    slash("EditMacro") {
+    sub("Edit") {
         description = Locale.EDIT_MACRO_DESCRIPTION
         execute(autoCompletingMacroArg(),
             EveryArg("Content", "The new content of the macro")) {
@@ -104,7 +105,7 @@ fun macroCommands(macroService: MacroService) = commands("Macros") {
         }
     }
 
-    slash("ListMacros") {
+    sub("List") {
         description = Locale.LIST_MACROS_DESCRIPTION
         execute {
             respond {
