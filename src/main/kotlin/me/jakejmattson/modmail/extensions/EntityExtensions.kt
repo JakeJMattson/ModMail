@@ -45,6 +45,4 @@ suspend fun MessageChannel.archiveString() = messages.toList()
         }
     }
 
-fun User.descriptor() = "$mention\n$tag\n${id.value}"
-
 suspend fun Message.addFailReaction() = addReaction(Emojis.x.toReaction())

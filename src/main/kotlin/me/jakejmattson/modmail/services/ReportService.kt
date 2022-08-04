@@ -16,20 +16,19 @@ import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.allowedMentions
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.datetime.toKotlinInstant
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.annotations.Service
-import me.jakejmattson.discordkt.extensions.pfpUrl
-import me.jakejmattson.discordkt.extensions.sendPrivateMessage
+import me.jakejmattson.discordkt.extensions.*
 import me.jakejmattson.modmail.extensions.cleanContent
-import me.jakejmattson.modmail.extensions.descriptor
 import java.awt.Color
 import java.io.File
+import java.time.Instant
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -154,13 +153,12 @@ private fun removeReport(report: Report) {
 }
 
 suspend fun Member.reportOpenEmbed(channel: TextChannel, detain: Boolean = false) = channel.createEmbed {
-    author {
-        name = username
-        icon = pfpUrl
-    }
-
-    description = descriptor()
+    addInlineField("User", mention)
+    addInlineField("Name", "$username#$discriminator")
+    addField("User ID", id.toString())
+    thumbnail(pfpUrl)
     color = if (detain) Color.RED.kColor else Color.GREEN.kColor
+    timestamp = Instant.now().toKotlinInstant()
 }
 
 private suspend fun sendReportClosedEmbed(report: Report, kord: Kord) {
@@ -181,14 +179,7 @@ private suspend fun sendReportClosedEmbed(report: Report, kord: Kord) {
         }
     }
 
-    val mostRecentMessage = user.getDmChannel().messages.firstOrNull { it.author == kord.getSelf() }
-
-    if (mostRecentMessage != null)
-        mostRecentMessage.edit {
-            builder(embeds?.first()!!)
-        }
-    else
-        user.sendPrivateMessage {
-            builder(this)
-        }
+    user.sendPrivateMessage {
+        builder(this)
+    }
 }

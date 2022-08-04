@@ -8,7 +8,6 @@ import dev.kord.core.behavior.createTextChannel
 import dev.kord.core.entity.Guild
 import dev.kord.core.entity.Member
 import dev.kord.core.entity.User
-import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.Image
 import me.jakejmattson.discordkt.arguments.ChoiceArg
 import me.jakejmattson.discordkt.arguments.UserArg
@@ -54,68 +53,62 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
         if (detain) newReport.detain(guild.kord)
 
         event.respond(reportChannel.mention)
-        loggingService.staffOpen(guild, (event.channel as TextChannel).name, event.author)
+        loggingService.staffOpen(guild, reportChannel.name, event.author)
     }
 
-    slash("Open", "Open a Report") {
-        description = Locale.OPEN_DESCRIPTION
-        execute(UserArg) {
-            val user = args.first
-            val targetMember = user.asMemberOrNull(guild.id)
+    user("Open a Report", "Open", Locale.OPEN_DESCRIPTION) {
+        val user = args.first
+        val targetMember = user.asMemberOrNull(guild.id)
 
-            if (targetMember == null) {
-                println("User is no longer in this guild.")
-                return@execute
-            }
+        if (targetMember == null) {
+            println("User is no longer in this guild.")
+            return@user
+        }
 
-            if (!hasValidState(this, guild, targetMember))
-                return@execute
+        if (!hasValidState(this, guild, targetMember))
+            return@user
 
-            try {
-                targetMember.openReport(this, false)
-            } catch (ex: RequestException) {
-                respond("Unable to contact the target user. Direct messages are disabled or the bot is blocked.")
-                return@execute
-            }
+        try {
+            targetMember.openReport(this, false)
+        } catch (ex: RequestException) {
+            respond("Unable to contact the target user. Direct messages are disabled or the bot is blocked.")
+            return@user
         }
     }
 
-    slash("Detain", "Detain this User") {
-        description = Locale.DETAIN_DESCRIPTION
-        execute(UserArg) {
-            val user = args.first
-            val targetMember = user.asMemberOrNull(guild.id)
+    user("Detain this User", "Detain", Locale.DETAIN_DESCRIPTION) {
+        val user = args.first
+        val targetMember = user.asMemberOrNull(guild.id)
 
-            if (targetMember == null) {
-                println("User is no longer in this guild.")
-                return@execute
-            }
-
-            if (targetMember.getPermissions().contains(discord.configuration.defaultPermissions)) {
-                respond("You cannot detain another staff member.")
-                return@execute
-            }
-
-            if (targetMember.isDetained()) {
-                respond("This member is already detained.")
-                return@execute
-            }
-
-            if (!hasValidState(this, guild, targetMember))
-                return@execute
-
-            try {
-                targetMember.openReport(this, true)
-            } catch (ex: RequestException) {
-                respond("Unable to contact the target user. " +
-                    "Direct messages are disabled or the bot is blocked. " +
-                    "Mute was not applied")
-
-                return@execute
-            }
-
-            targetMember.mute()
+        if (targetMember == null) {
+            println("User is no longer in this guild.")
+            return@user
         }
+
+        if (targetMember.getPermissions().contains(discord.configuration.defaultPermissions)) {
+            respond("You cannot detain another staff member.")
+            return@user
+        }
+
+        if (targetMember.isDetained()) {
+            respond("This member is already detained.")
+            return@user
+        }
+
+        if (!hasValidState(this, guild, targetMember))
+            return@user
+
+        try {
+            targetMember.openReport(this, true)
+        } catch (ex: RequestException) {
+            respond("Unable to contact the target user. " +
+                "Direct messages are disabled or the bot is blocked. " +
+                "Mute was not applied")
+
+            return@user
+        }
+
+        targetMember.mute()
     }
 
     slash("Release") {
@@ -171,7 +164,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
         }
     }
 
-    slash("History", "View Report History") {
+    slash("History") {
         description = Locale.HISTORY_DESCRIPTION
         execute(UserArg) {
             val user = args.first

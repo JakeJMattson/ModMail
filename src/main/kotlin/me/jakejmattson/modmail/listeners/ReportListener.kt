@@ -18,7 +18,7 @@ import kotlin.collections.set
 @Suppress("unused")
 fun reportListener(discord: Discord, config: Configuration, reportService: ReportService) = listeners {
     on<MessageCreateEvent> {
-        val user = message.author!!.takeUnless { it.isBot } ?: return@on
+        val user = message.author?.takeUnless { it.isBot } ?: return@on
 
         if (getGuild() == null) {
             if (Conversations.hasConversation(user, message.channel.asChannel())) return@on
