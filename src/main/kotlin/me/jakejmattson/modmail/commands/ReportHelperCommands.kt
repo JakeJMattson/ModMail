@@ -5,16 +5,13 @@ import dev.kord.common.kColor
 import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.createTextChannel
-import dev.kord.core.entity.Guild
 import dev.kord.core.entity.Member
-import dev.kord.core.entity.User
 import dev.kord.rest.Image
 import me.jakejmattson.discordkt.arguments.ChoiceArg
 import me.jakejmattson.discordkt.arguments.UserArg
 import me.jakejmattson.discordkt.commands.CommandEvent
 import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.discordkt.extensions.addField
-import me.jakejmattson.modmail.arguments.toReportChannel
 import me.jakejmattson.modmail.extensions.archiveString
 import me.jakejmattson.modmail.services.*
 import java.awt.Color
@@ -29,10 +26,10 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
 
         getDmChannel().createEmbed {
             if (detain) {
-                color = Color.green.kColor
+                color = Color.red.kColor
                 addField("You've have been detained by the staff of ${guild.name}!", Locale.USER_DETAIN_MESSAGE)
             } else {
-                color = Color.red.kColor
+                color = Color.green.kColor
                 addField("Chatting with ${guild.name}!", Locale.BOT_DESCRIPTION)
             }
 
@@ -57,16 +54,19 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     }
 
     user("Open a Report", "Open", Locale.OPEN_DESCRIPTION) {
-        val user = args.first
-        val targetMember = user.asMemberOrNull(guild.id)
+        val targetMember = arg.asMemberOrNull(guild.id)
 
         if (targetMember == null) {
             println("User is no longer in this guild.")
             return@user
         }
 
-        if (!hasValidState(this, guild, targetMember))
+        val openReport = targetMember.findReport()
+
+        if (openReport != null) {
+            respond("Open report: <#${openReport.channelId}>")
             return@user
+        }
 
         try {
             targetMember.openReport(this, false)
@@ -77,8 +77,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     }
 
     user("Detain this User", "Detain", Locale.DETAIN_DESCRIPTION) {
-        val user = args.first
-        val targetMember = user.asMemberOrNull(guild.id)
+        val targetMember = arg.asMemberOrNull(guild.id)
 
         if (targetMember == null) {
             println("User is no longer in this guild.")
@@ -95,8 +94,13 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             return@user
         }
 
-        if (!hasValidState(this, guild, targetMember))
+        val openReport = targetMember.findReport()
+
+        if (openReport != null) {
+            openReport.detain(discord.kord)
+            respond("Open report: <#${openReport.channelId}> (mute applied)")
             return@user
+        }
 
         try {
             targetMember.openReport(this, true)
@@ -117,7 +121,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             val report = channel.toReportChannel()?.report
 
             if (report == null) {
-                respond("Invalid report channel")
+                respond("This command must be run in a report channel")
                 return@execute
             }
 
@@ -145,7 +149,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             val reportChannel = channel.toReportChannel()
 
             if (reportChannel == null) {
-                respond("Invalid report channel")
+                respond("This command must be run in a report channel")
                 return@execute
             }
 
@@ -180,19 +184,4 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             }
         }
     }
-}
-
-private suspend fun hasValidState(event: CommandEvent<*>, currentGuild: Guild, targetUser: User): Boolean {
-    val report = targetUser.toLiveReport() ?: return true
-    val reportGuild = report.guild
-
-    event.respond(
-        if (reportGuild == currentGuild) {
-            report.channel.mention
-        } else {
-            "The target user already has an open report in ${reportGuild.name}."
-        }
-    )
-
-    return false
 }
