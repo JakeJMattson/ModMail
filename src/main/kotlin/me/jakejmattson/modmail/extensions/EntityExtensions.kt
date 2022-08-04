@@ -2,7 +2,6 @@ package me.jakejmattson.modmail.extensions
 
 import dev.kord.core.entity.Embed
 import dev.kord.core.entity.Message
-import dev.kord.core.entity.User
 import dev.kord.core.entity.channel.MessageChannel
 import dev.kord.x.emoji.Emojis
 import dev.kord.x.emoji.toReaction

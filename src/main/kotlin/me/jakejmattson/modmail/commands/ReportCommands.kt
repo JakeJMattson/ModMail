@@ -7,7 +7,6 @@ import me.jakejmattson.discordkt.arguments.AnyArg
 import me.jakejmattson.discordkt.arguments.EveryArg
 import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.discordkt.extensions.pfpUrl
-import me.jakejmattson.modmail.arguments.toReportChannel
 import me.jakejmattson.modmail.extensions.archiveString
 import me.jakejmattson.modmail.listeners.deletionQueue
 import me.jakejmattson.modmail.services.*
@@ -20,7 +19,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             val reportChannel = channel.toReportChannel()
 
             if (reportChannel == null) {
-                respond("Invalid report channel")
+                respond("This command must be run in a report channel")
                 return@execute
             }
 
@@ -40,7 +39,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             val reportChannel = channel.toReportChannel()
 
             if (reportChannel == null) {
-                respond("Invalid report channel")
+                respond("This command must be run in a report channel")
                 return@execute
             }
 
@@ -75,7 +74,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             val reportChannel = channel.toReportChannel()
 
             if (reportChannel == null) {
-                respond("Invalid report channel")
+                respond("This command must be run in a report channel")
                 return@execute
             }
 
@@ -101,7 +100,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             val reportChannel = channel.toReportChannel()
 
             if (reportChannel == null) {
-                respond("Invalid report channel")
+                respond("This command must be run in a report channel")
                 return@execute
             }
 
@@ -123,7 +122,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             val reportChannel = channel.toReportChannel()
 
             if (reportChannel == null) {
-                respond("Invalid report channel")
+                respond("This command must be run in a report channel")
                 return@execute
             }
 

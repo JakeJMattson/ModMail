@@ -5,7 +5,6 @@ import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.entity.interaction.GuildAutoCompleteInteraction
 import me.jakejmattson.discordkt.arguments.AnyArg
 import me.jakejmattson.discordkt.arguments.EveryArg
-import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.discordkt.commands.subcommand
 import me.jakejmattson.discordkt.extensions.*
 import me.jakejmattson.modmail.services.Locale

@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation("me.jakejmattson:DiscordKt:0.23.1")
+    implementation("me.jakejmattson:DiscordKt:0.23.2")
 }
 
 tasks {

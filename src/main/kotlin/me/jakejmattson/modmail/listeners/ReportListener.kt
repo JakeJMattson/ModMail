@@ -30,6 +30,7 @@ fun reportListener(discord: Discord, config: Configuration, reportService: Repor
                 validGuilds.size > 1 -> {
                     guildChoiceConversation(discord, message).startPrivately(discord, user)
                 }
+
                 else -> {
                     val guild = validGuilds.firstOrNull() ?: return@on
                     with(reportService) {
