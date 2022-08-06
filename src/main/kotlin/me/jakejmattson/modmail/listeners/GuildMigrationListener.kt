@@ -2,9 +2,7 @@ package me.jakejmattson.modmail.listeners
 
 import dev.kord.common.kColor
 import dev.kord.core.behavior.channel.createEmbed
-import dev.kord.core.event.guild.GuildCreateEvent
-import dev.kord.core.event.guild.MemberJoinEvent
-import dev.kord.core.event.guild.MemberLeaveEvent
+import dev.kord.core.event.guild.*
 import dev.kord.rest.Image
 import kotlinx.coroutines.flow.firstOrNull
 import me.jakejmattson.discordkt.dsl.listeners
@@ -16,29 +14,33 @@ import java.awt.Color
 
 @Suppress("unused")
 fun guildMigration(configuration: Configuration) = listeners {
-    on<MemberLeaveEvent> {
-        val report = user.toLiveReport() ?: return@on
-        if (report.guild.id != guild.id) return@on
+    on<BanAddEvent> {
+        val report = user.findReport() ?: return@on
+        if (report.guildId != guild.id) return@on
 
-        val message = guild.bans.firstOrNull { it.user.id == user.id }?.let {
-            "This user was banned for reason: ${it.reason}"
-        } ?: "This user has left the server."
-
-        report.channel.createEmbed {
-            addField("User no longer in server!", message)
+        report.liveChannel(kord)?.createEmbed {
             color = Color.red.kColor
+            addField("User Banned!", "Reason: ${this@on.getBanOrNull()?.reason ?: ""}")
+        }
+    }
+
+    on<MemberLeaveEvent> {
+        val report = user.findReport() ?: return@on
+        if (report.guildId != guild.id) return@on
+
+        report.liveChannel(kord)?.createEmbed {
+            color = Color.orange.kColor
+            addField("User Left!", "This user has left the server.")
         }
     }
 
     on<MemberJoinEvent> {
-        val report = member.asUser().toLiveReport() ?: return@on
+        val report = member.asUser().findReport() ?: return@on
+        if (report.guildId != guild.id) return@on
 
-        if (report.guild.id != guild.id)
-            return@on
-
-        report.channel.createEmbed {
-            addField("User has rejoined server!", "This report is now reactivated.")
+        report.liveChannel(kord)?.createEmbed {
             color = Color.green.kColor
+            addField("User Joined!", "This report is now reactivated.")
         }
 
         if (member.isDetained())

@@ -28,13 +28,12 @@ fun editListener(discord: Discord, reportService: ReportService, loggingService:
             }
         } else {
             val report = author.findReport() ?: return@on
-            val liveReport = report.toLiveReport(kord) ?: return@on
             val targetMessage = report.messages[messageId] ?: return@on
-            val channel = liveReport.channel
+            val channel = report.liveChannel(kord) ?: return@on
             val guildMessage = channel.getMessage(targetMessage)
             val newContent = message.cleanContent(discord)
 
-            loggingService.edit(liveReport, guildMessage.cleanContent(discord), newContent)
+            loggingService.edit(report, guildMessage.cleanContent(discord), newContent)
 
             channel.getMessage(targetMessage).edit {
                 content = newContent
@@ -59,6 +58,6 @@ fun editListener(discord: Discord, reportService: ReportService, loggingService:
         if (getGuild() != null)
             return@on
 
-        user.toLiveReport()?.channel?.type()
+        user.findReport()?.liveChannel(kord)?.type()
     }
 }

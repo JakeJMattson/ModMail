@@ -7,9 +7,7 @@ import me.jakejmattson.discordkt.arguments.AnyArg
 import me.jakejmattson.discordkt.arguments.EveryArg
 import me.jakejmattson.discordkt.commands.subcommand
 import me.jakejmattson.discordkt.extensions.*
-import me.jakejmattson.modmail.services.Locale
-import me.jakejmattson.modmail.services.MacroService
-import me.jakejmattson.modmail.services.toLiveReport
+import me.jakejmattson.modmail.services.*
 import java.awt.Color
 
 @Suppress("unused")
@@ -27,7 +25,7 @@ fun macroCommands(macroService: MacroService) = subcommand("Macro") {
         execute(autoCompletingMacroArg()) {
             val name = args.first
             val macro = macroService.findMacro(guild, name)
-            val report = channel.toLiveReport()
+            val report = channel.findReport()
 
             if (macro == null) {
                 respond("`$name` does not exist.")
@@ -35,7 +33,7 @@ fun macroCommands(macroService: MacroService) = subcommand("Macro") {
             }
 
             if (report != null) {
-                report.user.sendPrivateMessage(macro.message)
+                report.liveMember(discord.kord)?.sendPrivateMessage(macro.message)
                 respond("Macro content sent to user.")
             } else
                 respond("Macro preview shown below.")

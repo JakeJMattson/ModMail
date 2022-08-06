@@ -14,12 +14,11 @@ import me.jakejmattson.discordkt.extensions.thumbnail
 
 @Service
 class LoggingService(discord: Discord, private val config: Configuration) {
-    private val api = discord.kord
+    private val kord = discord.kord
 
     suspend fun memberOpen(report: Report) {
-        val liveReport = report.toLiveReport(api) ?: return
-        val config = liveReport.guild.logConfig
-        val message = "New report opened by ${liveReport.user.tag}"
+        val config = config[report.guildId]!!.loggingConfiguration
+        val message = "New report opened by ${report.liveMember(kord)?.tag}"
 
         if (config.logOpen)
             log(config, message)
@@ -57,8 +56,8 @@ class LoggingService(discord: Discord, private val config: Configuration) {
             log(config, message)
     }
 
-    suspend fun edit(report: LiveReport, old: String, new: String) {
-        val config = report.guild.logConfig
+    suspend fun edit(report: Report, old: String, new: String) {
+        val config = config[report.guildId]!!.loggingConfiguration
 
         if (config.logEdits)
             logEmbed(config, buildEditEmbed(report, old, new))
@@ -76,12 +75,12 @@ class LoggingService(discord: Discord, private val config: Configuration) {
     private val Guild.logConfig
         get() = config[this]!!.loggingConfiguration
 
-    private suspend fun log(config: LoggingConfiguration, message: String) = config.getLiveChannel(api)?.createMessage(message)
-    private suspend fun logEmbed(config: LoggingConfiguration, embed: EmbedBuilder) = config.getLiveChannel(api)?.createMessage {
+    private suspend fun log(config: LoggingConfiguration, message: String) = config.getLiveChannel(kord)?.createMessage(message)
+    private suspend fun logEmbed(config: LoggingConfiguration, embed: EmbedBuilder) = config.getLiveChannel(kord)?.createMessage {
         embeds.add(embed)
     }
 
-    private fun buildEditEmbed(report: LiveReport, old: String, new: String) = EmbedBuilder().apply {
+    private suspend fun buildEditEmbed(report: Report, old: String, new: String) = EmbedBuilder().apply {
         fun createFields(title: String, message: String) = message.chunked(1024).mapIndexed { index, chunk ->
             field {
                 name = if (index == 0) title else "(cont)"
@@ -90,12 +89,10 @@ class LoggingService(discord: Discord, private val config: Configuration) {
             }
         }
 
-        val channel = report.channel.mention
-
-        addField("Edit Detected!", "The user has performed a message edit in $channel.")
+        addField("Edit Detected!", "The user has performed a message edit in <#${report.channelId}>.")
 
         createFields("Old Content", old)
         createFields("New Content", new)
-        thumbnail(report.user.pfpUrl)
+        thumbnail(report.liveMember(kord)?.pfpUrl ?: "")
     }
 }

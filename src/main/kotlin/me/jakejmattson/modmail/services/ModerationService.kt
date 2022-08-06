@@ -10,7 +10,7 @@ import java.util.*
 private val detainedReports = Vector<Report>()
 
 suspend fun Report.detain(kord: Kord) {
-    val member = toLiveReport(kord)?.user?.asMember(guildId) ?: return
+    val member = liveMember(kord) ?: return
 
     if (!member.isDetained()) {
         detainedReports.addElement(this)
@@ -19,7 +19,7 @@ suspend fun Report.detain(kord: Kord) {
 }
 
 suspend fun Report.release(kord: Kord): Boolean {
-    val member = toLiveReport(kord)?.user?.asMember(guildId) ?: return false
+    val member = liveMember(kord) ?: return false
 
     if (member.isDetained()) {
         detainedReports.remove(this)

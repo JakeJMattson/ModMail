@@ -45,7 +45,7 @@ suspend fun main(it: Array<String>) {
             commandReaction = null
             dualRegistry = false
             theme = Color(0x00bfff)
-            intents = Intent.GuildMembers + Intent.Guilds + Intent.DirectMessages + Intent.DirectMessageTyping + Intent.GuildMessageTyping
+            intents = Intent.GuildMembers + Intent.Guilds + Intent.DirectMessages + Intent.DirectMessageTyping + Intent.GuildMessageTyping + Intent.GuildBans
             defaultPermissions = Permissions(Permission.ManageMessages)
         }
 

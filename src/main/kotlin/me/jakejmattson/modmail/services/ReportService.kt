@@ -39,32 +39,20 @@ data class Report(val userId: Snowflake,
                   val guildId: Snowflake,
                   val messages: MutableMap<Snowflake, Snowflake> = mutableMapOf()) {
 
-    suspend fun toLiveReport(kord: Kord): LiveReport? {
-        val user = kord.getUser(userId) ?: return null
-        val guild = kord.getGuild(guildId) ?: return null
-        val channel = guild.getChannelOfOrNull<TextChannel>(channelId) ?: return null
-
-        return LiveReport(user, channel, guild)
-    }
+    suspend fun liveMember(kord: Kord) = kord.getGuild(guildId)?.getMemberOrNull(userId)
+    suspend fun liveChannel(kord: Kord) = kord.getChannelOf<TextChannel>(channelId)
 }
-
-data class LiveReport(val user: User, val channel: TextChannel, val guild: Guild)
 
 data class ReportChannel(val channel: TextChannel, val report: Report)
 
-fun TextChannel.toReportChannel() = findReport()?.let { report ->
+fun MessageChannel.toReportChannel() = (this as? TextChannel)?.findReport()?.let { report ->
     ReportChannel(this, report)
 }
 
-fun MessageChannel.toReportChannel() = (this as? TextChannel)?.toReportChannel()
-
 private val reports = Vector<Report>()
 
-suspend fun UserBehavior.toLiveReport() = findReport()?.toLiveReport(kord)
 fun UserBehavior.findReport() = reports.firstOrNull { it.userId == id }
 fun MessageChannelBehavior.findReport() = reports.firstOrNull { it.channelId == id }
-suspend fun MessageChannelBehavior.toLiveReport() = findReport()?.toLiveReport(kord)
-fun GuildBehavior.getReports() = reports.filter { it.guildId == id }
 
 @Service
 class ReportService(private val config: Configuration,
@@ -82,11 +70,13 @@ class ReportService(private val config: Configuration,
     }
 
     suspend fun createReport(user: User, guild: Guild) {
+        val member = user.asMemberOrNull(guild.id) ?: return
+
         if (guild.channels.count() >= 250) return
 
         val reportCategory = config[guild]?.getLiveReportCategory(guild.kord) ?: return
 
-        createReportChannel(reportCategory, user, guild)
+        createReportChannel(reportCategory, member, guild)
     }
 
     fun addReport(report: Report) {
@@ -99,11 +89,11 @@ class ReportService(private val config: Configuration,
         val safeMessage = message.cleanContent(discord)
 
         with(user.findReport()) {
-            val liveReport = this?.toLiveReport(message.kord) ?: return@with
+            val liveChannel = this?.liveChannel(message.kord) ?: return@with
 
             if (safeMessage.isEmpty()) return
 
-            val newMessage = liveReport.channel.createMessage {
+            val newMessage = liveChannel.createMessage {
                 content = safeMessage
 
                 allowedMentions {
@@ -122,17 +112,17 @@ class ReportService(private val config: Configuration,
     fun writeReportToFile(report: Report) =
         File("$reportsFolder/${report.channelId.value}.json").writeText(Json.encodeToString(report))
 
-    private suspend fun createReportChannel(category: Category, user: User, guild: Guild) {
-        val reportChannel = guild.createTextChannel(user.username) {
+    private suspend fun createReportChannel(category: Category, member: Member, guild: Guild) {
+        val reportChannel = guild.createTextChannel(member.username) {
             parentId = category.id
         }
 
-        user.asMember(guild.id).reportOpenEmbed(reportChannel, false)
+        member.reportOpenEmbed(reportChannel, false)
 
-        val newReport = Report(user.id, reportChannel.id, guild.id, ConcurrentHashMap())
+        val newReport = Report(member.id, reportChannel.id, guild.id, ConcurrentHashMap())
         addReport(newReport)
 
-        user.sendPrivateMessage {
+        member.sendPrivateMessage {
             color = Color.GREEN.kColor
 
             field {
