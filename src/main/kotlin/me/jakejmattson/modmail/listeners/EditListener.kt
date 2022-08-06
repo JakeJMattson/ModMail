@@ -7,7 +7,9 @@ import dev.kord.core.event.message.MessageUpdateEvent
 import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.dsl.listeners
 import me.jakejmattson.modmail.extensions.cleanContent
-import me.jakejmattson.modmail.services.*
+import me.jakejmattson.modmail.services.LoggingService
+import me.jakejmattson.modmail.services.ReportService
+import me.jakejmattson.modmail.services.findReport
 
 @Suppress("unused")
 fun editListener(discord: Discord, reportService: ReportService, loggingService: LoggingService) = listeners {

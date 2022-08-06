@@ -1,15 +1,17 @@
 package me.jakejmattson.modmail.commands
 
+import dev.kord.common.kColor
 import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.channel.edit
 import me.jakejmattson.discordkt.arguments.AnyArg
 import me.jakejmattson.discordkt.arguments.EveryArg
 import me.jakejmattson.discordkt.commands.commands
-import me.jakejmattson.discordkt.extensions.pfpUrl
+import me.jakejmattson.discordkt.extensions.author
 import me.jakejmattson.modmail.extensions.archiveString
 import me.jakejmattson.modmail.listeners.deletionQueue
 import me.jakejmattson.modmail.services.*
+import java.awt.Color
 
 @Suppress("unused")
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands("Report") {
@@ -82,11 +84,9 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             val messageAuthor = author
 
             channel.createEmbed {
-                author {
-                    name = messageAuthor.tag
-                    icon = messageAuthor.pfpUrl
-                }
+                author(messageAuthor)
                 description = args.first
+                color = Color.white.kColor
             }
 
             loggingService.command(this)

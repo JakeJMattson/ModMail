@@ -4,16 +4,16 @@ import dev.kord.common.entity.MessageType
 import dev.kord.common.entity.Snowflake
 import dev.kord.common.kColor
 import dev.kord.core.Kord
-import dev.kord.core.behavior.*
+import dev.kord.core.behavior.UserBehavior
 import dev.kord.core.behavior.channel.MessageChannelBehavior
 import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.behavior.channel.createMessage
+import dev.kord.core.behavior.createTextChannel
 import dev.kord.core.entity.*
 import dev.kord.core.entity.channel.Category
 import dev.kord.core.entity.channel.MessageChannel
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.Image
-import dev.kord.rest.builder.message.EmbedBuilder
 import dev.kord.rest.builder.message.create.allowedMentions
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.count
@@ -164,7 +164,7 @@ private suspend fun sendReportClosedEmbed(report: Report, kord: Kord) {
     val guild = kord.getGuild(report.guildId) ?: return
     val user = kord.getUser(report.userId) ?: return
 
-    val builder: EmbedBuilder.() -> Unit = {
+    user.sendPrivateMessage {
         color = Color.RED.kColor
 
         field {
@@ -176,9 +176,5 @@ private suspend fun sendReportClosedEmbed(report: Report, kord: Kord) {
             name = guild.name
             icon = guild.getIconUrl(Image.Format.PNG)
         }
-    }
-
-    user.sendPrivateMessage {
-        builder(this)
     }
 }

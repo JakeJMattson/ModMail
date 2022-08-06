@@ -1,5 +1,6 @@
 package me.jakejmattson.modmail.services
 
+import dev.kord.common.kColor
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.entity.Guild
 import dev.kord.core.entity.User
@@ -11,6 +12,7 @@ import me.jakejmattson.discordkt.commands.CommandEvent
 import me.jakejmattson.discordkt.extensions.addField
 import me.jakejmattson.discordkt.extensions.pfpUrl
 import me.jakejmattson.discordkt.extensions.thumbnail
+import java.awt.Color
 
 @Service
 class LoggingService(discord: Discord, private val config: Configuration) {
@@ -89,10 +91,10 @@ class LoggingService(discord: Discord, private val config: Configuration) {
             }
         }
 
-        addField("Edit Detected!", "The user has performed a message edit in <#${report.channelId}>.")
-
+        color = Color.white.kColor
+        thumbnail(report.liveMember(kord)?.pfpUrl ?: "")
+        addField("Edit Detected!", "<@!${report.userId}> edited a message.")
         createFields("Old Content", old)
         createFields("New Content", new)
-        thumbnail(report.liveMember(kord)?.pfpUrl ?: "")
     }
 }

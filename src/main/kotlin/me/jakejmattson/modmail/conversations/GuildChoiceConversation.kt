@@ -6,6 +6,7 @@ import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.conversations.conversation
 import me.jakejmattson.discordkt.extensions.mutualGuilds
 import me.jakejmattson.discordkt.extensions.pfpUrl
+import me.jakejmattson.discordkt.extensions.thumbnail
 import me.jakejmattson.modmail.services.Configuration
 import me.jakejmattson.modmail.services.ReportService
 
@@ -18,9 +19,7 @@ fun guildChoiceConversation(discord: Discord, message: Message) = conversation {
         embed {
             title = "Select Server"
             description = "Select the server you want to contact."
-            thumbnail {
-                url = discord.kord.getSelf().pfpUrl
-            }
+            thumbnail(discord.kord.getSelf().pfpUrl)
         }
 
         guilds.toList().chunked(5).forEach { row ->

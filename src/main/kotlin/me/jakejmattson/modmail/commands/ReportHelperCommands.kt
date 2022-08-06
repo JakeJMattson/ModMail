@@ -12,6 +12,7 @@ import me.jakejmattson.discordkt.arguments.UserArg
 import me.jakejmattson.discordkt.commands.CommandEvent
 import me.jakejmattson.discordkt.commands.commands
 import me.jakejmattson.discordkt.extensions.addField
+import me.jakejmattson.discordkt.extensions.thumbnail
 import me.jakejmattson.modmail.extensions.archiveString
 import me.jakejmattson.modmail.services.*
 import java.awt.Color
@@ -33,9 +34,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                 addField("Chatting with ${guild.name}!", Locale.BOT_DESCRIPTION)
             }
 
-            thumbnail {
-                url = guild.getIconUrl(Image.Format.JPEG) ?: ""
-            }
+            thumbnail(guild.getIconUrl(Image.Format.JPEG) ?: "")
         }
 
         val reportChannel = guild.createTextChannel(username) {
