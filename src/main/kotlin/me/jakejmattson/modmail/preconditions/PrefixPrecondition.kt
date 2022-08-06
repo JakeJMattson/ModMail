@@ -9,8 +9,11 @@ fun prefixPrecondition(configuration: Configuration) = precondition {
     if (message == null) return@precondition
 
     val guildConfig = configuration[guild!!] ?: return@precondition
+    val content = message!!.content
 
-    if (message!!.content.startsWith(guildConfig.prefix)) {
+    if (content.startsWith(guildConfig.prefix)) {
         fail("Text commands are deprecated. Please use the appropriate slash command.")
+    } else if (content.startsWith("/")) {
+        fail("You failed at using a slash command. Try again.")
     }
 }
