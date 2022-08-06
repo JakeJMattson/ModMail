@@ -1,10 +1,11 @@
 package me.jakejmattson.modmail.listeners
 
+import dev.kord.common.entity.Snowflake
 import dev.kord.common.kColor
 import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.event.guild.*
 import dev.kord.rest.Image
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.delay
 import me.jakejmattson.discordkt.dsl.listeners
 import me.jakejmattson.discordkt.extensions.addField
 import me.jakejmattson.discordkt.extensions.sendPrivateMessage
@@ -14,9 +15,13 @@ import java.awt.Color
 
 @Suppress("unused")
 fun guildMigration(configuration: Configuration) = listeners {
+    val banQueue = mutableListOf<Pair<Snowflake, Snowflake>>()
+
     on<BanAddEvent> {
         val report = user.findReport() ?: return@on
         if (report.guildId != guild.id) return@on
+
+        banQueue.add(report.userId to report.guildId)
 
         report.liveChannel(kord)?.createEmbed {
             color = Color.red.kColor
@@ -27,6 +32,13 @@ fun guildMigration(configuration: Configuration) = listeners {
     on<MemberLeaveEvent> {
         val report = user.findReport() ?: return@on
         if (report.guildId != guild.id) return@on
+
+        delay(500)
+
+        if (banQueue.contains(user.id to report.guildId)) {
+            banQueue.remove(report.userId to report.guildId)
+            return@on
+        }
 
         report.liveChannel(kord)?.createEmbed {
             color = Color.orange.kColor
