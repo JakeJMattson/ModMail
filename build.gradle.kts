@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 
 group = "me.jakejmattson"
-version = "4.0.0"
+version = "4.0.0-RC2"
 
 plugins {
     kotlin("jvm") version "1.7.10"
@@ -40,7 +40,7 @@ tasks {
         archiveFileName.set("ModMail.jar")
         manifest {
             attributes(
-                "Main-Class" to "me.jakejmattson.modmail.MainAppKt"
+                "Main-Class" to "me.jakejmattson.modmail.MainKt"
             )
         }
     }
