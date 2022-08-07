@@ -25,6 +25,7 @@ import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.annotations.Service
 import me.jakejmattson.discordkt.extensions.*
+import me.jakejmattson.modmail.extensions.addFailReaction
 import me.jakejmattson.modmail.extensions.cleanContent
 import me.jakejmattson.modmail.extensions.fullname
 import java.awt.Color
@@ -80,27 +81,29 @@ class ReportService(private val config: Configuration,
 
     suspend fun receiveFromUser(message: Message) {
         val user = message.author!!
-        val safeMessage = message.cleanContent(discord)
+        val report = user.findReport() ?: return
+        val liveChannel = report.liveChannel(message.kord) ?: return
 
-        with(user.findReport()) {
-            val liveChannel = this?.liveChannel(message.kord) ?: return@with
+        if (report.liveMember(message.kord) == null) {
+            message.addFailReaction()
+            return
+        }
 
-            if (safeMessage.isEmpty()) return
+        val safeMessage = message.cleanContent(discord).takeUnless { it.isEmpty() } ?: return
 
-            val newMessage = liveChannel.createMessage {
-                content = safeMessage
+        val newMessage = liveChannel.createMessage {
+            content = safeMessage
 
-                allowedMentions {
-                    repliedUser = false
-                }
-
-                if (message.type is MessageType.Reply) {
-                    messageReference = messages.entries.firstOrNull { it.value == message.referencedMessage!!.id }?.key
-                }
+            allowedMentions {
+                repliedUser = false
             }
 
-            messages[message.id] = newMessage.id
+            if (message.type is MessageType.Reply) {
+                messageReference = report.messages.entries.firstOrNull { it.value == message.referencedMessage!!.id }?.key
+            }
         }
+
+        report.messages[message.id] = newMessage.id
     }
 
     fun writeReportToFile(report: Report) =
@@ -120,7 +123,7 @@ class ReportService(private val config: Configuration,
             color = Color.GREEN.kColor
 
             field {
-                name = "A report has been created."
+                name = "Report Opened"
                 value = "Someone will respond shortly, please be patient."
             }
 
