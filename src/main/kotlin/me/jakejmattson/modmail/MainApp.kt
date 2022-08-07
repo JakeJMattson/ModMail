@@ -15,7 +15,6 @@ import me.jakejmattson.modmail.services.Locale
 import me.jakejmattson.modmail.services.configFile
 import java.awt.Color
 import java.time.Instant
-import kotlin.system.exitProcess
 
 @Serializable
 private data class Properties(val version: String, val kotlin: String, val repository: String) : Data()
@@ -24,15 +23,8 @@ private val startup = Instant.now()
 
 @KordPreview
 @PrivilegedIntent
-suspend fun main(it: Array<String>) {
-    val token = it.firstOrNull()
-
-    if (token == null || token == "UNSET") {
-        println("You must specify the token with the -e flag when running via docker, or as the first command line param.")
-        exitProcess(-1)
-    }
-
-    bot(token) {
+suspend fun main(args: Array<String>) {
+    bot(args.firstOrNull()) {
         val configuration = data(configFile.path) { Configuration() }
         val project = data(javaClass.getResource("/properties.json")?.path ?: "") { Properties("0.0", "0.0", "0.0") }
 

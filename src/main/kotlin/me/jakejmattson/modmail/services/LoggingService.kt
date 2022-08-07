@@ -26,9 +26,9 @@ class LoggingService(discord: Discord, private val config: Configuration) {
             log(config, message)
     }
 
-    suspend fun staffOpen(guild: Guild, channelName: String, staff: User) {
+    suspend fun staffOpen(guild: Guild, channelName: String, staff: User, detain: Boolean) {
         val config = guild.logConfig
-        val message = "Staff action :: ${staff.tag} opened $channelName"
+        val message = "Staff action :: ${staff.tag} ${if (detain) "detained" else "opened"} $channelName"
 
         if (config.logOpen)
             log(config, message)

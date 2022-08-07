@@ -41,15 +41,15 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             parentId = reportCategory?.id
         }
 
-        reportOpenEmbed(reportChannel, detain)
+        reportOpenEmbed(reportChannel, event.author, detain)
 
         val newReport = Report(id, reportChannel.id, guild.id, ConcurrentHashMap())
         reportService.addReport(newReport)
 
         if (detain) newReport.detain(guild.kord)
 
+        loggingService.staffOpen(guild, reportChannel.name, event.author, detain)
         event.respond(reportChannel.mention)
-        loggingService.staffOpen(guild, reportChannel.name, event.author)
     }
 
     user("Open a Report", "Open", Locale.OPEN_DESCRIPTION) {
@@ -117,7 +117,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
     slash("Release") {
         description = Locale.RELEASE_DESCRIPTION
         execute {
-            val report = channel.toReportChannel()?.report
+            val report = channel.findReport()
 
             if (report == null) {
                 respond("This command must be run in a report channel")
@@ -145,14 +145,12 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
         description = Locale.INFO_DESCRIPTION
         execute(ChoiceArg("Field", "The info to display", "user", "channel", "all").optional("user")) {
             val choice = args.first
-            val reportChannel = channel.toReportChannel()
+            val report = channel.findReport()
 
-            if (reportChannel == null) {
+            if (report == null) {
                 respond("This command must be run in a report channel")
                 return@execute
             }
-
-            val (_, report) = reportChannel
 
             val response = with(report) {
                 when (choice) {

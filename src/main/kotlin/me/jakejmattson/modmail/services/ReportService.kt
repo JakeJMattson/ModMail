@@ -11,7 +11,6 @@ import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.createTextChannel
 import dev.kord.core.entity.*
 import dev.kord.core.entity.channel.Category
-import dev.kord.core.entity.channel.MessageChannel
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.Image
 import dev.kord.rest.builder.message.create.allowedMentions
@@ -27,6 +26,7 @@ import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.annotations.Service
 import me.jakejmattson.discordkt.extensions.*
 import me.jakejmattson.modmail.extensions.cleanContent
+import me.jakejmattson.modmail.extensions.fullname
 import java.awt.Color
 import java.io.File
 import java.time.Instant
@@ -43,12 +43,6 @@ data class Report(val userId: Snowflake,
     suspend fun liveChannel(kord: Kord) = kord.getChannelOf<TextChannel>(channelId)
 }
 
-data class ReportChannel(val channel: TextChannel, val report: Report)
-
-fun MessageChannel.toReportChannel() = (this as? TextChannel)?.findReport()?.let { report ->
-    ReportChannel(this, report)
-}
-
 private val reports = Vector<Report>()
 
 fun UserBehavior.findReport() = reports.firstOrNull { it.userId == id }
@@ -62,7 +56,7 @@ class ReportService(private val config: Configuration,
         GlobalScope.launch {
             reportsFolder.listFiles()?.forEach {
                 val report = Json.decodeFromString<Report>(it.readText())
-                val channel = discord.kord.getChannel(report.channelId)
+                val channel = report.liveChannel(discord.kord)
 
                 if (channel != null) reports.add(report) else it.delete()
             }
@@ -117,7 +111,7 @@ class ReportService(private val config: Configuration,
             parentId = category.id
         }
 
-        member.reportOpenEmbed(reportChannel, false)
+        member.reportOpenEmbed(reportChannel)
 
         val newReport = Report(member.id, reportChannel.id, guild.id, ConcurrentHashMap())
         addReport(newReport)
@@ -151,11 +145,12 @@ private fun removeReport(report: Report) {
     reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId.toString()) }?.delete()
 }
 
-suspend fun Member.reportOpenEmbed(channel: TextChannel, detain: Boolean = false) = channel.createEmbed {
+suspend fun Member.reportOpenEmbed(channel: TextChannel, opener: User? = null, detain: Boolean = false) = channel.createEmbed {
     addInlineField("User", mention)
-    addInlineField("Name", "$username#$discriminator")
+    addInlineField("Name", fullname)
     addField("User ID", id.toString())
     thumbnail(pfpUrl)
+    if (opener != null) footer("Opened by ${opener.fullname}", opener.pfpUrl)
     color = if (detain) Color.RED.kColor else Color.GREEN.kColor
     timestamp = Instant.now().toKotlinInstant()
 }
