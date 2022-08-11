@@ -3,7 +3,7 @@
    <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-1.7.10-%23A97BFF.svg?logo=Kotlin">
    </a>
    <a href="https://github.com/discordkt/discordkt/releases/">
-   <img alt="Version" src="https://img.shields.io/badge/Version-0.23.2-%23E15ABA?label=Version&logo=GitHub">
+   <img alt="Version" src="https://img.shields.io/badge/Version-0.23.3-%23E15ABA?label=Version&logo=GitHub">
    </a>
    <br>
    <a href="https://discordapp.com/users/254786431656919051/">

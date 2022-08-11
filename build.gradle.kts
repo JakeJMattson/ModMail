@@ -1,7 +1,8 @@
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import java.util.*
 
 group = "me.jakejmattson"
-version = "4.0.0-RC2"
+version = "4.0.0-RC3"
+description = "A report management bot"
 
 plugins {
     kotlin("jvm") version "1.7.10"
@@ -15,33 +16,27 @@ repositories {
 }
 
 dependencies {
-    implementation("me.jakejmattson:DiscordKt:0.23.2")
+    implementation("me.jakejmattson:DiscordKt:0.23.3")
 }
 
 tasks {
-    val resourcePath = "src/main/resources"
-
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
-    }
 
-    copy {
-        from(file("$resourcePath/properties-template.json"))
-        into(file(resourcePath))
-        rename { "properties.json" }
-        expand(
-            "version" to version,
-            "kotlin" to KotlinCompilerVersion.VERSION,
-            "repository" to "https://github.com/JakeJMattson/ModMail"
-        )
+        Properties().apply {
+            setProperty("name", project.name)
+            setProperty("description", project.description)
+            setProperty("version", version.toString())
+            setProperty("url", "https://github.com/JakeJMattson/ModMail")
+
+            store(file("src/main/resources/bot.properties").outputStream(), null)
+        }
     }
 
     shadowJar {
         archiveFileName.set("ModMail.jar")
         manifest {
-            attributes(
-                "Main-Class" to "me.jakejmattson.modmail.MainKt"
-            )
+            attributes("Main-Class" to "me.jakejmattson.modmail.MainKt")
         }
     }
 }
