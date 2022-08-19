@@ -1,6 +1,5 @@
 package me.jakejmattson.modmail.services
 
-import dev.kord.common.entity.MessageType
 import dev.kord.common.entity.Snowflake
 import dev.kord.common.kColor
 import dev.kord.core.Kord
@@ -89,18 +88,9 @@ class ReportService(private val config: Configuration,
             return
         }
 
-        val safeMessage = message.cleanContent(discord).takeUnless { it.isEmpty() } ?: return
-
         val newMessage = liveChannel.createMessage {
-            content = safeMessage
-
-            allowedMentions {
-                repliedUser = false
-            }
-
-            if (message.type is MessageType.Reply) {
-                messageReference = report.messages.entries.firstOrNull { it.value == message.referencedMessage!!.id }?.key
-            }
+            content = message.content
+            allowedMentions { }
         }
 
         report.messages[message.id] = newMessage.id
