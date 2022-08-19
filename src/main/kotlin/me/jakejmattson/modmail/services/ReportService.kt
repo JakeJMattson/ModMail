@@ -8,6 +8,7 @@ import dev.kord.core.behavior.channel.MessageChannelBehavior
 import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.createTextChannel
+import dev.kord.core.behavior.reply
 import dev.kord.core.entity.*
 import dev.kord.core.entity.channel.Category
 import dev.kord.core.entity.channel.TextChannel
@@ -25,7 +26,6 @@ import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.annotations.Service
 import me.jakejmattson.discordkt.extensions.*
 import me.jakejmattson.modmail.extensions.addFailReaction
-import me.jakejmattson.modmail.extensions.cleanContent
 import me.jakejmattson.modmail.extensions.fullname
 import java.awt.Color
 import java.io.File
@@ -89,8 +89,18 @@ class ReportService(private val config: Configuration,
         }
 
         val newMessage = liveChannel.createMessage {
-            content = message.content
             allowedMentions { }
+            content = message.content
+        }
+
+        val snowflakeRegex = Regex("^\\d{17,21}$")
+        val snowflakes = message.content.split(" ").filter { it.matches(snowflakeRegex) }.toSet()
+
+        if (snowflakes.isNotEmpty()) {
+            newMessage.reply {
+                allowedMentions { }
+                content = "Detected: " + snowflakes.joinToString { "<@!$it>" }
+            }
         }
 
         report.messages[message.id] = newMessage.id
