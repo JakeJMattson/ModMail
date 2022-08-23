@@ -22,15 +22,15 @@ dependencies {
 tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
+        dependsOn("writeProperties")
+    }
 
-        Properties().apply {
-            setProperty("name", project.name)
-            setProperty("description", project.description)
-            setProperty("version", version.toString())
-            setProperty("url", "https://github.com/JakeJMattson/ModMail")
-
-            store(file("src/main/resources/bot.properties").outputStream(), null)
-        }
+    register<WriteProperties>("writeProperties") {
+        property("name", project.name)
+        property("description", project.description.toString())
+        property("version", version.toString())
+        property("url", "https://github.com/JakeJMattson/ModMail")
+        setOutputFile("src/main/resources/bot.properties")
     }
 
     shadowJar {
