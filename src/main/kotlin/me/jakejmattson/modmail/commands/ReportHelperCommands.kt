@@ -7,7 +7,6 @@ import dev.kord.core.behavior.createTextChannel
 import dev.kord.core.behavior.interaction.respondPublic
 import dev.kord.core.entity.Member
 import dev.kord.rest.Image
-import me.jakejmattson.discordkt.arguments.ChoiceArg
 import me.jakejmattson.discordkt.arguments.UserArg
 import me.jakejmattson.discordkt.commands.CommandEvent
 import me.jakejmattson.discordkt.commands.commands
@@ -140,9 +139,8 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
         }
     }
 
-    slash("Info", Locale.INFO_DESCRIPTION) {
-        execute(ChoiceArg("Field", "The info to display", "user", "channel", "all").optional("user")) {
-            val choice = args.first
+    slash("ID", Locale.ID_DESCRIPTION) {
+        execute {
             val report = channel.findReport()
 
             if (report == null) {
@@ -150,16 +148,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
                 return@execute
             }
 
-            val response = with(report) {
-                when (choice) {
-                    "user" -> userId.toString()
-                    "channel" -> channelId.toString()
-                    "all" -> "User ID: $userId\nChannel ID: $channelId"
-                    else -> "Invalid selection!"
-                }
-            }
-
-            respond(response)
+            respond(report.userId)
         }
     }
 

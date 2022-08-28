@@ -34,16 +34,17 @@
 | Tag       | Tag       | Prepend a tag to the name of this report channel. |
 
 ## ReportHelpers
-| Commands | Arguments | Description                                                      |
-|----------|-----------|------------------------------------------------------------------|
-| Detain   | User      | Mute a user and open a report with them.                         |
-| History  | User      | Read the target user's DM history with the bot.                  |
-| Info     | [Field]   | Retrieve info from the target report channel - user/channel/all. |
-| Open     | User      | Open a report with the target user.                              |
-| Release  |           | Release a user from detainment and unmute them.                  |
+| Commands | Arguments | Description                                       |
+|----------|-----------|---------------------------------------------------|
+| Detain   | User      | Mute a user and open a report with them.          |
+| History  | User      | Read the target user's DM history with the bot.   |
+| ID       |           | Show the user ID of the user this report is with. |
+| Open     | User      | Open a report with the target user.               |
+| Release  |           | Release a user from detainment and unmute them.   |
 
 ## Utility
 | Commands | Arguments | Description          |
 |----------|-----------|----------------------|
 | Help     | [Command] | Display a help menu. |
+| info     |           | Bot info for ModMail |
 
