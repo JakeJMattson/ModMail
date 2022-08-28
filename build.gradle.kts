@@ -1,7 +1,5 @@
-import java.util.*
-
 group = "me.jakejmattson"
-version = "4.0.0-RC3"
+version = "4.0.0-RC4"
 description = "A report management bot"
 
 plugins {
@@ -16,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation("me.jakejmattson:DiscordKt:0.23.3")
+    implementation("me.jakejmattson:DiscordKt:0.23.4")
 }
 
 tasks {

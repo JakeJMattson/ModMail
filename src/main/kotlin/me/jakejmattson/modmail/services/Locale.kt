@@ -47,6 +47,7 @@ class Messages(
     val HISTORY_DESCRIPTION: String = "Read the target user's DM history with the bot.",
 
     //Macro commands descriptions
+    val SEND_MACRO_DESCRIPTION: String = "Send a macro to a user through a report.",
     val ADD_MACRO_DESCRIPTION: String = "Add a custom command to send text in a report.",
     val REMOVE_MACRO_DESCRIPTION: String = "Removes a macro with the given name.",
     val RENAME_MACRO_DESCRIPTION: String = "Change a macro's name, keeping the original response.",

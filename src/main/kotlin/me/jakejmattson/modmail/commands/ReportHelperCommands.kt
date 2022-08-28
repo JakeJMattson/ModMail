@@ -114,8 +114,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
         targetMember.mute()
     }
 
-    slash("Release") {
-        description = Locale.RELEASE_DESCRIPTION
+    slash("Release", Locale.RELEASE_DESCRIPTION) {
         execute {
             val report = channel.findReport()
 
@@ -141,8 +140,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
         }
     }
 
-    slash("Info") {
-        description = Locale.INFO_DESCRIPTION
+    slash("Info", Locale.INFO_DESCRIPTION) {
         execute(ChoiceArg("Field", "The info to display", "user", "channel", "all").optional("user")) {
             val choice = args.first
             val report = channel.findReport()
@@ -165,8 +163,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
         }
     }
 
-    slash("History") {
-        description = Locale.HISTORY_DESCRIPTION
+    slash("History", Locale.HISTORY_DESCRIPTION) {
         execute(UserArg) {
             val user = args.first
             val history = user.getDmChannel().archiveString().toByteArray()

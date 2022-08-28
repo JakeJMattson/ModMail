@@ -22,8 +22,7 @@ fun macroCommands(macroService: MacroService) = subcommand("Macro") {
             .filter { it.contains(input, true) }
     }
 
-    sub("Send") {
-        description = "Send a macro to a user through a report."
+    sub("Send", Locale.SEND_MACRO_DESCRIPTION) {
         execute(autoCompletingMacroArg()) {
             val name = args.first
             val macro = macroService.findMacro(guild, name)
@@ -49,8 +48,7 @@ fun macroCommands(macroService: MacroService) = subcommand("Macro") {
         }
     }
 
-    sub("Add") {
-        description = Locale.ADD_MACRO_DESCRIPTION
+    sub("Add", Locale.ADD_MACRO_DESCRIPTION) {
         execute(AnyArg("Name", "The name used to reference this macro"),
             EveryArg("Content", "The content displayed when this macro is sent")) {
             val (name, message) = args
@@ -63,8 +61,7 @@ fun macroCommands(macroService: MacroService) = subcommand("Macro") {
         }
     }
 
-    sub("Remove") {
-        description = Locale.REMOVE_MACRO_DESCRIPTION
+    sub("Remove", Locale.REMOVE_MACRO_DESCRIPTION) {
         execute(autoCompletingMacroArg()) {
             val name = args.first
             val wasRemoved = macroService.removeMacro(name, guild)
@@ -76,8 +73,7 @@ fun macroCommands(macroService: MacroService) = subcommand("Macro") {
         }
     }
 
-    sub("Rename") {
-        description = Locale.RENAME_MACRO_DESCRIPTION
+    sub("Rename", Locale.RENAME_MACRO_DESCRIPTION) {
         execute(autoCompletingMacroArg(), AnyArg("NewName", "The new name to give this macro")) {
             val (name, newName) = args
             val wasChanged = macroService.editName(name, newName, guild)
@@ -89,8 +85,7 @@ fun macroCommands(macroService: MacroService) = subcommand("Macro") {
         }
     }
 
-    sub("Edit") {
-        description = Locale.EDIT_MACRO_DESCRIPTION
+    sub("Edit", Locale.EDIT_MACRO_DESCRIPTION) {
         execute(autoCompletingMacroArg(),
             EveryArg("Content", "The new content of the macro")) {
             val (name, message) = args
@@ -104,8 +99,7 @@ fun macroCommands(macroService: MacroService) = subcommand("Macro") {
         }
     }
 
-    sub("List") {
-        description = Locale.LIST_MACROS_DESCRIPTION
+    sub("List", Locale.LIST_MACROS_DESCRIPTION) {
         execute {
             respond {
                 addField("Macros", macroService.listMacros(guild))

@@ -16,8 +16,7 @@ import java.awt.Color
 
 @Suppress("unused")
 fun reportCommands(configuration: Configuration, loggingService: LoggingService) = commands("Report") {
-    slash("Close") {
-        description = Locale.CLOSE_DESCRIPTION
+    slash("Close", Locale.CLOSE_DESCRIPTION) {
         execute {
             val report = channel.findReport()
 
@@ -35,8 +34,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         }
     }
 
-    slash("Archive") {
-        description = Locale.ARCHIVE_DESCRIPTION
+    slash("Archive", Locale.ARCHIVE_DESCRIPTION) {
         execute(EveryArg("Info", "A message sent along side the archive file").optional("")) {
             val note = args.first
             val channel = channel as TextChannel
@@ -71,8 +69,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         }
     }
 
-    slash("Note") {
-        description = Locale.NOTE_DESCRIPTION
+    slash("Note", Locale.NOTE_DESCRIPTION) {
         execute(EveryArg("Note", "The note content")) {
             val report = channel.findReport()
 
@@ -94,8 +91,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         }
     }
 
-    slash("Tag") {
-        description = Locale.TAG_DESCRIPTION
+    slash("Tag", Locale.TAG_DESCRIPTION) {
         execute(AnyArg("Tag", "A prefix or emoji")) {
             val report = channel.findReport()
 
@@ -115,8 +111,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
         }
     }
 
-    slash("ResetTags") {
-        description = Locale.RESET_TAGS_DESCRIPTION
+    slash("ResetTags", Locale.RESET_TAGS_DESCRIPTION) {
         execute {
             val report = channel.findReport()
 
