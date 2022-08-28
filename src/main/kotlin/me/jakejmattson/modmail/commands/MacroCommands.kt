@@ -1,7 +1,6 @@
 package me.jakejmattson.modmail.commands
 
 import dev.kord.common.kColor
-import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.entity.interaction.GuildAutoCompleteInteraction
 import me.jakejmattson.discordkt.arguments.AnyArg
 import me.jakejmattson.discordkt.arguments.EveryArg
@@ -33,16 +32,12 @@ fun macroCommands(macroService: MacroService) = subcommand("Macro") {
                 return@execute
             }
 
-            if (report != null) {
+            if (report != null)
                 report.liveMember(discord.kord)?.sendPrivateMessage(macro.message)
-                respond("Macro content sent to user.")
-            } else
-                respond("Macro preview shown below.")
 
-            channel.createEmbed {
+            respondPublic {
                 description = macro.message
                 color = if (report != null) Color.green.kColor else Color.red.kColor
-                author(this@execute.author)
                 footer("Macro: ${macro.name}")
             }
         }
@@ -55,7 +50,7 @@ fun macroCommands(macroService: MacroService) = subcommand("Macro") {
             val wasAdded = macroService.addMacro(name, message, guild)
 
             if (wasAdded)
-                respond("Created macro: `$name`")
+                respondPublic("Created macro: `$name`")
             else
                 respond("`$name` already exists.")
         }
@@ -67,7 +62,7 @@ fun macroCommands(macroService: MacroService) = subcommand("Macro") {
             val wasRemoved = macroService.removeMacro(name, guild)
 
             if (wasRemoved)
-                respond("Deleted macro: `${name}`")
+                respondPublic("Deleted macro: `${name}`")
             else
                 respond("`${name}` does not exist.")
         }
@@ -78,10 +73,10 @@ fun macroCommands(macroService: MacroService) = subcommand("Macro") {
             val (name, newName) = args
             val wasChanged = macroService.editName(name, newName, guild)
 
-            if (!wasChanged)
-                respond("`$newName` already exists.")
+            if (wasChanged)
+                respondPublic("Changed `$name` to `$newName`")
             else
-                respond("Changed `$name` to `$newName`")
+                respond("`$newName` already exists.")
         }
     }
 
@@ -93,7 +88,7 @@ fun macroCommands(macroService: MacroService) = subcommand("Macro") {
             val wasEdited = macroService.editMessage(name, message, guild)
 
             if (wasEdited)
-                respond("Edited macro: $name")
+                respondPublic("Edited macro: $name")
             else
                 respond("`$name` does not exist")
         }

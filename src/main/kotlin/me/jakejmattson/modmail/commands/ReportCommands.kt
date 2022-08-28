@@ -78,16 +78,12 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
                 return@execute
             }
 
-            val messageAuthor = author
-
-            channel.createEmbed {
-                author(messageAuthor)
+            respondPublic {
                 description = args.first
                 color = Color.white.kColor
             }
 
             loggingService.command(this)
-            respond("Note added.")
         }
     }
 
@@ -107,7 +103,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             }
 
             loggingService.command(this, "Added tag :: $tag")
-            respond("Tag added.")
+            respondPublic("Tag added.")
         }
     }
 
@@ -128,7 +124,7 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
             }
 
             loggingService.command(this, "Channel is now $newName")
-            respond("Tags reset.")
+            respondPublic("Tags reset.")
         }
     }
 }

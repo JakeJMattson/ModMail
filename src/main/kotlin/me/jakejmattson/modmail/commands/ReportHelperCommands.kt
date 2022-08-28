@@ -3,8 +3,8 @@ package me.jakejmattson.modmail.commands
 import dev.kord.common.exception.RequestException
 import dev.kord.common.kColor
 import dev.kord.core.behavior.channel.createEmbed
-import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.createTextChannel
+import dev.kord.core.behavior.interaction.respondPublic
 import dev.kord.core.entity.Member
 import dev.kord.rest.Image
 import me.jakejmattson.discordkt.arguments.ChoiceArg
@@ -136,7 +136,7 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             }
 
             report.release(discord.kord)
-            respond("${member.tag} has been released.")
+            respondPublic("${member.tag} has been released.")
         }
     }
 
@@ -168,13 +168,10 @@ fun reportHelperCommands(configuration: Configuration, reportService: ReportServ
             val user = args.first
             val history = user.getDmChannel().archiveString().toByteArray()
 
-            if (history.isEmpty()) {
+            if (history.isNotEmpty())
+                interaction?.respondPublic { addFile("$${user.id.value}.txt", history.inputStream()) }
+            else {
                 respond("No history available.")
-                return@execute
-            }
-
-            channel.createMessage {
-                addFile("$${user.id.value}.txt", history.inputStream())
             }
         }
     }

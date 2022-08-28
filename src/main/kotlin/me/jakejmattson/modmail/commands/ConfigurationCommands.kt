@@ -16,6 +16,11 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
             ChannelArg("LoggingChannel", "The channel where logging messages will be sent")) {
             val (reports, archive, logging) = args
             configuration.edit { this[guild] = GuildConfiguration("", reports.id, archive.id, LoggingConfiguration(logging.id)) }
+            respond("${guild.name} configured.\n" +
+                "Report Category: ${reports.mention}\n +" +
+                "Archive Channel: ${archive.mention}" +
+                "Logging Channel: ${logging.mention}"
+            )
         }
     }
 
@@ -23,7 +28,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
         execute(ChannelArg<Category>("Category", "The category where new reports will be created")) {
             val category = args.first
             configuration.edit { this[guild]!!.reportCategory = category.id }
-            respond("Report category updated to ${category.mention}")
+            respond("Report Category updated to ${category.mention}")
         }
     }
 
@@ -31,7 +36,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
         execute(ChannelArg("Channel", "The channel where archived reports will be sent")) {
             val channel = args.first
             configuration.edit { this[guild]!!.archiveChannel = channel.id }
-            respond("Archive channel updated to ${channel.mention}")
+            respond("Archive Channel updated to ${channel.mention}")
         }
     }
 
@@ -39,7 +44,7 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
         execute(ChannelArg("Channel", "The channel where logging messages will be sent")) {
             val channel = args.first
             configuration.edit { this[guild]!!.loggingConfiguration.loggingChannel = channel.id }
-            respond("Logging channel updated to ${channel.mention}")
+            respond("Logging Channel updated to ${channel.mention}")
         }
     }
 }
