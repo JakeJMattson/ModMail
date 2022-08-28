@@ -93,7 +93,7 @@ class ReportService(private val config: Configuration,
 
         val newMessage = liveChannel.createMessage {
             allowedMentions { }
-            content = message.content
+            content = message.fullContent().takeIf { it.isNotBlank() } ?: "[STICKER:${message.stickers.first().name}]"
         }
 
         val snowflakeRegex = Regex("^\\d{17,21}$")
