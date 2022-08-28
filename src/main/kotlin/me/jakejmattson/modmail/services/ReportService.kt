@@ -8,12 +8,14 @@ import dev.kord.core.behavior.channel.MessageChannelBehavior
 import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.createTextChannel
-import dev.kord.core.behavior.reply
+import dev.kord.core.behavior.getChannelOf
 import dev.kord.core.entity.*
 import dev.kord.core.entity.channel.Category
+import dev.kord.core.entity.channel.GuildMessageChannel
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.Image
 import dev.kord.rest.builder.message.create.allowedMentions
+import dev.kord.rest.builder.message.create.embed
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
@@ -26,6 +28,7 @@ import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.annotations.Service
 import me.jakejmattson.discordkt.extensions.*
 import me.jakejmattson.modmail.extensions.addFailReaction
+import me.jakejmattson.modmail.extensions.fullContent
 import me.jakejmattson.modmail.extensions.fullname
 import java.awt.Color
 import java.io.File
@@ -94,12 +97,25 @@ class ReportService(private val config: Configuration,
         }
 
         val snowflakeRegex = Regex("^\\d{17,21}$")
-        val snowflakes = message.content.split(" ").filter { it.matches(snowflakeRegex) }.toSet()
+        val snowflakes = message.content.split(Regex("\\s+")).filter { it.matches(snowflakeRegex) }.toSet()
+        val messageRegex = "^https://discord\\.com/channels/(\\d{17,21})/(\\d{17,21})/(\\d{17,21})$".toRegex()
+        val messageLinks = message.content.split(Regex("\\s+")).filter { it.matches(messageRegex) }
 
-        if (snowflakes.isNotEmpty()) {
-            newMessage.reply {
-                allowedMentions { }
-                content = "Detected: " + snowflakes.joinToString { "<@!$it>" }
+        if (messageLinks.isNotEmpty()) {
+            newMessage.replySilently {
+                embed {
+                    color = Color.white.kColor
+
+                    messageLinks.map { it.unwrapMessageLink()!! }.forEach { (_, channelId, messageId) ->
+                        val linkedMessage = liveChannel.guild.getChannelOf<GuildMessageChannel>(channelId).getMessage(messageId)
+                        addField(linkedMessage.author?.fullName ?: "Unknown Author",
+                            "[[$messageId]](${linkedMessage.jumpLink()})\n${linkedMessage.fullContent()}")
+                    }
+                }
+            }
+        } else if (snowflakes.isNotEmpty()) {
+            newMessage.replySilently {
+                content = "Potential users:\n" + snowflakes.joinToString("\n") { "`$it` = <@!$it>" }
             }
         }
 
