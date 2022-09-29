@@ -6,5 +6,8 @@ import me.jakejmattson.modmail.services.Locale
 
 @Suppress("unused")
 fun validGuildPrecondition(configuration: Configuration) = precondition {
+    if ("configure".equals(command?.name, true))
+        return@precondition
+
     guild?.let { configuration[it] } ?: fail(Locale.FAIL_GUILD_NOT_CONFIGURED)
 }
