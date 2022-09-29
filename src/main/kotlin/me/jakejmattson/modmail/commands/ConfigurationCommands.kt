@@ -17,8 +17,8 @@ fun configurationCommands(configuration: Configuration) = commands("Configuratio
             val (reports, archive, logging) = args
             configuration.edit { this[guild] = GuildConfiguration("", reports.id, archive.id, LoggingConfiguration(logging.id)) }
             respond("${guild.name} configured.\n" +
-                "Report Category: ${reports.mention}\n +" +
-                "Archive Channel: ${archive.mention}" +
+                "Report Category: ${reports.mention}\n" +
+                "Archive Channel: ${archive.mention}\n" +
                 "Logging Channel: ${logging.mention}"
             )
         }
