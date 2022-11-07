@@ -1,6 +1,12 @@
+# IntelliJ
 .idea/
-WarmBot.iml
-target/
+*.iml
+
+# Gradle
+.gradle/
+build/
+gradle.properties
+
 data/
 velocity.log
 old-conf/
