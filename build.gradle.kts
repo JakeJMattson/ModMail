@@ -3,10 +3,10 @@ version = "4.0.0"
 description = "A report management bot"
 
 plugins {
-    kotlin("jvm") version "1.7.20"
-    kotlin("plugin.serialization") version "1.7.20"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("com.github.ben-manes.versions") version "0.43.0"
+    kotlin("jvm") version "1.8.21"
+    kotlin("plugin.serialization") version "1.8.21"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.github.ben-manes.versions") version "0.46.0"
 }
 
 repositories {
@@ -18,12 +18,18 @@ dependencies {
 }
 
 tasks {
+    compileJava {
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
+    }
+
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "17"
         dependsOn("writeProperties")
     }
 
     register<WriteProperties>("writeProperties") {
+        dependsOn(processResources)
         property("name", project.name)
         property("description", project.description.toString())
         property("version", version.toString())
