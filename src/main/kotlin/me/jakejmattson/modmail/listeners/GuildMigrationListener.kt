@@ -5,11 +5,12 @@ import dev.kord.common.kColor
 import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.event.guild.*
 import dev.kord.rest.Image
+import dev.kord.x.emoji.Emojis.mage
 import kotlinx.coroutines.delay
 import me.jakejmattson.discordkt.dsl.listeners
-import me.jakejmattson.discordkt.extensions.addField
-import me.jakejmattson.discordkt.extensions.sendPrivateMessage
-import me.jakejmattson.discordkt.extensions.thumbnail
+import me.jakejmattson.discordkt.util.addField
+import me.jakejmattson.discordkt.util.sendPrivateMessage
+import me.jakejmattson.discordkt.util.thumbnail
 import me.jakejmattson.modmail.services.*
 import java.awt.Color
 
@@ -65,7 +66,7 @@ fun guildMigration(configuration: Configuration) = listeners {
         guild.owner.sendPrivateMessage {
             title = "Please configure ${guild.name}"
             description = "Please run the `/configure` command inside your server. You will be asked for a few things."
-            guild.getIconUrl(Image.Format.PNG)?.let { thumbnail(it) }
+            thumbnail(guild.icon?.cdnUrl?.toUrl() ?: "")
             addField("Report Category", "Where new report channels will be created.")
             addField("Archive Channel", "Where reports can be archived as text.")
             addField("Logging Channel", "Where logging messages will be sent.")

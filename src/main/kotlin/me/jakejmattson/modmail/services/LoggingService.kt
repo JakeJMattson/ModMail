@@ -9,9 +9,9 @@ import dev.kord.rest.builder.message.EmbedBuilder
 import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.annotations.Service
 import me.jakejmattson.discordkt.commands.CommandEvent
-import me.jakejmattson.discordkt.extensions.addField
-import me.jakejmattson.discordkt.extensions.pfpUrl
-import me.jakejmattson.discordkt.extensions.thumbnail
+import me.jakejmattson.discordkt.util.addField
+import me.jakejmattson.discordkt.util.pfpUrl
+import me.jakejmattson.discordkt.util.thumbnail
 import java.awt.Color
 
 @Service
@@ -67,7 +67,7 @@ class LoggingService(discord: Discord, private val config: Configuration) {
 
     suspend fun command(command: CommandEvent<*>, additionalInfo: String = "") = command.guild!!.logConfig.apply {
         val author = command.author.tag
-        val commandName = command.command!!.names.first()
+        val commandName = command.command?.name
         val channelName = (command.channel as TextChannel).name
 
         if (logCommands)
@@ -79,7 +79,7 @@ class LoggingService(discord: Discord, private val config: Configuration) {
 
     private suspend fun log(config: LoggingConfiguration, message: String) = config.getLiveChannel(kord)?.createMessage(message)
     private suspend fun logEmbed(config: LoggingConfiguration, embed: EmbedBuilder) = config.getLiveChannel(kord)?.createMessage {
-        embeds.add(embed)
+        embeds = mutableListOf(embed)
     }
 
     private suspend fun buildEditEmbed(report: Report, old: String, new: String) = EmbedBuilder().apply {

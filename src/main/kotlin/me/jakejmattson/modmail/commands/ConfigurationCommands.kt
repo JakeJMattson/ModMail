@@ -1,5 +1,6 @@
 package me.jakejmattson.modmail.commands
 
+import dev.kord.common.entity.ALL
 import dev.kord.common.entity.Permission
 import dev.kord.common.entity.Permissions
 import dev.kord.core.entity.channel.Category
@@ -9,7 +10,7 @@ import me.jakejmattson.discordkt.dsl.edit
 import me.jakejmattson.modmail.services.*
 
 @Suppress("unused")
-fun configurationCommands(configuration: Configuration) = commands("Configuration", Permissions(Permission.All)) {
+fun configurationCommands(configuration: Configuration) = commands("Configuration", Permissions(Permissions.ALL)) {
     slash("Configure", Locale.CONFIGURE_DESCRIPTION) {
         execute(ChannelArg<Category>("ReportCategory", "The category where new reports will be created"),
             ChannelArg("ArchiveChannel", "The channel where archived reports will be sent"),

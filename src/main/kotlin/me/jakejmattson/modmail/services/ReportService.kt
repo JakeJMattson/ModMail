@@ -14,22 +14,20 @@ import dev.kord.core.entity.channel.Category
 import dev.kord.core.entity.channel.GuildMessageChannel
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.Image
-import dev.kord.rest.builder.message.create.allowedMentions
-import dev.kord.rest.builder.message.create.embed
+import dev.kord.rest.builder.message.allowedMentions
+import dev.kord.rest.builder.message.embed
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.annotations.Service
-import me.jakejmattson.discordkt.extensions.*
+import me.jakejmattson.discordkt.util.*
 import me.jakejmattson.modmail.extensions.addFailReaction
 import me.jakejmattson.modmail.extensions.fullContent
-import me.jakejmattson.modmail.extensions.fullname
 import java.awt.Color
 import java.io.File
 import java.time.Instant
@@ -37,12 +35,14 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 @Serializable
-data class Report(val userId: Snowflake,
-                  val channelId: Snowflake,
-                  val guildId: Snowflake,
-                  val messages: MutableMap<Snowflake, Snowflake> = mutableMapOf()) {
+data class Report(
+    val userId: Snowflake,
+    val channelId: Snowflake,
+    val guildId: Snowflake,
+    val messages: MutableMap<Snowflake, Snowflake> = mutableMapOf()
+) {
 
-    suspend fun liveMember(kord: Kord) = kord.getGuild(guildId)?.getMemberOrNull(userId)
+    suspend fun liveMember(kord: Kord) = kord.getGuildOrNull(guildId)?.getMemberOrNull(userId)
     suspend fun liveChannel(kord: Kord) = kord.getChannelOf<TextChannel>(channelId)
 }
 
@@ -52,9 +52,11 @@ fun UserBehavior.findReport() = reports.firstOrNull { it.userId == id }
 fun MessageChannelBehavior.findReport() = reports.firstOrNull { it.channelId == id }
 
 @Service
-class ReportService(private val config: Configuration,
-                    private val loggingService: LoggingService,
-                    private val discord: Discord) {
+class ReportService(
+    private val config: Configuration,
+    private val loggingService: LoggingService,
+    private val discord: Discord
+) {
     init {
         GlobalScope.launch {
             reportsFolder.listFiles()?.forEach {
@@ -107,9 +109,12 @@ class ReportService(private val config: Configuration,
                     color = Color.white.kColor
 
                     messageLinks.map { it.unwrapMessageLink()!! }.forEach { (_, channelId, messageId) ->
-                        val linkedMessage = liveChannel.guild.getChannelOf<GuildMessageChannel>(channelId).getMessage(messageId)
-                        addField(linkedMessage.author?.fullName ?: "Unknown Author",
-                            "[[$messageId]](${linkedMessage.jumpLink()})\n${linkedMessage.fullContent()}")
+                        val linkedMessage =
+                            liveChannel.guild.getChannelOf<GuildMessageChannel>(channelId).getMessage(messageId)
+                        addField(
+                            linkedMessage.author?.fullName ?: "Unknown Author",
+                            "[[$messageId]](${linkedMessage.jumpLink()})\n${linkedMessage.fullContent()}"
+                        )
                     }
                 }
             }
@@ -145,7 +150,7 @@ class ReportService(private val config: Configuration,
 
             author {
                 name = guild.name
-                icon = guild.getIconUrl(Image.Format.PNG)
+                icon = guild.icon?.cdnUrl?.toUrl()
             }
         }
 
@@ -164,18 +169,19 @@ private fun removeReport(report: Report) {
     reportsFolder.listFiles()?.firstOrNull { it.name.startsWith(report.channelId.toString()) }?.delete()
 }
 
-suspend fun Member.reportOpenEmbed(channel: TextChannel, opener: User? = null, detain: Boolean = false) = channel.createEmbed {
-    addInlineField("User", mention)
-    addInlineField("Name", fullname)
-    addField("User ID", id.toString())
-    thumbnail(pfpUrl)
-    if (opener != null) footer("Opened by ${opener.fullname}", opener.pfpUrl)
-    color = if (detain) Color.RED.kColor else Color.GREEN.kColor
-    timestamp = Instant.now().toKotlinInstant()
-}
+suspend fun Member.reportOpenEmbed(channel: TextChannel, opener: User? = null, detain: Boolean = false) =
+    channel.createEmbed {
+        addInlineField("User", mention)
+        addInlineField("Name", fullName)
+        addField("User ID", id.toString())
+        thumbnail(pfpUrl)
+        if (opener != null) footer("Opened by ${opener.fullName}", opener.pfpUrl)
+        color = if (detain) Color.RED.kColor else Color.GREEN.kColor
+        timestamp = Instant.now().toKotlinInstant()
+    }
 
 private suspend fun sendReportClosedEmbed(report: Report, kord: Kord) {
-    val guild = kord.getGuild(report.guildId) ?: return
+    val guild = kord.getGuildOrNull(report.guildId) ?: return
     val user = kord.getUser(report.userId) ?: return
 
     user.sendPrivateMessage {
@@ -188,7 +194,7 @@ private suspend fun sendReportClosedEmbed(report: Report, kord: Kord) {
 
         author {
             name = guild.name
-            icon = guild.getIconUrl(Image.Format.PNG)
+            icon = guild.icon?.cdnUrl?.toUrl()
         }
     }
 }

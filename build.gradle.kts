@@ -14,18 +14,16 @@ repositories {
 }
 
 dependencies {
-    implementation("me.jakejmattson:DiscordKt:0.23.4")
+    implementation("me.jakejmattson:DiscordKt:0.24.0")
 }
 
 tasks {
-    compileJava {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
+    kotlin {
+        jvmToolchain(17)
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "17"
-        dependsOn("writeProperties")
+        doLast("writeProperties") {}
     }
 
     register<WriteProperties>("writeProperties") {

@@ -44,7 +44,7 @@ fun editListener(discord: Discord, reportService: ReportService, loggingService:
     }
 
     on<MessageDeleteEvent> {
-        getGuild() ?: return@on
+        getGuildOrNull() ?: return@on
 
         val report = channel.findReport() ?: return@on
         val targetMessage = report.messages[messageId] ?: return@on
@@ -57,7 +57,7 @@ fun editListener(discord: Discord, reportService: ReportService, loggingService:
     }
 
     on<TypingStartEvent> {
-        if (getGuild() != null)
+        if (getGuildOrNull() != null)
             return@on
 
         user.findReport()?.liveChannel(kord)?.type()

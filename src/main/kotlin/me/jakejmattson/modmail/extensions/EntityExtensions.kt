@@ -8,8 +8,8 @@ import dev.kord.x.emoji.Emojis
 import dev.kord.x.emoji.toReaction
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.Discord
-import me.jakejmattson.discordkt.extensions.containsURL
-import me.jakejmattson.discordkt.extensions.sanitiseMentions
+import me.jakejmattson.discordkt.util.containsURL
+import me.jakejmattson.discordkt.util.sanitiseMentions
 
 private const val embedNotation = "<---------- Embed ---------->"
 
@@ -46,6 +46,3 @@ suspend fun MessageChannel.archiveString() = messages.toList()
     }
 
 suspend fun Message.addFailReaction() = addReaction(Emojis.x.toReaction())
-
-val User.fullname
-    get() = "$username#$discriminator"

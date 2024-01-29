@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.conversations.Conversations
 import me.jakejmattson.discordkt.dsl.listeners
-import me.jakejmattson.discordkt.extensions.mutualGuilds
-import me.jakejmattson.discordkt.extensions.sendPrivateMessage
+import me.jakejmattson.discordkt.util.mutualGuilds
+import me.jakejmattson.discordkt.util.sendPrivateMessage
 import me.jakejmattson.modmail.conversations.guildChoiceConversation
 import me.jakejmattson.modmail.extensions.addFailReaction
 import me.jakejmattson.modmail.extensions.fullContent
@@ -20,7 +20,7 @@ fun reportListener(discord: Discord, config: Configuration, reportService: Repor
     on<MessageCreateEvent> {
         val user = message.author?.takeUnless { it.isBot } ?: return@on
 
-        if (getGuild() == null) {
+        if (getGuildOrNull() == null) {
             if (Conversations.hasConversation(user, message.channel.asChannel())) return@on
 
             val validGuilds = user.mutualGuilds.toList().filter { config.guildConfigurations[it.id] != null }
@@ -53,7 +53,7 @@ fun reportListener(discord: Discord, config: Configuration, reportService: Repor
 
                 val newMessage = member.sendPrivateMessage(content)
 
-                report.messages[id] = newMessage.id
+                report.messages[id] = newMessage!!.id
             }
         }
     }

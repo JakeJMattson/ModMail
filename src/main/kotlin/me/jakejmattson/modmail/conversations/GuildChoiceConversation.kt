@@ -4,9 +4,9 @@ import dev.kord.core.entity.Message
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.conversations.conversation
-import me.jakejmattson.discordkt.extensions.mutualGuilds
-import me.jakejmattson.discordkt.extensions.pfpUrl
-import me.jakejmattson.discordkt.extensions.thumbnail
+import me.jakejmattson.discordkt.util.mutualGuilds
+import me.jakejmattson.discordkt.util.pfpUrl
+import me.jakejmattson.discordkt.util.thumbnail
 import me.jakejmattson.modmail.services.Configuration
 import me.jakejmattson.modmail.services.ReportService
 

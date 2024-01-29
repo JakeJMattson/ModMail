@@ -1,14 +1,15 @@
 package me.jakejmattson.modmail.commands
 
 import dev.kord.common.kColor
-import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.channel.edit
 import dev.kord.core.entity.channel.TextChannel
+import io.ktor.client.request.forms.*
+import io.ktor.utils.io.jvm.javaio.*
+import kotlinx.coroutines.runBlocking
 import me.jakejmattson.discordkt.arguments.AnyArg
 import me.jakejmattson.discordkt.arguments.EveryArg
 import me.jakejmattson.discordkt.commands.commands
-import me.jakejmattson.discordkt.extensions.author
 import me.jakejmattson.modmail.extensions.archiveString
 import me.jakejmattson.modmail.listeners.deletionQueue
 import me.jakejmattson.modmail.services.*
@@ -57,7 +58,11 @@ fun reportCommands(configuration: Configuration, loggingService: LoggingService)
 
             archiveChannel.createMessage {
                 content = archiveMessage
-                addFile("$${channel.name}.txt", channel.archiveString().toByteArray().inputStream())
+                addFile("$${channel.name}.txt", ChannelProvider {
+                    runBlocking {
+                        channel.archiveString().toByteArray().inputStream().toByteReadChannel()
+                    }
+                })
 
                 report.release(discord.kord)
                 deletionQueue.add(channel.id)
