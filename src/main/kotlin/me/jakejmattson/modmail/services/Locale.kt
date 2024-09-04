@@ -1,7 +1,6 @@
 package me.jakejmattson.modmail.services
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
@@ -14,7 +13,17 @@ val Locale = run {
         serializersModule = SerializersModule { }
     }
 
-    val messages = if (messagesFile.exists()) json.decodeFromString(messagesFile.readText()) else Messages()
+    val messages = if (messagesFile.exists()) {
+        try {
+            json.decodeFromString(messagesFile.readText())
+        } catch (e: Exception) {
+            println("Failed to read messages file")
+            e.printStackTrace()
+            Messages()
+        }
+    } else {
+        Messages()
+    }
     messagesFile.writeText(json.encodeToString(messages))
     messages
 }

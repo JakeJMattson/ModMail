@@ -2,7 +2,6 @@ package me.jakejmattson.modmail.services
 
 import dev.kord.core.entity.Guild
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.jakejmattson.discordkt.annotations.Service
@@ -67,6 +66,13 @@ private fun Map<String, MutableList<Macro>>.save() = macroFile.writeText(Json.en
 
 private fun loadMacros() =
     if (macroFile.exists())
-        Json.decodeFromString(macroFile.readText())
-    else
+        try {
+            Json.decodeFromString(macroFile.readText())
+        } catch (e: Exception) {
+            println("Failed to read macro file")
+            e.printStackTrace()
+            mutableMapOf()
+        }
+    else {
         mutableMapOf<String, MutableList<Macro>>()
+    }

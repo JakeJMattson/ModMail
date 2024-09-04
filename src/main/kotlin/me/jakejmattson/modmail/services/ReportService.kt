@@ -9,11 +9,13 @@ import dev.kord.core.behavior.channel.createEmbed
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.createTextChannel
 import dev.kord.core.behavior.getChannelOf
-import dev.kord.core.entity.*
+import dev.kord.core.entity.Guild
+import dev.kord.core.entity.Member
+import dev.kord.core.entity.Message
+import dev.kord.core.entity.User
 import dev.kord.core.entity.channel.Category
 import dev.kord.core.entity.channel.GuildMessageChannel
 import dev.kord.core.entity.channel.TextChannel
-import dev.kord.rest.Image
 import dev.kord.rest.builder.message.allowedMentions
 import dev.kord.rest.builder.message.embed
 import kotlinx.coroutines.GlobalScope
@@ -31,7 +33,7 @@ import me.jakejmattson.modmail.extensions.fullContent
 import java.awt.Color
 import java.io.File
 import java.time.Instant
-import java.util.*
+import java.util.Vector
 import java.util.concurrent.ConcurrentHashMap
 
 @Serializable
@@ -60,7 +62,14 @@ class ReportService(
     init {
         GlobalScope.launch {
             reportsFolder.listFiles()?.forEach {
-                val report = Json.decodeFromString<Report>(it.readText())
+                val report = try {
+                    Json.decodeFromString<Report>(it.readText())
+                } catch (e: Exception) {
+                    println("Failed to read file: ${it.name}")
+                    e.printStackTrace()
+                    return@forEach
+                }
+
                 val channel = report.liveChannel(discord.kord)
 
                 if (channel != null) reports.add(report) else it.delete()
